@@ -1,0 +1,454 @@
+import { crowdinAPIService } from '.'
+import { toWords } from 'payload/dist/utilities/formatLabels'
+import { htmlToSlate, payloadHtmlToSlateConfig } from 'slate-serializers'
+import { Payload } from 'payload'
+import { localeMap } from "../../../constants/locales"
+import {
+  getLocalizedFields,
+  getFieldSlugs,
+  buildCrowdinJsonObject,
+  getLocalizedRequiredFields
+} from '../utilities'
+import deepEqual from 'deep-equal'
+
+interface IfindOrCreateCollectionDirectory {
+  projectId: number
+  directoryId: number
+  collectionSlug: string
+  payload: any
+  crowdin: crowdinAPIService
+}
+
+interface IfindOrCreateArticleDirectory extends IfindOrCreateCollectionDirectory {
+  document: any
+}
+
+interface IupdateOrCreateFile extends IfindOrCreateCollectionDirectory {
+  name: string
+  value: string | object
+  fileType: 'html' | 'json'
+  articleDirectory: any
+}
+
+interface IupdateTranslation {
+  projectId: number
+  documentId: string
+  fieldName: string
+  locale: string
+  payload: any
+  crowdin: crowdinAPIService
+}
+
+export async function getCrowdinFiles(crowdinArticleDirectoryId, payload: any): Promise<any> {
+  const result = await payload.find({
+    collection: "crowdin-files",
+    where: {
+      crowdinArticleDirectory: {
+        equals: crowdinArticleDirectoryId,
+      },
+    },
+  })
+  return result.docs
+}
+
+export async function getCrowdinFile(name: string, crowdinArticleDirectoryId, payload: any): Promise<any> {
+  const files = await getCrowdinFiles(crowdinArticleDirectoryId, payload)
+  const file = files.find(file => file.field === name)
+  /*if (!file) {
+    throw new Error(
+      `Could not find an entry in crowdin-files for the ${name} field.`
+    )
+  }*/
+  return file
+}
+
+export async function payloadUpdateCrowdInFile({
+  id,
+  name,
+  value,
+  fileType,
+  projectId,
+  fileId,
+  payload,
+  crowdin,
+}) {
+  // Update file on CrowdIn
+  const crowdInFile = await crowdin.updateFile({
+    projectId: projectId,
+    fileId: fileId,
+    name: name,
+    fileData: value,
+    fileType: fileType,
+  })
+
+  const payloadCrowdInFile = await payload.update({
+    collection: 'crowdin-files', // required
+    id: id,
+    data: { // required
+      updatedAt: crowdInFile.data.updatedAt,
+      revisionId: crowdInFile.data.revisionId,
+    },
+  })
+}
+
+export async function payloadCreateCrowdInFile({
+  name,
+  value,
+  fileType,
+  projectId,
+  articleDirectory,
+  payload,
+  crowdin,
+}: IupdateOrCreateFile) {
+  // Create file on CrowdIn
+  const crowdInFile = await crowdin.createFile({
+    projectId: projectId,
+    directoryId: articleDirectory.originalId,
+    name: name,
+    fileData: value,
+    fileType: fileType,
+  })
+
+  // createFile has been intermittent in not being available
+  // perhaps logic goes wrong somewhere and express middleware
+  // is hard to debug?
+  /*const crowdInFile =  {data: {
+    revisionId: 5,
+    status: 'active',
+    priority: 'normal',
+    importOptions: { contentSegmentation: true, customSegmentation: false },
+    exportOptions: null,
+    excludedTargetLanguages: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    id: 1079,
+    projectId: 323731,
+    branchId: null,
+    directoryId: 1077,
+    name: name,
+    title: null,
+    type: fileType,
+    path: `/policies/security-and-privacy/${name}.${fileType}`
+  }}*/
+
+  // Store result on Payload CMS
+  const payloadCrowdInFile = await payload.create({
+    collection: 'crowdin-files', // required
+    data: { // required
+      title: crowdInFile.data.name,
+      field: name,
+      crowdinArticleDirectory: articleDirectory.id,
+      createdAt: crowdInFile.data.createdAt,
+      updatedAt: crowdInFile.data.updatedAt,
+      originalId: crowdInFile.data.id,
+      projectId: crowdInFile.data.projectId,
+      directoryId: crowdInFile.data.directoryId,
+      revisionId: crowdInFile.data.revisionId,
+      name: crowdInFile.data.name,
+      type: crowdInFile.data.type,
+      path: crowdInFile.data.path,
+    },
+  })
+
+  return payloadCrowdInFile
+}
+
+export async function findOrCreateArticleDirectory({
+  document,
+  projectId,
+  directoryId,
+  collectionSlug,
+  payload,
+  crowdin
+}: IfindOrCreateArticleDirectory) {
+  let crowdInPayloadArticleDirectory
+
+  if (document.crowdinArticleDirectory) {
+    // Update not possible. Article name needs to be updated manually on CrowdIn.
+    // The name of the directory is CrowdIn specific helper text to give
+    // context to translators.
+    // See https://developer.crowdin.com/api/v2/#operation/api.projects.directories.getMany
+    crowdInPayloadArticleDirectory = await payload.findByID({
+      collection: 'crowdin-article-directories',
+      'id': document.crowdinArticleDirectory.id || document.crowdinArticleDirectory
+    })
+  } else {
+    const crowdInPayloadCollectionDirectory = await findOrCreateCollectionDirectory({
+      projectId: projectId,
+      directoryId: directoryId,
+      collectionSlug: collectionSlug,
+      payload: payload,
+      crowdin: crowdin
+    })
+
+    // Create article directory on CrowdIn
+    const crowdInDirectory = await crowdin.createDirectory({
+      projectId: projectId,
+      directoryId: crowdInPayloadCollectionDirectory.originalId,
+      name: document.id,
+      title: document.title || document.name, // no tests for this CrowdIn metadata, but makes it easier for translators
+    })
+
+    // Store result in Payload CMS
+    crowdInPayloadArticleDirectory = await payload.create({
+      collection: 'crowdin-article-directories',
+      data: {
+        crowdinCollectionDirectory: crowdInPayloadCollectionDirectory.id,
+        originalId: crowdInDirectory.data.id,
+        projectId: projectId,
+        directoryId: crowdInDirectory.data.directoryId,
+        name: crowdInDirectory.data.name,
+        createdAt: crowdInDirectory.data.createdAt,
+        updatedAt: crowdInDirectory.data.updatedAt,
+      }
+    })
+
+    // Associate result with document
+    const update = await payload.update({
+      collection: collectionSlug,
+      id: document.id,
+      data: {
+        crowdinArticleDirectory: crowdInPayloadArticleDirectory.id
+      }
+    })
+  }
+  
+  return crowdInPayloadArticleDirectory
+}
+
+export async function findOrCreateCollectionDirectory({
+  projectId,
+  directoryId,
+  collectionSlug,
+  payload,
+  crowdin
+}: IfindOrCreateCollectionDirectory) {
+  let crowdInPayloadCollectionDirectory
+  // Check whether collection directory exists on CrowdIn
+  const query = await payload.find({
+    collection: 'crowdin-collection-directories',
+    where: {
+      collectionSlug: {
+        equals: collectionSlug,
+      },
+    },
+  })
+
+  if (query.totalDocs === 0) {
+    // Create collection directory on CrowdIn
+    const crowdInDirectory = await crowdin.createDirectory({
+      projectId: projectId,
+      directoryId: directoryId,
+      name: collectionSlug,
+      title: toWords(collectionSlug) // is this transformed value available on the collection object?
+    })
+
+    // Store result in Payload CMS
+    crowdInPayloadCollectionDirectory = await payload.create({
+      collection: 'crowdin-collection-directories',
+      data: {
+        collectionSlug: collectionSlug,
+        originalId: crowdInDirectory.data.id,
+        projectId: projectId,
+        directoryId: crowdInDirectory.data.directoryId,
+        name: crowdInDirectory.data.name,
+        title: crowdInDirectory.data.title,
+        createdAt: crowdInDirectory.data.createdAt,
+        updatedAt: crowdInDirectory.data.updatedAt,
+      }
+    })
+  } else {
+    crowdInPayloadCollectionDirectory = query.docs[0]
+  }
+
+  return crowdInPayloadCollectionDirectory
+}
+
+export async function updateTranslation({
+  projectId,
+  documentId,
+  collection,
+  payload,
+  crowdin,
+  dryRun = true
+}) {
+  /**
+   * Get existing document
+   * 
+   * * check document exists
+   * * check for `meta` field (which can be added by @payloadcms/seo) 
+   * 
+   */
+  const doc = await payload.findByID({
+    collection: collection,
+    id: documentId,
+    locale: "en"
+  })
+  const report = {}
+  for (const locale of Object.keys(localeMap)) {
+    report[locale] = {}
+    report[locale].currentTranslations = await getCurrentDocumentTranslation({
+      doc: doc,
+      collection: collection,
+      locale: locale,
+      payload: payload
+    })
+    report[locale].latestTranslations = await getLatestDocumentTranslation({
+      projectId: projectId,
+      collection: collection,
+      doc: doc,
+      locale: locale,
+      payload: payload,
+      crowdin: crowdin
+    })
+    report[locale].changed = !deepEqual(report[locale].currentTranslations, report[locale].latestTranslations)
+    if (report[locale].changed && !dryRun) {
+      await payload.update({
+        collection: collection,
+        locale: locale,
+        id: documentId,
+        data: report[locale].latestTranslations,
+      })
+    }
+  }
+  return {
+    source: doc,
+    translations: { ...report }
+  }
+}
+
+export async function getCurrentDocumentTranslation({
+  doc,
+  collection,
+  locale,
+  payload
+}) {
+  const document = await payload.findByID({
+    collection: collection,
+    id: doc.id,
+    locale: locale
+  })
+  const collectionConfig = payload.config.collections.find(col => col.slug === collection)
+  const localizedFields = getLocalizedFields(collectionConfig)
+  const htmlFields = {}
+  getLocalizedFields(collectionConfig, 'html').forEach(field => (
+    htmlFields[field.name] = document[field.name]
+  ))
+  return {
+    ...buildCrowdinJsonObject(document, localizedFields),
+    ...htmlFields
+  }
+}
+
+/**
+ * Retrieve translations from CrowdIn for a document in a given locale
+ */
+export async function getLatestDocumentTranslation({
+  projectId,
+  collection,
+  doc,
+  locale,
+  payload,
+  crowdin
+}) {
+  const collectionConfig = payload.config.collections.find(col => col.slug === collection)
+  const localizedFields = getLocalizedFields(collectionConfig)
+  const localizedJsonFields = getFieldSlugs(getLocalizedFields(collectionConfig, 'json'))
+  const localizedHtmlFields = getFieldSlugs(getLocalizedFields(collectionConfig, 'html'))
+  if (!localizedFields) {
+    return {message: "no localized fields"}
+  }
+  // Support @payloadcms/seo
+  if (doc.meta?.title) {
+    localizedJsonFields.push('meta.title')
+  }
+  if (doc.meta?.description) {
+    localizedJsonFields.push('meta.description')
+  }
+
+  // add json fields
+  const docTranslations = await getTranslation({
+    projectId: projectId,
+    documentId: doc.id,
+    fieldName: 'fields',
+    locale: locale,
+    payload: payload,
+    crowdin: crowdin
+  })
+  // add html fields
+  for (const field of localizedHtmlFields) {
+    docTranslations[field] = await getTranslation({
+      projectId: projectId,
+      documentId: doc.id,
+      fieldName: field,
+      locale: locale,
+      payload: payload,
+      crowdin: crowdin
+    })
+  }
+  // Add required fields if not present
+  const requiredFieldSlugs = getFieldSlugs(getLocalizedRequiredFields(collectionConfig))
+  if (requiredFieldSlugs.length > 0) {
+    const currentTranslations = await getCurrentDocumentTranslation({
+      doc: doc,
+      collection: collection,
+      locale: locale,
+      payload: payload
+    })
+    requiredFieldSlugs.forEach(slug => {
+      if (!docTranslations.hasOwnProperty(slug)) {
+        docTranslations[slug] = currentTranslations[slug]
+      }
+    })
+  }
+  return docTranslations
+}
+
+/**
+ * Retrieve translations for a document field name
+ * 
+ * * returns Slate object for html fields
+ * * returns all json fields if fieldName is 'fields'
+ */
+export async function getTranslation({
+  projectId,
+  documentId,
+  fieldName,
+  locale,
+  payload,
+  crowdin
+}: IupdateTranslation) {
+  const articleDirectory = await getCrowdinArticleDirectory(documentId, payload)
+  const file = await getCrowdinFile(fieldName, articleDirectory.id, payload)
+  const response = await crowdin.getTranslation({
+    projectId: projectId,
+    fileId: file.originalId,
+    targetLanguageId: localeMap[locale].crowdinId
+  })
+  const data = await getFileDataFromUrl(response.data.url)
+  return (file.type === 'html') ? htmlToSlate(data, payloadHtmlToSlateConfig) : JSON.parse(data)
+}
+
+export async function getCrowdinArticleDirectory(documentId: string, payload: Payload) {
+  // Get directory
+  const crowdInPayloadArticleDirectory = await payload.find({
+    collection: 'crowdin-article-directories',
+    where: {
+      name: {
+        equals: documentId,
+      },
+    },
+  })
+  if (crowdInPayloadArticleDirectory.totalDocs === 0) {
+    throw new Error(
+      'This article does not have a corresponding entry in the  crowdin-article-directories collection.'
+    )
+  }
+  return crowdInPayloadArticleDirectory.docs[0]
+}
+
+async function getFileDataFromUrl(url: string) {
+  const response = await fetch(url)
+  const body = await response.text()
+  return body
+}

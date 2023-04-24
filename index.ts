@@ -1,0 +1,1 @@
+export { crowdInSync } from './plugin'
