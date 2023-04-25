@@ -11,6 +11,7 @@ import {
 } from '../utilities'
 import deepEqual from 'deep-equal'
 
+
 /**
  * Need to find a way to pass this in through config
  * 
@@ -147,8 +148,7 @@ interface IupdateTranslation extends ApiObjects {
   projectId: number
   documentId: string
   collection: string
-  localeMap: string[]
-  dryRun: boolean
+  dryRun?: boolean
 }
 
 export async function getCrowdinFiles(crowdinArticleDirectoryId: number, payload: Payload): Promise<any> {
@@ -380,7 +380,6 @@ export async function updateTranslation({
   projectId,
   documentId,
   collection,
-  localeMap = [],
   payload,
   crowdin,
   dryRun = true
