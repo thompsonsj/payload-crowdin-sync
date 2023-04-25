@@ -25,6 +25,7 @@ export const crowdInSync =
     const {
       projectId,
       directoryId,
+      localeMap,
       collections: allCollectionOptions
     } = pluginOptions
 

@@ -7,7 +7,11 @@ export interface CollectionOptions {
 
 export interface PluginOptions {
   projectId: number
-  directoryId?: number
+  /** This should be optional? */
+  directoryId: number
+  localeMap?: {[key: string]: {
+    crowdinId: string
+  }}
   collections?: Record<string, CollectionOptions>
 }
 
