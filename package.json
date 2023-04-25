@@ -1,0 +1,36 @@
+{
+  "name": "payload-crowdin-sync",
+  "version": "0.1.0",
+  "description": "Automatically upload/sync localized fields from the default locale to CrowdIn. Make these fields read-only in other locales and update them using CrowdIn translations.",
+  "main": "index.js",
+  "scripts": {
+    "release": "standard-version"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thompsonsj/payload-crowdin-sync.git"
+  },
+  "author": "https://github.com/thompsonsj",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thompsonsj/payload-crowdin-sync/issues"
+  },
+  "homepage": "https://github.com/thompsonsj/payload-crowdin-sync#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.1",
+    "@commitlint/config-conventional": "^17.6.1",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "standard-version": "^9.5.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  }
+}
