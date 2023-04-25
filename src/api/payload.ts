@@ -2,7 +2,7 @@ import { crowdinAPIService } from '.'
 import { toWords } from 'payload/dist/utilities/formatLabels'
 import { htmlToSlate, payloadHtmlToSlateConfig } from 'slate-serializers'
 import { Payload } from 'payload'
-import { localeMap } from "../../../constants/locales"
+import { CollectionConfig } from 'payload/types'
 import {
   getLocalizedFields,
   getFieldSlugs,
@@ -11,12 +11,118 @@ import {
 } from '../utilities'
 import deepEqual from 'deep-equal'
 
-interface IfindOrCreateCollectionDirectory {
+/**
+ * Need to find a way to pass this in through config
+ * 
+ * Locales should only be defined in one place and
+ * need to be configurable.
+ */
+interface IlocaleMap {
+  [key: string]: {
+    crowdinId: string
+    previewSlug: string
+  }
+}
+
+const localeMap: IlocaleMap = {
+  da_DK: {
+    crowdinId: "da",
+    previewSlug: "da",
+  },
+  de_DE: {
+    crowdinId: "de",
+    previewSlug: "de",
+  },
+  en_GB: { 
+    crowdinId: "en-GB",
+    previewSlug: "en",
+  },
+  en_US: {
+    crowdinId: "en-US",
+    previewSlug: "en",
+  },
+  es_ES: {
+    crowdinId: "es-ES",
+    previewSlug: "es",
+  },
+  et_EE: {
+    crowdinId: "et",
+    previewSlug: "en",
+  },
+  fi_FI: {
+    crowdinId: "fi",
+    previewSlug: "fi",
+  },
+  fr_FR: {
+    crowdinId: "fr",
+    previewSlug: "fr",
+  },
+  it_IT: {
+    crowdinId: "it",
+    previewSlug: "it",
+  },
+  lt_LT: {
+    crowdinId: "lt",
+    previewSlug: "en",
+  },
+  lv_LV: {
+    crowdinId: "lv",
+    previewSlug: "en",
+  },
+  nl_NL: {
+    crowdinId: "nl",
+    previewSlug: "nl",
+  },
+  no_NO: {
+    crowdinId: "no",
+    previewSlug: "no",
+  },
+  pl_PL: {
+    crowdinId: "pl",
+    previewSlug: "en",
+  },
+  pt_PT: {
+    crowdinId: "pt-PT",
+    previewSlug: "en",
+  },
+  sv_SE: {
+    crowdinId: "sv-SE",
+    previewSlug: "sv",
+  }
+}
+
+interface ApiObjects {
+  payload: Payload
+  crowdin: crowdinAPIService
+}
+
+interface IpayloadUpdateCrowdInFile extends ApiObjects {
+  id: string
+  name: string
+  value: any
+  fileType: 'html' | 'json'
+  projectId: number
+  fileId: number
+}
+
+interface IgetLatestDocumentTranslation extends ApiObjects {
+  projectId: number
+  collection: string
+  doc: any
+  locale: string
+}
+
+interface IgetCurrentDocumentTranslation {
+  doc: any
+  collection: string
+  locale: string
+  payload: any
+}
+
+interface IfindOrCreateCollectionDirectory extends ApiObjects {
   projectId: number
   directoryId: number
   collectionSlug: string
-  payload: any
-  crowdin: crowdinAPIService
 }
 
 interface IfindOrCreateArticleDirectory extends IfindOrCreateCollectionDirectory {
@@ -30,16 +136,22 @@ interface IupdateOrCreateFile extends IfindOrCreateCollectionDirectory {
   articleDirectory: any
 }
 
-interface IupdateTranslation {
+interface IgetTranslation extends ApiObjects {
   projectId: number
   documentId: string
   fieldName: string
   locale: string
-  payload: any
-  crowdin: crowdinAPIService
 }
 
-export async function getCrowdinFiles(crowdinArticleDirectoryId, payload: any): Promise<any> {
+interface IupdateTranslation extends ApiObjects {
+  projectId: number
+  documentId: string
+  collection: string
+  localeMap: string[]
+  dryRun: boolean
+}
+
+export async function getCrowdinFiles(crowdinArticleDirectoryId: number, payload: Payload): Promise<any> {
   const result = await payload.find({
     collection: "crowdin-files",
     where: {
@@ -51,9 +163,9 @@ export async function getCrowdinFiles(crowdinArticleDirectoryId, payload: any): 
   return result.docs
 }
 
-export async function getCrowdinFile(name: string, crowdinArticleDirectoryId, payload: any): Promise<any> {
+export async function getCrowdinFile(name: string, crowdinArticleDirectoryId: number, payload: Payload): Promise<any> {
   const files = await getCrowdinFiles(crowdinArticleDirectoryId, payload)
-  const file = files.find(file => file.field === name)
+  const file = files.find((file: any) => file.field === name)
   /*if (!file) {
     throw new Error(
       `Could not find an entry in crowdin-files for the ${name} field.`
@@ -71,7 +183,7 @@ export async function payloadUpdateCrowdInFile({
   fileId,
   payload,
   crowdin,
-}) {
+}: IpayloadUpdateCrowdInFile) {
   // Update file on CrowdIn
   const crowdInFile = await crowdin.updateFile({
     projectId: projectId,
@@ -268,10 +380,11 @@ export async function updateTranslation({
   projectId,
   documentId,
   collection,
+  localeMap = [],
   payload,
   crowdin,
   dryRun = true
-}) {
+}: IupdateTranslation) {
   /**
    * Get existing document
    * 
@@ -284,7 +397,7 @@ export async function updateTranslation({
     id: documentId,
     locale: "en"
   })
-  const report = {}
+  const report: {[key: string]: any} = {}
   for (const locale of Object.keys(localeMap)) {
     report[locale] = {}
     report[locale].currentTranslations = await getCurrentDocumentTranslation({
@@ -322,15 +435,15 @@ export async function getCurrentDocumentTranslation({
   collection,
   locale,
   payload
-}) {
+}: IgetCurrentDocumentTranslation) {
   const document = await payload.findByID({
     collection: collection,
     id: doc.id,
     locale: locale
   })
-  const collectionConfig = payload.config.collections.find(col => col.slug === collection)
+  const collectionConfig = payload.config.collections.find((col: CollectionConfig) => col.slug === collection)
   const localizedFields = getLocalizedFields(collectionConfig)
-  const htmlFields = {}
+  const htmlFields: {[key: string]: any} = {}
   getLocalizedFields(collectionConfig, 'html').forEach(field => (
     htmlFields[field.name] = document[field.name]
   ))
@@ -350,8 +463,8 @@ export async function getLatestDocumentTranslation({
   locale,
   payload,
   crowdin
-}) {
-  const collectionConfig = payload.config.collections.find(col => col.slug === collection)
+}: IgetLatestDocumentTranslation) {
+  const collectionConfig = payload.config.collections.find(col => col.slug === collection) as CollectionConfig
   const localizedFields = getLocalizedFields(collectionConfig)
   const localizedJsonFields = getFieldSlugs(getLocalizedFields(collectionConfig, 'json'))
   const localizedHtmlFields = getFieldSlugs(getLocalizedFields(collectionConfig, 'html'))
@@ -417,7 +530,7 @@ export async function getTranslation({
   locale,
   payload,
   crowdin
-}: IupdateTranslation) {
+}: IgetTranslation) {
   const articleDirectory = await getCrowdinArticleDirectory(documentId, payload)
   const file = await getCrowdinFile(fieldName, articleDirectory.id, payload)
   const response = await crowdin.getTranslation({

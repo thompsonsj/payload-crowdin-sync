@@ -4,5 +4,5 @@ export const {
   uploadStorageApi,
   sourceFilesApi,
 } = new crowdin({
-  token: process.env.CROWDIN_API_TOKEN,
+  token: process.env.CROWDIN_API_TOKEN as string,
 })

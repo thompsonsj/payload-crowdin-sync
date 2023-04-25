@@ -1,5 +1,5 @@
 import { CrowdinPluginRequest } from "../types"
-import { sourceFilesApi, uploadStorageApi } from "./connection"
+import { Response, NextFunction } from "express"
 import crowdin from '@crowdin/crowdin-api-client'
 
 interface IaddDirectory {
@@ -33,7 +33,7 @@ interface IgetTranslation {
 
 export class crowdinAPIService {
   crowdin: crowdin
-  constructor({token}) {
+  constructor({token}: {token: string}) {
     this.crowdin = new crowdin({
       token: token,
     })
@@ -60,7 +60,7 @@ export class crowdinAPIService {
     name,
     fileData,
     fileType
-  }) {
+  }: IaddStorage) {
     const storage = await this.crowdin.uploadStorageApi.addStorage(`${name}.${fileType}`, fileData);
       return storage.data.id
   }
@@ -125,10 +125,10 @@ export class crowdinAPIService {
   }
 }
 
-export function crowdinClient({token}) {
+export function crowdinClient({token}: {token: string}) {
   const service = new crowdinAPIService({token})
 
-  return (req: CrowdinPluginRequest, _, next) => {
+  return (req: CrowdinPluginRequest, _: Response, next: NextFunction) => {
     req.crowdinClient = service
     next()
   }

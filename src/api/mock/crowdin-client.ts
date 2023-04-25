@@ -1,3 +1,6 @@
+import { CrowdinPluginRequest } from "../../types"
+import { Response, NextFunction } from "express"
+
 /*
   CrowdIn Service mock
 
@@ -67,7 +70,7 @@ class crowdinAPIWrapper {
     name,
     fileData,
     fileType
-  }) {
+  }: IaddStorage) {
     const storage = await Promise.resolve(1).then(() => {
       return {
         data: {
@@ -160,7 +163,7 @@ class crowdinAPIWrapper {
 export function mockCrowdinClient() {
   const service = new crowdinAPIWrapper()
 
-  return (req, _, next) => {
+  return (req: any, _: Response, next: NextFunction) => {
     req.crowdinClient = service
     next()
   }

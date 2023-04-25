@@ -1,3 +1,7 @@
+# WIP 23 Apr 2023
+
+This plugin is currently being refactored. Although the logic works, it was extracted from a Payload CMS install and needs work to decouple logic from that installation.
+
 # Payload CrowdIn Sync Plugin
 
 Automatically upload/sync localized fields from the default locale to CrowdIn. Make these fields read-only in other locales and update them using CrowdIn translations.
