@@ -1,4 +1,4 @@
-import { CollectionAfterChangeHook, CollectionConfig, Field } from 'payload/types';
+import { CollectionAfterChangeHook, CollectionConfig, Field, GlobalConfig, GlobalAfterChangeHook, PayloadRequest } from 'payload/types';
 import { CrowdinPluginRequest, FieldWithName } from '../../types'
 import { findOrCreateArticleDirectory, payloadCreateCrowdInFile, payloadUpdateCrowdInFile, getCrowdinFile } from '../../api/payload'
 import { buildCrowdinJsonObject, convertSlateToHtml, fieldChanged, fieldCrowdinFileType } from '../../utilities'
@@ -14,11 +14,43 @@ import deepEqual from 'deep-equal'
  * we need to be careful updates are not made sooner than
  * expected.
  */
-interface Args {
+
+interface CommonArgs {
   projectId: number,
   directoryId: number
-  collection: CollectionConfig
   localizedFields: Field[]
+}
+
+interface Args extends CommonArgs {
+  collection: CollectionConfig
+}
+
+interface GlobalArgs extends CommonArgs {
+  global: GlobalConfig
+}
+
+export const getGlobalAfterChangeHook = ({
+  projectId,
+  directoryId,
+  global,
+  localizedFields
+}: GlobalArgs): GlobalAfterChangeHook => async ({
+  doc, // full document data
+  previousDoc, // document data before updating the collection
+  req, // full express request
+}) => {
+  const operation = previousDoc ? 'update' : 'create'
+  return performAfterChange({
+    doc,
+    req,
+    previousDoc,
+    operation,
+    projectId,
+    directoryId,
+    collection: global,
+    localizedFields,
+    global: true,
+  })
 }
 
 export const getAfterChangeHook = ({
@@ -26,12 +58,47 @@ export const getAfterChangeHook = ({
   directoryId,
   collection,
   localizedFields
-}: Args): CollectionAfterChangeHook => async ({
+}: Args): CollectionAfterChangeHook=> async ({
   doc, // full document data
   req, // full express request
   previousDoc, // document data before updating the collection
   operation, // name of the operation ie. 'create', 'update'
 }) => {
+  return performAfterChange({
+    doc,
+    req,
+    previousDoc,
+    operation,
+    projectId,
+    directoryId,
+    collection,
+    localizedFields
+  })
+}
+
+interface IPerformChange {
+  doc: any,
+  req: PayloadRequest
+  previousDoc: any
+  operation: string
+  projectId: number
+  directoryId: number
+  collection: CollectionConfig | GlobalConfig
+  localizedFields: Field[]
+  global?: boolean
+}
+
+const performAfterChange = async ({
+  doc, // full document data
+  req, // full express request
+  previousDoc,
+  operation,
+  projectId,
+  directoryId,
+  collection,
+  localizedFields,
+  global = false,
+}: IPerformChange) => {
   const createFile = async ({
     name,
     value,
@@ -46,7 +113,7 @@ export const getAfterChangeHook = ({
       collectionSlug: collection.slug,
       articleDirectory: articleDirectory,
       payload: req.payload,
-      crowdin: (req as CrowdinPluginRequest).crowdinClient
+      crowdin: (req as CrowdinPluginRequest).crowdinClient,
     })
   }
 
@@ -66,9 +133,10 @@ export const getAfterChangeHook = ({
     directoryId: directoryId,
     collectionSlug: collection.slug,
     payload: req.payload,
-    crowdin: (req as CrowdinPluginRequest).crowdinClient
+    crowdin: (req as CrowdinPluginRequest).crowdinClient,
+    global,
   })
-
+ 
   // build json object for CrowdIn
   // do this for current and previous to detect a change
   const crowdinJsonFileData = buildCrowdinJsonObject(doc, localizedFields as FieldWithName[])

@@ -1,4 +1,4 @@
-import { CollectionConfig, Field } from 'payload/types'
+import { CollectionConfig, Field, GlobalConfig } from 'payload/types'
 import deepEqual from 'deep-equal'
 import { FieldWithName } from '../types'
 import { slateToHtml, payloadSlateToDomConfig } from 'slate-serializers'
@@ -9,7 +9,7 @@ const localizedFieldTypes = [
   'text'
 ]
 
-export const getLocalizedFields = (collection: CollectionConfig, type?: 'json' | 'html'): any[] => {
+export const getLocalizedFields = (collection: CollectionConfig | GlobalConfig, type?: 'json' | 'html'): any[] => {
   const fields = [...collection.fields].filter(field => isLocalizedField(field))
   if (type) {
     return fields.filter(field => fieldCrowdinFileType(field as FieldWithName) === type)

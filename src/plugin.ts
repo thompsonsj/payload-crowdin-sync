@@ -1,6 +1,6 @@
 import type { Config } from 'payload/config'
 import type { PluginOptions } from './types'
-import { getAfterChangeHook } from './hooks/collections/afterChange'
+import { getAfterChangeHook, getGlobalAfterChangeHook } from './hooks/collections/afterChange'
 import { getFields } from './fields/getFields'
 import CrowdInFiles from './collections/CrowdInFiles'
 import CrowdInCollectionDirectories from './collections/CrowdInCollectionDirectories'
@@ -67,6 +67,35 @@ export const crowdInSync =
         CrowdInFiles,
         CrowdInCollectionDirectories,
         CrowdInArticleDirectories,
+      ],
+      globals: [
+        ...(config.globals || []).map(existingGlobal => {
+
+          if (containsLocalizedFields(existingGlobal.fields)) {
+            const fields = getFields({
+              collection: existingGlobal,
+            })
+
+            return {
+              ...existingGlobal,
+              hooks: {
+                ...(existingGlobal.hooks || {}),
+                afterChange: [
+                  ...(existingGlobal.hooks?.afterChange || []),
+                  getGlobalAfterChangeHook({
+                    projectId: projectId,
+                    directoryId: directoryId,
+                    global: existingGlobal,
+                    localizedFields: getLocalizedFields(existingGlobal)
+                  }),
+                ],
+              },
+              fields,
+            }
+          }
+
+          return existingGlobal
+        }),
       ],
       onInit: async payload => {
         initFunctions.forEach(fn => fn())

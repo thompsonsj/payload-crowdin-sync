@@ -10,6 +10,7 @@ import {
   getLocalizedRequiredFields
 } from '../utilities'
 import deepEqual from 'deep-equal'
+import { lowerCase, upperFirst } from "lodash"
 
 
 /**
@@ -128,6 +129,7 @@ interface IfindOrCreateCollectionDirectory extends ApiObjects {
 
 interface IfindOrCreateArticleDirectory extends IfindOrCreateCollectionDirectory {
   document: any
+  global?: boolean
 }
 
 interface IupdateOrCreateFile extends IfindOrCreateCollectionDirectory {
@@ -271,7 +273,8 @@ export async function findOrCreateArticleDirectory({
   directoryId,
   collectionSlug,
   payload,
-  crowdin
+  crowdin,
+  global = false
 }: IfindOrCreateArticleDirectory) {
   let crowdInPayloadArticleDirectory
 
@@ -288,7 +291,7 @@ export async function findOrCreateArticleDirectory({
     const crowdInPayloadCollectionDirectory = await findOrCreateCollectionDirectory({
       projectId: projectId,
       directoryId: directoryId,
-      collectionSlug: collectionSlug,
+      collectionSlug: global ? 'globals' : collectionSlug,
       payload: payload,
       crowdin: crowdin
     })
@@ -297,8 +300,8 @@ export async function findOrCreateArticleDirectory({
     const crowdInDirectory = await crowdin.createDirectory({
       projectId: projectId,
       directoryId: crowdInPayloadCollectionDirectory.originalId,
-      name: document.id,
-      title: document.title || document.name, // no tests for this CrowdIn metadata, but makes it easier for translators
+      name: global ? collectionSlug : document.id,
+      title: global ? upperFirst(lowerCase(collectionSlug)) : document.title || document.name, // no tests for this CrowdIn metadata, but makes it easier for translators
     })
 
     // Store result in Payload CMS
@@ -316,13 +319,22 @@ export async function findOrCreateArticleDirectory({
     })
 
     // Associate result with document
-    const update = await payload.update({
-      collection: collectionSlug,
-      id: document.id,
-      data: {
-        crowdinArticleDirectory: crowdInPayloadArticleDirectory.id
-      }
-    })
+    if (global) {
+      const update = await payload.updateGlobal({
+        slug: collectionSlug,
+        data: {
+          crowdinArticleDirectory: crowdInPayloadArticleDirectory.id
+        }
+      })
+    } else {
+      const update = await payload.update({
+        collection: collectionSlug,
+        id: document.id,
+        data: {
+          crowdinArticleDirectory: crowdInPayloadArticleDirectory.id
+        }
+      })
+    }
   }
   
   return crowdInPayloadArticleDirectory
