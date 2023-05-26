@@ -1,9 +1,7 @@
-import type { FieldHook } from 'payload/dist/fields/config/types'
-import type { CollectionConfig, Field} from 'payload/types'
-import { containsLocalizedFields, isLocalizedField } from '../utilities'
+import type { CollectionConfig, Field, GlobalConfig} from 'payload/types'
 
 interface Args {
-  collection: CollectionConfig
+  collection: CollectionConfig | GlobalConfig
 }
 
 export const getFields = ({
