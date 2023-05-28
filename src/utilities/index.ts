@@ -3,6 +3,7 @@ import deepEqual from 'deep-equal'
 import { FieldWithName } from '../types'
 import { slateToHtml, payloadSlateToDomConfig } from 'slate-serializers'
 import type { Descendant } from 'slate'
+import { isArray } from "lodash"
 
 const localizedFieldTypes = [
   'richText',
@@ -12,22 +13,37 @@ const localizedFieldTypes = [
 const nestedFieldTypes = [
   'array',
   'group',
-  'blocks',
+  // 'blocks',
 ]
 
-const containsNestedFields = (field: Field) => nestedFieldTypes.includes(field.type)
+export const containsNestedFields = (field: Field) => nestedFieldTypes.includes(field.type)
 
-export const getLocalizedFields = (fields: Field[], type?: 'json' | 'html'): any[] => ( fields
+export const getLocalizedFields = ({
+  fields,
+  type,
+}: {
+  fields: Field[],
+  type?: 'json' | 'html',
+}): any[] => ( fields
   // localized or group fields only.
   .filter(field => isLocalizedField(field) || containsNestedFields(field))
   // further filter on CrowdIn field type
-  .filter (field => type ? fieldCrowdinFileType(field as FieldWithName) === type : true  || containsNestedFields(field))
+  .filter (field => {
+    if (containsNestedFields(field)) {
+      return true
+    }
+    return type ? fieldCrowdinFileType(field as FieldWithName) === type : true
+  })
+  
   // recursion for group field
   .map(field => {
     if (field.type === 'group' || field.type === 'array') {
       return {
         ...field,
-        fields: getLocalizedFields(field.fields, type)
+        fields: getLocalizedFields({
+          fields: field.fields,
+          type
+        })
       }
     }
     if (field.type === 'blocks') {
@@ -36,7 +52,10 @@ export const getLocalizedFields = (fields: Field[], type?: 'json' | 'html'): any
         blocks: 
           field.blocks.map(block => {
             return {
-              fields: getLocalizedFields(block.fields, type)
+              fields: getLocalizedFields({
+                fields: block.fields,
+                type
+              })
             }
           })
       }
@@ -46,7 +65,7 @@ export const getLocalizedFields = (fields: Field[], type?: 'json' | 'html'): any
 )
 
 export const getLocalizedRequiredFields = (collection: CollectionConfig, type?: 'json' | 'html'): any[] => {
-  const fields = getLocalizedFields(collection.fields, type)
+  const fields = getLocalizedFields({ fields: collection.fields, type })
   return fields.filter(field => field.required)
 }
 
@@ -69,10 +88,12 @@ export const fieldCrowdinFileType = (field: FieldWithName): 'json' | 'html' => f
 
 export const buildCrowdinJsonObject = (doc: { [key: string]: any }, localizedFields: FieldWithName[]): object => {
   let response: { [key: string]: any } = {}
-  getLocalizedFields(localizedFields, 'json')
+  getLocalizedFields({ fields: localizedFields, type: 'json'})
     .forEach(field => {
     if (field.type === 'group') {
       response[field.name] = buildCrowdinJsonObject(doc[field.name], field.fields)
+    } else if (field.type === 'array') {
+      response[field.name] = doc[field.name].map((item: any) => buildCrowdinJsonObject(item, field.fields))
     } else {
       /**
        * Kept the following comments from when the plugin

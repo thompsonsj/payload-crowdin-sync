@@ -453,9 +453,9 @@ export async function getCurrentDocumentTranslation({
     locale: locale
   })
   const collectionConfig = payload.config.collections.find((col: CollectionConfig) => col.slug === collection)
-  const localizedFields = getLocalizedFields(collectionConfig.fields)
+  const localizedFields = getLocalizedFields({fields: collectionConfig.fields})
   const htmlFields: {[key: string]: any} = {}
-  getLocalizedFields(collectionConfig.fields, 'html').forEach(field => (
+  getLocalizedFields({fields: collectionConfig.fields, type: 'html'}).forEach(field => (
     htmlFields[field.name] = document[field.name]
   ))
   return {
@@ -476,9 +476,9 @@ export async function getLatestDocumentTranslation({
   crowdin
 }: IgetLatestDocumentTranslation) {
   const collectionConfig = payload.config.collections.find(col => col.slug === collection) as CollectionConfig
-  const localizedFields = getLocalizedFields(collectionConfig.fields)
-  const localizedJsonFields = getFieldSlugs(getLocalizedFields(collectionConfig.fields, 'json'))
-  const localizedHtmlFields = getFieldSlugs(getLocalizedFields(collectionConfig.fields, 'html'))
+  const localizedFields = getLocalizedFields({ fields: collectionConfig.fields })
+  const localizedJsonFields = getFieldSlugs(getLocalizedFields({fields: collectionConfig.fields, type: 'json'}))
+  const localizedHtmlFields = getFieldSlugs(getLocalizedFields({fields: collectionConfig.fields, type: 'html'}))
   if (!localizedFields) {
     return {message: "no localized fields"}
   }

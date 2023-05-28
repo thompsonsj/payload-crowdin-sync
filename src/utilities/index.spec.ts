@@ -2,6 +2,7 @@ import { Block, GlobalConfig } from 'payload/types'
 import { buildCrowdinJsonObject, getLocalizedFields, fieldChanged } from '.'
 import { FieldWithName } from '../types'
 import deepEqual from 'deep-equal'
+import dot from 'dot-object'
 
 describe("Function: getLocalizedFields", () => {
   it ("includes localized fields from a group field", () => {
@@ -62,7 +63,7 @@ describe("Function: getLocalizedFields", () => {
         ]
       },
     ]
-    expect(getLocalizedFields(global.fields)).toEqual(expected)
+    expect(getLocalizedFields({ fields: global.fields })).toEqual(expected)
   })
 
   it ("includes localized fields from an array field", () => {
@@ -128,9 +129,11 @@ describe("Function: getLocalizedFields", () => {
         ]
       },
     ]
-    expect(getLocalizedFields(global.fields)).toEqual(expected)
+    expect(getLocalizedFields({ fields: global.fields })).toEqual(expected)
   })
 
+  /**
+   * blocks not supported yet
   it ("includes localized fields from a blocks field", () => {
     const TestBlock: Block = {
       slug: 'text',
@@ -223,6 +226,204 @@ describe("Function: getLocalizedFields", () => {
     ]
     expect(getLocalizedFields(global.fields)).toEqual(expected)
   })
+   */
+
+  it ("extract rich text localized fields", () => {
+    const global: GlobalConfig = {
+      slug: "global",
+      fields: [
+        {
+          name: 'simpleLocalizedField',
+          type: 'richText',
+          localized: true,
+        },
+        {
+          name: 'simpleNonLocalizedField',
+          type: 'text',
+        },
+        {
+          name: 'arrayField',
+          type: 'array',
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              localized: true,
+            },
+            {
+              name: 'richText',
+              type: 'richText',
+              localized: true,
+            },
+            {
+              name: 'select',
+              type: 'select',
+              localized: true,
+              options: [
+                'one',
+                'two'
+              ]
+            },
+          ]
+        },
+        {
+          name: 'groupField',
+          type: 'group',
+          fields: [
+            {
+              name: 'simpleLocalizedField',
+              type: 'richText',
+              localized: true,
+            },
+            {
+              name: 'simpleNonLocalizedField',
+              type: 'text',
+            },
+            // select fields not supported yet
+            {
+              name: 'text',
+              type: 'select',
+              localized: true,
+              options: [
+                'one',
+                'two'
+              ]
+            },
+          ]
+        },
+      ]
+    }
+    const expected = [
+      {
+        name: 'simpleLocalizedField',
+        type: 'richText',
+        localized: true,
+      },
+      {
+        name: 'arrayField',
+        type: 'array',
+        fields: [
+          {
+            name: 'richText',
+            type: 'richText',
+            localized: true,
+          },
+        ]
+      },
+      {
+        name: 'groupField',
+        type: 'group',
+        fields: [
+          {
+            name: 'simpleLocalizedField',
+            type: 'richText',
+            localized: true,
+          },
+        ]
+      },
+    ]
+    expect(getLocalizedFields({ fields: global.fields, type: 'html'})).toEqual(expected)
+  })
+
+  
+  it ("extract and flatten rich text localized fields", () => {
+    const global: GlobalConfig = {
+      slug: "global",
+      fields: [
+        {
+          name: 'simpleLocalizedField',
+          type: 'richText',
+          localized: true,
+        },
+        {
+          name: 'simpleNonLocalizedField',
+          type: 'text',
+        },
+        {
+          name: 'arrayField',
+          type: 'array',
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              localized: true,
+            },
+            {
+              name: 'richText',
+              type: 'richText',
+              localized: true,
+            },
+            {
+              name: 'select',
+              type: 'select',
+              localized: true,
+              options: [
+                'one',
+                'two'
+              ]
+            },
+          ]
+        },
+        {
+          name: 'groupField',
+          type: 'group',
+          fields: [
+            {
+              name: 'simpleLocalizedField',
+              type: 'richText',
+              localized: true,
+            },
+            {
+              name: 'simpleNonLocalizedField',
+              type: 'text',
+            },
+            // select fields not supported yet
+            {
+              name: 'text',
+              type: 'select',
+              localized: true,
+              options: [
+                'one',
+                'two'
+              ]
+            },
+          ]
+        },
+      ]
+    }
+    const expected = [
+      {
+        name: 'simpleLocalizedField',
+        type: 'richText',
+        localized: true,
+      },
+      {
+        name: 'arrayField',
+        type: 'array',
+        fields: [
+          {
+            name: 'richText',
+            type: 'richText',
+            localized: true,
+          },
+        ]
+      },
+      {
+        name: 'groupField',
+        type: 'group',
+        fields: [
+          {
+            name: 'simpleLocalizedField',
+            type: 'richText',
+            localized: true,
+          },
+        ]
+      },
+    ]
+    // dot.keepArray = true
+    expect(dot.dot(getLocalizedFields({ fields: global.fields, type: 'html' }))).toEqual(expected)
+  })
+  
 })
 
 describe("Function: fieldChanged", () => {
@@ -383,13 +584,94 @@ describe("Function: buildCrowdinJsonObject", () => {
         ]
       },
     ]
-    const localizedFields = getLocalizedFields(fields)
+    const localizedFields = getLocalizedFields({ fields })
     const expected = {
       title: 'Test Policy created with title',
       groupField: {
         title: "Group title field content",
         text: "Group text field content",
       },
+    }
+    expect(buildCrowdinJsonObject(doc, localizedFields)).toEqual(expected)
+  })
+
+  it ("includes localized fields nested in an array", () => {
+    const doc = {
+      id: '638641358b1a140462752076',
+      title: 'Test Policy created with title',
+      arrayField: [
+        {
+          title: "Array field title content one",
+          text: "Array field text content one",
+          select: "two",
+          id: "64735620230d57bce946d370"
+        },
+        {
+          title: "Array field title content two",
+          text: "Array field text content two",
+          select: "two",
+          id: "64735621230d57bce946d371"
+        }
+      ],
+      status: 'draft',
+      createdAt: '2022-11-29T17:28:21.644Z',
+      updatedAt: '2022-11-29T17:28:21.644Z'
+    }
+    const fields: FieldWithName[] = [
+      {
+        name: 'title',
+        type: 'text',
+        localized: true,
+      },
+      // select not supported yet
+      {
+        name: 'select',
+        type: 'select',
+        localized: true,
+        options: [
+          'one',
+          'two'
+        ]
+      },
+      {
+        name: 'arrayField',
+        type: 'array',
+        fields: [
+          {
+            name: 'title',
+            type: 'text',
+            localized: true,
+          },
+          {
+            name: 'text',
+            type: 'text',
+            localized: true,
+          },
+          {
+            name: 'select',
+            type: 'select',
+            localized: true,
+            options: [
+              'one',
+              'two'
+            ]
+          },
+        ]
+      },
+    ]
+    const localizedFields = getLocalizedFields({ fields })
+    const expected = {
+      title: 'Test Policy created with title',
+      arrayField: [
+        {
+          title: "Array field title content one",
+          text: "Array field text content one",
+        },
+        {
+          title: "Array field title content two",
+          text: "Array field text content two",
+        }
+      ],
     }
     expect(buildCrowdinJsonObject(doc, localizedFields)).toEqual(expected)
   })
