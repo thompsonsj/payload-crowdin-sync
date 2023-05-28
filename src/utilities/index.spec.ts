@@ -1,4 +1,4 @@
-import { GlobalConfig } from 'payload/types'
+import { Block, GlobalConfig } from 'payload/types'
 import { buildCrowdinJsonObject, getLocalizedFields, fieldChanged } from '.'
 import { FieldWithName } from '../types'
 import deepEqual from 'deep-equal'
@@ -59,6 +59,165 @@ describe("Function: getLocalizedFields", () => {
             type: 'text',
             localized: true,
           },
+        ]
+      },
+    ]
+    expect(getLocalizedFields(global.fields)).toEqual(expected)
+  })
+
+  it ("includes localized fields from an array field", () => {
+    const global: GlobalConfig = {
+      slug: "global",
+      fields: [
+        {
+          name: 'simpleLocalizedField',
+          type: 'text',
+          localized: true,
+        },
+        {
+          name: 'simpleNonLocalizedField',
+          type: 'text',
+        },
+        {
+          name: 'arrayField',
+          type: 'array',
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              localized: true,
+            },
+            {
+              name: 'text',
+              type: 'text',
+              localized: true,
+            },
+            {
+              name: 'select',
+              type: 'select',
+              localized: true,
+              options: [
+                'one',
+                'two'
+              ]
+            },
+          ]
+        },
+      ]
+    }
+    const expected = [
+      {
+        name: 'simpleLocalizedField',
+        type: 'text',
+        localized: true,
+      },
+      {
+        name: 'arrayField',
+        type: 'array',
+        fields: [
+          {
+            name: 'title',
+            type: 'text',
+            localized: true,
+          },
+          {
+            name: 'text',
+            type: 'text',
+            localized: true,
+          },
+        ]
+      },
+    ]
+    expect(getLocalizedFields(global.fields)).toEqual(expected)
+  })
+
+  it ("includes localized fields from a blocks field", () => {
+    const TestBlock: Block = {
+      slug: 'text',
+      imageAltText: 'Text',
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          localized: true,
+        },
+        {
+          name: 'text',
+          type: 'richText',
+          localized: true,
+        },
+        {
+          name: 'select',
+          type: 'select',
+          localized: true,
+          options: [
+            'one',
+            'two'
+          ]
+        },
+      ]
+    }
+    const TestBlockLocalizedFieldsOnly: Block = {
+      slug: 'text',
+      imageAltText: 'Text',
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          localized: true,
+        },
+        {
+          name: 'text',
+          type: 'richText',
+          localized: true,
+        },
+      ]
+    }
+    const global: GlobalConfig = {
+      slug: "global",
+      fields: [
+        {
+          name: 'simpleLocalizedField',
+          type: 'text',
+          localized: true,
+        },
+        {
+          name: 'simpleNonLocalizedField',
+          type: 'text',
+        },
+        {
+          name: 'blocksField',
+          type: 'blocks',
+          blocks: [
+            TestBlock
+          ]
+        },
+      ]
+    }
+    const expected = [
+      {
+        name: 'simpleLocalizedField',
+        type: 'text',
+        localized: true,
+      },
+      {
+        name: 'blocksField',
+        type: 'blocks',
+        blocks: [
+          {
+            fields: [
+              {
+                name: 'title',
+                type: 'text',
+                localized: true,
+              },
+              {
+                name: 'text',
+                type: 'richText',
+                localized: true,
+              },
+            ]
+          }
         ]
       },
     ]

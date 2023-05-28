@@ -9,17 +9,36 @@ const localizedFieldTypes = [
   'text'
 ]
 
+const nestedFieldTypes = [
+  'array',
+  'group',
+  'blocks',
+]
+
+const containsNestedFields = (field: Field) => nestedFieldTypes.includes(field.type)
+
 export const getLocalizedFields = (fields: Field[], type?: 'json' | 'html'): any[] => ( fields
   // localized or group fields only.
-  .filter(field => isLocalizedField(field) || field.type === 'group')
+  .filter(field => isLocalizedField(field) || containsNestedFields(field))
   // further filter on CrowdIn field type
-  .filter (field => type ? fieldCrowdinFileType(field as FieldWithName) === type : true  || field.type === 'group')
+  .filter (field => type ? fieldCrowdinFileType(field as FieldWithName) === type : true  || containsNestedFields(field))
   // recursion for group field
   .map(field => {
-    if (field.type === 'group') {
+    if (field.type === 'group' || field.type === 'array') {
       return {
         ...field,
         fields: getLocalizedFields(field.fields, type)
+      }
+    }
+    if (field.type === 'blocks') {
+      return {
+        ...field,
+        blocks: 
+          field.blocks.map(block => {
+            return {
+              fields: getLocalizedFields(block.fields, type)
+            }
+          })
       }
     }
     return field
