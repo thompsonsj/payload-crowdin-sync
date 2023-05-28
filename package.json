@@ -1,6 +1,6 @@
 {
   "name": "payload-crowdin-sync",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Automatically upload/sync localized fields from the default locale to CrowdIn. Make these fields read-only in other locales and update them using CrowdIn translations.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,14 +19,15 @@
   },
   "homepage": "https://github.com/thompsonsj/payload-crowdin-sync#readme",
   "devDependencies": {
-    "@babel/core": "^7.22.0",
-    "@babel/preset-env": "^7.22.0",
+    "@babel/core": "^7.22.1",
+    "@babel/preset-env": "^7.22.2",
     "@babel/preset-typescript": "^7.21.5",
     "@commitlint/cli": "^17.6.3",
     "@commitlint/config-conventional": "^17.6.3",
     "@types/deep-equal": "^1.0.1",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.5.1",
+    "@types/node": "^20.2.5",
     "babel-jest": "^29.5.0",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
@@ -52,13 +53,13 @@
     ]
   },
   "dependencies": {
-    "@crowdin/crowdin-api-client": "^1.22.2",
+    "@crowdin/crowdin-api-client": "^1.23.0",
     "@types/dot-object": "^2.1.2",
     "deep-equal": "^2.2.1",
     "dot-object": "^2.1.4",
     "lodash": "^4.17.21",
     "payload": "^1.8.3",
-    "slate-serializers": "^0.0.32"
+    "slate-serializers": "^0.0.33"
   },
   "volta": {
     "node": "16.20.0",
