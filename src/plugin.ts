@@ -54,7 +54,7 @@ export const crowdInSync =
                     projectId: projectId,
                     directoryId: directoryId,
                     collection: existingCollection,
-                    localizedFields: getLocalizedFields(existingCollection)
+                    localizedFields: getLocalizedFields(existingCollection.fields)
                   }),
                 ],
               },
@@ -86,7 +86,7 @@ export const crowdInSync =
                     projectId: projectId,
                     directoryId: directoryId,
                     global: existingGlobal,
-                    localizedFields: getLocalizedFields(existingGlobal)
+                    localizedFields: getLocalizedFields(existingGlobal.fields)
                   }),
                 ],
               },

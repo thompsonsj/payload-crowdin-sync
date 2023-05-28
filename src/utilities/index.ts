@@ -9,16 +9,25 @@ const localizedFieldTypes = [
   'text'
 ]
 
-export const getLocalizedFields = (collection: CollectionConfig | GlobalConfig, type?: 'json' | 'html'): any[] => {
-  const fields = [...collection.fields].filter(field => isLocalizedField(field))
-  if (type) {
-    return fields.filter(field => fieldCrowdinFileType(field as FieldWithName) === type)
-  }
-  return fields
-}
+export const getLocalizedFields = (fields: Field[], type?: 'json' | 'html'): any[] => ( fields
+  // localized or group fields only.
+  .filter(field => isLocalizedField(field) || field.type === 'group')
+  // further filter on CrowdIn field type
+  .filter (field => type ? fieldCrowdinFileType(field as FieldWithName) === type : true  || field.type === 'group')
+  // recursion for group field
+  .map(field => {
+    if (field.type === 'group') {
+      return {
+        ...field,
+        fields: getLocalizedFields(field.fields)
+      }
+    }
+    return field
+  })
+)
 
 export const getLocalizedRequiredFields = (collection: CollectionConfig, type?: 'json' | 'html'): any[] => {
-  const fields = getLocalizedFields(collection, type)
+  const fields = getLocalizedFields(collection.fields, type)
   return fields.filter(field => field.required)
 }
 

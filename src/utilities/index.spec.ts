@@ -1,6 +1,70 @@
-import { buildCrowdinJsonObject, fieldChanged } from '.'
+import { GlobalConfig } from 'payload/types'
+import { buildCrowdinJsonObject, getLocalizedFields, fieldChanged } from '.'
 import { FieldWithName } from '../types'
 import deepEqual from 'deep-equal'
+
+describe("Function: getLocalizedFields", () => {
+  it ("includes localized fields from a group field", () => {
+    const global: GlobalConfig = {
+      slug: "global",
+      fields: [
+        {
+          name: 'simpleLocalizedField',
+          type: 'text',
+          localized: true,
+        },
+        {
+          name: 'simpleNonLocalizedField',
+          type: 'text',
+        },
+        {
+          name: 'groupField',
+          type: 'group',
+          fields: [
+            {
+              name: 'simpleLocalizedField',
+              type: 'text',
+              localized: true,
+            },
+            {
+              name: 'simpleNonLocalizedField',
+              type: 'text',
+            },
+            // select fields not supported yet
+            {
+              name: 'text',
+              type: 'select',
+              localized: true,
+              options: [
+                'one',
+                'two'
+              ]
+            },
+          ]
+        },
+      ]
+    }
+    const expected = [
+      {
+        name: 'simpleLocalizedField',
+        type: 'text',
+        localized: true,
+      },
+      {
+        name: 'groupField',
+        type: 'group',
+        fields: [
+          {
+            name: 'simpleLocalizedField',
+            type: 'text',
+            localized: true,
+          },
+        ]
+      },
+    ]
+    expect(getLocalizedFields(global.fields)).toEqual(expected)
+  })
+})
 
 describe("Function: fieldChanged", () => {
   it ("detects a richText field change on create", () => {
