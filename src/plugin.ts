@@ -54,7 +54,7 @@ export const crowdInSync =
                     projectId: projectId,
                     directoryId: directoryId,
                     collection: existingCollection,
-                    localizedFields: getLocalizedFields(existingCollection)
+                    localizedFields: getLocalizedFields({fields: existingCollection.fields})
                   }),
                 ],
               },
@@ -75,7 +75,6 @@ export const crowdInSync =
             const fields = getFields({
               collection: existingGlobal,
             })
-
             return {
               ...existingGlobal,
               hooks: {
@@ -86,7 +85,7 @@ export const crowdInSync =
                     projectId: projectId,
                     directoryId: directoryId,
                     global: existingGlobal,
-                    localizedFields: getLocalizedFields(existingGlobal)
+                    localizedFields: getLocalizedFields({ fields: existingGlobal.fields })
                   }),
                 ],
               },

@@ -3,22 +3,69 @@ import deepEqual from 'deep-equal'
 import { FieldWithName } from '../types'
 import { slateToHtml, payloadSlateToDomConfig } from 'slate-serializers'
 import type { Descendant } from 'slate'
+import { isArray } from "lodash"
 
 const localizedFieldTypes = [
   'richText',
   'text'
 ]
 
-export const getLocalizedFields = (collection: CollectionConfig | GlobalConfig, type?: 'json' | 'html'): any[] => {
-  const fields = [...collection.fields].filter(field => isLocalizedField(field))
-  if (type) {
-    return fields.filter(field => fieldCrowdinFileType(field as FieldWithName) === type)
-  }
-  return fields
-}
+const nestedFieldTypes = [
+  'array',
+  'group',
+  // 'blocks',
+]
+
+export const containsNestedFields = (field: Field) => nestedFieldTypes.includes(field.type)
+
+export const getLocalizedFields = ({
+  fields,
+  type,
+}: {
+  fields: Field[],
+  type?: 'json' | 'html',
+}): any[] => ( fields
+  // localized or group fields only.
+  .filter(field => isLocalizedField(field) || containsNestedFields(field))
+  // further filter on CrowdIn field type
+  .filter (field => {
+    if (containsNestedFields(field)) {
+      return true
+    }
+    return type ? fieldCrowdinFileType(field as FieldWithName) === type : true
+  })
+  
+  // recursion for group field
+  .map(field => {
+    if (field.type === 'group' || field.type === 'array') {
+      return {
+        ...field,
+        fields: getLocalizedFields({
+          fields: field.fields,
+          type
+        })
+      }
+    }
+    if (field.type === 'blocks') {
+      return {
+        ...field,
+        blocks: 
+          field.blocks.map(block => {
+            return {
+              fields: getLocalizedFields({
+                fields: block.fields,
+                type
+              })
+            }
+          })
+      }
+    }
+    return field
+  })
+)
 
 export const getLocalizedRequiredFields = (collection: CollectionConfig, type?: 'json' | 'html'): any[] => {
-  const fields = getLocalizedFields(collection, type)
+  const fields = getLocalizedFields({ fields: collection.fields, type })
   return fields.filter(field => field.required)
 }
 
@@ -41,18 +88,24 @@ export const fieldCrowdinFileType = (field: FieldWithName): 'json' | 'html' => f
 
 export const buildCrowdinJsonObject = (doc: { [key: string]: any }, localizedFields: FieldWithName[]): object => {
   let response: { [key: string]: any } = {}
-  localizedFields
-    .filter(field => fieldCrowdinFileType(field) === 'json')
+  getLocalizedFields({ fields: localizedFields, type: 'json'})
     .forEach(field => {
-    if (field.name in doc) {
-      response[field.name] = doc[field.name]
-    }
-  })
-  // support @payloadcms/plugin-seo
-  if ('meta' in doc) {
-    response.meta = {}
-    Object.keys(doc.meta).forEach(key => {
+    if (field.type === 'group') {
+      response[field.name] = buildCrowdinJsonObject(doc[field.name], field.fields)
+    } else if (field.type === 'array') {
+      response[field.name] = doc[field.name].map((item: any) => buildCrowdinJsonObject(item, field.fields))
+    } else {
       /**
+       * Kept the following comments from when the plugin
+       * used to manually check for doc.meta[key].en to
+       * support @payloadcms/plugin-seo. Is the `en` key
+       * check a thing? This wouldn't be appropriate for
+       * other installations without an `en` default locale.
+       * Maybe this was in response to a behaviour that does
+       * not exist now?
+       * 
+       * --
+       * 
        * prevDocument in afterChange hook returns
        * localization keys in meta fields only.
        * Normalize.
@@ -64,13 +117,13 @@ export const buildCrowdinJsonObject = (doc: { [key: string]: any }, localizedFie
        * not likely because there are defined fields
        * on the seo plugin)
        *  */ 
-      if (doc.meta[key].en) {
-        response.meta[key] = doc.meta[key].en
+      if (doc[field.name]?.en) {
+        response[field.name] = doc[field.name].en
       } else {
-        response.meta[key] = doc.meta[key]
+        response[field.name] = doc[field.name]
       }
-    })
-  }
+    }
+  })
   return response
 }
 

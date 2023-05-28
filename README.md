@@ -1,6 +1,23 @@
-# WIP 23 Apr 2023
+# WIP 28 May 2023
 
 This plugin is currently being refactored. Although the logic works, it was extracted from a Payload CMS install and needs work to decouple logic from that installation.
+
+Features:
+
+- [x] Support localized `text` fields. Combine text fields into a single json file on CrowdIn called `fields.json`.
+- [x] Support localized `richText` fields. Store each `richText` field as HTML (converted from Slate JSON) on CrowdIn with a filename corresponding to the field name.
+- [x] Store CrowdIn files in an appropriate data structure.
+- [ ] Support **sending localized fields to CrowdIn** for the following Payload fields (recursive - can go as deep as necessary):
+  - [x] `group`
+  - [x] `array`
+  - [ ] `blocks`
+- Improve testing so that it does not require a local server. See [Notes on the current test suite](#notes-on-the-current-test-suite).
+- [ ] Support **updating localized fields from CrowdIn** for the following Payload fields. Note that this will require effective required field detection to avoid update errors. See `getLocalizedRequiredFields`.
+  - [ ] `group`
+  - [ ] `array`
+  - [ ] `blocks`
+- [ ] Add UI for syncing translations (currently done with URLs added to `server.ts` on the Payload installation).
+- [ ] Add option to make localized fields read-only in other locales (CrowdIn mangaes these fields).
 
 # Payload CrowdIn Sync Plugin
 

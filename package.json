@@ -53,7 +53,9 @@
   },
   "dependencies": {
     "@crowdin/crowdin-api-client": "^1.22.2",
+    "@types/dot-object": "^2.1.2",
     "deep-equal": "^2.2.1",
+    "dot-object": "^2.1.4",
     "lodash": "^4.17.21",
     "payload": "^1.8.3",
     "slate-serializers": "^0.0.32"
