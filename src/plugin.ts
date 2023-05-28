@@ -75,7 +75,7 @@ export const crowdInSync =
             const fields = getFields({
               collection: existingGlobal,
             })
-
+            console.log(getLocalizedFields(existingGlobal.fields))
             return {
               ...existingGlobal,
               hooks: {

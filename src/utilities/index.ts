@@ -19,7 +19,7 @@ export const getLocalizedFields = (fields: Field[], type?: 'json' | 'html'): any
     if (field.type === 'group') {
       return {
         ...field,
-        fields: getLocalizedFields(field.fields)
+        fields: getLocalizedFields(field.fields, type)
       }
     }
     return field
@@ -50,18 +50,22 @@ export const fieldCrowdinFileType = (field: FieldWithName): 'json' | 'html' => f
 
 export const buildCrowdinJsonObject = (doc: { [key: string]: any }, localizedFields: FieldWithName[]): object => {
   let response: { [key: string]: any } = {}
-  localizedFields
-    .filter(field => fieldCrowdinFileType(field) === 'json')
+  getLocalizedFields(localizedFields, 'json')
     .forEach(field => {
-    if (field.name in doc) {
-      response[field.name] = doc[field.name]
-    }
-  })
-  // support @payloadcms/plugin-seo
-  if ('meta' in doc) {
-    response.meta = {}
-    Object.keys(doc.meta).forEach(key => {
+    if (field.type === 'group') {
+      response[field.name] = buildCrowdinJsonObject(doc[field.name], field.fields)
+    } else {
       /**
+       * Kept the following comments from when the plugin
+       * used to manually check for doc.meta[key].en to
+       * support @payloadcms/plugin-seo. Is the `en` key
+       * check a thing? This wouldn't be appropriate for
+       * other installations without an `en` default locale.
+       * Maybe this was in response to a behaviour that does
+       * not exist now?
+       * 
+       * --
+       * 
        * prevDocument in afterChange hook returns
        * localization keys in meta fields only.
        * Normalize.
@@ -73,13 +77,13 @@ export const buildCrowdinJsonObject = (doc: { [key: string]: any }, localizedFie
        * not likely because there are defined fields
        * on the seo plugin)
        *  */ 
-      if (doc.meta[key].en) {
-        response.meta[key] = doc.meta[key].en
+      if (doc[field.name]?.en) {
+        response[field.name] = doc[field.name].en
       } else {
-        response.meta[key] = doc.meta[key]
+        response[field.name] = doc[field.name]
       }
-    })
-  }
+    }
+  })
   return response
 }
 
