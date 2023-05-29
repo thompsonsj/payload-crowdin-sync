@@ -1,6 +1,6 @@
 {
   "name": "payload-crowdin-sync",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Automatically upload/sync localized fields from the default locale to CrowdIn. Make these fields read-only in other locales and update them using CrowdIn translations.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
