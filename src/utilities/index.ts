@@ -73,7 +73,6 @@ export const getFieldSlugs = (fields: FieldWithName[]): string[] => fields.map((
 
 export const isLocalizedField = (field: Field) => "localized" in field && field.localized && localizedFieldTypes.includes(field.type)
 
-// this needs to be fixed - it doesn't detect nested fields
 export const containsLocalizedFields = (fields: Field[]): boolean => typeof fields.find((field: Field) => {
   if (field.type === 'group' || field.type === 'array') {
     return containsLocalizedFields(field.fields)
