@@ -124,7 +124,6 @@ const performAfterChange = async ({
    */
   const crowdinJsonFileData = buildCrowdinJsonObject(doc, localizedFields as FieldWithName[])
   const prevCrowdinFileData = buildCrowdinJsonObject(previousDoc, localizedFields as FieldWithName[])
-
   /**
    * Retrieve the CrowdIn Article Directory article
    * 
