@@ -69,7 +69,11 @@ export const getLocalizedRequiredFields = (collection: CollectionConfig, type?: 
   return fields.filter(field => field.required)
 }
 
-export const getFieldSlugs = (fields: FieldWithName[]): string[] => fields.map((field: any) => field.name)
+/**
+ * Not yet compatible with nested fields - this means nested HTML
+ * field translations cannot be synced from CrowdIn. 
+ */
+export const getFieldSlugs = (fields: FieldWithName[]): string[] => fields.filter((field: Field) => field.type === 'text' || field.type === 'richText').map((field: FieldWithName) => field.name)
 
 export const isLocalizedField = (field: Field) => "localized" in field && field.localized && localizedFieldTypes.includes(field.type)
 

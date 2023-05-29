@@ -2,7 +2,7 @@ import { crowdinAPIService } from '.'
 import { toWords } from 'payload/dist/utilities/formatLabels'
 import { htmlToSlate, payloadHtmlToSlateConfig } from 'slate-serializers'
 import { Payload } from 'payload'
-import { CollectionConfig } from 'payload/types'
+import { CollectionConfig, GlobalConfig } from 'payload/types'
 import {
   getLocalizedFields,
   getFieldSlugs,
@@ -112,6 +112,7 @@ interface IgetLatestDocumentTranslation extends ApiObjects {
   collection: string
   doc: any
   locale: string
+  global?: boolean
 }
 
 interface IgetCurrentDocumentTranslation {
@@ -119,6 +120,7 @@ interface IgetCurrentDocumentTranslation {
   collection: string
   locale: string
   payload: any
+  global?: boolean
 }
 
 interface IfindOrCreateCollectionDirectory extends ApiObjects {
@@ -144,6 +146,7 @@ interface IgetTranslation extends ApiObjects {
   documentId: string
   fieldName: string
   locale: string
+  global?: boolean
 }
 
 interface IupdateTranslation extends ApiObjects {
@@ -151,6 +154,7 @@ interface IupdateTranslation extends ApiObjects {
   documentId: string
   collection: string
   dryRun?: boolean
+  global? :boolean
 }
 
 export async function getCrowdinFiles(crowdinArticleDirectoryId: number, payload: Payload): Promise<any> {
@@ -394,7 +398,8 @@ export async function updateTranslation({
   collection,
   payload,
   crowdin,
-  dryRun = true
+  dryRun = true,
+  global = false,
 }: IupdateTranslation) {
   /**
    * Get existing document
@@ -403,11 +408,19 @@ export async function updateTranslation({
    * * check for `meta` field (which can be added by @payloadcms/seo) 
    * 
    */
-  const doc = await payload.findByID({
-    collection: collection,
-    id: documentId,
-    locale: "en"
-  })
+  let doc
+  if (global) {
+    doc = await payload.findGlobal({
+      slug: collection,
+      locale: "en"
+    })
+  } else {
+    doc = await payload.findByID({
+      collection: collection,
+      id: documentId,
+      locale: "en"
+    })
+  }
   const report: {[key: string]: any} = {}
   for (const locale of Object.keys(localeMap)) {
     report[locale] = {}
@@ -415,7 +428,8 @@ export async function updateTranslation({
       doc: doc,
       collection: collection,
       locale: locale,
-      payload: payload
+      payload: payload,
+      global
     })
     report[locale].latestTranslations = await getLatestDocumentTranslation({
       projectId: projectId,
@@ -423,16 +437,30 @@ export async function updateTranslation({
       doc: doc,
       locale: locale,
       payload: payload,
-      crowdin: crowdin
+      crowdin: crowdin,
+      global,
     })
     report[locale].changed = !deepEqual(report[locale].currentTranslations, report[locale].latestTranslations)
     if (report[locale].changed && !dryRun) {
-      await payload.update({
-        collection: collection,
-        locale: locale,
-        id: documentId,
-        data: report[locale].latestTranslations,
-      })
+      if (global) {
+        await payload.updateGlobal({
+          slug: collection,
+          locale: locale,
+          data: {
+            ...report[locale].latestTranslations,
+            // error on update without the following line.
+            // see https://github.com/thompsonsj/payload-crowdin-sync/pull/13/files#r1209271660
+            crowdinArticleDirectory: doc.crowdinArticleDirectory.id,
+          },
+        })
+      } else {
+        await payload.update({
+          collection: collection,
+          locale: locale,
+          id: documentId,
+          data: report[locale].latestTranslations,
+        })
+      }
     }
   }
   return {
@@ -445,15 +473,30 @@ export async function getCurrentDocumentTranslation({
   doc,
   collection,
   locale,
-  payload
+  payload,
+  global = false,
 }: IgetCurrentDocumentTranslation) {
-  const document = await payload.findByID({
-    collection: collection,
-    id: doc.id,
-    locale: locale
-  })
-  const collectionConfig = payload.config.collections.find((col: CollectionConfig) => col.slug === collection)
+  let document: any
+  if (global) {
+    document = await payload.findGlobal({
+      slug: collection,
+      locale: locale
+    })
+  } else {
+    document = await payload.findByID({
+      collection: collection,
+      id: doc.id,
+      locale: locale
+    })
+  }
+  let collectionConfig
+  if (global) {
+    collectionConfig = payload.config.globals.find((col: GlobalConfig) => col.slug === collection)
+  } else {
+    collectionConfig = payload.config.collections.find((col: CollectionConfig) => col.slug === collection)
+  }
   const localizedFields = getLocalizedFields({fields: collectionConfig.fields})
+  // does not support nested html fields yet
   const htmlFields: {[key: string]: any} = {}
   getLocalizedFields({fields: collectionConfig.fields, type: 'html'}).forEach(field => (
     htmlFields[field.name] = document[field.name]
@@ -473,9 +516,15 @@ export async function getLatestDocumentTranslation({
   doc,
   locale,
   payload,
-  crowdin
+  crowdin,
+  global = false,
 }: IgetLatestDocumentTranslation) {
-  const collectionConfig = payload.config.collections.find(col => col.slug === collection) as CollectionConfig
+  let collectionConfig: any
+  if (global) {
+    collectionConfig = payload.config.globals.find((col: GlobalConfig) => col.slug === collection)
+  } else {
+    collectionConfig = payload.config.collections.find((col: CollectionConfig) => col.slug === collection)
+  }
   const localizedFields = getLocalizedFields({ fields: collectionConfig.fields })
   const localizedJsonFields = getFieldSlugs(getLocalizedFields({fields: collectionConfig.fields, type: 'json'}))
   const localizedHtmlFields = getFieldSlugs(getLocalizedFields({fields: collectionConfig.fields, type: 'html'}))
@@ -493,21 +542,21 @@ export async function getLatestDocumentTranslation({
   // add json fields
   const docTranslations = await getTranslation({
     projectId: projectId,
-    documentId: doc.id,
+    documentId: global ? collectionConfig.slug : doc.id,
     fieldName: 'fields',
     locale: locale,
     payload: payload,
-    crowdin: crowdin
+    crowdin: crowdin,
   })
   // add html fields
   for (const field of localizedHtmlFields) {
     docTranslations[field] = await getTranslation({
       projectId: projectId,
-      documentId: doc.id,
+      documentId: global ? collectionConfig.slug : doc.id,
       fieldName: field,
       locale: locale,
       payload: payload,
-      crowdin: crowdin
+      crowdin: crowdin,
     })
   }
   // Add required fields if not present
@@ -517,7 +566,8 @@ export async function getLatestDocumentTranslation({
       doc: doc,
       collection: collection,
       locale: locale,
-      payload: payload
+      payload: payload,
+      global,
     })
     requiredFieldSlugs.forEach(slug => {
       if (!docTranslations.hasOwnProperty(slug)) {
@@ -540,7 +590,7 @@ export async function getTranslation({
   fieldName,
   locale,
   payload,
-  crowdin
+  crowdin,
 }: IgetTranslation) {
   const articleDirectory = await getCrowdinArticleDirectory(documentId, payload)
   const file = await getCrowdinFile(fieldName, articleDirectory.id, payload)
