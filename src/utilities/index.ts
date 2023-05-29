@@ -1,4 +1,4 @@
-import { CollectionConfig, Field, GlobalConfig } from 'payload/types'
+import { Block, CollectionConfig, Field, GlobalConfig } from 'payload/types'
 import deepEqual from 'deep-equal'
 import { FieldWithName } from '../types'
 import { slateToHtml, payloadSlateToDomConfig } from 'slate-serializers'
@@ -73,7 +73,16 @@ export const getFieldSlugs = (fields: FieldWithName[]): string[] => fields.map((
 
 export const isLocalizedField = (field: Field) => "localized" in field && field.localized && localizedFieldTypes.includes(field.type)
 
-export const containsLocalizedFields = (fields: Field[]) => typeof fields.find(field => isLocalizedField(field)) === 'undefined' ? false : true
+// this needs to be fixed - it doesn't detect nested fields
+export const containsLocalizedFields = (fields: Field[]): boolean => typeof fields.find((field: Field) => {
+  if (field.type === 'group' || field.type === 'array') {
+    return containsLocalizedFields(field.fields)
+  }
+  if (field.type === 'blocks') {
+    return typeof field.blocks.find((block: Block) => containsLocalizedFields(block.fields)) !== 'undefined'
+  }
+  return isLocalizedField(field)
+}) === 'undefined' ? false : true
 
 export const fieldChanged = (previousValue: string | object | undefined, value: string | object | undefined, type: string) => {
   if (type === 'richText') {
