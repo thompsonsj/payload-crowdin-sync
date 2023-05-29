@@ -1,5 +1,5 @@
 import { Block, GlobalConfig } from 'payload/types'
-import { buildCrowdinJsonObject, getLocalizedFields, fieldChanged } from '.'
+import { buildCrowdinJsonObject, getLocalizedFields, fieldChanged, containsLocalizedFields } from '.'
 import { FieldWithName } from '../types'
 import deepEqual from 'deep-equal'
 import dot from 'dot-object'
@@ -324,6 +324,161 @@ describe("Function: getLocalizedFields", () => {
     ]
     expect(getLocalizedFields({ fields: global.fields, type: 'html'})).toEqual(expected)
   })  
+})
+
+describe("Function: containsLocalizedFields", () => {
+  it("detects localized fields on the top-level", () => {
+    const global: GlobalConfig = {
+      slug: "global",
+      fields: [
+        {
+          name: 'simpleLocalizedField',
+          type: 'richText',
+          localized: true,
+        },
+        {
+          name: 'simpleNonLocalizedField',
+          type: 'text',
+        },
+      ],
+    }
+    expect(containsLocalizedFields(global.fields)).toBe(true)
+  })
+
+  it("detects localized fields in a group field", () => {
+    const global: GlobalConfig = {
+      slug: "global",
+      fields: [
+        {
+          name: 'simpleNonLocalizedField',
+          type: 'text',
+        },
+        {
+          name: 'groupField',
+          type: 'group',
+          fields: [
+            {
+              name: 'simpleLocalizedField',
+              type: 'richText',
+              localized: true,
+            },
+          ]
+        },
+      ],
+    }
+    expect(containsLocalizedFields(global.fields)).toBe(true)
+  })
+
+  it("detects localized fields in an array field", () => {
+    const global: GlobalConfig = {
+      slug: "global",
+      fields: [
+        {
+          name: 'simpleNonLocalizedField',
+          type: 'text',
+        },
+        {
+          name: 'arrayField',
+          type: 'array',
+          fields: [
+            {
+              name: 'richText',
+              type: 'richText',
+              localized: true,
+            },
+          ]
+        },
+      ],
+    }
+    expect(containsLocalizedFields(global.fields)).toBe(true)
+  })
+
+  it("detects localized fields in a blocks field", () => {
+    const TestBlock: Block = {
+      slug: 'text',
+      imageAltText: 'Text',
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          localized: true,
+        },
+        {
+          name: 'text',
+          type: 'richText',
+          localized: true,
+        },
+        {
+          name: 'select',
+          type: 'select',
+          localized: true,
+          options: [
+            'one',
+            'two'
+          ]
+        },
+      ]
+    }
+    const global: GlobalConfig = {
+      slug: "global",
+      fields: [
+        {
+          name: 'simpleNonLocalizedField',
+          type: 'text',
+        },
+        {
+          name: 'blocksField',
+          type: 'blocks',
+          blocks: [
+            TestBlock
+          ]
+        },
+      ],
+    }
+    expect(containsLocalizedFields(global.fields)).toBe(true)
+  })
+
+  it("returns false if no localized fields in a blocks field", () => {
+    const TestBlock: Block = {
+      slug: 'text',
+      imageAltText: 'Text',
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+        },
+        {
+          name: 'text',
+          type: 'richText',
+        },
+        {
+          name: 'select',
+          type: 'select',
+          options: [
+            'one',
+            'two'
+          ]
+        },
+      ]
+    }
+    const global: GlobalConfig = {
+      slug: "global",
+      fields: [
+        {
+          name: 'simpleNonLocalizedField',
+          type: 'text',
+        },
+        {
+          name: 'blocksField',
+          type: 'blocks',
+          blocks: [
+            TestBlock
+          ]
+        },
+      ],
+    }
+    expect(containsLocalizedFields(global.fields)).toBe(false)
+  })
 })
 
 describe("Function: fieldChanged", () => {
