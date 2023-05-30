@@ -282,7 +282,7 @@ describe("Function: buildCrowdinJsonObject", () => {
   })
 })
 
-describe("Function: buildCrowdinJsonObject - double nested", () => {
+describe("Function: buildCrowdinJsonObject - group nested in array", () => {
   const doc = {
     "id": "6474a81bef389b66642035ff",
     "title": "Experience the magic of our product!",
@@ -411,5 +411,48 @@ describe("Function: buildCrowdinJsonObject - double nested", () => {
         fields: getLocalizedFields({ fields: Promos.fields })
       , type: 'json'})
     )).toEqual(expected)
+  })
+
+  /**
+   * afterChange builds a JSON object for the previous version of
+   * a document to compare with the current version. Ensure this
+   * function works in that scenario. Also important for dealing
+   * with non-required empty fields.
+   */
+  it('can work with an empty document', () => {
+    expect(buildCrowdinJsonObject({},
+      getLocalizedFields({ fields: Promos.fields })
+    )).toEqual({})
+  })
+
+  it('can work with an empty array field', () => {
+    expect(buildCrowdinJsonObject({
+      ...doc,
+      ctas: undefined,
+    },
+      getLocalizedFields({ fields: Promos.fields })
+    )).toEqual({
+      "text": "Get in touch with us or try it out yourself",
+      "title": "Experience the magic of our product!"
+    })
+  })
+
+  it('can work with an empty group field in an array', () => {
+    expect(buildCrowdinJsonObject({
+      ...doc,
+      ctas: [
+        {},
+        {}
+      ],
+    },
+      getLocalizedFields({ fields: Promos.fields })
+    )).toEqual({
+      ctas: [
+        {},
+        {}
+      ],
+      "text": "Get in touch with us or try it out yourself",
+      "title": "Experience the magic of our product!"
+    })
   })
 })

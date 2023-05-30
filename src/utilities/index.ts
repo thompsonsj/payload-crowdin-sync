@@ -102,6 +102,9 @@ export const buildCrowdinJsonObject = (doc: { [key: string]: any }, localizedFie
   let response: { [key: string]: any } = {}
   getLocalizedFields({ fields: localizedFields, type: 'json'})
     .forEach(field => {
+    if (!doc[field.name]) {
+      return
+    }
     if (field.type === 'group') {
       response[field.name] = buildCrowdinJsonObject(doc[field.name], field.fields)
     } else if (field.type === 'array') {
