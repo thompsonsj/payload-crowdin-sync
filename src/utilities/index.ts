@@ -160,6 +160,41 @@ export const buildCrowdinJsonObject = (doc: { [key: string]: any }, localizedFie
   return response
 }
 
+export const buildCrowdinHtmlObject = ({
+  doc,
+  fields,
+  prefix = ''
+}: {
+  doc: { [key: string]: any },
+  fields: Field[],
+  prefix?: string
+}) => {
+  let response: { [key: string]: any } = {}
+  getLocalizedFields({ fields, type: 'html'}).forEach(field => {
+    if (!doc[field.name]) {
+      return
+    }
+    if (field.type === 'group') {
+      response[field.name] = buildCrowdinHtmlObject({
+        doc: doc[field.name],
+        fields: field.fields,
+      })
+    } else if (field.type === 'array') {
+      response[field.name] = doc[field.name].map((item: any) => buildCrowdinHtmlObject({
+        doc: item,
+        fields: field.fields
+      }))
+    } else {
+      if (doc[field.name]?.en) {
+        response[field.name] = doc[field.name].en
+      } else {
+        response[field.name] = doc[field.name]
+      }
+    }
+  })
+  return response
+}
+
 export const convertSlateToHtml = (slate: Descendant[]): string => {
   return slateToHtml(slate, {
     ...payloadSlateToDomConfig,
