@@ -1,4 +1,4 @@
-# WIP 28 May 2023
+# WIP 1 June 2023
 
 This plugin is currently being refactored. Although the logic works, it was extracted from a Payload CMS install and needs work to decouple logic from that installation.
 
@@ -90,7 +90,85 @@ All of the collections created by this plugin are designed to emulate the struct
 
 ### Sync translations
 
-Translation synchronisation refers to the process of loading translations from CrowdIn into Payload CMS. If [drafts](https://payloadcms.com/docs/versions/drafts) are enabled, this will create a new version for each locale. The source locale (e.g. `en`) is not affected.
+Translation synchronisation refers to the process of loading translations from CrowdIn into Payload CMS. If [drafts](https://payloadcms.com/docs/versions/drafts) are enabled, this will create a new version in Payload CMS for each locale. The source locale (e.g. `en`) is not affected.
+
+**A UI has not been developed for this feature yet**. To perform updates now, add the following routes to `server.ts` in your Payload installation:
+
+```ts
+import {
+  updateTranslation
+} from 'payload-crowdin-sync'
+
+app.get('/translations/global/:global', async (_, res) => {
+  const collection = _.params.global
+  const client = (_ as any).crowdinClient
+
+  const report = await updateTranslation({
+    projectId: 323731,
+    documentId: null,
+    collection: collection,
+    payload: payload,
+    crowdin: client,
+    global: true,
+  })
+
+  res.setHeader('content-type', 'application/json')
+  res.send(report)
+})
+
+app.get('/translations/global/:global/update', async (_, res) => {
+  const collection = _.params.global
+  const client = (_ as any).crowdinClient
+
+  const report = await updateTranslation({
+    projectId: 323731,
+    documentId: null,
+    collection: collection,
+    payload: payload,
+    crowdin: client,
+    global: true,
+    dryRun: false,
+  })
+
+  res.setHeader('content-type', 'application/json')
+  res.send(report)
+})
+
+app.get('/translations/:collection/:id', async (_, res) => {
+  const collection = _.params.collection
+  const id = _.params.id
+  const client = (_ as any).crowdinClient
+
+  const report = await updateTranslation({
+    projectId: 323731,
+    documentId: id,
+    collection: collection,
+    payload: payload,
+    crowdin: client
+  })
+
+  res.setHeader('content-type', 'application/json')
+  res.send(report)
+})
+
+app.get('/translations/:collection/:id/update', async (_, res) => {
+  const collection = _.params.collection
+  const id = _.params.id
+  const client = (_ as any).crowdinClient
+
+  const report = await updateTranslation({
+    projectId: 323731,
+    documentId: id,
+    collection: collection,
+    payload: payload,
+    crowdin: client,
+    dryRun: false
+  })
+
+  res.setHeader('content-type', 'application/json')
+  res.send(report)
+})
+```
 
 #### Dry run
 
