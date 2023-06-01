@@ -116,8 +116,6 @@ const performAfterChange = async ({
     return doc
   }
 
-  console.log(getLocalizedFields({ fields: localizedFields, type: 'html'}))
-
   /**
    * Prepare JSON objects
    * 
@@ -201,13 +199,12 @@ const performAfterChange = async ({
       doc: previousDoc,
       fields: localizedFields,
     })
-    console.log(currentCrowdinHtmlData)
+    
     Object.keys(currentCrowdinHtmlData).forEach(async name => {
       const crowdinFile = await getCrowdinFile(name, articleDirectory.id, req.payload)
       const currentValue = currentCrowdinHtmlData[name]
       const prevValue = prevCrowdinHtmlData[name]
       if (!fieldChanged(prevValue, currentValue, 'richText')) {
-        console.log(`${name} not changed`)
         return
       }
       if (typeof crowdinFile === 'undefined') {
