@@ -1,9 +1,9 @@
-import { Block, CollectionConfig, Field, GlobalConfig } from 'payload/types'
+import { Block, CollapsibleField, CollectionConfig, Field, GlobalConfig } from 'payload/types'
 import deepEqual from 'deep-equal'
 import { FieldWithName } from '../types'
 import { slateToHtml, payloadSlateToDomConfig } from 'slate-serializers'
 import type { Descendant } from 'slate'
-import { isArray } from "lodash"
+import { merge } from "lodash"
 
 const localizedFieldTypes = [
   'richText',
@@ -24,7 +24,8 @@ export const getLocalizedFields = ({
 }: {
   fields: Field[],
   type?: 'json' | 'html',
-}): any[] => ( fields
+}): any[] => ([
+  ...fields
   // localized or group fields only.
   .filter(field => isLocalizedField(field) || containsNestedFields(field))
   // further filter on CrowdIn field type
@@ -34,8 +35,7 @@ export const getLocalizedFields = ({
     }
     return type ? fieldCrowdinFileType(field as FieldWithName) === type : true
   })
-  
-  // recursion for group field
+  // recursion for group, array and blocks field
   .map(field => {
     if (field.type === 'group' || field.type === 'array') {
       return {
@@ -50,7 +50,7 @@ export const getLocalizedFields = ({
       return {
         ...field,
         blocks: 
-          field.blocks.map(block => {
+          field.blocks.map((block: Block) => {
             return {
               fields: getLocalizedFields({
                 fields: block.fields,
@@ -62,6 +62,24 @@ export const getLocalizedFields = ({
     }
     return field
   })
+  .filter(field => field.type !== 'collapsible'),
+  // recursion for collapsible field - flatten results into the returned array
+  ...getCollapsibleLocalizedFields({ fields, type })
+])
+
+export const getCollapsibleLocalizedFields = ({
+  fields,
+  type,
+}: {
+  fields: Field[],
+  type?: 'json' | 'html',
+}): any[] => (
+  fields
+    .filter(field => field.type === 'collapsible')
+    .flatMap(field => getLocalizedFields({
+      fields: (field as CollapsibleField).fields,
+      type
+    }))
 )
 
 export const getLocalizedRequiredFields = (collection: CollectionConfig, type?: 'json' | 'html'): any[] => {
@@ -136,6 +154,55 @@ export const buildCrowdinJsonObject = (doc: { [key: string]: any }, localizedFie
         response[field.name] = doc[field.name].en
       } else {
         response[field.name] = doc[field.name]
+      }
+    }
+  })
+  return response
+}
+
+export const buildCrowdinHtmlObject = ({
+  doc,
+  fields,
+  prefix = ''
+}: {
+  doc: { [key: string]: any },
+  fields: Field[],
+  prefix?: string
+}) => {
+  let response: { [key: string]: any } = {}
+  getLocalizedFields({ fields, type: 'html'}).forEach(field => {
+    const name = [prefix, (field as FieldWithName).name].filter(string => string).join('.')
+    if (!doc[field.name]) {
+      return
+    }
+    if (field.type === 'group') {
+      const subPrefix = `${[prefix, field.name].filter(string => string).join('.')}`
+      response = {
+        ...response,
+        ...buildCrowdinHtmlObject({
+          doc: doc[field.name],
+          fields: field.fields,
+          prefix: subPrefix,
+        })
+      }
+    } else if (field.type === 'array') {
+      const arrayValues = doc[field.name].map((item: any, index: number) => {
+        const subPrefix = `${[prefix, `${field.name}[${index}]`].filter(string => string).join('.')}`  
+        return buildCrowdinHtmlObject({
+        doc: item,
+        fields: field.fields,
+        prefix: subPrefix,
+        })
+      })
+      response = {
+        ...response,
+        ...merge({}, ...arrayValues)
+      }
+    } else {
+      if (doc[field.name]?.en) {
+        response[name] = doc[field.name].en
+      } else {
+        response[name] = doc[field.name]
       }
     }
   })
