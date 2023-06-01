@@ -130,6 +130,70 @@ describe("fn: getLocalizedFields", () => {
       expect(getLocalizedFields({ fields: global.fields })).toEqual(expected)
     })
 
+    it ("includes localized fields from an array with a localization setting on the array field", () => {
+      const global: GlobalConfig = {
+        slug: "global",
+        fields: [
+          {
+            name: 'simpleLocalizedField',
+            type: 'text',
+            localized: true,
+          },
+          {
+            name: 'simpleNonLocalizedField',
+            type: 'text',
+          },
+          {
+            name: 'arrayField',
+            type: 'array',
+            localized: true,
+            fields: [
+              {
+                name: 'title',
+                type: 'text',
+                
+              },
+              {
+                name: 'text',
+                type: 'text',
+              },
+              {
+                name: 'select',
+                type: 'select',
+                options: [
+                  'one',
+                  'two'
+                ]
+              },
+            ]
+          },
+        ]
+      }
+      const expected = [
+        {
+          name: 'simpleLocalizedField',
+          type: 'text',
+          localized: true,
+        },
+        {
+          name: 'arrayField',
+          type: 'array',
+          localized: true,
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+            },
+            {
+              name: 'text',
+              type: 'text',
+            },
+          ]
+        },
+      ]
+      expect(getLocalizedFields({ fields: global.fields })).toEqual(expected)
+    })
+
     /**
      * * help ensure no errors during version 0 development
      * * mitigate against errors if a new field type is introduced by Payload CMS
@@ -190,45 +254,42 @@ describe("fn: getLocalizedFields", () => {
     })
 
     it ("includes localized fields from a group field", () => {
-      const global: GlobalConfig = {
-        slug: "global",
-        fields: [
-          {
-            name: 'simpleLocalizedField',
-            type: 'text',
-            localized: true,
-          },
-          {
-            name: 'simpleNonLocalizedField',
-            type: 'text',
-          },
-          {
-            name: 'groupField',
-            type: 'group',
-            fields: [
-              {
-                name: 'simpleLocalizedField',
-                type: 'text',
-                localized: true,
-              },
-              {
-                name: 'simpleNonLocalizedField',
-                type: 'text',
-              },
-              // select fields not supported yet
-              {
-                name: 'text',
-                type: 'select',
-                localized: true,
-                options: [
-                  'one',
-                  'two'
-                ]
-              },
-            ]
-          },
-        ]
-      }
+      const fields: Field[] = [
+        {
+          name: 'simpleLocalizedField',
+          type: 'text',
+          localized: true,
+        },
+        {
+          name: 'simpleNonLocalizedField',
+          type: 'text',
+        },
+        {
+          name: 'groupField',
+          type: 'group',
+          fields: [
+            {
+              name: 'simpleLocalizedField',
+              type: 'text',
+              localized: true,
+            },
+            {
+              name: 'simpleNonLocalizedField',
+              type: 'text',
+            },
+            // select fields not supported yet
+            {
+              name: 'text',
+              type: 'select',
+              localized: true,
+              options: [
+                'one',
+                'two'
+              ]
+            },
+          ]
+        },
+      ]
       const expected = [
         {
           name: 'simpleLocalizedField',
@@ -247,7 +308,68 @@ describe("fn: getLocalizedFields", () => {
           ]
         },
       ]
-      expect(getLocalizedFields({ fields: global.fields })).toEqual(expected)
+      expect(getLocalizedFields({ fields })).toEqual(expected)
+    })
+
+    it ("includes localized fields from a group field with a localization setting on the group field", () => {
+      const fields: Field[] = [
+        {
+          name: 'simpleLocalizedField',
+          type: 'text',
+          localized: true,
+        },
+        {
+          name: 'simpleNonLocalizedField',
+          type: 'text',
+        },
+        {
+          name: 'groupField',
+          type: 'group',
+          localized: true,
+          fields: [
+            {
+              name: 'textLocalizedField',
+              type: 'text',
+            },
+            {
+              name: 'richTextLocalizedField',
+              type: 'richText',
+            },
+            // select fields not supported yet
+            {
+              name: 'text',
+              type: 'select',
+              options: [
+                'one',
+                'two'
+              ]
+            },
+          ]
+        },
+      ]
+      const expected = [
+        {
+          name: 'simpleLocalizedField',
+          type: 'text',
+          localized: true,
+        },
+        {
+          name: 'groupField',
+          type: 'group',
+          localized: true,
+          fields: [
+            {
+              name: 'textLocalizedField',
+              type: 'text',
+            },
+            {
+              name: 'richTextLocalizedField',
+              type: 'richText',
+            },
+          ]
+        },
+      ]
+      expect(getLocalizedFields({ fields })).toEqual(expected)
     })
 
     /**

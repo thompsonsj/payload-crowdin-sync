@@ -1,5 +1,5 @@
-import { CollectionConfig, Field } from "payload/types"
-import { buildCrowdinHtmlObject } from "."
+import { CollectionConfig, Field, GlobalConfig } from "payload/types"
+import { buildCrowdinHtmlObject, getLocalizedFields } from "."
 
 describe("fn: buildCrowdinHtmlObject", () => {
   it ("does not include undefined localized fields", () => {
@@ -197,6 +197,16 @@ describe("fn: buildCrowdinHtmlObject", () => {
         type: 'group',
         fields: [
           {
+            admin: {
+             elements: [
+               "link",
+             ],
+             leaves: [
+               "bold",
+               "italic",
+               "underline",
+             ],
+            },
             name: 'title',
             type: 'richText',
             localized: true,
@@ -211,6 +221,127 @@ describe("fn: buildCrowdinHtmlObject", () => {
             name: 'select',
             type: 'select',
             localized: true,
+            options: [
+              'one',
+              'two'
+            ]
+          },
+        ]
+      },
+    ]
+    const expected = {
+      ['groupField.title']: [
+        {
+          "type": "h1",
+          "children": [
+            {
+                "text": "A "
+            },
+            {
+                "text": "test",
+                "bold": true
+            },
+            {
+                "text": " rich text value"
+            }
+          ]
+        }
+      ],
+      ['groupField.content']: [
+        {
+          "type": "p",
+          "children": [
+            {
+                "text": "A simple paragraph."
+            },
+          ]
+        }
+      ],
+    }
+    expect(buildCrowdinHtmlObject({doc, fields})).toEqual(expected)
+  })
+
+  it ("includes localized fields nested in a group with a localization setting on the group field", () => {
+    const doc = {
+      id: '638641358b1a140462752076',
+      title: 'Test Policy created with title',
+      groupField: {
+        title: [
+          {
+            "type": "h1",
+            "children": [
+              {
+                  "text": "A "
+              },
+              {
+                  "text": "test",
+                  "bold": true
+              },
+              {
+                  "text": " rich text value"
+              }
+            ]
+          }
+        ],
+        content: [
+          {
+            "type": "p",
+            "children": [
+              {
+                  "text": "A simple paragraph."
+              },
+            ]
+          }
+        ],
+        select: "one"
+      },
+      status: 'draft',
+      createdAt: '2022-11-29T17:28:21.644Z',
+      updatedAt: '2022-11-29T17:28:21.644Z'
+    }
+    const fields: Field[] = [
+      {
+        name: 'title',
+        type: 'text',
+        localized: true,
+      },
+      // select not supported yet
+      {
+        name: 'select',
+        type: 'select',
+        localized: true,
+        options: [
+          'one',
+          'two'
+        ]
+      },
+      {
+        name: 'groupField',
+        type: 'group',
+        localized: true,
+        fields: [
+          {
+            admin: {
+             elements: [
+               "link",
+             ],
+             leaves: [
+               "bold",
+               "italic",
+               "underline",
+             ],
+            },
+            name: 'title',
+            type: 'richText',
+          },
+          {
+            name: 'content',
+            type: 'richText',
+          },
+          // select not supported yet
+          {
+            name: 'select',
+            type: 'select',
             options: [
               'one',
               'two'
@@ -424,6 +555,177 @@ describe("fn: buildCrowdinHtmlObject", () => {
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected)
   })
 
+  it ("includes localized fields nested in an array with a localization setting on the array field", () => {
+    const doc = {
+      id: '638641358b1a140462752076',
+      title: 'Test Policy created with title',
+      arrayField: [
+        {
+          title: [
+            {
+              "type": "h1",
+              "children": [
+                {
+                    "text": "A "
+                },
+                {
+                    "text": "test",
+                    "bold": true
+                },
+                {
+                    "text": " rich text value"
+                }
+              ]
+            }
+          ],
+          content: [
+            {
+              "type": "p",
+              "children": [
+                {
+                    "text": "A simple paragraph in the first array item."
+                },
+              ]
+            }
+          ],
+          select: "two",
+          id: "64735620230d57bce946d370"
+        },
+        {
+          title: [
+            {
+              "type": "h1",
+              "children": [
+                {
+                    "text": "A "
+                },
+                {
+                    "text": "test",
+                    "bold": true
+                },
+                {
+                    "text": " rich text value"
+                }
+              ]
+            }
+          ],
+          content: [
+            {
+              "type": "p",
+              "children": [
+                {
+                    "text": "A simple paragraph in the second array item."
+                },
+              ]
+            }
+          ],
+          select: "two",
+          id: "64735621230d57bce946d371"
+        }
+      ],
+      status: 'draft',
+      createdAt: '2022-11-29T17:28:21.644Z',
+      updatedAt: '2022-11-29T17:28:21.644Z'
+    }
+    const fields: Field[] = [
+      {
+        name: 'title',
+        type: 'text',
+        localized: true,
+      },
+      // select not supported yet
+      {
+        name: 'select',
+        type: 'select',
+        localized: true,
+        options: [
+          'one',
+          'two'
+        ]
+      },
+      {
+        name: 'arrayField',
+        type: 'array',
+        localized: true,
+        fields: [
+          {
+            name: 'title',
+            type: 'richText',
+          },
+          {
+            name: 'content',
+            type: 'richText',
+          },
+          {
+            name: 'select',
+            type: 'select',
+            options: [
+              'one',
+              'two'
+            ]
+          },
+        ]
+      },
+    ]
+    const expected = {
+      ['arrayField[0].title']: [
+        {
+          "type": "h1",
+          "children": [
+            {
+                "text": "A "
+            },
+            {
+                "text": "test",
+                "bold": true
+            },
+            {
+                "text": " rich text value"
+            }
+          ]
+        }
+      ],
+      ['arrayField[0].content']: [
+        {
+          "type": "p",
+          "children": [
+            {
+                "text": "A simple paragraph in the first array item."
+            },
+          ]
+        }
+      ],
+      ['arrayField[1].title']: [
+        {
+          "type": "h1",
+          "children": [
+            {
+                "text": "A "
+            },
+            {
+                "text": "test",
+                "bold": true
+            },
+            {
+                "text": " rich text value"
+            }
+          ]
+        }
+      ],
+      ['arrayField[1].content']: [
+        {
+          "type": "p",
+          "children": [
+            {
+                "text": "A simple paragraph in the second array item."
+            },
+          ]
+        }
+      ],
+    }
+    expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected)
+  })
+
   it ("includes localized fields within a collapsible field", () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -533,6 +835,181 @@ describe("fn: buildCrowdinHtmlObject", () => {
               name: 'select',
               type: 'select',
               localized: true,
+              options: [
+                'one',
+                'two'
+              ]
+            },
+          ]
+        }],
+      },
+    ]
+    const expected = {
+      ['arrayField[0].title']: [
+        {
+          "type": "h1",
+          "children": [
+            {
+                "text": "A "
+            },
+            {
+                "text": "test",
+                "bold": true
+            },
+            {
+                "text": " rich text value"
+            }
+          ]
+        }
+      ],
+      ['arrayField[0].content']: [
+        {
+          "type": "p",
+          "children": [
+            {
+                "text": "A simple paragraph in the first array item."
+            },
+          ]
+        }
+      ],
+      ['arrayField[1].title']: [
+        {
+          "type": "h1",
+          "children": [
+            {
+                "text": "A "
+            },
+            {
+                "text": "test",
+                "bold": true
+            },
+            {
+                "text": " rich text value"
+            }
+          ]
+        }
+      ],
+      ['arrayField[1].content']: [
+        {
+          "type": "p",
+          "children": [
+            {
+                "text": "A simple paragraph in the second array item."
+            },
+          ]
+        }
+      ],
+    }
+    expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected)
+  })
+
+  it ("includes localized fields within a collapsible field with a localization setting on the array field", () => {
+    const doc = {
+      id: '638641358b1a140462752076',
+      title: 'Test Policy created with title',
+      arrayField: [
+        {
+          title: [
+            {
+              "type": "h1",
+              "children": [
+                {
+                    "text": "A "
+                },
+                {
+                    "text": "test",
+                    "bold": true
+                },
+                {
+                    "text": " rich text value"
+                }
+              ]
+            }
+          ],
+          content: [
+            {
+              "type": "p",
+              "children": [
+                {
+                    "text": "A simple paragraph in the first array item."
+                },
+              ]
+            }
+          ],
+          select: "two",
+          id: "64735620230d57bce946d370"
+        },
+        {
+          title: [
+            {
+              "type": "h1",
+              "children": [
+                {
+                    "text": "A "
+                },
+                {
+                    "text": "test",
+                    "bold": true
+                },
+                {
+                    "text": " rich text value"
+                }
+              ]
+            }
+          ],
+          content: [
+            {
+              "type": "p",
+              "children": [
+                {
+                    "text": "A simple paragraph in the second array item."
+                },
+              ]
+            }
+          ],
+          select: "two",
+          id: "64735621230d57bce946d371"
+        }
+      ],
+      status: 'draft',
+      createdAt: '2022-11-29T17:28:21.644Z',
+      updatedAt: '2022-11-29T17:28:21.644Z'
+    }
+    const fields: Field[] = [
+      {
+        name: 'title',
+        type: 'text',
+        localized: true,
+      },
+      // select not supported yet
+      {
+        name: 'select',
+        type: 'select',
+        localized: true,
+        options: [
+          'one',
+          'two'
+        ]
+      },
+      {
+        label: "Array fields",
+        type: "collapsible",
+        fields: [{
+          name: 'arrayField',
+          type: 'array',
+          localized: true,
+          fields: [
+            {
+              name: 'title',
+              type: 'richText',
+            },
+            {
+              name: 'content',
+              type: 'richText',
+            },
+            {
+              name: 'select',
+              type: 'select',
               options: [
                 'one',
                 'two'
