@@ -220,35 +220,33 @@ describe("Function: buildCrowdinHtmlObject", () => {
       },
     ]
     const expected = {
-      groupField: {
-        title: [
-          {
-            "type": "h1",
-            "children": [
-              {
-                  "text": "A "
-              },
-              {
-                  "text": "test",
-                  "bold": true
-              },
-              {
-                  "text": " rich text value"
-              }
-            ]
-          }
-        ],
-        content: [
-          {
-            "type": "p",
-            "children": [
-              {
-                  "text": "A simple paragraph."
-              },
-            ]
-          }
-        ],
-      },
+      ['groupField.title']: [
+        {
+          "type": "h1",
+          "children": [
+            {
+                "text": "A "
+            },
+            {
+                "text": "test",
+                "bold": true
+            },
+            {
+                "text": " rich text value"
+            }
+          ]
+        }
+      ],
+      ['groupField.content']: [
+        {
+          "type": "p",
+          "children": [
+            {
+                "text": "A simple paragraph."
+            },
+          ]
+        }
+      ],
     }
     expect(buildCrowdinHtmlObject({doc, fields})).toEqual(expected)
   })
@@ -368,64 +366,58 @@ describe("Function: buildCrowdinHtmlObject", () => {
       },
     ]
     const expected = {
-      arrayField: [
+      ['arrayField[0].title']: [
         {
-          title: [
+          "type": "h1",
+          "children": [
             {
-              "type": "h1",
-              "children": [
-                {
-                    "text": "A "
-                },
-                {
-                    "text": "test",
-                    "bold": true
-                },
-                {
-                    "text": " rich text value"
-                }
-              ]
-            }
-          ],
-          content: [
+                "text": "A "
+            },
             {
-              "type": "p",
-              "children": [
-                {
-                    "text": "A simple paragraph in the first array item."
-                },
-              ]
+                "text": "test",
+                "bold": true
+            },
+            {
+                "text": " rich text value"
             }
-          ],
-        },
+          ]
+        }
+      ],
+      ['arrayField[0].content']: [
         {
-          title: [
+          "type": "p",
+          "children": [
             {
-              "type": "h1",
-              "children": [
-                {
-                    "text": "A "
-                },
-                {
-                    "text": "test",
-                    "bold": true
-                },
-                {
-                    "text": " rich text value"
-                }
-              ]
-            }
-          ],
-          content: [
+                "text": "A simple paragraph in the first array item."
+            },
+          ]
+        }
+      ],
+      ['arrayField[1].title']: [
+        {
+          "type": "h1",
+          "children": [
             {
-              "type": "p",
-              "children": [
-                {
-                    "text": "A simple paragraph in the second array item."
-                },
-              ]
+                "text": "A "
+            },
+            {
+                "text": "test",
+                "bold": true
+            },
+            {
+                "text": " rich text value"
             }
-          ],
+          ]
+        }
+      ],
+      ['arrayField[1].content']: [
+        {
+          "type": "p",
+          "children": [
+            {
+                "text": "A simple paragraph in the second array item."
+            },
+          ]
         }
       ],
     }
@@ -551,64 +543,58 @@ describe("Function: buildCrowdinHtmlObject", () => {
       },
     ]
     const expected = {
-      arrayField: [
+      ['arrayField[0].title']: [
         {
-          title: [
+          "type": "h1",
+          "children": [
             {
-              "type": "h1",
-              "children": [
-                {
-                    "text": "A "
-                },
-                {
-                    "text": "test",
-                    "bold": true
-                },
-                {
-                    "text": " rich text value"
-                }
-              ]
-            }
-          ],
-          content: [
+                "text": "A "
+            },
             {
-              "type": "p",
-              "children": [
-                {
-                    "text": "A simple paragraph in the first array item."
-                },
-              ]
+                "text": "test",
+                "bold": true
+            },
+            {
+                "text": " rich text value"
             }
-          ],
-        },
+          ]
+        }
+      ],
+      ['arrayField[0].content']: [
         {
-          title: [
+          "type": "p",
+          "children": [
             {
-              "type": "h1",
-              "children": [
-                {
-                    "text": "A "
-                },
-                {
-                    "text": "test",
-                    "bold": true
-                },
-                {
-                    "text": " rich text value"
-                }
-              ]
-            }
-          ],
-          content: [
+                "text": "A simple paragraph in the first array item."
+            },
+          ]
+        }
+      ],
+      ['arrayField[1].title']: [
+        {
+          "type": "h1",
+          "children": [
             {
-              "type": "p",
-              "children": [
-                {
-                    "text": "A simple paragraph in the second array item."
-                },
-              ]
+                "text": "A "
+            },
+            {
+                "text": "test",
+                "bold": true
+            },
+            {
+                "text": " rich text value"
             }
-          ],
+          ]
+        }
+      ],
+      ['arrayField[1].content']: [
+        {
+          "type": "p",
+          "children": [
+            {
+                "text": "A simple paragraph in the second array item."
+            },
+          ]
         }
       ],
     }

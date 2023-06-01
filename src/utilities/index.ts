@@ -3,7 +3,7 @@ import deepEqual from 'deep-equal'
 import { FieldWithName } from '../types'
 import { slateToHtml, payloadSlateToDomConfig } from 'slate-serializers'
 import type { Descendant } from 'slate'
-import { isArray } from "lodash"
+import { merge } from "lodash"
 
 const localizedFieldTypes = [
   'richText',
@@ -171,24 +171,34 @@ export const buildCrowdinHtmlObject = ({
 }) => {
   let response: { [key: string]: any } = {}
   getLocalizedFields({ fields, type: 'html'}).forEach(field => {
+    const name = [prefix, (field as FieldWithName).name].filter(string => string).join('.')
     if (!doc[field.name]) {
       return
     }
     if (field.type === 'group') {
-      response[field.name] = buildCrowdinHtmlObject({
-        doc: doc[field.name],
-        fields: field.fields,
-      })
+      const subPrefix = `${[prefix, field.name].filter(string => string).join('.')}`
+      response = {
+        ...buildCrowdinHtmlObject({
+          doc: doc[field.name],
+          fields: field.fields,
+          prefix: subPrefix,
+        })
+      }
     } else if (field.type === 'array') {
-      response[field.name] = doc[field.name].map((item: any) => buildCrowdinHtmlObject({
+      const arrayValues = doc[field.name].map((item: any, index: number) => {
+        const subPrefix = `${[prefix, `${field.name}[${index}]`].filter(string => string).join('.')}`  
+        return buildCrowdinHtmlObject({
         doc: item,
-        fields: field.fields
-      }))
+        fields: field.fields,
+        prefix: subPrefix,
+        })
+      })
+      response = merge({}, ...arrayValues)
     } else {
       if (doc[field.name]?.en) {
-        response[field.name] = doc[field.name].en
+        response[name] = doc[field.name].en
       } else {
-        response[field.name] = doc[field.name]
+        response[name] = doc[field.name]
       }
     }
   })
