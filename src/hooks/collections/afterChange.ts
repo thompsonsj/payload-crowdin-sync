@@ -1,7 +1,7 @@
 import { CollectionAfterChangeHook, CollectionConfig, Field, GlobalConfig, GlobalAfterChangeHook, PayloadRequest } from 'payload/types';
 import { CrowdinPluginRequest, FieldWithName } from '../../types'
 import { findOrCreateArticleDirectory, payloadCreateCrowdInFile, payloadUpdateCrowdInFile, getCrowdinFile } from '../../api/payload'
-import { buildCrowdinJsonObject, containsNestedFields, convertSlateToHtml, fieldChanged, getLocalizedFields } from '../../utilities'
+import { buildCrowdinHtmlObject, buildCrowdinJsonObject, containsNestedFields, convertSlateToHtml, fieldChanged, getLocalizedFields } from '../../utilities'
 import deepEqual from 'deep-equal'
 import dot from "dot-object"
 
@@ -122,8 +122,8 @@ const performAfterChange = async ({
    * `text` fields are compiled into a single JSON file
    * on CrowdIn. Prepare previous and current objects.
    */
-  const crowdinJsonFileData = buildCrowdinJsonObject(doc, localizedFields as FieldWithName[])
-  const prevCrowdinFileData = buildCrowdinJsonObject(previousDoc, localizedFields as FieldWithName[])
+  const currentCrowdinJsonData = buildCrowdinJsonObject(doc, localizedFields as FieldWithName[])
+  const prevCrowdinJsonData = buildCrowdinJsonObject(previousDoc, localizedFields as FieldWithName[])
   /**
    * Retrieve the CrowdIn Article Directory article
    * 
@@ -164,7 +164,7 @@ const performAfterChange = async ({
   const createJsonFile = async () => {
       await createFile({
         name: 'fields',
-        value: crowdinJsonFileData,
+        value: currentCrowdinJsonData,
         type: 'json'
       })
   }
@@ -190,53 +190,37 @@ const performAfterChange = async ({
    * * `arrayField[0].localizedRichTextField`
    * * `arrayField[1].localizedRichTextField`
    */
-  const createOrUpdateHtmlSource = async ({
-    fields,
-    prefix = '',
-  }: {
-    fields: Field[],
-    prefix?: string
-  }) => {
-    fields.forEach(async field => {
-      const name = [prefix, (field as FieldWithName).name].filter(string => string).join('.')
+  const createOrUpdateHtmlSource = async () => {
+    const currentCrowdinHtmlData = buildCrowdinHtmlObject({
+      doc,
+      fields: localizedFields,
+    })
+    const prevCrowdinHtmlData = buildCrowdinHtmlObject({
+      doc: previousDoc,
+      fields: localizedFields,
+    })
+    Object.keys(currentCrowdinHtmlData).forEach(async name => {
       const crowdinFile = await getCrowdinFile(name, articleDirectory.id, req.payload)
-
-      if (!containsNestedFields(field)) {
-        // do not do anything if field not changed
-        if (!fieldChanged(dot.pick(name, previousDoc), dot.pick(name, doc), field.type)) {
-          // do nothing
-        }
-        else if (typeof crowdinFile === 'undefined') {
-          await createHtmlFile({
-            name,
-            value: convertSlateToHtml(dot.pick(name, doc)),
-          })
-        }
-        else {
-          const file = await payloadUpdateCrowdInFile({
-            id: crowdinFile.id,
-            fileId: crowdinFile.originalId,
-            name,
-            value: convertSlateToHtml(dot.pick(name, doc)),
-            fileType: 'html',
-            projectId: projectId,
-            payload: req.payload,
-            crowdin: (req as CrowdinPluginRequest).crowdinClient
-          })
-        }
+      const currentValue = currentCrowdinHtmlData[name]
+      const prevValue = prevCrowdinHtmlData[name]
+      if (!fieldChanged(prevValue, currentValue, 'richText')) {
+        return
       }
-      else if (field.type === 'group') {
-        createOrUpdateHtmlSource({
-          fields: field.fields,
-          prefix: `${[prefix, field.name].filter(string => string).join('.')}`
+      if (typeof crowdinFile === 'undefined') {
+        await createHtmlFile({
+          name,
+          value: convertSlateToHtml(currentValue),
         })
-      }
-      else if (field.type === 'array') {
-       dot.pick(name, doc).forEach((value: any, index: number) => {
-          createOrUpdateHtmlSource({
-            fields: field.fields,
-            prefix: `${[prefix, `${field.name}[${index}]`].filter(string => string).join('.')}`
-          })
+      } else {
+        const file = await payloadUpdateCrowdInFile({
+          id: crowdinFile.id,
+          fileId: crowdinFile.originalId,
+          name,
+          value: convertSlateToHtml(currentValue),
+          fileType: 'html',
+          projectId: projectId,
+          payload: req.payload,
+          crowdin: (req as CrowdinPluginRequest).crowdinClient
         })
       }
     })
@@ -248,22 +232,17 @@ const performAfterChange = async ({
   // as the asynchronous operations will run twice almost instantaneously
   // on create.
   if (operation === 'create') {
-    if (!deepEqual(crowdinJsonFileData, prevCrowdinFileData) && Object.keys(crowdinJsonFileData).length !== 0) {
+    if (!deepEqual(currentCrowdinJsonData, prevCrowdinJsonData) && Object.keys(currentCrowdinJsonData).length !== 0) {
       await createJsonFile()
     }
-    createOrUpdateHtmlSource({
-      fields: getLocalizedFields({
-        fields: localizedFields,
-        type: 'html'
-      })
-    })
+    await createOrUpdateHtmlSource()
   }
 
   // for all localized fields, ensure there is a CrowdIn file,
   // and update if necessary
   if (operation === 'update') {
     const crowdinJsonFile = await getCrowdinFile('fields', articleDirectory.id, req.payload)
-    if (!deepEqual(crowdinJsonFileData, prevCrowdinFileData)) {
+    if (!deepEqual(currentCrowdinJsonData, prevCrowdinJsonData)) {
       if (typeof crowdinJsonFile === 'undefined') {
         await createJsonFile()
       } else {
@@ -271,7 +250,7 @@ const performAfterChange = async ({
           id: crowdinJsonFile.id,
           fileId: crowdinJsonFile.originalId,
           name: 'fields',
-          value: crowdinJsonFileData,
+          value: currentCrowdinJsonData,
           fileType: 'json',
           projectId: projectId,
           payload: req.payload,
@@ -280,12 +259,7 @@ const performAfterChange = async ({
       }
     }
 
-    createOrUpdateHtmlSource({
-      fields: getLocalizedFields({
-        fields: localizedFields,
-        type: 'html'
-      })
-    })
+    await createOrUpdateHtmlSource()
   }
 
   return doc

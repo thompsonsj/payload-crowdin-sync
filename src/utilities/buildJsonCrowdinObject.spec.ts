@@ -2,7 +2,7 @@ import { CollectionConfig, Field } from "payload/types"
 import { buildCrowdinJsonObject, getLocalizedFields } from "."
 import { FieldWithName } from "../types"
 
-describe("Function: buildCrowdinJsonObject", () => {
+describe("fn: buildCrowdinJsonObject", () => {
   it ("does not include undefined localized fields", () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -367,7 +367,7 @@ describe("Function: buildCrowdinJsonObject", () => {
   })
 })
 
-describe("Function: buildCrowdinJsonObject - group nested in array", () => {
+describe("fn: buildCrowdinJsonObject - group nested in array", () => {
   const doc = {
     "id": "6474a81bef389b66642035ff",
     "title": "Experience the magic of our product!",

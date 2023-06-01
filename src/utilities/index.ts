@@ -178,6 +178,7 @@ export const buildCrowdinHtmlObject = ({
     if (field.type === 'group') {
       const subPrefix = `${[prefix, field.name].filter(string => string).join('.')}`
       response = {
+        ...response,
         ...buildCrowdinHtmlObject({
           doc: doc[field.name],
           fields: field.fields,
@@ -193,7 +194,10 @@ export const buildCrowdinHtmlObject = ({
         prefix: subPrefix,
         })
       })
-      response = merge({}, ...arrayValues)
+      response = {
+        ...response,
+        ...merge({}, ...arrayValues)
+      }
     } else {
       if (doc[field.name]?.en) {
         response[name] = doc[field.name].en
