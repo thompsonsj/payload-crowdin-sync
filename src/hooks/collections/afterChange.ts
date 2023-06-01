@@ -1,9 +1,8 @@
 import { CollectionAfterChangeHook, CollectionConfig, Field, GlobalConfig, GlobalAfterChangeHook, PayloadRequest } from 'payload/types';
-import { CrowdinPluginRequest, FieldWithName } from '../../types'
+import { CrowdinPluginRequest } from '../../types'
 import { findOrCreateArticleDirectory, payloadCreateCrowdInFile, payloadUpdateCrowdInFile, getCrowdinFile } from '../../api/payload'
-import { buildCrowdinHtmlObject, buildCrowdinJsonObject, convertSlateToHtml, fieldChanged, getLocalizedFields } from '../../utilities'
+import { buildCrowdinHtmlObject, buildCrowdinJsonObject, convertSlateToHtml, fieldChanged } from '../../utilities'
 import deepEqual from 'deep-equal'
-import dot from "dot-object"
 
 /**
  * Update CrowdIn collections and make updates in CrowdIn
@@ -116,8 +115,6 @@ const performAfterChange = async ({
     return doc
   }
 
-  console.log(getLocalizedFields({ fields: localizedFields, type: 'html'}))
-
   /**
    * Prepare JSON objects
    * 
@@ -201,13 +198,12 @@ const performAfterChange = async ({
       doc: previousDoc,
       fields: localizedFields,
     })
-    console.log(currentCrowdinHtmlData)
+
     Object.keys(currentCrowdinHtmlData).forEach(async name => {
       const crowdinFile = await getCrowdinFile(name, articleDirectory.id, req.payload)
       const currentValue = currentCrowdinHtmlData[name]
       const prevValue = prevCrowdinHtmlData[name]
-      if (!fieldChanged(prevValue, currentValue, 'richText')) {
-        console.log(`${name} not changed`)
+      if (!fieldChanged(prevValue, currentValue, 'richText') && process.env.PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE  !== 'true') {
         return
       }
       if (typeof crowdinFile === 'undefined') {
@@ -236,7 +232,7 @@ const performAfterChange = async ({
   // as the asynchronous operations will run twice almost instantaneously
   // on create.
   if (operation === 'create') {
-    if (!deepEqual(currentCrowdinJsonData, prevCrowdinJsonData) && Object.keys(currentCrowdinJsonData).length !== 0) {
+    if ((!deepEqual(currentCrowdinJsonData, prevCrowdinJsonData) && Object.keys(currentCrowdinJsonData).length !== 0) || process.env.PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE === 'true') {
       await createJsonFile()
     }
     await createOrUpdateHtmlSource()
@@ -246,7 +242,7 @@ const performAfterChange = async ({
   // and update if necessary
   if (operation === 'update') {
     const crowdinJsonFile = await getCrowdinFile('fields', articleDirectory.id, req.payload)
-    if (!deepEqual(currentCrowdinJsonData, prevCrowdinJsonData)) {
+    if (!deepEqual(currentCrowdinJsonData, prevCrowdinJsonData) || process.env.PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE === 'true') {
       if (typeof crowdinJsonFile === 'undefined') {
         await createJsonFile()
       } else {
