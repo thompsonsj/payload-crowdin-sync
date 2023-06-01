@@ -130,8 +130,12 @@ describe("fn: getLocalizedFields", () => {
       expect(getLocalizedFields({ fields: global.fields })).toEqual(expected)
     })
 
-    it ("includes localized fields from a collapsible field", () => {
-      const global: GlobalConfig = {
+    /**
+     * * help ensure no errors during version 0 development
+     * * mitigate against errors if a new field type is introduced by Payload CMS
+     */
+    it ("does not include unrecognized field types", () => {
+      const global: any = {
         slug: "global",
         fields: [
           {
@@ -144,8 +148,13 @@ describe("fn: getLocalizedFields", () => {
             type: 'text',
           },
           {
-            label: "Collapsible Field",
-            type: 'collapsible',
+            name: 'unknownLocalizedField',
+            type: 'weird',
+            localized: true,
+          },
+          {
+            name: "Unknown Field type",
+            type: 'strange',
             fields: [
               {
                 name: 'textLocalizedFieldInCollapsibleField',
@@ -176,10 +185,66 @@ describe("fn: getLocalizedFields", () => {
           type: 'text',
           localized: true,
         },
+      ]
+      expect(getLocalizedFields({ fields: global.fields })).toEqual(expected)
+    })
+
+    it ("includes localized fields from a group field", () => {
+      const global: GlobalConfig = {
+        slug: "global",
+        fields: [
+          {
+            name: 'simpleLocalizedField',
+            type: 'text',
+            localized: true,
+          },
+          {
+            name: 'simpleNonLocalizedField',
+            type: 'text',
+          },
+          {
+            name: 'groupField',
+            type: 'group',
+            fields: [
+              {
+                name: 'simpleLocalizedField',
+                type: 'text',
+                localized: true,
+              },
+              {
+                name: 'simpleNonLocalizedField',
+                type: 'text',
+              },
+              // select fields not supported yet
+              {
+                name: 'text',
+                type: 'select',
+                localized: true,
+                options: [
+                  'one',
+                  'two'
+                ]
+              },
+            ]
+          },
+        ]
+      }
+      const expected = [
         {
-          name: 'textLocalizedFieldInCollapsibleField',
+          name: 'simpleLocalizedField',
           type: 'text',
           localized: true,
+        },
+        {
+          name: 'groupField',
+          type: 'group',
+          fields: [
+            {
+              name: 'simpleLocalizedField',
+              type: 'text',
+              localized: true,
+            },
+          ]
         },
       ]
       expect(getLocalizedFields({ fields: global.fields })).toEqual(expected)
