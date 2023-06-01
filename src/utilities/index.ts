@@ -3,7 +3,7 @@ import deepEqual from 'deep-equal'
 import { FieldWithName } from '../types'
 import { slateToHtml, payloadSlateToDomConfig } from 'slate-serializers'
 import type { Descendant } from 'slate'
-import { merge } from "lodash"
+import { isEmpty, merge } from "lodash"
 
 const localizedFieldTypes = [
   'richText',
@@ -37,15 +37,24 @@ export const getLocalizedFields = ({
     }
     return type ? fieldCrowdinFileType(field as FieldWithName) === type : true
   })
+  // exclude group and array fields with no localized fields
+  .filter(field => {
+    if (field.type === 'group' || field.type === 'array') {
+      const localizedParent = hasLocalizedProp(field)
+      return containsLocalizedFields({ fields: field.fields, type, localizedParent })
+    }
+    return true
+  })
   // recursion for group, array and blocks field
   .map(field => {
+    const localizedParent = hasLocalizedProp(field)
     if (field.type === 'group' || field.type === 'array') {
       return {
         ...field,
         fields: getLocalizedFields({
           fields: field.fields,
           type,
-          localizedParent: hasLocalizedProp(field),
+          localizedParent,
         })
       }
     }
@@ -58,7 +67,7 @@ export const getLocalizedFields = ({
               fields: getLocalizedFields({
                 fields: block.fields,
                 type,
-                localizedParent: hasLocalizedProp(field),
+                localizedParent,
               })
             }
           })
@@ -101,15 +110,15 @@ const hasLocalizedProp = (field: Field) => "localized" in field && field.localiz
 
 export const isLocalizedField = (field: Field, addLocalizedProp: boolean = false) => (hasLocalizedProp(field) || addLocalizedProp) && localizedFieldTypes.includes(field.type)
 
-export const containsLocalizedFields = (fields: Field[]): boolean => typeof fields.find((field: Field) => {
-  if (field.type === 'group' || field.type === 'array') {
-    return containsLocalizedFields(field.fields)
-  }
-  if (field.type === 'blocks') {
-    return typeof field.blocks.find((block: Block) => containsLocalizedFields(block.fields)) !== 'undefined'
-  }
-  return isLocalizedField(field)
-}) === 'undefined' ? false : true
+export const containsLocalizedFields = ({
+  fields,
+  type,
+  localizedParent,
+}: {
+  fields: Field[],
+  type?: 'json' | 'html',
+  localizedParent?: boolean,
+}): boolean => !isEmpty(getLocalizedFields({ fields, type, localizedParent }))
 
 export const fieldChanged = (previousValue: string | object | undefined, value: string | object | undefined, type: string) => {
   if (type === 'richText') {

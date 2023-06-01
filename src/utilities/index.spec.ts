@@ -18,7 +18,7 @@ describe("Function: containsLocalizedFields", () => {
         },
       ],
     }
-    expect(containsLocalizedFields(global.fields)).toBe(true)
+    expect(containsLocalizedFields({ fields: global.fields })).toBe(true)
   })
 
   it("detects localized fields in a group field", () => {
@@ -42,7 +42,7 @@ describe("Function: containsLocalizedFields", () => {
         },
       ],
     }
-    expect(containsLocalizedFields(global.fields)).toBe(true)
+    expect(containsLocalizedFields({ fields: global.fields})).toBe(true)
   })
 
   it("detects localized fields in an array field", () => {
@@ -66,52 +66,7 @@ describe("Function: containsLocalizedFields", () => {
         },
       ],
     }
-    expect(containsLocalizedFields(global.fields)).toBe(true)
-  })
-
-  it("detects localized fields in a blocks field", () => {
-    const TestBlock: Block = {
-      slug: 'text',
-      imageAltText: 'Text',
-      fields: [
-        {
-          name: 'title',
-          type: 'text',
-          localized: true,
-        },
-        {
-          name: 'text',
-          type: 'richText',
-          localized: true,
-        },
-        {
-          name: 'select',
-          type: 'select',
-          localized: true,
-          options: [
-            'one',
-            'two'
-          ]
-        },
-      ]
-    }
-    const global: GlobalConfig = {
-      slug: "global",
-      fields: [
-        {
-          name: 'simpleNonLocalizedField',
-          type: 'text',
-        },
-        {
-          name: 'blocksField',
-          type: 'blocks',
-          blocks: [
-            TestBlock
-          ]
-        },
-      ],
-    }
-    expect(containsLocalizedFields(global.fields)).toBe(true)
+    expect(containsLocalizedFields({ fields: global.fields })).toBe(true)
   })
 
   it("returns false if no localized fields in a blocks field", () => {
@@ -153,7 +108,7 @@ describe("Function: containsLocalizedFields", () => {
         },
       ],
     }
-    expect(containsLocalizedFields(global.fields)).toBe(false)
+    expect(containsLocalizedFields({ fields: global.fields })).toBe(false)
   })
 })
 

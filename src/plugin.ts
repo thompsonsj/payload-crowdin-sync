@@ -39,7 +39,7 @@ export const crowdInSync =
       collections: [
         ...(config.collections || []).map(existingCollection => {
 
-          if (containsLocalizedFields(existingCollection.fields)) {
+          if (containsLocalizedFields({ fields: existingCollection.fields })) {
             const fields = getFields({
               collection: existingCollection,
             })
@@ -71,7 +71,7 @@ export const crowdInSync =
       globals: [
         ...(config.globals || []).map(existingGlobal => {
 
-          if (containsLocalizedFields(existingGlobal.fields)) {
+          if (containsLocalizedFields({ fields: existingGlobal.fields })) {
             const fields = getFields({
               collection: existingGlobal,
             })
