@@ -60,7 +60,18 @@ export default buildConfig({
 Plugin options:
 
 - `projectId` (required): the id of the project in CrowdIn.
-- `directoryId` (optional): define a parent directory in your CrowdIn project to sync translations. 
+- `directoryId` (optional): define a parent directory in your CrowdIn project to sync translations.
+
+### Environment variables
+
+Set `PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE=true` to update all localized fields in CrowdIn when an article is created/updated.
+
+By default, updates will only be sent to CrowdIn in the following scenarios.
+
+- At least one of the localized text fields has changed: any change to a localized `text` field updates the compiled `fields.json` that is sent to CrowdIn.
+- A `richText` field is changed. Individual `richText` fields will only be updated on CrowdIn if the content has changed - each field has its own file on CrowdIn.
+
+It is useful to have a convenient way of forcing all localized fields to update at once. For example, if the plugin is activated on an existing install, it is convenient to trigger all updates on CrowdIn for a given article without having to change every `richText` field or one of the `text` fields.
 
 ## Details
 
