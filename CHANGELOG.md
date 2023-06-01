@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.3.0...v0.4.0) (2023-06-01)
+
+
+### Features
+
+* **afterchange:** respect an env variable to always update ([#22](https://github.com/thompsonsj/payload-crowdin-sync/issues/22)) ([b1b87a5](https://github.com/thompsonsj/payload-crowdin-sync/commit/b1b87a5d7e84230f7204aeb24d21830e7a482f44))
+* support localization setting nested-field fields ([#20](https://github.com/thompsonsj/payload-crowdin-sync/issues/20)) ([561e8e2](https://github.com/thompsonsj/payload-crowdin-sync/commit/561e8e26e434602dc6d32ef452489a5cf6253325))
+
 ## [0.3.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.1.3...v0.3.0) (2023-06-01)
 
 
