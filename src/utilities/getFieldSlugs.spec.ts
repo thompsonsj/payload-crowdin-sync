@@ -37,7 +37,6 @@ describe("Function: getFieldSlugs", () => {
       ],
     }
     const htmlFields = getLocalizedFields({ fields: Policies.fields, type: 'html'})
-    console.log(getLocalizedFields({ fields: Policies.fields, type: 'html'}))
     expect(getFieldSlugs(htmlFields)).toEqual(['content'])
   })
 
