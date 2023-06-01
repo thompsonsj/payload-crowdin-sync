@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.4.0...v0.4.1) (2023-06-01)
+
+
+### Bug Fixes
+
+* **containslocalizedfields:** fix logic, add tests ([#23](https://github.com/thompsonsj/payload-crowdin-sync/issues/23)) ([5650761](https://github.com/thompsonsj/payload-crowdin-sync/commit/565076183735db6ced89ab8e8f83565ed8cdb9c1))
+
 ## [0.4.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.3.0...v0.4.0) (2023-06-01)
 
 
