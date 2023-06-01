@@ -26,7 +26,7 @@ describe("fn: buildCrowdinJsonObject", () => {
     const expected = {
       title: 'Test Policy created with title',
     }
-    expect(buildCrowdinJsonObject(doc, localizedFields)).toEqual(expected)
+    expect(buildCrowdinJsonObject({doc, fields: localizedFields})).toEqual(expected)
   })
 
   it ("includes localized fields", () => {
@@ -54,7 +54,7 @@ describe("fn: buildCrowdinJsonObject", () => {
       title: 'Test Policy created with title',
       anotherString: 'An example string',
     }
-    expect(buildCrowdinJsonObject(doc, localizedFields)).toEqual(expected)
+    expect(buildCrowdinJsonObject({doc, fields: localizedFields})).toEqual(expected)
   })
 
   it ("includes localized fields nested in a group", () => {
@@ -121,7 +121,72 @@ describe("fn: buildCrowdinJsonObject", () => {
         text: "Group text field content",
       },
     }
-    expect(buildCrowdinJsonObject(doc, localizedFields)).toEqual(expected)
+    expect(buildCrowdinJsonObject({doc, fields: localizedFields})).toEqual(expected)
+  })
+
+  it ("includes localized fields nested in a group with a localization setting on the group field", () => {
+    const doc = {
+      id: '638641358b1a140462752076',
+      title: 'Test Policy created with title',
+      groupField: {
+        title: "Group title field content",
+        text: "Group text field content",
+        select: "one"
+      },
+      status: 'draft',
+      createdAt: '2022-11-29T17:28:21.644Z',
+      updatedAt: '2022-11-29T17:28:21.644Z'
+    }
+    const fields: FieldWithName[] = [
+      {
+        name: 'title',
+        type: 'text',
+        localized: true,
+      },
+      // select not supported yet
+      {
+        name: 'select',
+        type: 'select',
+        localized: true,
+        options: [
+          'one',
+          'two'
+        ]
+      },
+      {
+        name: 'groupField',
+        type: 'group',
+        localized: true,
+        fields: [
+          {
+            name: 'title',
+            type: 'text',
+          },
+          {
+            name: 'text',
+            type: 'text',
+          },
+          // select not supported yet
+          {
+            name: 'select',
+            type: 'select',
+            options: [
+              'one',
+              'two'
+            ]
+          },
+        ]
+      },
+    ]
+    const localizedFields = getLocalizedFields({ fields })
+    const expected = {
+      title: 'Test Policy created with title',
+      groupField: {
+        title: "Group title field content",
+        text: "Group text field content",
+      },
+    }
+    expect(buildCrowdinJsonObject({doc, fields: localizedFields})).toEqual(expected)
   })
 
   it ("includes localized fields nested in an array", () => {
@@ -202,7 +267,86 @@ describe("fn: buildCrowdinJsonObject", () => {
         }
       ],
     }
-    expect(buildCrowdinJsonObject(doc, localizedFields)).toEqual(expected)
+    expect(buildCrowdinJsonObject({doc, fields: localizedFields})).toEqual(expected)
+  })
+
+  it ("includes localized fields nested in an array with a localization setting on the array field", () => {
+    const doc = {
+      id: '638641358b1a140462752076',
+      title: 'Test Policy created with title',
+      arrayField: [
+        {
+          title: "Array field title content one",
+          text: "Array field text content one",
+          select: "two",
+          id: "64735620230d57bce946d370"
+        },
+        {
+          title: "Array field title content two",
+          text: "Array field text content two",
+          select: "two",
+          id: "64735621230d57bce946d371"
+        }
+      ],
+      status: 'draft',
+      createdAt: '2022-11-29T17:28:21.644Z',
+      updatedAt: '2022-11-29T17:28:21.644Z'
+    }
+    const fields: FieldWithName[] = [
+      {
+        name: 'title',
+        type: 'text',
+        localized: true,
+      },
+      // select not supported yet
+      {
+        name: 'select',
+        type: 'select',
+        localized: true,
+        options: [
+          'one',
+          'two'
+        ]
+      },
+      {
+        name: 'arrayField',
+        type: 'array',
+        localized: true,
+        fields: [
+          {
+            name: 'title',
+            type: 'text',
+          },
+          {
+            name: 'text',
+            type: 'text',
+          },
+          {
+            name: 'select',
+            type: 'select',
+            options: [
+              'one',
+              'two'
+            ]
+          },
+        ]
+      },
+    ]
+    const localizedFields = getLocalizedFields({ fields })
+    const expected = {
+      title: 'Test Policy created with title',
+      arrayField: [
+        {
+          title: "Array field title content one",
+          text: "Array field text content one",
+        },
+        {
+          title: "Array field title content two",
+          text: "Array field text content two",
+        }
+      ],
+    }
+    expect(buildCrowdinJsonObject({doc, fields: localizedFields})).toEqual(expected)
   })
 
   it ("includes localized fields within a collapsible field", () => {
@@ -287,7 +431,7 @@ describe("fn: buildCrowdinJsonObject", () => {
         }
       ],
     }
-    expect(buildCrowdinJsonObject(doc, localizedFields)).toEqual(expected)
+    expect(buildCrowdinJsonObject({doc, fields: localizedFields})).toEqual(expected)
   })
 
   it ("includes localized fields and meta @payloadcms/plugin-seo ", () => {
@@ -325,7 +469,7 @@ describe("fn: buildCrowdinJsonObject", () => {
       title: 'Test Policy created with title',
       meta: { title: 'Test Policy created with title | Teamtailor' },
     }
-    expect(buildCrowdinJsonObject(doc, localizedFields)).toEqual(expected)
+    expect(buildCrowdinJsonObject({doc, fields: localizedFields})).toEqual(expected)
   })
 
   it ("includes localized fields and removes localization keys from meta @payloadcms/plugin-seo ", () => {
@@ -363,7 +507,7 @@ describe("fn: buildCrowdinJsonObject", () => {
       title: 'Test Policy created with title',
       meta: { title: 'Test Policy created with title | Teamtailor' },
     }
-    expect(buildCrowdinJsonObject(doc, localizedFields)).toEqual(expected)
+    expect(buildCrowdinJsonObject({doc, fields: localizedFields})).toEqual(expected)
   })
 })
 
@@ -487,15 +631,15 @@ describe("fn: buildCrowdinJsonObject - group nested in array", () => {
   }
 
   it('includes group json fields nested inside of array field items', () => {
-    expect(buildCrowdinJsonObject(doc, getLocalizedFields({ fields: Promos.fields, type: 'json'}))).toEqual(expected)
+    expect(buildCrowdinJsonObject({doc, fields:getLocalizedFields({ fields: Promos.fields, type: 'json'})})).toEqual(expected)
   })
 
   it('includes group json fields nested inside of array field items even when getLocalizedFields is run twice', () => {
-    expect(buildCrowdinJsonObject(doc,
-      getLocalizedFields({ 
+    expect(buildCrowdinJsonObject({doc,
+      fields: getLocalizedFields({ 
         fields: getLocalizedFields({ fields: Promos.fields })
       , type: 'json'})
-    )).toEqual(expected)
+      })).toEqual(expected)
   })
 
   /**
@@ -505,33 +649,33 @@ describe("fn: buildCrowdinJsonObject - group nested in array", () => {
    * with non-required empty fields.
    */
   it('can work with an empty document', () => {
-    expect(buildCrowdinJsonObject({},
-      getLocalizedFields({ fields: Promos.fields })
-    )).toEqual({})
+    expect(buildCrowdinJsonObject({doc: {},
+      fields: getLocalizedFields({ fields: Promos.fields })
+    })).toEqual({})
   })
 
   it('can work with an empty array field', () => {
-    expect(buildCrowdinJsonObject({
+    expect(buildCrowdinJsonObject({doc: {
       ...doc,
       ctas: undefined,
     },
-      getLocalizedFields({ fields: Promos.fields })
-    )).toEqual({
+      fields: getLocalizedFields({ fields: Promos.fields })
+    })).toEqual({
       "text": "Get in touch with us or try it out yourself",
       "title": "Experience the magic of our product!"
     })
   })
 
   it('can work with an empty group field in an array', () => {
-    expect(buildCrowdinJsonObject({
+    expect(buildCrowdinJsonObject({doc: {
       ...doc,
       ctas: [
         {},
         {}
       ],
     },
-      getLocalizedFields({ fields: Promos.fields })
-    )).toEqual({
+      fields: getLocalizedFields({ fields: Promos.fields })
+    })).toEqual({
       ctas: [
         {},
         {}

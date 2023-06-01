@@ -1,7 +1,7 @@
 import { CollectionAfterChangeHook, CollectionConfig, Field, GlobalConfig, GlobalAfterChangeHook, PayloadRequest } from 'payload/types';
 import { CrowdinPluginRequest, FieldWithName } from '../../types'
 import { findOrCreateArticleDirectory, payloadCreateCrowdInFile, payloadUpdateCrowdInFile, getCrowdinFile } from '../../api/payload'
-import { buildCrowdinHtmlObject, buildCrowdinJsonObject, containsNestedFields, convertSlateToHtml, fieldChanged, getLocalizedFields } from '../../utilities'
+import { buildCrowdinHtmlObject, buildCrowdinJsonObject, convertSlateToHtml, fieldChanged, getLocalizedFields } from '../../utilities'
 import deepEqual from 'deep-equal'
 import dot from "dot-object"
 
@@ -116,14 +116,16 @@ const performAfterChange = async ({
     return doc
   }
 
+  console.log(getLocalizedFields({ fields: localizedFields, type: 'html'}))
+
   /**
    * Prepare JSON objects
    * 
    * `text` fields are compiled into a single JSON file
    * on CrowdIn. Prepare previous and current objects.
    */
-  const currentCrowdinJsonData = buildCrowdinJsonObject(doc, localizedFields as FieldWithName[])
-  const prevCrowdinJsonData = buildCrowdinJsonObject(previousDoc, localizedFields as FieldWithName[])
+  const currentCrowdinJsonData = buildCrowdinJsonObject({doc, fields: localizedFields})
+  const prevCrowdinJsonData = buildCrowdinJsonObject({doc: previousDoc, fields: localizedFields})
   /**
    * Retrieve the CrowdIn Article Directory article
    * 
@@ -199,11 +201,13 @@ const performAfterChange = async ({
       doc: previousDoc,
       fields: localizedFields,
     })
+    console.log(currentCrowdinHtmlData)
     Object.keys(currentCrowdinHtmlData).forEach(async name => {
       const crowdinFile = await getCrowdinFile(name, articleDirectory.id, req.payload)
       const currentValue = currentCrowdinHtmlData[name]
       const prevValue = prevCrowdinHtmlData[name]
       if (!fieldChanged(prevValue, currentValue, 'richText')) {
+        console.log(`${name} not changed`)
         return
       }
       if (typeof crowdinFile === 'undefined') {

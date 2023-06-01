@@ -502,7 +502,10 @@ export async function getCurrentDocumentTranslation({
     htmlFields[field.name] = document[field.name]
   ))
   return {
-    ...buildCrowdinJsonObject(document, localizedFields),
+    ...buildCrowdinJsonObject({
+      doc: document,
+      fields: localizedFields
+    }),
     ...htmlFields
   }
 }
