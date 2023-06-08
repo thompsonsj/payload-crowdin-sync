@@ -880,4 +880,78 @@ describe("fn: getLocalizedFields", () => {
     })
     */
   })
+
+  /**
+   * @see https://github.com/payloadcms/plugin-seo
+   * 
+   * payloadcms/plugin-seo adds localized fields.
+   * If there are no other localized fields, we don't
+   * want to submit to CrowdIn.
+   */
+  describe("payloadcms/plugin-seo tests", () => {
+    const seoFields: Field[] = [
+      {
+        "name": "meta",
+        "label": "SEO",
+        "type": "group",
+        "fields": [
+          /**{
+            "name": "overview",
+            "label": "Overview",
+            "type": "ui",
+            "admin": {
+              "components": {}
+            }
+          },*/
+          {
+            "name": "title",
+            "type": "text",
+            "localized": true,
+            "admin": {
+              "components": {}
+            }
+          },
+          {
+            "name": "description",
+            "type": "textarea",
+            "localized": true,
+            "admin": {
+              "components": {}
+            }
+          },
+          /**{
+            "name": "preview",
+            "label": "Preview",
+            "type": "ui",
+            "admin": {
+              "components": {}
+            }
+          }**/
+        ]
+      }
+    ]
+
+    it("excludes payloadcms/plugin-seo localized fields if there are no localized fields on the collection/global", () => {
+      const nonLocalizedFieldCollection: Field[] = [
+        {
+          name: 'textLocalizedField',
+          type: 'text',
+        },
+        {
+          name: 'richTextLocalizedField',
+          type: 'richText',
+        },
+        {
+          name: 'textareaLocalizedField',
+          type: 'text',
+        },
+      ]
+
+      const fields: Field[] = [
+        ...nonLocalizedFieldCollection,
+        ...seoFields,
+      ]
+      expect(getLocalizedFields({ fields })).toEqual([])
+    })
+  })
 })
