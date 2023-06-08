@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.4.1...v0.5.0) (2023-06-08)
+
+
+### Features
+
+* **utilities:** textarea field support ([#27](https://github.com/thompsonsj/payload-crowdin-sync/issues/27)) ([1e4c08d](https://github.com/thompsonsj/payload-crowdin-sync/commit/1e4c08d94f157e05e84a89b08dc9edf328f70735))
+
 ## [0.4.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.4.0...v0.4.1) (2023-06-01)
 
 
