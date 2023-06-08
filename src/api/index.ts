@@ -77,14 +77,25 @@ export class crowdinAPIService {
       fileData,
       fileType,
     })
-    const file = await this.crowdin.sourceFilesApi.createFile(projectId, {
+    const options = {
       name: `${name}.${fileType}`,
       title: name,
       storageId: storageId,
       directoryId: directoryId,
       type: fileType
-    })
-    return file
+    }
+    try {
+      const file = await this.crowdin.sourceFilesApi.createFile(projectId, {
+        name: `${name}.${fileType}`,
+        title: name,
+        storageId: storageId,
+        directoryId: directoryId,
+        type: fileType
+      })
+      return file
+    } catch (error) {
+      console.error(error, options)
+    }
   }
 
   async updateFile({

@@ -160,6 +160,7 @@ interface IupdateTranslation extends ApiObjects {
 export async function getCrowdinFiles(crowdinArticleDirectoryId: number, payload: Payload): Promise<any> {
   const result = await payload.find({
     collection: "crowdin-files",
+    limit: 9999,
     where: {
       crowdinArticleDirectory: {
         equals: crowdinArticleDirectoryId,
@@ -250,25 +251,27 @@ export async function payloadCreateCrowdInFile({
   }}*/
 
   // Store result on Payload CMS
-  const payloadCrowdInFile = await payload.create({
-    collection: 'crowdin-files', // required
-    data: { // required
-      title: crowdInFile.data.name,
-      field: name,
-      crowdinArticleDirectory: articleDirectory.id,
-      createdAt: crowdInFile.data.createdAt,
-      updatedAt: crowdInFile.data.updatedAt,
-      originalId: crowdInFile.data.id,
-      projectId: crowdInFile.data.projectId,
-      directoryId: crowdInFile.data.directoryId,
-      revisionId: crowdInFile.data.revisionId,
-      name: crowdInFile.data.name,
-      type: crowdInFile.data.type,
-      path: crowdInFile.data.path,
-    },
-  })
+  if (crowdInFile) {
+    const payloadCrowdInFile = await payload.create({
+      collection: 'crowdin-files', // required
+      data: { // required
+        title: crowdInFile.data.name,
+        field: name,
+        crowdinArticleDirectory: articleDirectory.id,
+        createdAt: crowdInFile.data.createdAt,
+        updatedAt: crowdInFile.data.updatedAt,
+        originalId: crowdInFile.data.id,
+        projectId: crowdInFile.data.projectId,
+        directoryId: crowdInFile.data.directoryId,
+        revisionId: crowdInFile.data.revisionId,
+        name: crowdInFile.data.name,
+        type: crowdInFile.data.type,
+        path: crowdInFile.data.path,
+      },
+    })
 
-  return payloadCrowdInFile
+    return payloadCrowdInFile
+  }
 }
 
 export async function findOrCreateArticleDirectory({
