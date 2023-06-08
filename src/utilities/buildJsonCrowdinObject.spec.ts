@@ -32,8 +32,9 @@ describe("fn: buildCrowdinJsonObject", () => {
   it ("includes localized fields", () => {
     const doc = {
       id: '638641358b1a140462752076',
-      title: 'Test Policy created with title',
-      anotherString: 'An example string',
+      title: 'Text value',
+      anotherString: 'Another text value',
+      description: 'A textarea value.\nWith a new line.',
       status: 'draft',
       createdAt: '2022-11-29T17:28:21.644Z',
       updatedAt: '2022-11-29T17:28:21.644Z'
@@ -48,11 +49,17 @@ describe("fn: buildCrowdinJsonObject", () => {
         name: 'anotherString',
         type: 'text',
         localized: true,
+      },
+      {
+        name: 'description',
+        type: 'textarea',
+        localized: true,
       }
     ]
     const expected = {
-      title: 'Test Policy created with title',
-      anotherString: 'An example string',
+      title: 'Text value',
+      anotherString: 'Another text value',
+      description: 'A textarea value.\nWith a new line.',
     }
     expect(buildCrowdinJsonObject({doc, fields: localizedFields})).toEqual(expected)
   })
@@ -64,6 +71,7 @@ describe("fn: buildCrowdinJsonObject", () => {
       groupField: {
         title: "Group title field content",
         text: "Group text field content",
+        description: 'A textarea value.\nWith a new line.',
         select: "one"
       },
       status: 'draft',
@@ -100,6 +108,11 @@ describe("fn: buildCrowdinJsonObject", () => {
             type: 'text',
             localized: true,
           },
+          {
+            name: 'description',
+            type: 'textarea',
+            localized: true,
+          },
           // select not supported yet
           {
             name: 'select',
@@ -119,6 +132,7 @@ describe("fn: buildCrowdinJsonObject", () => {
       groupField: {
         title: "Group title field content",
         text: "Group text field content",
+        description: 'A textarea value.\nWith a new line.',
       },
     }
     expect(buildCrowdinJsonObject({doc, fields: localizedFields})).toEqual(expected)
@@ -439,7 +453,10 @@ describe("fn: buildCrowdinJsonObject", () => {
       id: '638641358b1a140462752076',
       title: 'Test Policy created with title',
       status: 'draft',
-      meta: { title: 'Test Policy created with title | Teamtailor' },
+      meta: {
+        title: 'Meta title value',
+        description: 'Meta description value.\nCan contain new lines.',
+      },
       createdAt: '2022-11-29T17:28:21.644Z',
       updatedAt: '2022-11-29T17:28:21.644Z'
     }
@@ -461,13 +478,21 @@ describe("fn: buildCrowdinJsonObject", () => {
             admin: {
               components: {}
             }
+          },
+          {
+            name: "description",
+            type: "textarea",
+            localized: true,
+            admin: {
+              components: {}
+            }
           }
         ]
       }
     ]
     const expected = {
       title: 'Test Policy created with title',
-      meta: { title: 'Test Policy created with title | Teamtailor' },
+      meta: { title: 'Meta title value', description: 'Meta description value.\nCan contain new lines.', },
     }
     expect(buildCrowdinJsonObject({doc, fields: localizedFields})).toEqual(expected)
   })

@@ -7,7 +7,8 @@ import { isEmpty, merge } from "lodash"
 
 const localizedFieldTypes = [
   'richText',
-  'text'
+  'text',
+  'textarea',
 ]
 
 const nestedFieldTypes = [
