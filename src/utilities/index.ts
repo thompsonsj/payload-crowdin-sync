@@ -3,7 +3,7 @@ import deepEqual from 'deep-equal'
 import { FieldWithName } from '../types'
 import { slateToHtml, payloadSlateToDomConfig } from 'slate-serializers'
 import type { Descendant } from 'slate'
-import { isEmpty, merge } from "lodash"
+import { get, isEmpty, merge } from "lodash"
 
 const localizedFieldTypes = [
   'richText',
@@ -20,6 +20,26 @@ const nestedFieldTypes = [
 export const containsNestedFields = (field: Field) => nestedFieldTypes.includes(field.type)
 
 export const getLocalizedFields = ({
+  fields,
+  type,
+  localizedParent = false,
+}: {
+  fields: Field[],
+  type?: 'json' | 'html',
+  localizedParent?: boolean
+}): any[] => {
+  const localizedFields = getLocalizedFieldsRecursive({
+    fields,
+    type,
+    localizedParent,
+  })
+  if (localizedFields.length === 1 && get(localizedFields[0], 'name') === 'meta') {
+    return []
+  }
+  return localizedFields
+}
+
+export const getLocalizedFieldsRecursive = ({
   fields,
   type,
   localizedParent = false,
