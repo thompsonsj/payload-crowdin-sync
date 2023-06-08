@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.5.0...v0.5.1) (2023-06-08)
+
+
+### Bug Fixes
+
+* **plugin-seo:** return empty if localized fields are only seo ([#30](https://github.com/thompsonsj/payload-crowdin-sync/issues/30)) ([02145ac](https://github.com/thompsonsj/payload-crowdin-sync/commit/02145acae69dd24983412cb999ef7c00a0313660))
+
 ## [0.5.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.4.1...v0.5.0) (2023-06-08)
 
 
