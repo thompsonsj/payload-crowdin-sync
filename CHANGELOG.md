@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.5.1...v0.5.2) (2023-06-08)
+
+
+### Bug Fixes
+
+* **api:** invalid name error when more than 10 files ([#32](https://github.com/thompsonsj/payload-crowdin-sync/issues/32)) ([113f457](https://github.com/thompsonsj/payload-crowdin-sync/commit/113f4571fe6911d5745fc8d88f7816620c118fc2))
+
 ## [0.5.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.5.0...v0.5.1) (2023-06-08)
 
 
