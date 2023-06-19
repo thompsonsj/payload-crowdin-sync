@@ -129,7 +129,15 @@ export const getFieldSlugs = (fields: FieldWithName[]): string[] => fields.filte
 
 const hasLocalizedProp = (field: Field) => "localized" in field && field.localized
 
-export const isLocalizedField = (field: Field, addLocalizedProp: boolean = false) => (hasLocalizedProp(field) || addLocalizedProp) && localizedFieldTypes.includes(field.type)
+export const isLocalizedField = (field: Field, addLocalizedProp: boolean = false) => (hasLocalizedProp(field) || addLocalizedProp) && localizedFieldTypes.includes(field.type) && !excludeBasedOnDescription(field)
+
+const excludeBasedOnDescription = (field: Field) => {
+  const description = get(field, 'admin.description', '')
+  if (description.includes("Not sent to CrowdIn. Localize in the CMS.")) {
+    return true
+  }
+  return false
+}
 
 export const containsLocalizedFields = ({
   fields,
