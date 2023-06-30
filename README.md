@@ -31,14 +31,12 @@ Automatically upload/sync localized fields from the default locale to CrowdIn. M
 
 ## Usage
 
-Install this plugin within your Payload as follows:
+```
+#npm
+npm install payload-crowdin-sync
 
-Add the CrowdIn service as middleware to `server.ts`.
-
-```ts
-import { crowdinClient } from './plugins/crowdin-sync/api'
-
-app.use(crowdinClient())
+# yarn
+yarn add payload-crowdin-sync
 ```
 
 Add the plugin to your Payload configuration.
@@ -46,13 +44,14 @@ Add the plugin to your Payload configuration.
 ```ts
 import { buildConfig } from 'payload/config';
 import path from 'path';
-import { crowdInSync } from '@thompsonsj/payload-plugin-crowdin';
+import { crowdInSync, crowdinClient } from 'payload-crowdin-sync';
 
 export default buildConfig({
   plugins: [
     crowdInSync({
       projectId: 323731,
       directoryId: 1169,
+      client: crowdinClient({ token: `<your-token>`})
     }),
   ],
   // The rest of your config goes here
@@ -215,35 +214,12 @@ The document will be updated and the same report will be generated as for a revi
 A Jest test suite is included comprising of:
 
 - unit tests (`*.spec.ts`) within the `src` folder adjacent to files/functions that they are testing; and
-- integrations tests (`*.int.ts`) in the `test` folder.
+- integrations tests (`*.test.ts`) in the `dev/tests` folder.
 
-Integration tests use Payload's REST API to perform a series of API calls in a synchronous manner.
+Integration tests use Payload's [Local API](https://payloadcms.com/docs/local-api/overview) to run tests against a configured Payload installation in the `dev` folder. Tests use [mongodb-memory-server](https://github.com/nodkz/mongodb-memory-server) to connect to for all tests, so it is not necessary to add test documents to a development database.
 
-### Integration tests
+### References
 
-Run a test server using `yarn test:server`.
-
-This uses a MongoDB database on your local machine called `test` which can be inspected through an explorer such as MongoDB Compass.
-
-Run tests with `yarn test`. This runs all the integration and unit tests.
-
-### Notes on the current test suite
-
-Integration tests are not ideal: they break a lot of best practice when writing tests. However, they are effective, and this is the reason they are included.
-
-They use the Payload CMS REST API to perform operations on the test server.
-
-The advantages of this approach are that the setup is as similar as possible to production. The test server runs with almost exactly the same configuration as production.
-
-However, there are many disadvantages. Tests should be refactored. The reason for not doing this so far is that it has been difficult to set up preferred alternatives - I experienced a lot of complaints from Babel, Payload, TypeScript, Jest. In particular, the `get-port` dependency from Payload CMS caused a lot of issues because it uses a `require` import. This occured when trying to initiate Payload for tests directly. Having said that, Payload CMS tests run fine so maybe further work is needed to emulate that test setup.
-
-**Integration tests do not tear down data**. This is an unfortunate side effect of running a seperate test server. However, the benefit is that the databse can be inspected after the test is run. Manually deleting the `policies`, `crowdin-files`, `crowdin-article-directories` and `crowdin-collection-directories` folders is possible, and Payload CMS will recreate those collections once the tests are re-run.
-
-**CrowdIn API responses are mocked**. Configuration in `server.ts` detects when this `test` database is running and provides a mock CrowdIn API service that returns sample data. This is another unfortunate side effect of the test setup - best practice dictates that API responses should never be mocked. See notes on this approach below.
-
-Preferred alternatives:
-
-- Set up integration tasks in a similar way to [payloadcms/payload | GitHub](https://github.com/payloadcms/payload), which uses specific configs and `init` functions to start Payload within tests and be able to access the `payload` object within them.
-- Use services/dependency injection in a similar way to how its achieved in [finkinfridom/payload-cloudinary-plugin | GitHub](https://github.com/finkinfridom/payload-cloudinary-plugin) in order to write tests on hooks/functions directly and mock any API calls/libraries as needed.
-
-
+- Useful tips on using the local API in tests: https://github.com/payloadcms/payload/discussions/985.
+- Review other Payload CMS plugins to see how test environments are configured there. e.g. https://github.com/payloadcms/plugin-cloud-storage and https://github.com/payloadcms/plugin-seo.
+- Although the tutorial at https://payloadcms.com/blog/typescript-jest-vscode-debugger-tutorial works, I couldn't get it to work in the latest version of Payload CMS. Regardless, it makes more sense not to test the REST API as done in the tutorial, and to only work with the local API.
