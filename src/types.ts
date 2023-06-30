@@ -9,6 +9,7 @@ export interface PluginOptions {
   projectId: number
   /** This should be optional? */
   directoryId: number
+  client: crowdinAPIService,
   localeMap?: {[key: string]: {
     crowdinId: string
   }}

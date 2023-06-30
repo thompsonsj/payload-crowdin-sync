@@ -1,5 +1,5 @@
 import { CollectionAfterChangeHook, CollectionConfig, Field, GlobalConfig, GlobalAfterChangeHook, PayloadRequest } from 'payload/types';
-import { CrowdinPluginRequest } from '../../types'
+import { CrowdinPluginRequest, PluginOptions } from '../../types'
 import { findOrCreateArticleDirectory, payloadCreateCrowdInFile, payloadUpdateCrowdInFile, getCrowdinFile } from '../../api/payload'
 import { buildCrowdinHtmlObject, buildCrowdinJsonObject, convertSlateToHtml, fieldChanged } from '../../utilities'
 import deepEqual from 'deep-equal'
@@ -18,7 +18,8 @@ import deepEqual from 'deep-equal'
 interface CommonArgs {
   projectId: number,
   directoryId: number
-  localizedFields: Field[]
+  localizedFields: Field[],
+  pluginOptions: PluginOptions,
 }
 
 interface Args extends CommonArgs {
@@ -33,7 +34,8 @@ export const getGlobalAfterChangeHook = ({
   projectId,
   directoryId,
   global,
-  localizedFields
+  localizedFields,
+  pluginOptions,
 }: GlobalArgs): GlobalAfterChangeHook => async ({
   doc, // full document data
   previousDoc, // document data before updating the collection
@@ -50,6 +52,7 @@ export const getGlobalAfterChangeHook = ({
     collection: global,
     localizedFields,
     global: true,
+    pluginOptions,
   })
 }
 
@@ -57,7 +60,8 @@ export const getAfterChangeHook = ({
   projectId,
   directoryId,
   collection,
-  localizedFields
+  localizedFields,
+  pluginOptions,
 }: Args): CollectionAfterChangeHook=> async ({
   doc, // full document data
   req, // full express request
@@ -72,7 +76,8 @@ export const getAfterChangeHook = ({
     projectId,
     directoryId,
     collection,
-    localizedFields
+    localizedFields,
+    pluginOptions,
   })
 }
 
@@ -86,6 +91,7 @@ interface IPerformChange {
   collection: CollectionConfig | GlobalConfig
   localizedFields: Field[]
   global?: boolean
+  pluginOptions: PluginOptions,
 }
 
 const performAfterChange = async ({
@@ -98,6 +104,7 @@ const performAfterChange = async ({
   collection,
   localizedFields,
   global = false,
+  pluginOptions,
 }: IPerformChange) => {
   /**
    * Abort if there are no fields to localize
@@ -137,7 +144,7 @@ const performAfterChange = async ({
     directoryId: directoryId,
     collectionSlug: collection.slug,
     payload: req.payload,
-    crowdin: (req as CrowdinPluginRequest).crowdinClient,
+    crowdin: pluginOptions.client,
     global,
   })
 
@@ -156,7 +163,7 @@ const performAfterChange = async ({
       collectionSlug: collection.slug,
       articleDirectory: articleDirectory,
       payload: req.payload,
-      crowdin: (req as CrowdinPluginRequest).crowdinClient,
+      crowdin: pluginOptions.client,
     })
   }
 
@@ -220,7 +227,7 @@ const performAfterChange = async ({
           fileType: 'html',
           projectId: projectId,
           payload: req.payload,
-          crowdin: (req as CrowdinPluginRequest).crowdinClient
+          crowdin: pluginOptions.client
         })
       }
     })
@@ -254,7 +261,7 @@ const performAfterChange = async ({
           fileType: 'json',
           projectId: projectId,
           payload: req.payload,
-          crowdin: (req as CrowdinPluginRequest).crowdinClient
+          crowdin: pluginOptions.client
         })
       }
     }

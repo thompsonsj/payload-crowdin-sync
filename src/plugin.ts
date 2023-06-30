@@ -25,6 +25,7 @@ export const crowdInSync =
     const {
       projectId,
       directoryId,
+      client,
       localeMap,
       collections: allCollectionOptions
     } = pluginOptions
@@ -54,7 +55,8 @@ export const crowdInSync =
                     projectId: projectId,
                     directoryId: directoryId,
                     collection: existingCollection,
-                    localizedFields: getLocalizedFields({fields: existingCollection.fields})
+                    localizedFields: getLocalizedFields({fields: existingCollection.fields}),
+                    pluginOptions,
                   }),
                 ],
               },
@@ -85,7 +87,8 @@ export const crowdInSync =
                     projectId: projectId,
                     directoryId: directoryId,
                     global: existingGlobal,
-                    localizedFields: getLocalizedFields({ fields: existingGlobal.fields })
+                    localizedFields: getLocalizedFields({ fields: existingGlobal.fields }),
+                    pluginOptions,
                   }),
                 ],
               },
