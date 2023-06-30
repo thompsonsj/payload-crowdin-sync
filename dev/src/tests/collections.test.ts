@@ -131,6 +131,26 @@ describe('Collections', () => {
       expect(file.type).toEqual('json')
     })
 
+    it('does not create a "fields" CrowdIn file if all fields are empty strings', async () => {
+      const post = await payload.create({
+        collection: collections.localized,
+        data: { title: '' },
+      });
+      // retrieve post to get populated fields
+      const result = await payload.findByID({
+        collection: collections.localized,
+        id: post.id,
+      });
+      const crowdinArticleDirectoryId = result.crowdinArticleDirectory?.id
+      const crowdInFiles = await payload.find({
+        collection: 'crowdin-files',
+        where: {
+          crowdinArticleDirectory: { equals: crowdinArticleDirectoryId },
+        },
+      });
+      expect(crowdInFiles.docs.length).toEqual(0)
+    })
+
     it('creates a `fields` file to include the title field and a `content` file for the content richText field', async () => {
       const post = await payload.create({
         collection: collections.localized,

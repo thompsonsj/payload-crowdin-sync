@@ -1,5 +1,5 @@
 import { CollectionAfterChangeHook, CollectionConfig, Field, GlobalConfig, GlobalAfterChangeHook, PayloadRequest } from 'payload/types';
-import { CrowdinPluginRequest, PluginOptions } from '../../types'
+import { PluginOptions } from '../../types'
 import { findOrCreateArticleDirectory, payloadCreateCrowdInFile, payloadUpdateCrowdInFile, getCrowdinFile } from '../../api/payload'
 import { buildCrowdinHtmlObject, buildCrowdinJsonObject, convertSlateToHtml, fieldChanged } from '../../utilities'
 import deepEqual from 'deep-equal'
@@ -16,8 +16,6 @@ import deepEqual from 'deep-equal'
  */
 
 interface CommonArgs {
-  projectId: number,
-  directoryId: number
   localizedFields: Field[],
   pluginOptions: PluginOptions,
 }
@@ -31,8 +29,6 @@ interface GlobalArgs extends CommonArgs {
 }
 
 export const getGlobalAfterChangeHook = ({
-  projectId,
-  directoryId,
   global,
   localizedFields,
   pluginOptions,
@@ -47,8 +43,6 @@ export const getGlobalAfterChangeHook = ({
     req,
     previousDoc,
     operation,
-    projectId,
-    directoryId,
     collection: global,
     localizedFields,
     global: true,
@@ -57,8 +51,6 @@ export const getGlobalAfterChangeHook = ({
 }
 
 export const getAfterChangeHook = ({
-  projectId,
-  directoryId,
   collection,
   localizedFields,
   pluginOptions,
@@ -73,8 +65,6 @@ export const getAfterChangeHook = ({
     req,
     previousDoc,
     operation,
-    projectId,
-    directoryId,
     collection,
     localizedFields,
     pluginOptions,
@@ -86,8 +76,6 @@ interface IPerformChange {
   req: PayloadRequest
   previousDoc: any
   operation: string
-  projectId: number
-  directoryId: number
   collection: CollectionConfig | GlobalConfig
   localizedFields: Field[]
   global?: boolean
@@ -99,8 +87,6 @@ const performAfterChange = async ({
   req, // full express request
   previousDoc,
   operation,
-  projectId,
-  directoryId,
   collection,
   localizedFields,
   global = false,
@@ -140,8 +126,8 @@ const performAfterChange = async ({
    */
   const articleDirectory = await findOrCreateArticleDirectory({
     document: doc,
-    projectId: projectId,
-    directoryId: directoryId,
+    projectId: pluginOptions.projectId,
+    directoryId: pluginOptions.directoryId,
     collectionSlug: collection.slug,
     payload: req.payload,
     crowdin: pluginOptions.client,
@@ -158,8 +144,8 @@ const performAfterChange = async ({
       name: name,
       value: value,
       fileType: type,
-      projectId: projectId,
-      directoryId: directoryId,
+      projectId: pluginOptions.projectId,
+      directoryId: pluginOptions.directoryId,
       collectionSlug: collection.slug,
       articleDirectory: articleDirectory,
       payload: req.payload,
@@ -225,7 +211,7 @@ const performAfterChange = async ({
           name,
           value: convertSlateToHtml(currentValue),
           fileType: 'html',
-          projectId: projectId,
+          projectId: pluginOptions.projectId,
           payload: req.payload,
           crowdin: pluginOptions.client
         })
@@ -259,7 +245,7 @@ const performAfterChange = async ({
           name: 'fields',
           value: currentCrowdinJsonData,
           fileType: 'json',
-          projectId: projectId,
+          projectId: pluginOptions.projectId,
           payload: req.payload,
           crowdin: pluginOptions.client
         })
