@@ -22,14 +22,6 @@ import {
 export const crowdInSync =
   (pluginOptions: PluginOptions) =>
   (config: Config): Config => {
-    const {
-      projectId,
-      directoryId,
-      client,
-      localeMap,
-      collections: allCollectionOptions
-    } = pluginOptions
-
     const initFunctions: (() => void)[] = []
 
     return {
@@ -52,8 +44,6 @@ export const crowdInSync =
                 afterChange: [
                   ...(existingCollection.hooks?.afterChange || []),
                   getAfterChangeHook({
-                    projectId: projectId,
-                    directoryId: directoryId,
                     collection: existingCollection,
                     localizedFields: getLocalizedFields({fields: existingCollection.fields}),
                     pluginOptions,
@@ -84,8 +74,6 @@ export const crowdInSync =
                 afterChange: [
                   ...(existingGlobal.hooks?.afterChange || []),
                   getGlobalAfterChangeHook({
-                    projectId: projectId,
-                    directoryId: directoryId,
                     global: existingGlobal,
                     localizedFields: getLocalizedFields({ fields: existingGlobal.fields }),
                     pluginOptions,
