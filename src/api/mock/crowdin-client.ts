@@ -161,10 +161,5 @@ class crowdinAPIWrapper {
 }
 
 export function mockCrowdinClient() {
-  const service = new crowdinAPIWrapper()
-
-  return (req: any, _: Response, next: NextFunction) => {
-    req.crowdinClient = service
-    next()
-  }
+  return new crowdinAPIWrapper()
 }
