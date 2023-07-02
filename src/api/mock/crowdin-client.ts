@@ -126,7 +126,7 @@ class crowdinAPIWrapper {
           createdAt: date,
           updatedAt: date,
           etag: 'string',
-          url: 'https://api.crowdin.com/api/v2/projects/1/translations/builds/1/download',
+          url: `https://api.crowdin.com/api/v2/projects/1/translations/builds/1/download?targetLanguageId=${targetLanguageId}`,
           expireIn: 'string',
         }
       }

@@ -45,9 +45,13 @@ describe('Translations', () => {
         payload,
       )
       const scope = nock('https://api.crowdin.com')
-        .get('/api/v2/projects/1/translations/builds/1/download')
+        .get('/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de')
         .reply(200, {
           title: "Testbeitrag",
+        })
+        .get('/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr')
+        .reply(200, {
+          title: "Poste d'essai",
         })
       const translation = await translationsApi.getTranslation({
         documentId: post.id,
@@ -71,10 +75,13 @@ describe('Translations', () => {
         payload,
       )
       const scope = nock('https://api.crowdin.com')
-        .persist()
-        .get('/api/v2/projects/1/translations/builds/1/download')
+        .get(`/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de`)
         .reply(200, {
           title: "Testbeitrag",
+        })
+        .get('/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr')
+        .reply(200, {
+          title: "Poste d'essai",
         })
       const translation = await translationsApi.updateTranslation({
         documentId: post.id,
@@ -109,11 +116,14 @@ describe('Translations', () => {
       payload,
     )
     const scope = nock('https://api.crowdin.com')
-      .persist()
-      .get('/api/v2/projects/1/translations/builds/1/download')
+      .get('/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de')
       .reply(200, 
         "<p>Testbeitrag</p>"
       )
+      .get('/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr')
+        .reply(200, {
+          title: "Poste d'essai",
+        })
     const translation = await translationsApi.updateTranslation({
       documentId: post.id,
       collection: collections.localized,
@@ -125,6 +135,11 @@ describe('Translations', () => {
       id: post.id,
       locale: 'de_DE',
     });
-    expect(result.content).toEqual([{"children": [{"text": "{\"title\":\"Testbeitrag\"}"}]}])
+    expect(result.content).toEqual([{
+      "children": [
+        {"text": "Testbeitrag"
+      },],
+      "type": "p",
+  }])
   });
 });
