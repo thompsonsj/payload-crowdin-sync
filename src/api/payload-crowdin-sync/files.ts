@@ -207,7 +207,7 @@ export class payloadCrowdInSyncFilesApi {
   }: IupdateOrCreateFile) {
     const empty = isEmpty(value)
     // Check whether file exists on CrowdIn
-    let crowdInFile = await this.getFile(name, articleDirectory.originalId)
+    let crowdInFile = await this.getFile(name, articleDirectory.id)
     let updatedCrowdInFile
     if (!empty) {
       if (!crowdInFile) {
