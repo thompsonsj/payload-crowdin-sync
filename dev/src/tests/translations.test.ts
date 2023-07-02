@@ -61,7 +61,7 @@ describe('Translations', () => {
   })
 
   describe('fn: updateTranslation', () => {
-    it('updates a Payload article with a translation retrieved from CrowdIn', async () => {
+    it('updates a Payload article with a `text` field translation retrieved from CrowdIn', async () => {
       const post = await payload.create({
         collection: collections.localized,
         data: { title: 'Test post' },
@@ -90,4 +90,41 @@ describe('Translations', () => {
       expect(result.title).toEqual("Testbeitrag")
     });
   })
+
+  it('updates a Payload article with a `richText` field translation retrieved from CrowdIn', async () => {
+    const post = await payload.create({
+      collection: collections.localized,
+      data: {
+        content: {
+          children: [
+            {
+              text: "Test content"
+            }
+          ]
+        }
+      },
+    });
+    const translationsApi = new payloadCrowdInSyncTranslationsApi(
+      pluginOptions,
+      payload,
+    )
+    const scope = nock('https://api.crowdin.com')
+      .persist()
+      .get('/api/v2/projects/1/translations/builds/1/download')
+      .reply(200, 
+        "<p>Testbeitrag</p>"
+      )
+    const translation = await translationsApi.updateTranslation({
+      documentId: post.id,
+      collection: collections.localized,
+      dryRun: false,
+    })
+    // retrieve translated post from Payload
+    const result = await payload.findByID({
+      collection: collections.localized,
+      id: post.id,
+      locale: 'de_DE',
+    });
+    expect(result.content).toEqual([{"children": [{"text": "{\"title\":\"Testbeitrag\"}"}]}])
+  });
 });

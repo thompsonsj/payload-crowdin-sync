@@ -207,12 +207,13 @@ export class payloadCrowdInSyncTranslationsApi {
       localizedJsonFields.push('meta.description')
     }
   
+    let docTranslations: { [key: string]: any } = {}
     // add json fields
-    const docTranslations = await this.getTranslation({
+    docTranslations = await this.getTranslation({
       documentId: global ? collectionConfig.slug : doc.id,
       fieldName: 'fields',
       locale: locale,
-    })
+    }) || {}
     // add html fields
     for (const field of localizedHtmlFields) {
       docTranslations[field] = await this.getTranslation({
