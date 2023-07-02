@@ -250,7 +250,7 @@ export class payloadCrowdInSyncFilesApi {
   
     const payloadCrowdInFile = await this.payload.update({
       collection: 'crowdin-files', // required
-      id: crowdInFile.fileId,
+      id: crowdInFile.id,
       data: { // required
         updatedAt: updatedCrowdInFile.data.updatedAt,
         revisionId: updatedCrowdInFile.data.revisionId,

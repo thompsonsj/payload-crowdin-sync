@@ -113,6 +113,41 @@ class crowdinAPIWrapper {
     return file
   }
 
+  async updateOrRestoreFile(projectId: number, fileId: number, {
+    storageId,
+  }: SourceFilesModel.ReplaceFileFromStorageRequest ): Promise<ResponseObject<SourceFilesModel.File>> {
+    /*const storageId = await this.addStorage({
+      name,
+      fileData,
+      fileType,
+    })*/
+    const file = await Promise.resolve(1).then(() => {
+      const date = new Date().toISOString()
+      return {
+        data: {
+          revisionId: 5,
+          status: 'active',
+          priority: 'normal' as SourceFilesModel.Priority,
+          importOptions: {} as any,
+          exportOptions: {} as any,
+          excludedTargetLanguages: [],
+          createdAt: date,
+          updatedAt: date,
+          id: 1079,
+          projectId,
+          branchId: this.branchId,
+          directoryId: this.directoryId as number,
+          name: 'file',
+          title: 'file',
+          type: 'html',
+          path: `/policies/security-and-privacy/file.filetype`,
+          parserVersion: 3,
+        }
+      }
+    })
+    return file
+  }
+
   async buildProjectFileTranslation(projectId: number, fileId: number, {
     targetLanguageId,
   }: TranslationsModel.BuildProjectFileTranslationRequest): Promise<ResponseObject<TranslationsModel.BuildProjectFileTranslationResponse>> {
