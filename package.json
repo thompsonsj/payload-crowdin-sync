@@ -1,13 +1,17 @@
 {
   "name": "payload-crowdin-sync",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Automatically upload/sync localized fields from the default locale to CrowdIn. Make these fields read-only in other locales and update them using CrowdIn translations.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "./dist/*"
+  ],
   "scripts": {
     "build": "tsc",
     "develop": "tsc --watch",
-    "test": "jest --forceExit --detectOpenHandles"
+    "test": "jest --forceExit --detectOpenHandles",
+    "prepare": "yarn build"
   },
   "repository": {
     "type": "git",
