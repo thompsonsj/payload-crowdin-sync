@@ -3,6 +3,8 @@ import { mockCrowdinClient } from '../mock/crowdin-client';
 import { Payload } from 'payload';
 import { PluginOptions } from '../../types';
 import { toWords } from 'payload/dist/utilities/formatLabels'
+import { getArticleDirectory, getFile, getFiles } from '../helpers';
+import { isEmpty } from 'lodash';
 
 interface IcrowdinFile {
   id: string
@@ -181,50 +183,53 @@ export class payloadCrowdInSyncFilesApi {
   }
 
   async getFile(name: string, crowdinArticleDirectoryId: number): Promise<any> {
-    const result = await this.payload.find({
-      collection: "crowdin-files",
-      where: {
-        field: { equals: name },
-        crowdinArticleDirectory: {
-          equals: crowdinArticleDirectoryId,
-        },
-      },
-    })
-    const allFiles = await this.payload.find({
-      collection: "crowdin-files",
-      where: {
-        crowdinArticleDirectory: {
-          equals: crowdinArticleDirectoryId,
-        },
-      },
-    })
-    return result.docs[0]
+    return getFile(name, crowdinArticleDirectoryId, this.payload)
   }
 
+  async getFiles(crowdinArticleDirectoryId: number): Promise<any> {
+    return getFiles(crowdinArticleDirectoryId, this.payload)
+  }
+
+  /**
+   * Create/Update/Delete a file on CrowdIn
+   * 
+   * Records the file in Payload CMS under the `crowdin-files` collection.
+   * 
+   * - Create a file if it doesn't exist on CrowdIn and the supplied content is not empty
+   * - Update a file if it exists on CrowdIn and the supplied content is not empty
+   * - Delete a file if it exists on CrowdIn and the supplied file content is empty
+   */
   async createOrUpdateFile({
     name,
     value,
     fileType,
     articleDirectory,
   }: IupdateOrCreateFile) {
+    const empty = isEmpty(value)
     // Check whether file exists on CrowdIn
     let crowdInFile = await this.getFile(name, articleDirectory.originalId)
     let updatedCrowdInFile
-    if (!crowdInFile) {
-      updatedCrowdInFile = await this.createFile({
-        name,
-        value,
-        fileType,
-        articleDirectory,
-      })
-    } 
-    else {
-      updatedCrowdInFile = await this.updateFile({
-        crowdInFile,
-        name: name,
-        fileData: value,
-        fileType: fileType,
-      })
+    if (!empty) {
+      if (!crowdInFile) {
+        updatedCrowdInFile = await this.createFile({
+          name,
+          value,
+          fileType,
+          articleDirectory,
+        })
+      } 
+      else {
+        updatedCrowdInFile = await this.updateFile({
+          crowdInFile,
+          name: name,
+          fileData: value,
+          fileType: fileType,
+        })
+      }
+    } else {
+      if (crowdInFile) {
+        updatedCrowdInFile = await this.deleteFile(crowdInFile)
+      }
     }
     return updatedCrowdInFile
   }
@@ -314,6 +319,15 @@ export class payloadCrowdInSyncFilesApi {
     }
   }
 
+  private async deleteFile(crowdInFile: IcrowdinFile) {
+    const file = await this.sourceFilesApi.deleteFile(this.projectId, crowdInFile.fileId)
+    const payloadFile = await this.payload.delete({
+      collection: 'crowdin-files', // required
+      id: crowdInFile.id, // required
+    })
+    return payloadFile
+  }
+
   private async crowdInUpdateFile({
     fileId,
     name,
@@ -359,20 +373,6 @@ export class payloadCrowdInSyncFilesApi {
   }
 
   async getArticleDirectory(documentId: string) {
-    // Get directory
-    const crowdInPayloadArticleDirectory = await this.payload.find({
-      collection: 'crowdin-article-directories',
-      where: {
-        name: {
-          equals: documentId,
-        },
-      },
-    })
-    if (crowdInPayloadArticleDirectory.totalDocs === 0) {
-      throw new Error(
-        'This article does not have a corresponding entry in the  crowdin-article-directories collection.'
-      )
-    }
-    return crowdInPayloadArticleDirectory.docs[0]
+    return getArticleDirectory(documentId, this.payload)
   }
 }

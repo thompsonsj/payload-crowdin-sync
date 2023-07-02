@@ -102,13 +102,13 @@ describe('Translations', () => {
     const post = await payload.create({
       collection: collections.localized,
       data: {
-        content: {
+        content: [{
           children: [
             {
               text: "Test content"
             }
           ]
-        }
+        }],
       },
     });
     const translationsApi = new payloadCrowdInSyncTranslationsApi(

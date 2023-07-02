@@ -1439,10 +1439,10 @@
   dependencies:
     chalk "^4.1.0"
 
-"@crowdin/crowdin-api-client@^1.23.2":
-  version "1.23.2"
-  resolved "https://registry.yarnpkg.com/@crowdin/crowdin-api-client/-/crowdin-api-client-1.23.2.tgz#e8b11999f72c46f0aa669d08e13e725d34e74332"
-  integrity sha512-pKiskHtkTyECkrqWZlgKLZe4bKx2co3XUjnbPf/PmRm1hc2EPzyo0ORpQ2DEf9gTVWVgkTMyedSwaAUwrsCEAw==
+"@crowdin/crowdin-api-client@^1.23.3":
+  version "1.23.3"
+  resolved "https://registry.yarnpkg.com/@crowdin/crowdin-api-client/-/crowdin-api-client-1.23.3.tgz#7fe82e8119475d9d085b8ecbf7eb6f95d5002d92"
+  integrity sha512-pBpSgnmmDAbBQnwZVLVZ8GrBTRwTXXNKUlyR5OG9wo2JLP3c4RMNyxogF4u/0xhy16BhUNLQq7cR7n3tkCScrg==
   dependencies:
     axios "^1"
 
@@ -2405,10 +2405,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.2.4.tgz#e6c3345f7ed9c6df41fdc288a94e2633167bc15d"
   integrity sha512-ni5f8Xlf4PwnT/Z3f0HURc3ZSw8UyrqMqmM3L5ysa7VjHu8c3FOmIo1nKCcLrV/OAmtf3N4kFna/aJqxsfEtnA==
 
-"@types/node@^20.3.2":
-  version "20.3.2"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.3.2.tgz#fa6a90f2600e052a03c18b8cb3fd83dd4e599898"
-  integrity sha512-vOBLVQeCQfIcF/2Y7eKFTqrMnizK5lRNQ7ykML/5RuwVXVWxYkgwS7xbt4B6fKCUPgbSL5FSsjHQpaGQP/dQmw==
+"@types/node@^20.3.3":
+  version "20.3.3"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.3.3.tgz#329842940042d2b280897150e023e604d11657d6"
+  integrity sha512-wheIYdr4NYML61AjC8MKj/2jrR/kDQri/CIpVoZwldwhnIrD/j9jIU5bJ8yBKuB2VhpFV7Ab6G2XkBjv9r9Zzw==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
@@ -6991,10 +6991,10 @@ pause@0.0.1:
   resolved "https://registry.yarnpkg.com/pause/-/pause-0.0.1.tgz#1d408b3fdb76923b9543d96fb4c9dfd535d9cb5d"
   integrity sha512-KG8UEiEVkR3wGEb4m5yZkVCzigAD+cVEJck2CzYZO37ZGJfctvVptVO192MwrtPhzONn6go8ylnOdMhKqi4nfg==
 
-payload@^1.10.4:
-  version "1.10.4"
-  resolved "https://registry.yarnpkg.com/payload/-/payload-1.10.4.tgz#2fc2be611cd1f2b36f7890b9934e84690089be84"
-  integrity sha512-H6cGhQr6gzqZoz1G+f4Nya0WWDKooBOECVMGsUpgxBDbN1hZ5G2yET0G5fVhVuiCZiPAXAWFx8s80Hn/OzUH3Q==
+payload@^1.10.5:
+  version "1.10.5"
+  resolved "https://registry.yarnpkg.com/payload/-/payload-1.10.5.tgz#b8f7e622130a60fdc2899c9719c5cef69a9444f4"
+  integrity sha512-P8F0HPJx54CMfl2BO9GONkoySUdlZh3cbuDa7/mVGS4Pm1fcZbVG6MH5QDPVTR3x+5NOuVZVogothQpPpN3PFQ==
   dependencies:
     "@date-io/date-fns" "^2.16.0"
     "@dnd-kit/core" "^6.0.7"

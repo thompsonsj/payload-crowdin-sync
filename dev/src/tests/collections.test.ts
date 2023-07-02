@@ -151,18 +151,19 @@ describe('Collections', () => {
       expect(crowdInFiles.docs.length).toEqual(0)
     })
 
-    it('creates a `fields` file to include the title field and a `content` file for the content richText field', async () => {
+    const fieldsAndContentTestName = 'creates a `fields` file to include the title field and a `content` file for the content richText field'
+    it(`${fieldsAndContentTestName}`, async () => {
       const post = await payload.create({
         collection: collections.localized,
         data: {
-          title: 'Test post',
-          content: {
+          title: `${fieldsAndContentTestName}`,
+          content: [{
             children: [
               {
-                text: "Test content"
+                text: `${fieldsAndContentTestName}`
               }
             ]
-          }
+          }],
         },
       });
       // retrieve post to get populated fields

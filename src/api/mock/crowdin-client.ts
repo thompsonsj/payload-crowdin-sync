@@ -71,6 +71,10 @@ class crowdinAPIWrapper {
     return storage
   }
 
+  async deleteFile(projectId: number, fileId: number): Promise<void> {
+    await Promise.resolve(1).then(() => undefined)
+  }
+
   async createFile(projectId: number, {
     directoryId = 1172,
     name,

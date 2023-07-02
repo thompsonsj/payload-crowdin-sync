@@ -180,7 +180,6 @@ const performAfterChange = async ({
       doc: previousDoc,
       fields: localizedFields,
     })
-
     Object.keys(currentCrowdinHtmlData).forEach(async name => {
       const currentValue = currentCrowdinHtmlData[name]
       const prevValue = prevCrowdinHtmlData[name]

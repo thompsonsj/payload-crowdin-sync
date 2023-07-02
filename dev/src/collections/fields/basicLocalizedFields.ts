@@ -14,5 +14,6 @@ export const basicLocalizedFields: Field[] = [
   {
     name: 'metaDescription',
     type: 'textarea',
+    // localized: true,
   }
 ]

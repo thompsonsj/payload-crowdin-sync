@@ -7,7 +7,7 @@ const LocalizedBlock: Block = {
 };
 
 const NestedFieldCollection: CollectionConfig = {
-  slug: 'all-field-types',
+  slug: 'nested-field-collection',
   access: {
     read: () => true,
   },
