@@ -1,0 +1,378 @@
+import crowdin, { Credentials, SourceFiles, UploadStorage } from '@crowdin/crowdin-api-client';
+import { mockCrowdinClient } from '../mock/crowdin-client';
+import { Payload } from 'payload';
+import { PluginOptions } from '../../types';
+import { toWords } from 'payload/dist/utilities/formatLabels'
+
+interface IcrowdinFile {
+  id: string
+  fileId: number
+}
+
+interface IfindOrCreateCollectionDirectory {
+  collectionSlug: string
+}
+
+interface IfindOrCreateArticleDirectory extends IfindOrCreateCollectionDirectory {
+  document: any
+  global?: boolean
+}
+
+interface IupdateOrCreateFile {
+  name: string
+  value: string | object
+  fileType: 'html' | 'json'
+  articleDirectory: any
+}
+
+interface IcreateOrUpdateFile {
+  name: string
+  fileData: string | object
+  fileType: 'html' | 'json'
+}
+
+interface IcreateFile extends IcreateOrUpdateFile {
+  directoryId: number
+}
+
+interface IupdateFile extends IcreateOrUpdateFile {
+  crowdInFile: IcrowdinFile
+}
+
+interface IupdateCrowdInFile extends IcreateOrUpdateFile {
+  fileId: number
+}
+
+interface IgetTranslation {
+  documentId: string
+  fieldName: string
+  locale: string
+  global?: boolean
+}
+
+export class payloadCrowdInSyncFilesApi {
+  sourceFilesApi: SourceFiles;
+  uploadStorageApi: UploadStorage;
+  projectId: number;
+  directoryId?: number;
+  payload: Payload;
+
+  constructor(pluginOptions: PluginOptions, payload: Payload) {
+    // credentials
+    const credentials: Credentials = {
+      token: pluginOptions.token,
+    };
+    const {
+      sourceFilesApi,
+      uploadStorageApi
+    } = new crowdin(credentials);
+    this.projectId = pluginOptions.projectId;
+    this.directoryId = pluginOptions.directoryId;
+    this.sourceFilesApi = process.env.NODE_ENV === 'test' ? mockCrowdinClient(pluginOptions) as any : sourceFilesApi;
+    this.uploadStorageApi = process.env.NODE_ENV === 'test' ? mockCrowdinClient(pluginOptions) as any : uploadStorageApi;
+    this.payload = payload;
+  }
+
+  async findOrCreateArticleDirectory({
+    document,
+    collectionSlug,
+    global = false
+  }: IfindOrCreateArticleDirectory) {
+    let crowdInPayloadArticleDirectory
+  
+    if (document.crowdinArticleDirectory) {
+      // Update not possible. Article name needs to be updated manually on CrowdIn.
+      // The name of the directory is CrowdIn specific helper text to give
+      // context to translators.
+      // See https://developer.crowdin.com/api/v2/#operation/api.projects.directories.getMany
+      crowdInPayloadArticleDirectory = await this.payload.findByID({
+        collection: 'crowdin-article-directories',
+        'id': document.crowdinArticleDirectory.id || document.crowdinArticleDirectory
+      })
+    } else {
+      const crowdInPayloadCollectionDirectory = await this.findOrCreateCollectionDirectory({
+        collectionSlug: global ? 'globals' : collectionSlug,
+      })
+  
+      // Create article directory on CrowdIn
+      const crowdInDirectory = await this.sourceFilesApi.createDirectory(this.projectId, {
+        directoryId: crowdInPayloadCollectionDirectory.originalId,
+        name: global ? collectionSlug : document.id,
+        title: global ? toWords(collectionSlug) : document.title || document.name, // no tests for this CrowdIn metadata, but makes it easier for translators
+      })
+  
+      // Store result in Payload CMS
+      crowdInPayloadArticleDirectory = await this.payload.create({
+        collection: 'crowdin-article-directories',
+        data: {
+          crowdinCollectionDirectory: crowdInPayloadCollectionDirectory.id,
+          originalId: crowdInDirectory.data.id,
+          projectId: this.projectId,
+          directoryId: crowdInDirectory.data.directoryId,
+          name: crowdInDirectory.data.name,
+          createdAt: crowdInDirectory.data.createdAt,
+          updatedAt: crowdInDirectory.data.updatedAt,
+        }
+      })
+  
+      // Associate result with document
+      if (global) {
+        const update = await this.payload.updateGlobal({
+          slug: collectionSlug,
+          data: {
+            crowdinArticleDirectory: crowdInPayloadArticleDirectory.id
+          }
+        })
+      } else {
+        const update = await this.payload.update({
+          collection: collectionSlug,
+          id: document.id,
+          data: {
+            crowdinArticleDirectory: crowdInPayloadArticleDirectory.id
+          }
+        })
+      }
+    }
+    
+    return crowdInPayloadArticleDirectory
+  }
+
+  private async findOrCreateCollectionDirectory({
+    collectionSlug,
+  }: IfindOrCreateCollectionDirectory) {
+    let crowdInPayloadCollectionDirectory
+    // Check whether collection directory exists on CrowdIn
+    const query = await this.payload.find({
+      collection: 'crowdin-collection-directories',
+      where: {
+        collectionSlug: {
+          equals: collectionSlug,
+        },
+      },
+    })
+  
+    if (query.totalDocs === 0) {
+      // Create collection directory on CrowdIn
+      const crowdInDirectory = await this.sourceFilesApi.createDirectory(this.projectId, {
+        directoryId: this.directoryId,
+        name: collectionSlug,
+        title: toWords(collectionSlug) // is this transformed value available on the collection object?
+      })
+  
+      // Store result in Payload CMS
+      crowdInPayloadCollectionDirectory = await this.payload.create({
+        collection: 'crowdin-collection-directories',
+        data: {
+          collectionSlug: collectionSlug,
+          originalId: crowdInDirectory.data.id,
+          projectId: this.projectId,
+          directoryId: crowdInDirectory.data.directoryId,
+          name: crowdInDirectory.data.name,
+          title: crowdInDirectory.data.title,
+          createdAt: crowdInDirectory.data.createdAt,
+          updatedAt: crowdInDirectory.data.updatedAt,
+        }
+      })
+    } else {
+      crowdInPayloadCollectionDirectory = query.docs[0]
+    }
+  
+    return crowdInPayloadCollectionDirectory
+  }
+
+  async getFile(name: string, crowdinArticleDirectoryId: number): Promise<any> {
+    const result = await this.payload.find({
+      collection: "crowdin-files",
+      where: {
+        field: { equals: name },
+        crowdinArticleDirectory: {
+          equals: crowdinArticleDirectoryId,
+        },
+      },
+    })
+    const allFiles = await this.payload.find({
+      collection: "crowdin-files",
+      where: {
+        crowdinArticleDirectory: {
+          equals: crowdinArticleDirectoryId,
+        },
+      },
+    })
+    return result.docs[0]
+  }
+
+  async createOrUpdateFile({
+    name,
+    value,
+    fileType,
+    articleDirectory,
+  }: IupdateOrCreateFile) {
+    // Check whether file exists on CrowdIn
+    let crowdInFile = await this.getFile(name, articleDirectory.originalId)
+    let updatedCrowdInFile
+    if (!crowdInFile) {
+      updatedCrowdInFile = await this.createFile({
+        name,
+        value,
+        fileType,
+        articleDirectory,
+      })
+    } 
+    else {
+      updatedCrowdInFile = await this.updateFile({
+        crowdInFile,
+        name: name,
+        fileData: value,
+        fileType: fileType,
+      })
+    }
+    return updatedCrowdInFile
+  }
+
+  private async updateFile({
+    crowdInFile,
+    name,
+    fileData,
+    fileType
+  }: IupdateFile) {
+    // Update file on CrowdIn
+    const updatedCrowdInFile = await this.crowdInUpdateFile({
+      fileId: crowdInFile.fileId,
+      name,
+      fileData,
+      fileType,
+    })
+  
+    const payloadCrowdInFile = await this.payload.update({
+      collection: 'crowdin-files', // required
+      id: crowdInFile.fileId,
+      data: { // required
+        updatedAt: updatedCrowdInFile.data.updatedAt,
+        revisionId: updatedCrowdInFile.data.revisionId,
+      },
+    })
+  }
+
+  private async createFile({
+    name,
+    value,
+    fileType,
+    articleDirectory,
+  }: IupdateOrCreateFile) {
+
+    // Create file on CrowdIn
+    const crowdInFile = await this.crowdInCreateFile({
+      directoryId: articleDirectory.originalId,
+      name: name,
+      fileData: value,
+      fileType: fileType,
+    })
+  
+    // createFile has been intermittent in not being available
+    // perhaps logic goes wrong somewhere and express middleware
+    // is hard to debug?
+    /*const crowdInFile =  {data: {
+      revisionId: 5,
+      status: 'active',
+      priority: 'normal',
+      importOptions: { contentSegmentation: true, customSegmentation: false },
+      exportOptions: null,
+      excludedTargetLanguages: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      id: 1079,
+      projectId: 323731,
+      branchId: null,
+      directoryId: 1077,
+      name: name,
+      title: null,
+      type: fileType,
+      path: `/policies/security-and-privacy/${name}.${fileType}`
+    }}*/
+  
+    // Store result on Payload CMS
+    if (crowdInFile) {
+      const payloadCrowdInFile = await this.payload.create({
+        collection: 'crowdin-files', // required
+        data: { // required
+          title: crowdInFile.data.name,
+          field: name,
+          crowdinArticleDirectory: articleDirectory.id,
+          createdAt: crowdInFile.data.createdAt,
+          updatedAt: crowdInFile.data.updatedAt,
+          originalId: crowdInFile.data.id,
+          projectId: crowdInFile.data.projectId,
+          directoryId: crowdInFile.data.directoryId,
+          revisionId: crowdInFile.data.revisionId,
+          name: crowdInFile.data.name,
+          type: crowdInFile.data.type,
+          path: crowdInFile.data.path,
+        },
+      })
+  
+      return payloadCrowdInFile
+    }
+  }
+
+  private async crowdInUpdateFile({
+    fileId,
+    name,
+    fileData,
+    fileType
+  }: IupdateCrowdInFile ) {
+    const storage = await this.uploadStorageApi.addStorage(
+      name,
+      fileData,
+      fileType,
+    )
+      //const file = await sourceFilesApi.deleteFile(projectId, 1161)
+    const file = await this.sourceFilesApi.updateOrRestoreFile(
+      this.projectId,
+      fileId,
+      {
+        storageId: storage.data.id,
+      }
+    )
+    return file
+  }
+
+  private async crowdInCreateFile({
+    name,
+    fileData,
+    fileType,
+    directoryId,
+  }: IcreateFile ) {
+    const storage = await this.uploadStorageApi.addStorage(name, fileData, fileType)
+    const options = {
+      name: `${name}.${fileType}`,
+      title: name,
+      storageId: storage.data.id,
+      directoryId,
+      type: fileType
+    }
+    try {
+      const file = await this.sourceFilesApi.createFile(this.projectId, options)
+      return file
+    } catch (error) {
+      console.error(error, options)
+    }
+  }
+
+  async getArticleDirectory(documentId: string) {
+    // Get directory
+    const crowdInPayloadArticleDirectory = await this.payload.find({
+      collection: 'crowdin-article-directories',
+      where: {
+        name: {
+          equals: documentId,
+        },
+      },
+    })
+    if (crowdInPayloadArticleDirectory.totalDocs === 0) {
+      throw new Error(
+        'This article does not have a corresponding entry in the  crowdin-article-directories collection.'
+      )
+    }
+    return crowdInPayloadArticleDirectory.docs[0]
+  }
+}

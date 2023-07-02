@@ -7,8 +7,6 @@ import CrowdInCollectionDirectories from './collections/CrowdInCollectionDirecto
 import CrowdInArticleDirectories from './collections/CrowdInArticleDirectories'
 import { 
   containsLocalizedFields,
-  getLocalizedFields,
-  isLocalizedField
 } from './utilities'
 
 /**
@@ -45,7 +43,6 @@ export const crowdInSync =
                   ...(existingCollection.hooks?.afterChange || []),
                   getAfterChangeHook({
                     collection: existingCollection,
-                    localizedFields: getLocalizedFields({fields: existingCollection.fields}),
                     pluginOptions,
                   }),
                 ],
@@ -75,7 +72,6 @@ export const crowdInSync =
                   ...(existingGlobal.hooks?.afterChange || []),
                   getGlobalAfterChangeHook({
                     global: existingGlobal,
-                    localizedFields: getLocalizedFields({ fields: existingGlobal.fields }),
                     pluginOptions,
                   }),
                 ],

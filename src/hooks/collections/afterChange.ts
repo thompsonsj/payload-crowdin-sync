@@ -1,8 +1,10 @@
 import { CollectionAfterChangeHook, CollectionConfig, Field, GlobalConfig, GlobalAfterChangeHook, PayloadRequest } from 'payload/types';
+import { Descendant } from 'slate'
 import { PluginOptions } from '../../types'
-import { findOrCreateArticleDirectory, payloadCreateCrowdInFile, payloadUpdateCrowdInFile, getCrowdinFile } from '../../api/payload'
 import { buildCrowdinHtmlObject, buildCrowdinJsonObject, convertSlateToHtml, fieldChanged } from '../../utilities'
 import deepEqual from 'deep-equal'
+import { getLocalizedFields } from '../../utilities'
+import { payloadCrowdInSyncFilesApi } from '../../api/payload-crowdin-sync/files';
 
 /**
  * Update CrowdIn collections and make updates in CrowdIn
@@ -16,7 +18,6 @@ import deepEqual from 'deep-equal'
  */
 
 interface CommonArgs {
-  localizedFields: Field[],
   pluginOptions: PluginOptions,
 }
 
@@ -30,7 +31,6 @@ interface GlobalArgs extends CommonArgs {
 
 export const getGlobalAfterChangeHook = ({
   global,
-  localizedFields,
   pluginOptions,
 }: GlobalArgs): GlobalAfterChangeHook => async ({
   doc, // full document data
@@ -44,7 +44,6 @@ export const getGlobalAfterChangeHook = ({
     previousDoc,
     operation,
     collection: global,
-    localizedFields,
     global: true,
     pluginOptions,
   })
@@ -52,7 +51,6 @@ export const getGlobalAfterChangeHook = ({
 
 export const getAfterChangeHook = ({
   collection,
-  localizedFields,
   pluginOptions,
 }: Args): CollectionAfterChangeHook=> async ({
   doc, // full document data
@@ -66,7 +64,6 @@ export const getAfterChangeHook = ({
     previousDoc,
     operation,
     collection,
-    localizedFields,
     pluginOptions,
   })
 }
@@ -77,7 +74,6 @@ interface IPerformChange {
   previousDoc: any
   operation: string
   collection: CollectionConfig | GlobalConfig
-  localizedFields: Field[]
   global?: boolean
   pluginOptions: PluginOptions,
 }
@@ -88,10 +84,11 @@ const performAfterChange = async ({
   previousDoc,
   operation,
   collection,
-  localizedFields,
   global = false,
   pluginOptions,
 }: IPerformChange) => {
+  const localizedFields: Field[] = getLocalizedFields({fields: collection.fields})
+
   /**
    * Abort if there are no fields to localize
    */
@@ -116,60 +113,52 @@ const performAfterChange = async ({
    */
   const currentCrowdinJsonData = buildCrowdinJsonObject({doc, fields: localizedFields})
   const prevCrowdinJsonData = buildCrowdinJsonObject({doc: previousDoc, fields: localizedFields})
+
+  /**
+   * Initialize CrowdIn client sourceFilesApi
+   */
+  const filesApi = new payloadCrowdInSyncFilesApi(
+    pluginOptions,
+    req.payload,
+  )
+
   /**
    * Retrieve the CrowdIn Article Directory article
    * 
    * Records of CrowdIn directories are stored in Payload.
-   * Check for CrowdIn article details in Payload, create
-   * a CrowdIn directory for this article if it does not
-   * exist.
    */
-  const articleDirectory = await findOrCreateArticleDirectory({
+  const articleDirectory = await filesApi.findOrCreateArticleDirectory({
     document: doc,
-    projectId: pluginOptions.projectId,
-    directoryId: pluginOptions.directoryId,
     collectionSlug: collection.slug,
-    payload: req.payload,
-    crowdin: pluginOptions.client,
     global,
   })
 
   // START: function definitions
-  const createFile = async ({
+  const createOrUpdateJsonFile = async () => {
+    await filesApi.createOrUpdateFile({
+      name: 'fields',
+      value: currentCrowdinJsonData,
+      fileType: 'json',
+      articleDirectory,
+    })
+  }
+
+  const createOrUpdateHtmlFile = async ({
     name,
     value,
-    type
-  }: {name: string, value: string | object, type: 'html' | 'json'}) => {
-    const file = await payloadCreateCrowdInFile({
+  }: {name: string, value: Descendant[]}) => {
+    await filesApi.createOrUpdateFile({
       name: name,
-      value: value,
-      fileType: type,
-      projectId: pluginOptions.projectId,
-      directoryId: pluginOptions.directoryId,
-      collectionSlug: collection.slug,
-      articleDirectory: articleDirectory,
-      payload: req.payload,
-      crowdin: pluginOptions.client,
+      value: convertSlateToHtml(value),
+      fileType: 'html',
+      articleDirectory,
     })
   }
 
-  const createJsonFile = async () => {
-      await createFile({
-        name: 'fields',
-        value: currentCrowdinJsonData,
-        type: 'json'
-      })
-  }
-
-  const createHtmlFile = async ({
-    name,
-    value
-  }: {name: string, value: string}) => {
-    await createFile({
-      name: name,
-      value: value,
-      type: 'html'
-    })
+  const createOrUpdateJsonSource = async () => {
+    if ((!deepEqual(currentCrowdinJsonData, prevCrowdinJsonData) && Object.keys(currentCrowdinJsonData).length !== 0) || process.env.PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE === 'true') {
+      await createOrUpdateJsonFile()
+    }
   }
 
   /**
@@ -193,29 +182,15 @@ const performAfterChange = async ({
     })
 
     Object.keys(currentCrowdinHtmlData).forEach(async name => {
-      const crowdinFile = await getCrowdinFile(name, articleDirectory.id, req.payload)
       const currentValue = currentCrowdinHtmlData[name]
       const prevValue = prevCrowdinHtmlData[name]
       if (!fieldChanged(prevValue, currentValue, 'richText') && process.env.PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE  !== 'true') {
         return
       }
-      if (typeof crowdinFile === 'undefined') {
-        await createHtmlFile({
-          name,
-          value: convertSlateToHtml(currentValue),
-        })
-      } else {
-        const file = await payloadUpdateCrowdInFile({
-          id: crowdinFile.id,
-          fileId: crowdinFile.originalId,
-          name,
-          value: convertSlateToHtml(currentValue),
-          fileType: 'html',
-          projectId: pluginOptions.projectId,
-          payload: req.payload,
-          crowdin: pluginOptions.client
-        })
-      }
+      const file = await createOrUpdateHtmlFile({
+        name,
+        value: currentValue as Descendant[],
+      })
     })
   }
   // END: function definitions
@@ -225,33 +200,12 @@ const performAfterChange = async ({
   // as the asynchronous operations will run twice almost instantaneously
   // on create.
   if (operation === 'create') {
-    if ((!deepEqual(currentCrowdinJsonData, prevCrowdinJsonData) && Object.keys(currentCrowdinJsonData).length !== 0) || process.env.PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE === 'true') {
-      await createJsonFile()
-    }
+    await createOrUpdateJsonSource()
     await createOrUpdateHtmlSource()
   }
 
-  // for all localized fields, ensure there is a CrowdIn file,
-  // and update if necessary
   if (operation === 'update') {
-    const crowdinJsonFile = await getCrowdinFile('fields', articleDirectory.id, req.payload)
-    if (!deepEqual(currentCrowdinJsonData, prevCrowdinJsonData) || process.env.PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE === 'true') {
-      if (typeof crowdinJsonFile === 'undefined') {
-        await createJsonFile()
-      } else {
-        const file = await payloadUpdateCrowdInFile({
-          id: crowdinJsonFile.id,
-          fileId: crowdinJsonFile.originalId,
-          name: 'fields',
-          value: currentCrowdinJsonData,
-          fileType: 'json',
-          projectId: pluginOptions.projectId,
-          payload: req.payload,
-          crowdin: pluginOptions.client
-        })
-      }
-    }
-
+    await createOrUpdateJsonSource()
     await createOrUpdateHtmlSource()
   }
 

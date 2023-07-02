@@ -1,5 +1,4 @@
 import { Field, PayloadRequest } from "payload/types"
-import { crowdinAPIService } from "./api"
 
 export interface CollectionOptions {
   directory?: string
@@ -8,16 +7,13 @@ export interface CollectionOptions {
 export interface PluginOptions {
   projectId: number
   /** This should be optional? */
-  directoryId: number
-  client: crowdinAPIService,
-  localeMap?: {[key: string]: {
+  directoryId?: number
+  token: string,
+  //client: crowdinAPIService,
+  localeMap: {[key: string]: {
     crowdinId: string
   }}
   collections?: Record<string, CollectionOptions>
-}
-
-export declare type CrowdinPluginRequest = PayloadRequest & {
-  crowdinClient: crowdinAPIService;
 }
 
 export type FieldWithName = Field & { name: string } 
