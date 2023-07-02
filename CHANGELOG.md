@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.6.0...v0.7.0) (2023-07-02)
+
+
+### Features
+
+* delete CrowdIn files if empty, ensure `fields.json` is non-empty ([#46](https://github.com/thompsonsj/payload-crowdin-sync/issues/46)) ([b681bef](https://github.com/thompsonsj/payload-crowdin-sync/commit/b681bef3334ee7f58d1c05c6f2f486c652e49495))
+* support blocks field type ([#47](https://github.com/thompsonsj/payload-crowdin-sync/issues/47)) ([6a8d4a9](https://github.com/thompsonsj/payload-crowdin-sync/commit/6a8d4a9aea9799c537f0e1452132b827a714e87b))
+
+
+### Bug Fixes
+
+* **translations:** docs with only richText translations do not update ([#44](https://github.com/thompsonsj/payload-crowdin-sync/issues/44)) ([94b489f](https://github.com/thompsonsj/payload-crowdin-sync/commit/94b489f8564dd514dbe6ae610449ad968ae0168a))
+
 ## [0.6.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.5.2...v0.6.0) (2023-06-19)
 
 
