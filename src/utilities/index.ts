@@ -14,7 +14,7 @@ const localizedFieldTypes = [
 const nestedFieldTypes = [
   'array',
   'group',
-  // 'blocks',
+  'blocks',
 ]
 
 export const containsNestedFields = (field: Field) => nestedFieldTypes.includes(field.type)
@@ -58,11 +58,15 @@ export const getLocalizedFieldsRecursive = ({
     }
     return type ? fieldCrowdinFileType(field as FieldWithName) === type : true
   })
-  // exclude group and array fields with no localized fields
+  // exclude group, array and block fields with no localized fields
+  // TODO: find a better way to do this - block, array and group logic is duplicated, and this filter needs to be compatible with field extraction logic later in this function
   .filter(field => {
+    const localizedParent = hasLocalizedProp(field)
     if (field.type === 'group' || field.type === 'array') {
-      const localizedParent = hasLocalizedProp(field)
       return containsLocalizedFields({ fields: field.fields, type, localizedParent })
+    }
+    if (field.type === 'blocks') {
+      return field.blocks.find(block => containsLocalizedFields({ fields: block.fields, type, localizedParent }))
     }
     return true
   })
@@ -80,18 +84,21 @@ export const getLocalizedFieldsRecursive = ({
       }
     }
     if (field.type === 'blocks') {
+      const blocks = field.blocks.map((block: Block) => {
+        if (containsLocalizedFields({ fields: block.fields, type, localizedParent })) {
+          return {
+            slug: block.slug,
+            fields: getLocalizedFields({
+              fields: block.fields,
+              type,
+              localizedParent,
+            })
+          }
+        }
+      }).filter(block => block)
       return {
         ...field,
-        blocks: 
-          field.blocks.map((block: Block) => {
-            return {
-              fields: getLocalizedFields({
-                fields: block.fields,
-                type,
-                localizedParent,
-              })
-            }
-          })
+        blocks,  
       }
     }
     return field
@@ -147,7 +154,9 @@ export const containsLocalizedFields = ({
   fields: Field[],
   type?: 'json' | 'html',
   localizedParent?: boolean,
-}): boolean => !isEmpty(getLocalizedFields({ fields, type, localizedParent }))
+}): boolean => {
+  return !isEmpty(getLocalizedFields({ fields, type, localizedParent }))
+}
 
 export const fieldChanged = (previousValue: string | object | undefined, value: string | object | undefined, type: string) => {
   if (type === 'richText') {
@@ -190,6 +199,12 @@ export const buildCrowdinJsonObject = ({
         fields: field.fields,
         topLevel: false,
       }))
+    } else if (field.type === 'blocks') {
+      response[field.name] = doc[field.name].map((item: any) => buildCrowdinJsonObject({
+        doc: item,
+        fields: field.blocks.find((block: Block) => block.slug === item.blockType)?.fields || [],
+        topLevel: false,
+      })).filter((item: any) => !isEmpty(item))
     } else {
       /**
        * Kept the following comments from when the plugin
@@ -262,6 +277,20 @@ export const buildCrowdinHtmlObject = ({
         return buildCrowdinHtmlObject({
         doc: item,
         fields: field.fields,
+        prefix: subPrefix,
+        topLevel: false,
+        })
+      })
+      response = {
+        ...response,
+        ...merge({}, ...arrayValues)
+      }
+    } else if (field.type === 'blocks') {
+      const arrayValues = doc[field.name].map((item: any, index: number) => {
+        const subPrefix = `${[prefix, `${field.name}[${index}]`].filter(string => string).join('.')}`  
+        return buildCrowdinHtmlObject({
+        doc: item,
+        fields: field.blocks.find((block: Block) => block.slug === item.blockType)?.fields || [],
         prefix: subPrefix,
         topLevel: false,
         })

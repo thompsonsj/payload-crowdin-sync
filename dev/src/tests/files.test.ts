@@ -104,4 +104,47 @@ describe(`Collection: ${collections.nestedFields}`, () => {
     expect(crowdInFiles.find((file) => file.name === 'arrayField[1].content.html')).toBeDefined()
     expect(crowdInFiles.find((file) => file.name === 'fields.json')).toBeDefined()
   })
+
+  it('creates files containing `blocks` fieldType content', async () => {
+    const article = await payload.create({
+      collection: collections.nestedFields,
+      data: {
+        layout: [
+          {
+            title: 'Test title 1',
+            content: [
+              {
+                children: [
+                  {
+                    text: "Test content 1"
+                  }
+                ]
+              }
+            ],
+            metaDescription: 'Test meta description 1',
+            blockType: 'basicBlock'
+          },
+          {
+            title: 'Test title 2',
+            content: [
+              {
+                children: [
+                  {
+                    text: "Test content 2"
+                  }
+                ]
+              }
+            ],
+            metaDescription: 'Test meta description 2',
+            blockType: 'basicBlock'
+          },
+        ],
+      },
+    });
+    const crowdInFiles = await getFilesByDocumentID(article.id, payload)
+    expect(crowdInFiles.length).toEqual(3)
+    expect(crowdInFiles.find((file) => file.name === 'layout[0].content.html')).toBeDefined()
+    expect(crowdInFiles.find((file) => file.name === 'layout[1].content.html')).toBeDefined()
+    expect(crowdInFiles.find((file) => file.name === 'fields.json')).toBeDefined()
+  })
 });
