@@ -3,6 +3,7 @@ import path from 'path';
 import Categories from './collections/Categories';
 import LocalizedPosts from './collections/LocalizedPosts';
 import Posts from './collections/Posts';
+import NestedFieldCollection from './collections/NestedFieldCollection';
 import Tags from './collections/Tags';
 import Users from './collections/Users';
 import { resolve } from 'path';
@@ -38,6 +39,7 @@ export default buildConfig({
   collections: [
     Categories,
     LocalizedPosts,
+    NestedFieldCollection,
     Posts,
     Tags,
     Users,

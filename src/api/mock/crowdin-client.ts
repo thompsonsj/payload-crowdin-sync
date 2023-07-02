@@ -71,6 +71,10 @@ class crowdinAPIWrapper {
     return storage
   }
 
+  async deleteFile(projectId: number, fileId: number): Promise<void> {
+    await Promise.resolve(1).then(() => undefined)
+  }
+
   async createFile(projectId: number, {
     directoryId = 1172,
     name,
@@ -126,7 +130,7 @@ class crowdinAPIWrapper {
           createdAt: date,
           updatedAt: date,
           etag: 'string',
-          url: 'https://api.crowdin.com/api/v2/projects/1/translations/builds/1/download',
+          url: `https://api.crowdin.com/api/v2/projects/1/translations/builds/1/download?targetLanguageId=${targetLanguageId}`,
           expireIn: 'string',
         }
       }

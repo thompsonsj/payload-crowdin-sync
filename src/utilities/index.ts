@@ -3,7 +3,7 @@ import deepEqual from 'deep-equal'
 import { FieldWithName } from '../types'
 import { slateToHtml, payloadSlateToDomConfig } from 'slate-serializers'
 import type { Descendant } from 'slate'
-import { get, isEmpty, merge } from "lodash"
+import { get, isEmpty, merge, omitBy } from "lodash"
 
 const localizedFieldTypes = [
   'richText',
@@ -220,7 +220,7 @@ export const buildCrowdinJsonObject = ({
       }
     }
   })
-  return response
+  return omitBy(response, isEmpty)
 }
 
 export const buildCrowdinHtmlObject = ({
