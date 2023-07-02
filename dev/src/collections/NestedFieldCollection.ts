@@ -2,7 +2,7 @@ import { Block, CollectionConfig } from 'payload/types';
 import { basicLocalizedFields } from './fields/basicLocalizedFields';
 
 const LocalizedBlock: Block = {
-  slug: 'Block', // required
+  slug: 'basicBlock', // required
   fields: basicLocalizedFields,
 };
 

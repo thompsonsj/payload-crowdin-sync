@@ -1,4 +1,4 @@
-# WIP 8 June 2023
+# WIP 2 July 2023
 
 This plugin is currently being refactored. Although the logic works, it was extracted from a Payload CMS install and needs work to decouple logic from that installation.
 
@@ -11,7 +11,7 @@ Features:
   - [x] `group`
   - [x] `array`
   - [x] `collapsible`
-  - [ ] `blocks`
+  - [x] `blocks`
 - [x] Improve testing so that it does not require a local server. See https://github.com/thompsonsj/payload-crowdin-sync/issues/40.
 - [ ] Support **updating localized fields from CrowdIn** for the following Payload fields. Note that this will require effective required field detection to avoid update errors. See `getLocalizedRequiredFields`.
   - [ ] `group`
@@ -19,7 +19,7 @@ Features:
   - [ ] `collapsible`
   - [ ] `blocks`
 - [ ] Add UI for syncing translations (currently done with URLs added to `server.ts` on the Payload installation).
-- [ ] Add option to make localized fields read-only in other locales (CrowdIn mangaes these fields).
+- [ ] Add option to make localized fields read-only in other locales (CrowdIn manages these fields).
 
 # Payload CrowdIn Sync Plugin
 
