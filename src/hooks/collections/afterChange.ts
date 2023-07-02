@@ -87,6 +87,13 @@ const performAfterChange = async ({
   global = false,
   pluginOptions,
 }: IPerformChange) => {
+  /**
+   * Abort if token not set and not in test mode
+   */
+  if (!pluginOptions.token && process.env.NODE_ENV !== 'test') {
+    return doc
+  }
+
   const localizedFields: Field[] = getLocalizedFields({fields: collection.fields})
 
   /**
