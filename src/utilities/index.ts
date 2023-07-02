@@ -15,6 +15,7 @@ const nestedFieldTypes = [
   'array',
   'group',
   'blocks',
+  'tabs',
 ]
 
 export const containsNestedFields = (field: Field) => nestedFieldTypes.includes(field.type)
@@ -28,8 +29,14 @@ export const getLocalizedFields = ({
   type?: 'json' | 'html',
   localizedParent?: boolean
 }): any[] => {
+  // flatten the presetational only tabs field
+  // TODO: check this is correct. Docs at https://payloadcms.com/docs/fields/tabs suggest that subsequent tabs can be accessed using a prefix, but documents saved with tabs seem to retain their structure as if they didn't have tabs.
+  let flattenedFields = fields
+  if (fields.length === 1 && fields[0].type === 'tabs') {
+    flattenedFields = fields[0].tabs.map(tab => tab.fields).flat()
+  }
   const localizedFields = getLocalizedFieldsRecursive({
-    fields,
+    fields: flattenedFields,
     type,
     localizedParent,
   })
