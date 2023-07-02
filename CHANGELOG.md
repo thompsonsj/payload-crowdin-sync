@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.7.0...v0.8.0) (2023-07-02)
+
+
+### Features
+
+* support tabs field type ([#49](https://github.com/thompsonsj/payload-crowdin-sync/issues/49)) ([a309dd7](https://github.com/thompsonsj/payload-crowdin-sync/commit/a309dd71ab4a14f31b1e4ef9663693ea2e54e6ec))
+
 ## [0.7.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.6.0...v0.7.0) (2023-07-02)
 
 
