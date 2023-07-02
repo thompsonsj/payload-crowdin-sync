@@ -1,5 +1,5 @@
-import { CrowdinPluginRequest } from "../../types"
-import { Response, NextFunction } from "express"
+import { PluginOptions } from '../../types'
+import { ResponseObject, SourceFilesModel, UploadStorageModel, TranslationsModel } from '@crowdin/crowdin-api-client'
 
 /*
   CrowdIn Service mock
@@ -11,84 +11,72 @@ import { Response, NextFunction } from "express"
   As a result, for effective testing, mocks are required
   to provide Payload with expected data for subsequent
   operations.
+
+  Importing types from the CrowdIn API client provides
+  assurance that the mock returns expected data structures.
 */
 
-interface IaddDirectory {
-  projectId: number
-  directoryId: number,
-  name: string
-  title: string
-}
-
-interface IaddStorage {
-  name: string
-  fileData: string | object
-  fileType: 'html' | 'json'
-}
-
-interface IcreateFile extends IaddStorage {
-  projectId: number
-  directoryId: number
-}
-
-interface IupdateFile extends IaddStorage {
-  projectId: number
-  fileId: number
-}
-
 class crowdinAPIWrapper {
+  projectId: number;
+  directoryId?: number;
+  branchId: number;
+
+  constructor(pluginOptions: PluginOptions) {
+    this.projectId = pluginOptions.projectId
+    this.directoryId = pluginOptions.directoryId
+    this.branchId = 4
+  }
+
   async listFileRevisions(projectId: number, fileId: number) {
     return await Promise.resolve(1).then(() => undefined)
   }
 
-  async createDirectory({
-    projectId,
-    directoryId,
+  async createDirectory(projectId: number,{
+    directoryId = 1179,
     name,
-    title
-  }: IaddDirectory) {
+    title = 'undefined',
+  }: SourceFilesModel.CreateDirectoryRequest): Promise<ResponseObject<SourceFilesModel.Directory>> {
     return await Promise.resolve(1).then(() => {
       const date = new Date().toISOString()
       return {
         data: {
           id: 1169,
-          projectId: projectId,
-          branchId: null,
-          directoryId: null,
+          projectId: this.projectId,
+          branchId: this.branchId,
+          directoryId,
           name: name,
           title: title,
-          exportPattern: null,
+          exportPattern: '**',
           priority: 'normal',
           createdAt: date,
-          updatedAt: date
+          updatedAt: date,
         }
       }
     })
   }
 
-  async addStorage({
-    name,
-    fileData,
-    fileType
-  }: IaddStorage) {
+  async addStorage(
+    fileName: string,
+    request: any,
+    contentType?: string,
+  ): Promise<ResponseObject<UploadStorageModel.Storage>> {
     const storage = await Promise.resolve(1).then(() => {
       return {
         data: {
           id: 1788135621,
-          fileName: name
+          fileName,
         }
       }
     })
-    return storage.data.id
+    return storage
   }
 
-  async createFile({
-    projectId,
-    directoryId,
+  async createFile(projectId: number, {
+    directoryId = 1172,
     name,
-    fileData,
-    fileType
-  }: IcreateFile ) {
+    storageId,
+    type = 'html',
+  }: SourceFilesModel.CreateFileRequest ): Promise<ResponseObject<SourceFilesModel.File>> {
     /*const storageId = await this.addStorage({
       name,
       fileData,
@@ -100,66 +88,53 @@ class crowdinAPIWrapper {
         data: {
           revisionId: 5,
           status: 'active',
-          priority: 'normal',
-          importOptions: { contentSegmentation: true, customSegmentation: false },
-          exportOptions: null,
-          excludedTargetLanguages: null,
+          priority: 'normal' as SourceFilesModel.Priority,
+          importOptions: {} as any,
+          exportOptions: {} as any,
+          excludedTargetLanguages: [],
           createdAt: date,
           updatedAt: date,
           id: 1079,
-          projectId: 323731,
-          branchId: null,
-          directoryId: 1077,
+          projectId,
+          branchId: this.branchId,
+          directoryId,
           name: name,
-          title: null,
-          type: fileType,
-          path: `/policies/security-and-privacy/${name}.${fileType}`
+          title: name,
+          type,
+          path: `/policies/security-and-privacy/${name}`,
+          parserVersion: 3,
         }
       }
     })
     return file
   }
 
-  async updateFile({
-    projectId,
-    fileId,
-    name,
-    fileData,
-    fileType
-  }: IupdateFile ) {
-    const storageId = await this.addStorage({
-      name,
-      fileData,
-      fileType,
-    })
-      //const file = await sourceFilesApi.deleteFile(projectId, 1161)
-    const file = await Promise.resolve(1).then(() => {
+  async buildProjectFileTranslation(projectId: number, fileId: number, {
+    targetLanguageId,
+  }: TranslationsModel.BuildProjectFileTranslationRequest): Promise<ResponseObject<TranslationsModel.BuildProjectFileTranslationResponse>> {
+    const build = await Promise.resolve(1).then(() => {
       const date = new Date().toISOString()
       return {
-          data: {
-          revisionId: 5,
-          status: 'active',
-          priority: 'normal',
-          importOptions: { contentSegmentation: true, customSegmentation: false },
-          exportOptions: null,
-          excludedTargetLanguages: null,
+        data: {
+          id: 1,
+          projectId,
+          branchId: this.branchId,
+          fileId,
+          languageId: 'en',
+          status: 'inProgress',
+          progress: 0,
           createdAt: date,
           updatedAt: date,
-          id: fileId,
-          projectId: projectId,
-          branchId: null,
-          directoryId: 1077,
-          name: name,
-          title: null,
-          type: 'html',
-          path: '/policies/security-and-privacy/en.html'
+          etag: 'string',
+          url: 'https://api.crowdin.com/api/v2/projects/1/translations/builds/1/download',
+          expireIn: 'string',
         }
       }
     })
-    return file
+    return build
   }
 }
 
-export function mockCrowdinClient() {
-  return new crowdinAPIWrapper()
+export function mockCrowdinClient(pluginOptions: PluginOptions) {
+  return new crowdinAPIWrapper(pluginOptions)
 }

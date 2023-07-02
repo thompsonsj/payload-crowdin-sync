@@ -7,19 +7,13 @@ import Tags from './collections/Tags';
 import Users from './collections/Users';
 import { resolve } from 'path';
 
-import { crowdInSync, mockCrowdinClient } from '../../dist';
+import { crowdInSync } from '../../dist';
 
 require('dotenv').config({
   path: resolve(__dirname, '../.env'),
 });
 
-interface IlocaleMap {
-  [key: string]: {
-    crowdinId: string
-  }
-}
-
-export const localeMap: IlocaleMap = {
+export const localeMap = {
   de_DE: {
     crowdinId: "de",
   },
@@ -37,7 +31,8 @@ export default buildConfig({
     crowdInSync({
       projectId: 323731,
       directoryId: 1169,
-      client: mockCrowdinClient() as any,
+      token: process.env.CROWDIN_TOKEN,
+      localeMap,
     }),
   ],
   collections: [

@@ -12,7 +12,7 @@ Features:
   - [x] `array`
   - [x] `collapsible`
   - [ ] `blocks`
-- Improve testing so that it does not require a local server. See [Notes on the current test suite](#notes-on-the-current-test-suite).
+- [x] Improve testing so that it does not require a local server. See https://github.com/thompsonsj/payload-crowdin-sync/issues/40.
 - [ ] Support **updating localized fields from CrowdIn** for the following Payload fields. Note that this will require effective required field detection to avoid update errors. See `getLocalizedRequiredFields`.
   - [ ] `group`
   - [ ] `array`
@@ -42,8 +42,6 @@ yarn add payload-crowdin-sync
 Add the plugin to your Payload configuration.
 
 ```ts
-import { buildConfig } from 'payload/config';
-import path from 'path';
 import { crowdInSync, crowdinClient } from 'payload-crowdin-sync';
 
 export default buildConfig({
@@ -51,7 +49,15 @@ export default buildConfig({
     crowdInSync({
       projectId: 323731,
       directoryId: 1169,
-      client: crowdinClient({ token: `<your-token>`})
+      token: process.env.CROWDIN_TOKEN,
+      localeMap: {
+        de_DE: {
+          crowdinId: "de",
+        },
+        fr_FR: {
+          crowdinId: "fr",
+        },
+      },
     }),
   ],
   // The rest of your config goes here
@@ -62,6 +68,9 @@ Plugin options:
 
 - `projectId` (required): the id of the project in CrowdIn.
 - `directoryId` (optional): define a parent directory in your CrowdIn project to sync translations.
+- `token` (required): Your CrowdIn API token.
+- `localeMap` (required): Map your Payload locales to your CrowdIn locale ids.
+
 
 ### Environment variables
 
