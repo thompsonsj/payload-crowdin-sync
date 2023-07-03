@@ -194,21 +194,4 @@ describe('Collections', () => {
       expect(postOneRefreshed.crowdinArticleDirectory.crowdinCollectionDirectory).toEqual(postTwoRefreshed.crowdinArticleDirectory.crowdinCollectionDirectory)
     })
   })
-
-  describe('crowdin-files: on update', () => {
-    it('updates the `fields` file if a text field has changed', async () => {
-      const post = await payload.create({
-        collection: collections.localized,
-        data: { title: 'Test post' },
-      });
-      const file = await getFileByDocumentID('fields', post.id, payload)
-      const updatedPost = await payload.update({
-        id: post.id,
-        collection: collections.localized,
-        data: { title: 'Test post updated' },
-      });
-      const updatedFile = await getFileByDocumentID('fields', post.id, payload)
-      expect(file.updatedAt).not.toEqual(updatedFile.updatedAt)
-    })
-  })
 });

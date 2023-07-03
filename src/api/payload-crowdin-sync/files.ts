@@ -8,7 +8,7 @@ import { isEmpty } from 'lodash';
 
 interface IcrowdinFile {
   id: string
-  fileId: number
+  originalId: number
 }
 
 interface IfindOrCreateCollectionDirectory {
@@ -242,7 +242,7 @@ export class payloadCrowdInSyncFilesApi {
   }: IupdateFile) {
     // Update file on CrowdIn
     const updatedCrowdInFile = await this.crowdInUpdateFile({
-      fileId: crowdInFile.fileId,
+      fileId: crowdInFile.originalId,
       name,
       fileData,
       fileType,
@@ -320,7 +320,7 @@ export class payloadCrowdInSyncFilesApi {
   }
 
   private async deleteFile(crowdInFile: IcrowdinFile) {
-    const file = await this.sourceFilesApi.deleteFile(this.projectId, crowdInFile.fileId)
+    const file = await this.sourceFilesApi.deleteFile(this.projectId, crowdInFile.originalId)
     const payloadFile = await this.payload.delete({
       collection: 'crowdin-files', // required
       id: crowdInFile.id, // required
