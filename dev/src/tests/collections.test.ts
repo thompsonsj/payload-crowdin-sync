@@ -1,5 +1,6 @@
 import payload from 'payload';
 import { initPayloadTest } from './helpers/config';
+import { getFilesByDocumentID, getFileByDocumentID } from '../../../dist/api/helpers';
 
 /**
  * Test the collections
@@ -113,20 +114,9 @@ describe('Collections', () => {
         collection: collections.localized,
         data: { title: 'Test post' },
       });
-      // retrieve post to get populated fields
-      const result = await payload.findByID({
-        collection: collections.localized,
-        id: post.id,
-      });
-      const crowdinArticleDirectoryId = result.crowdinArticleDirectory?.id
-      const crowdInFiles = await payload.find({
-        collection: 'crowdin-files',
-        where: {
-          crowdinArticleDirectory: { equals: crowdinArticleDirectoryId },
-        },
-      });
-      expect(crowdInFiles.docs.length).toEqual(1)
-      const file = crowdInFiles.docs.find(doc => doc.field === 'fields')
+      const crowdInFiles = await getFilesByDocumentID(post.id, payload)
+      expect(crowdInFiles.length).toEqual(1)
+      const file = crowdInFiles.find(doc => doc.field === 'fields')
       expect(file).not.toEqual(undefined)
       expect(file.type).toEqual('json')
     })
@@ -136,19 +126,8 @@ describe('Collections', () => {
         collection: collections.localized,
         data: { title: '' },
       });
-      // retrieve post to get populated fields
-      const result = await payload.findByID({
-        collection: collections.localized,
-        id: post.id,
-      });
-      const crowdinArticleDirectoryId = result.crowdinArticleDirectory?.id
-      const crowdInFiles = await payload.find({
-        collection: 'crowdin-files',
-        where: {
-          crowdinArticleDirectory: { equals: crowdinArticleDirectoryId },
-        },
-      });
-      expect(crowdInFiles.docs.length).toEqual(0)
+      const crowdInFiles = await getFilesByDocumentID(post.id, payload)
+      expect(crowdInFiles.length).toEqual(0)
     })
 
     const fieldsAndContentTestName = 'creates a `fields` file to include the title field and a `content` file for the content richText field'
@@ -166,21 +145,10 @@ describe('Collections', () => {
           }],
         },
       });
-      // retrieve post to get populated fields
-      const result = await payload.findByID({
-        collection: collections.localized,
-        id: post.id,
-      });
-      const crowdinArticleDirectoryId = result.crowdinArticleDirectory?.id
-      const crowdInFiles = await payload.find({
-        collection: 'crowdin-files',
-        where: {
-          crowdinArticleDirectory: { equals: crowdinArticleDirectoryId },
-        },
-      });
-      expect(crowdInFiles.docs.length).toEqual(2)
-      const fields = crowdInFiles.docs.find(doc => doc.field === 'fields')
-      const content = crowdInFiles.docs.find(doc => doc.field === 'content')
+      const crowdInFiles = await getFilesByDocumentID(post.id, payload)
+      expect(crowdInFiles.length).toEqual(2)
+      const fields = crowdInFiles.find(doc => doc.field === 'fields')
+      const content = crowdInFiles.find(doc => doc.field === 'content')
       expect(fields).not.toEqual(undefined)
       expect(fields.type).toEqual('json')
       expect(content).not.toEqual(undefined)
@@ -233,31 +201,13 @@ describe('Collections', () => {
         collection: collections.localized,
         data: { title: 'Test post' },
       });
-      // retrieve post to get populated fields
-      const result = await payload.findByID({
-        collection: collections.localized,
-        id: post.id,
-      });
-      const crowdinArticleDirectoryId = result.crowdinArticleDirectory?.id
-      const crowdInFiles = await payload.find({
-        collection: 'crowdin-files',
-        where: {
-          crowdinArticleDirectory: { equals: crowdinArticleDirectoryId },
-        },
-      });
-      const file = crowdInFiles.docs.find(doc => doc.field === 'fields')
+      const file = await getFileByDocumentID('fields', post.id, payload)
       const updatedPost = await payload.update({
         id: post.id,
         collection: collections.localized,
         data: { title: 'Test post updated' },
       });
-      const updatedCrowdInFiles = await payload.find({
-        collection: 'crowdin-files',
-        where: {
-          crowdinArticleDirectory: { equals: crowdinArticleDirectoryId },
-        },
-      });
-      const updatedFile = updatedCrowdInFiles.docs.find(doc => doc.field === 'fields')
+      const updatedFile = await getFileByDocumentID('fields', post.id, payload)
       expect(file.updatedAt).not.toEqual(updatedFile.updatedAt)
     })
   })

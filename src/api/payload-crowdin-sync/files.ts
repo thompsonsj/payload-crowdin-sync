@@ -182,11 +182,11 @@ export class payloadCrowdInSyncFilesApi {
     return crowdInPayloadCollectionDirectory
   }
 
-  async getFile(name: string, crowdinArticleDirectoryId: number): Promise<any> {
+  async getFile(name: string, crowdinArticleDirectoryId: string): Promise<any> {
     return getFile(name, crowdinArticleDirectoryId, this.payload)
   }
 
-  async getFiles(crowdinArticleDirectoryId: number): Promise<any> {
+  async getFiles(crowdinArticleDirectoryId: string): Promise<any> {
     return getFiles(crowdinArticleDirectoryId, this.payload)
   }
 

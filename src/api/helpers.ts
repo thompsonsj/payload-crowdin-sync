@@ -1,5 +1,12 @@
 import { Payload } from "payload";
 
+/**
+ * get CrowdIn Article Directory for a given documentId
+ * 
+ * The CrowdIn Article Directory is associated with a document,
+ * so is easy to retrieve. Use this function when you only have
+ * a document id.
+ */
 export async function getArticleDirectory(documentId: string, payload: Payload) {
   // Get directory
   const crowdInPayloadArticleDirectory = await payload.find({
@@ -18,7 +25,7 @@ export async function getArticleDirectory(documentId: string, payload: Payload) 
   return crowdInPayloadArticleDirectory.docs[0]
 }
 
-export async function getFile(name: string, crowdinArticleDirectoryId: number, payload: Payload): Promise<any> {
+export async function getFile(name: string, crowdinArticleDirectoryId: string, payload: Payload): Promise<any> {
   const result = await payload.find({
     collection: "crowdin-files",
     where: {
@@ -31,7 +38,7 @@ export async function getFile(name: string, crowdinArticleDirectoryId: number, p
   return result.docs[0]
 }
 
-export async function getFiles(crowdinArticleDirectoryId: number, payload: Payload): Promise<any> {
+export async function getFiles(crowdinArticleDirectoryId: string, payload: Payload): Promise<any> {
   const result = await payload.find({
     collection: "crowdin-files",
     where: {
@@ -43,7 +50,13 @@ export async function getFiles(crowdinArticleDirectoryId: number, payload: Paylo
   return result.docs
 }
 
+export async function getFileByDocumentID(name: string, documentId: string, payload: Payload): Promise<any> {
+  const articleDirectory = await getArticleDirectory(documentId, payload)
+  return getFile(name, articleDirectory.id, payload)
+}
+
 export async function getFilesByDocumentID(documentId: string, payload: Payload): Promise<any> {
   const articleDirectory = await getArticleDirectory(documentId, payload)
-  return getFiles(articleDirectory.id, payload)
+  const files = await getFiles(articleDirectory.id, payload)
+  return files
 }
