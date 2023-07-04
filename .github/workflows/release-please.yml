@@ -35,9 +35,7 @@ jobs:
           cache: 'yarn'
         if: ${{ steps.release.outputs.release_created }}
       - run: yarn install --frozen-lockfile
-      - run: yarn --cwd ./dev/ install
       - run: yarn build
-      - run: yarn test
         if: ${{ steps.release.outputs.release_created }}
       - run: npm publish
         env:
