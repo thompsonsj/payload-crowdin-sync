@@ -254,6 +254,8 @@ export class payloadCrowdInSyncFilesApi {
       data: { // required
         updatedAt: updatedCrowdInFile.data.updatedAt,
         revisionId: updatedCrowdInFile.data.revisionId,
+        ...(fileType === 'json' && { fileData: { json: fileData } }),
+        ...(fileType === 'html' && { fileData: { html: fileData } }),
       },
     })
   }
@@ -312,6 +314,8 @@ export class payloadCrowdInSyncFilesApi {
           name: crowdInFile.data.name,
           type: crowdInFile.data.type,
           path: crowdInFile.data.path,
+          ...(fileType === 'json' && { fileData: { json: value } }),
+          ...(fileType === 'html' && { fileData: { html: value } }),
         },
       })
   

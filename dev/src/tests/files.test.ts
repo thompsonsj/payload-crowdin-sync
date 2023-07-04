@@ -24,6 +24,15 @@ describe(`CrowdIn file create, update and delete`, () => {
   });
 
   describe(`Collection: ${collections.localized}`, () => {
+    it('updates the `fields` file for a new article', async () => {
+      const post = await payload.create({
+        collection: collections.localized,
+        data: { title: 'Test post' },
+      });
+      const file = await getFileByDocumentID('fields', post.id, payload)
+      expect(file.fileData.json).toEqual({ title: 'Test post' })
+    })
+
     it('updates the `fields` file if a text field has changed', async () => {
       const post = await payload.create({
         collection: collections.localized,
@@ -37,6 +46,7 @@ describe(`CrowdIn file create, update and delete`, () => {
       });
       const updatedFile = await getFileByDocumentID('fields', post.id, payload)
       expect(file.updatedAt).not.toEqual(updatedFile.updatedAt)
+      expect(updatedFile.fileData.json).toEqual({ title: 'Test post updated' })
     })
   })
 

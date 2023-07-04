@@ -157,4 +157,201 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
     }
     expect(buildCrowdinJsonObject({doc, fields: localizedFields})).toEqual(expected)
   })
+
+  it ("does not include localized fields richText fields nested in an array field within a block in the `fields.json` file", () => {
+    const TestBlockArrayOfRichText: Block = {
+      slug: 'testBlockArrayOfRichText',
+      fields: [
+        {
+          name: 'arrayField',
+          type: 'array',
+          fields: [
+            {
+              name: 'richText',
+              type: 'richText',
+              localized: true,
+            }
+          ]
+        },
+      ],
+    }
+
+    const doc = {
+      id: '638641358b1a140462752076',
+      title: 'Test Policy created with title',
+      blocksField: [
+        {
+          arrayField: [
+            {
+              content: [
+                {
+                  children: [
+                    {
+                      text: "Test content 1"
+                    }
+                  ]
+                }
+              ],
+              id: "64735620230d57bce946d370"
+            },
+            {
+              content: [
+                {
+                  children: [
+                    {
+                      text: "Test content 1"
+                    }
+                  ]
+                }
+              ],
+              id: "64735621230d57bce946d371"
+            }
+          ],
+          blockType: 'testBlockArrayOfRichText',
+        },
+        ],
+      status: 'draft',
+      createdAt: '2022-11-29T17:28:21.644Z',
+      updatedAt: '2022-11-29T17:28:21.644Z'
+    }
+    const fields: FieldWithName[] = [
+      {
+        name: 'title',
+        type: 'text',
+        localized: true,
+      },
+      // select not supported yet
+      {
+        name: 'select',
+        type: 'select',
+        localized: true,
+        options: [
+          'one',
+          'two'
+        ]
+      },
+      {
+        name: 'blocksField',
+        type: 'blocks',
+        blocks: [
+          TestBlockArrayOfRichText,
+        ]
+      },
+    ]
+    const localizedFields = getLocalizedFields({ fields, type: 'json' })
+    const expected = {
+      title: 'Test Policy created with title',
+    }
+    expect(buildCrowdinJsonObject({doc, fields: localizedFields})).toEqual(expected)
+  })
+
+  it ("does not include localized fields richText fields nested in an array field within a block in the `fields.json` file 2", () => {
+    const TestBlockArrayOfRichText: Block = {
+      slug: 'testBlockArrayOfRichText',
+      fields: [{
+        name: 'title',
+        type: 'text',
+        localized: true,
+      },
+      {
+        name: 'messages',
+        type: 'array',
+        localized: true,
+        maxRows: 3,
+        fields: [
+          {
+            name: 'title',
+            type: 'text',
+            localized: true,
+          },
+          {
+            name: 'message',
+            type: 'richText'
+          }
+        ]
+      },],
+    }
+
+    const doc = {
+      id: '638641358b1a140462752076',
+      title: 'Test Policy created with title',
+      blocksField: [
+        {
+          messages: [
+            {
+              title: "Test title 1",
+              message: [
+                {
+                  children: [
+                    {
+                      text: "Test content 1"
+                    }
+                  ]
+                }
+              ],
+              id: "64735620230d57bce946d370"
+            },
+            {
+              title: "Test title 2",
+              message: [
+                {
+                  children: [
+                    {
+                      text: "Test content 1"
+                    }
+                  ]
+                }
+              ],
+              id: "64735621230d57bce946d371"
+            }
+          ],
+          blockType: 'testBlockArrayOfRichText',
+        },
+        ],
+      status: 'draft',
+      createdAt: '2022-11-29T17:28:21.644Z',
+      updatedAt: '2022-11-29T17:28:21.644Z'
+    }
+    const fields: FieldWithName[] = [
+      {
+        name: 'title',
+        type: 'text',
+        localized: true,
+      },
+      // select not supported yet
+      {
+        name: 'select',
+        type: 'select',
+        localized: true,
+        options: [
+          'one',
+          'two'
+        ]
+      },
+      {
+        name: 'blocksField',
+        type: 'blocks',
+        blocks: [
+          TestBlockArrayOfRichText,
+        ]
+      },
+    ]
+    const localizedFields = getLocalizedFields({ fields })
+    const expected = {
+      title: 'Test Policy created with title',
+      "blocksField": [
+        {
+          "messages": [
+            {
+              "title": "Test title 1",
+            },
+            {
+              "title": "Test title 2",
+            },
+          ],
+        },
+       ],
+    }
+    expect(buildCrowdinJsonObject({doc, fields: localizedFields})).toEqual(expected)
+  })
 })
