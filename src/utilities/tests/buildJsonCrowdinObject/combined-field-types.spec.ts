@@ -167,10 +167,6 @@ describe("fn: buildCrowdinJsonObject: group nested in array", () => {
     },
       fields: getLocalizedFields({ fields: Promos.fields })
     })).toEqual({
-      ctas: [
-        {},
-        {}
-      ],
       "text": "Get in touch with us or try it out yourself",
       "title": "Experience the magic of our product!"
     })
