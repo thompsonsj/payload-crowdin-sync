@@ -143,7 +143,12 @@ export const getFieldSlugs = (fields: FieldWithName[]): string[] => fields.filte
 
 const hasLocalizedProp = (field: Field) => "localized" in field && field.localized
 
-export const isLocalizedField = (field: Field, addLocalizedProp: boolean = false) => (hasLocalizedProp(field) || addLocalizedProp) && localizedFieldTypes.includes(field.type) && !excludeBasedOnDescription(field)
+/**
+ * Is Localized Field
+ * 
+ * Note that `id` should be excluded - it is a `text` field that is added by Payload CMS.
+ */
+export const isLocalizedField = (field: Field, addLocalizedProp: boolean = false) => (hasLocalizedProp(field) || addLocalizedProp) && localizedFieldTypes.includes(field.type) && !excludeBasedOnDescription(field) && (field as any).name !== 'id'
 
 const excludeBasedOnDescription = (field: Field) => {
   const description = get(field, 'admin.description', '')
@@ -205,7 +210,7 @@ export const buildCrowdinJsonObject = ({
         doc: item,
         fields: field.fields,
         topLevel: false,
-      }))
+      })).filter((item: any) => !isEmpty(item))
     } else if (field.type === 'blocks') {
       response[field.name] = doc[field.name].map((item: any) => buildCrowdinJsonObject({
         doc: item,

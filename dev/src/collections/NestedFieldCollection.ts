@@ -6,6 +6,32 @@ const LocalizedBlock: Block = {
   fields: basicLocalizedFields,
 };
 
+const TestBlockArrayOfRichText: Block = {
+  slug: 'testBlockArrayOfRichText',
+  fields: [{
+    name: 'title',
+    type: 'text',
+    localized: true,
+  },
+  {
+    name: 'messages',
+    type: 'array',
+    localized: true,
+    maxRows: 3,
+    fields: [
+      {
+        name: 'title',
+        type: 'text',
+        localized: true,
+      },
+      {
+        name: 'message',
+        type: 'richText'
+      }
+    ]
+  },],
+}
+
 const NestedFieldCollection: CollectionConfig = {
   slug: 'nested-field-collection',
   access: {
@@ -27,14 +53,15 @@ const NestedFieldCollection: CollectionConfig = {
       type: 'blocks', // required
       blocks: [
         LocalizedBlock,
+        TestBlockArrayOfRichText,
       ],
     },
     // collapsible
-    {
+    /*{
       label: 'Collapsible',
       type: 'collapsible',
       fields: basicLocalizedFields,
-    },
+    },*/
     // group
     {
       name: "group", // required
@@ -63,7 +90,18 @@ const NestedFieldCollection: CollectionConfig = {
         {
           name: "tabTwo",
           label: "Tab Two Label",
-          fields: basicLocalizedFields,
+          fields: [
+            {
+              name: 'tabTwoTitle',
+              type: 'text',
+              localized: true,
+            },
+            {
+              name: 'tabTwoContent',
+              type: 'richText',
+              localized: true,
+            },
+          ],
         },
       ],
     },

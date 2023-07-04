@@ -66,7 +66,7 @@ describe(`CrowdIn file create, update and delete`, () => {
      * 
      * ValidationError: nested-field-collection validation failed: title.en: Cast to string failed for value "{ en: 'Test title' }" (type Object) at path "en"
      *  model.Object.<anonymous>.Document.invalidate (dev/node_modules/mongoose/lib/document.js:3050:32)
-     * /
+     */
     it('creates files containing fieldType content', async () => {
       const article = await payload.create({
         collection: collections.nestedFields,
@@ -90,7 +90,6 @@ describe(`CrowdIn file create, update and delete`, () => {
       expect(crowdInFiles.find((file) => file.name === 'content.html')).toBeDefined()
       expect(crowdInFiles.find((file) => file.name === 'fields.json')).toBeDefined()
     })
-    */
 
     it('creates files containing `array` fieldType content', async () => {
       const article = await payload.create({
@@ -153,27 +152,53 @@ describe(`CrowdIn file create, update and delete`, () => {
               blockType: 'basicBlock'
             },
             {
-              title: 'Test title 2',
-              content: [
+              messages: [
                 {
-                  children: [
+                  message: [
                     {
-                      text: "Test content 2"
+                      children: [
+                        {
+                          text: "Test content 1"
+                        }
+                      ]
                     }
-                  ]
+                  ],
+                  id: "64735620230d57bce946d370"
+                },
+                {
+                  message: [
+                    {
+                      children: [
+                        {
+                          text: "Test content 1"
+                        }
+                      ]
+                    }
+                  ],
+                  id: "64735621230d57bce946d371"
                 }
               ],
-              metaDescription: 'Test meta description 2',
-              blockType: 'basicBlock'
+              blockType: 'testBlockArrayOfRichText',
             },
           ],
         },
       });
       const crowdInFiles = await getFilesByDocumentID(article.id, payload)
-      expect(crowdInFiles.length).toEqual(3)
+      expect(crowdInFiles.length).toEqual(4)
+      const jsonFile = crowdInFiles.find((file) => file.name === 'fields.json')
       expect(crowdInFiles.find((file) => file.name === 'layout[0].content.html')).toBeDefined()
-      expect(crowdInFiles.find((file) => file.name === 'layout[1].content.html')).toBeDefined()
-      expect(crowdInFiles.find((file) => file.name === 'fields.json')).toBeDefined()
+      expect(crowdInFiles.find((file) => file.name === 'layout[1].messages[0].message.html')).toBeDefined()
+      expect(crowdInFiles.find((file) => file.name === 'layout[1].messages[1].message.html')).toBeDefined()
+      expect(jsonFile).toBeDefined()
+      expect(jsonFile.fileData.json).toEqual(
+        { 
+          layout: [
+            {
+              title: 'Test title 1',
+            }
+          ]
+        }
+      )
     })
   })
 });
