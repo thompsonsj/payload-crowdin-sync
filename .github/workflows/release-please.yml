@@ -12,6 +12,12 @@ name: release-please
 jobs:
   release-please:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
     steps:
       - uses: google-github-actions/release-please-action@v3
         with:
@@ -22,10 +28,11 @@ jobs:
         # these if statements ensure that a publication only occurs when
         # a new release is created:
         if: ${{ steps.release.outputs.release_created }}
-      - uses: actions/setup-node@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
-          node-version: 16
-          registry-url: 'https://registry.npmjs.org'
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
         if: ${{ steps.release.outputs.release_created }}
       - run: yarn install --frozen-lockfile
       - run: yarn --cwd ./dev/ install
