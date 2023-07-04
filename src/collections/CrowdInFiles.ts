@@ -1,4 +1,5 @@
 import { CollectionConfig } from 'payload/types'
+import { buildCrowdinHtmlObject, buildCrowdinJsonObject, getLocalizedFields } from '../utilities'
 
 /*
   Sample data returned from CrowdIn API
@@ -90,6 +91,23 @@ const CrowdInFiles: CollectionConfig = {
       name: 'path',
       type: 'text'
     },
+    {
+      name: 'fileData',
+      type: 'group',
+      admin: {
+        description: 'The file data submitted to the CrowdIn API',
+      },
+      fields: [
+        {
+          name: 'json',
+          type: 'json'
+        },
+        {
+          name: 'html',
+          type: 'textarea',
+        }
+      ]
+    }
   ],
 }
 
