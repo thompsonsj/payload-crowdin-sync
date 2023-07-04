@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.9.0...v0.9.1) (2023-07-04)
+
+
+### Bug Fixes
+
+* **utilities:** exclude id properties from arrays ([#64](https://github.com/thompsonsj/payload-crowdin-sync/issues/64)) ([48390bb](https://github.com/thompsonsj/payload-crowdin-sync/commit/48390bbd8ae6156d4637906426df781f148825d6))
+
 ## [0.9.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.8.2...v0.9.0) (2023-07-04)
 
 
