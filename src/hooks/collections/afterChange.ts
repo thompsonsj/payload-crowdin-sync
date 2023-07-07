@@ -205,15 +205,9 @@ const performAfterChange = async ({
   // this separation, there is a risk of duplicated CrowdIn files
   // as the asynchronous operations will run twice almost instantaneously
   // on create.
-  if (operation === 'create') {
-    await createOrUpdateJsonSource()
-    await createOrUpdateHtmlSource()
-  }
 
-  if (operation === 'update') {
-    await createOrUpdateJsonSource()
-    await createOrUpdateHtmlSource()
-  }
+  await createOrUpdateJsonSource()
+  await createOrUpdateHtmlSource()
 
   return doc
 }
