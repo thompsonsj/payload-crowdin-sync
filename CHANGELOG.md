@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.10.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.9.1...v0.10.0) (2023-07-07)
+
+
+### Features
+
+* **endpoints:** add custom endpoints for global translation sync ([#69](https://github.com/thompsonsj/payload-crowdin-sync/issues/69)) ([08b2163](https://github.com/thompsonsj/payload-crowdin-sync/commit/08b2163e8a552263d3ac016266f7cd70e22e51fb))
+
 ## [0.9.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.9.0...v0.9.1) (2023-07-04)
 
 
