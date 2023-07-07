@@ -113,91 +113,21 @@ All of the collections created by this plugin are designed to emulate the struct
 
 Translation synchronisation refers to the process of loading translations from CrowdIn into Payload CMS. If [drafts](https://payloadcms.com/docs/versions/drafts) are enabled, this will create a new version in Payload CMS for each locale. The source locale (e.g. `en`) is not affected.
 
-**A UI has not been developed for this feature yet**. To perform updates now, add the following routes to `server.ts` in your Payload installation:
+**A UI has not been developed for this feature yet**. To perform updates now, use custom REST API endpoints that are made available by this plugin.
 
-```ts
-import {
-  updateTranslation
-} from 'payload-crowdin-sync'
+If supplied translations do not contain required fields, translation updates will not be applied and validation errors will be returned in the API response.
 
-app.get('/translations/global/:global', async (_, res) => {
-  const collection = _.params.global
-  const client = (_ as any).crowdinClient
+#### Sync global translations
 
-  const report = await updateTranslation({
-    projectId: 323731,
-    documentId: null,
-    collection: collection,
-    payload: payload,
-    crowdin: client,
-    global: true,
-  })
+To sync global translations, add a new article in **Crowdin Translations** that contains the global `slug`. Each article contains an `excludeLocales` field that can be used to prevent some locales from being included in the update operation.
 
-  res.setHeader('content-type', 'application/json')
-  res.send(report)
-})
-
-app.get('/translations/global/:global/update', async (_, res) => {
-  const collection = _.params.global
-  const client = (_ as any).crowdinClient
-
-  const report = await updateTranslation({
-    projectId: 323731,
-    documentId: null,
-    collection: collection,
-    payload: payload,
-    crowdin: client,
-    global: true,
-    dryRun: false,
-  })
-
-  res.setHeader('content-type', 'application/json')
-  res.send(report)
-})
-
-app.get('/translations/:collection/:id', async (_, res) => {
-  const collection = _.params.collection
-  const id = _.params.id
-  const client = (_ as any).crowdinClient
-
-  const report = await updateTranslation({
-    projectId: 323731,
-    documentId: id,
-    collection: collection,
-    payload: payload,
-    crowdin: client
-  })
-
-  res.setHeader('content-type', 'application/json')
-  res.send(report)
-})
-
-app.get('/translations/:collection/:id/update', async (_, res) => {
-  const collection = _.params.collection
-  const id = _.params.id
-  const client = (_ as any).crowdinClient
-
-  const report = await updateTranslation({
-    projectId: 323731,
-    documentId: id,
-    collection: collection,
-    payload: payload,
-    crowdin: client,
-    dryRun: false
-  })
-
-  res.setHeader('content-type', 'application/json')
-  res.send(report)
-})
-```
-
-#### Dry run
+##### Dry run
 
 To review translations, visit:
 
-`<payload-base-url>/translations/<collection-slug>/<article-id>`
+`<payload-base-url>/api/crowdin-translations/<article-id>/review`
 
-e.g. `https://my-payload-app.com/translations/policies/635fe6227589577f859835d4`
+e.g. `https://my-payload-app.com/api/crowdin-translations/64a880bb87ef685285a4d9dc/update`
 
 A JSON object is returned that allows you to review what will be updated in the database. The JSON object will contain the following keys:
 
@@ -212,9 +142,9 @@ A JSON object is returned that allows you to review what will be updated in the 
 
 To update translations, visit:
 
-`<payload-base-url>/translations/<collection-slug>/<article-id>/update`
+`<payload-base-url>/api/crowdin-translations/<article-id>/review`
 
-e.g. `https://my-payload-app.com/translations/policies/635fe6227589577f859835d4/update`
+e.g. `https://my-payload-app.com/api/crowdin-translations/64a880bb87ef685285a4d9dc/update`
 
 The document will be updated and the same report will be generated as for a review.
 

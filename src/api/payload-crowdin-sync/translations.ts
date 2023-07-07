@@ -39,6 +39,7 @@ interface IupdateTranslation {
   collection: string
   dryRun?: boolean
   global? :boolean
+  excludeLocales?: string[]
 }
 
 export class payloadCrowdInSyncTranslationsApi {
@@ -70,6 +71,7 @@ export class payloadCrowdInSyncTranslationsApi {
     collection,
     dryRun = true,
     global = false,
+    excludeLocales = [],
   }: IupdateTranslation) {
     /**
      * Get existing document
@@ -93,6 +95,9 @@ export class payloadCrowdInSyncTranslationsApi {
     }
     const report: {[key: string]: any} = {}
     for (const locale of Object.keys(this.localeMap)) {
+      if (excludeLocales.includes(locale)) {
+        continue;
+      }
       report[locale] = {}
       report[locale].currentTranslations = await this.getCurrentDocumentTranslation({
         doc: doc,
