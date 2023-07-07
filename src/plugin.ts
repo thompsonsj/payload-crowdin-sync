@@ -5,9 +5,11 @@ import { getFields } from './fields/getFields'
 import CrowdInFiles from './collections/CrowdInFiles'
 import CrowdInCollectionDirectories from './collections/CrowdInCollectionDirectories'
 import CrowdInArticleDirectories from './collections/CrowdInArticleDirectories'
+import CrowdInGlobalTranslations from './collections/CrowdInTranslations'
 import { 
   containsLocalizedFields,
 } from './utilities'
+import { getReviewTranslationEndpoint } from './endpoints/globals/reviewTranslation'
 
 /**
  * This plugin extends all collections that contain localized fields
@@ -56,6 +58,26 @@ export const crowdInSync =
         CrowdInFiles,
         CrowdInCollectionDirectories,
         CrowdInArticleDirectories,
+        {
+          ...CrowdInGlobalTranslations,
+          fields: [
+            ...(CrowdInGlobalTranslations.fields || []),
+            {
+              name: 'excludeLocales',
+              type: 'select',
+              options: Object.keys(pluginOptions.localeMap),
+              hasMany: true,
+              admin: {
+                description: 'Select locales to exclude from translation synchronization.',
+              }
+            },
+          ],
+          endpoints: [
+            ...(CrowdInGlobalTranslations.endpoints || []),
+            getReviewTranslationEndpoint(pluginOptions),
+            getReviewTranslationEndpoint(pluginOptions, 'update'),
+          ],
+        },
       ],
       globals: [
         ...(config.globals || []).map(existingGlobal => {

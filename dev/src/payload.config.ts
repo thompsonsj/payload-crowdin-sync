@@ -1,5 +1,6 @@
 import { buildConfig } from 'payload/config';
 import path from 'path';
+import Nav from './globals/Nav';
 import Categories from './collections/Categories';
 import LocalizedPosts from './collections/LocalizedPosts';
 import Posts from './collections/Posts';
@@ -10,9 +11,11 @@ import { resolve } from 'path';
 
 import { crowdInSync } from '../../dist';
 
-require('dotenv').config({
+import dotenv from 'dotenv'
+
+dotenv.config({
   path: resolve(__dirname, '../.env'),
-});
+})
 
 export const localeMap = {
   de_DE: {
@@ -44,6 +47,7 @@ export default buildConfig({
     Tags,
     Users,
   ],
+  globals: [Nav],
   localization: {
     locales: ['en', ...Object.keys(localeMap)],
     defaultLocale: 'en',
