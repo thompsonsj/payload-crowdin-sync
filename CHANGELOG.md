@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.11.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.10.0...v0.11.0) (2023-07-08)
+
+
+### Features
+
+* **translations:** support nested html fields ([#72](https://github.com/thompsonsj/payload-crowdin-sync/issues/72)) ([40df595](https://github.com/thompsonsj/payload-crowdin-sync/commit/40df595d4b2e26ae23f9074f0ea479903ed3a0c9))
+
 ## [0.10.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.9.1...v0.10.0) (2023-07-07)
 
 
