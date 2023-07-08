@@ -1,29 +1,8 @@
-# WIP 2 July 2023
-
-This plugin is currently being refactored. Although the logic works, it was extracted from a Payload CMS install and needs work to decouple logic from that installation.
-
-Features:
-
-- [x] Support localized `text` and `textarea` fields. Combine text and textarea fields into a single json file on CrowdIn called `fields.json`.
-- [x] Support localized `richText` fields. Store each `richText` field as HTML (converted from Slate JSON) on CrowdIn with a filename corresponding to the field name.
-- [x] Store CrowdIn files in an appropriate data structure.
-- [ ] Support **sending localized fields to CrowdIn** for the following Payload fields (recursive - can go as deep as necessary):
-  - [x] `group`
-  - [x] `array`
-  - [x] `collapsible`
-  - [x] `blocks`
-- [x] Improve testing so that it does not require a local server. See https://github.com/thompsonsj/payload-crowdin-sync/issues/40.
-- [ ] Support **updating localized fields from CrowdIn** for the following Payload fields. Note that this will require effective required field detection to avoid update errors. See `getLocalizedRequiredFields`.
-  - [ ] `group`
-  - [ ] `array`
-  - [ ] `collapsible`
-  - [ ] `blocks`
-- [ ] Add UI for syncing translations (currently done with URLs added to `server.ts` on the Payload installation).
-- [ ] Add option to make localized fields read-only in other locales (CrowdIn manages these fields).
-
 # Payload CrowdIn Sync Plugin
 
 Automatically upload/sync localized fields from the default locale to CrowdIn. Make these fields read-only in other locales and update them using CrowdIn translations.
+
+Note: This plugin is still in development. A todo list is maintained at [/docs/development.md](/docs/development.md).
 
 #### Requirements
 
@@ -47,9 +26,13 @@ import { crowdInSync, crowdinClient } from 'payload-crowdin-sync';
 export default buildConfig({
   plugins: [
     crowdInSync({
+      /* Required: Your CrowdIn project ID. */
       projectId: 323731,
+      /* Optional: CrowdIn directory ID to store translations. */
       directoryId: 1169,
+      /* Optional: Your CrowdIn API token. If empty, changes to files are disabled. */
       token: process.env.CROWDIN_TOKEN,
+      /* Required: Map your Payload locales to CrowdIn locale ids. */
       localeMap: {
         de_DE: {
           crowdinId: "de",
@@ -58,19 +41,13 @@ export default buildConfig({
           crowdinId: "fr",
         },
       },
+      /* Required: The Payload locale that syncs to source translations (files) on CrowdIn. */
+      sourceLocale: "en",
     }),
   ],
   // The rest of your config goes here
 });
 ```
-
-Plugin options:
-
-- `projectId` (required): the id of the project in CrowdIn.
-- `directoryId` (optional): define a parent directory in your CrowdIn project to sync translations.
-- `token` (required): Your CrowdIn API token.
-- `localeMap` (required): Map your Payload locales to your CrowdIn locale ids.
-
 
 ### Environment variables
 
