@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.12.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.11.0...v0.12.0) (2023-07-08)
+
+
+### Features
+
+* **crowdincollectiontranslations:** add ([#74](https://github.com/thompsonsj/payload-crowdin-sync/issues/74)) ([15e4edb](https://github.com/thompsonsj/payload-crowdin-sync/commit/15e4edb8bd6cca71f10bc93598e19b477c5abe50))
+
 ## [0.11.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.10.0...v0.11.0) (2023-07-08)
 
 
