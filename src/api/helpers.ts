@@ -18,6 +18,8 @@ export async function getArticleDirectory(documentId: string, payload: Payload) 
     },
   })
   if (crowdInPayloadArticleDirectory.totalDocs === 0) {
+    // a thrown error won't be reported in an api call, so console.log it as well.
+    console.log(`No article directory found for document ${documentId}`)
     throw new Error(
       'This article does not have a corresponding entry in the  crowdin-article-directories collection.'
     )

@@ -12,6 +12,7 @@ import {
   buildCrowdinJsonObject,
   getLocalizedRequiredFields
 } from '../../utilities'
+import dot from 'dot-object'
 
 interface IgetLatestDocumentTranslation {
   collection: string
@@ -169,18 +170,20 @@ export class payloadCrowdInSyncTranslationsApi {
     if (!collectionConfig) throw new Error(`Collection ${collection} not found in payload config`)
 
     const localizedFields = getLocalizedFields({fields: collectionConfig.fields})
-    // does not support nested html fields yet
-    const htmlFields: {[key: string]: any} = {}
-    getLocalizedFields({fields: collectionConfig.fields, type: 'html'}).forEach(field => (
-      htmlFields[field.name] = document[field.name]
-    ))
-    return {
-      ...buildCrowdinJsonObject({
-        doc: document,
-        fields: localizedFields
-      }),
-      ...htmlFields
+  
+    let docTranslations: { [key: string]: any } = {}
+    docTranslations = buildCrowdinJsonObject({
+      doc: document,
+      fields: localizedFields
+    })
+
+    // add html fields
+    // globals have a document id - would using document id be more elegant?
+    const localizedHtmlFields = await this.getHtmlFieldSlugs(global ? collectionConfig.slug : doc.id)
+    for (const field of localizedHtmlFields) {
+      dot.copy(field, field, document, docTranslations);
     }
+    return docTranslations;
   }
   
   /**
@@ -199,17 +202,9 @@ export class payloadCrowdInSyncTranslationsApi {
       collectionConfig = this.payload.config.collections.find((col: CollectionConfig) => col.slug === collection)
     }
     const localizedFields = getLocalizedFields({ fields: collectionConfig.fields })
-    const localizedJsonFields = getFieldSlugs(getLocalizedFields({fields: collectionConfig.fields, type: 'json'}))
-    const localizedHtmlFields = getFieldSlugs(getLocalizedFields({fields: collectionConfig.fields, type: 'html'}))
+
     if (!localizedFields) {
       return {message: "no localized fields"}
-    }
-    // Support @payloadcms/seo
-    if (doc.meta?.title) {
-      localizedJsonFields.push('meta.title')
-    }
-    if (doc.meta?.description) {
-      localizedJsonFields.push('meta.description')
     }
   
     let docTranslations: { [key: string]: any } = {}
@@ -220,12 +215,14 @@ export class payloadCrowdInSyncTranslationsApi {
       locale: locale,
     }) || {}
     // add html fields
+    const localizedHtmlFields = await this.getHtmlFieldSlugs(global ? collectionConfig.slug : doc.id)
     for (const field of localizedHtmlFields) {
-      docTranslations[field] = await this.getTranslation({
+      const translation = await this.getTranslation({
         documentId: global ? collectionConfig.slug : doc.id,
         fieldName: field,
         locale: locale,
       })
+      dot.str(field, translation, docTranslations);
     }
     // Add required fields if not present
     const requiredFieldSlugs = getFieldSlugs(getLocalizedRequiredFields(collectionConfig))
@@ -243,6 +240,11 @@ export class payloadCrowdInSyncTranslationsApi {
       })
     }
     return docTranslations
+  }
+
+  async getHtmlFieldSlugs(documentId: string) {
+    const files = await this.filesApi.getFilesByDocumentID(documentId)
+    return files.filter((file: any) => file.type === 'html' ).map((file: any) => file.field)
   }
 
   /**
