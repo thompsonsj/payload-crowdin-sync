@@ -5,8 +5,6 @@ import { getFields } from './fields/getFields'
 import CrowdInFiles from './collections/CrowdInFiles'
 import CrowdInCollectionDirectories from './collections/CrowdInCollectionDirectories'
 import CrowdInArticleDirectories from './collections/CrowdInArticleDirectories'
-import CrowdInCollectionTranslations from './collections/CrowdInCollectionTranslations'
-import CrowdInGlobalTranslations from './collections/CrowdInGlobalTranslations'
 import { 
   containsLocalizedFields,
 } from './utilities'
@@ -83,11 +81,10 @@ export const crowdInSync =
         }),
         CrowdInFiles,
         CrowdInCollectionDirectories,
-        CrowdInArticleDirectories,
         {
-          ...CrowdInGlobalTranslations,
+          ...CrowdInArticleDirectories,
           fields: [
-            ...(CrowdInGlobalTranslations.fields || []),
+            ...(CrowdInArticleDirectories.fields || []),
             {
               name: 'excludeLocales',
               type: 'select',
@@ -99,36 +96,9 @@ export const crowdInSync =
             },
           ],
           endpoints: [
-            ...(CrowdInGlobalTranslations.endpoints || []),
+            ...(CrowdInArticleDirectories.endpoints || []),
             getReviewTranslationEndpoint({
               pluginOptions,
-              global: true,
-            }),
-            getReviewTranslationEndpoint({
-              pluginOptions,
-              global: true,
-              type: 'update'
-            }),
-          ],
-        },
-        {
-          ...CrowdInCollectionTranslations,
-          fields: [
-            ...(CrowdInCollectionTranslations.fields || []),
-            {
-              name: 'excludeLocales',
-              type: 'select',
-              options: Object.keys(pluginOptions.localeMap),
-              hasMany: true,
-              admin: {
-                description: 'Select locales to exclude from translation synchronization.',
-              }
-            },
-          ],
-          endpoints: [
-            ...(CrowdInCollectionTranslations.endpoints || []),
-            getReviewTranslationEndpoint({
-              pluginOptions
             }),
             getReviewTranslationEndpoint({
               pluginOptions,
