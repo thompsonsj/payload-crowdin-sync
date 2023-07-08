@@ -5,7 +5,8 @@ import { getFields } from './fields/getFields'
 import CrowdInFiles from './collections/CrowdInFiles'
 import CrowdInCollectionDirectories from './collections/CrowdInCollectionDirectories'
 import CrowdInArticleDirectories from './collections/CrowdInArticleDirectories'
-import CrowdInGlobalTranslations from './collections/CrowdInTranslations'
+import CrowdInCollectionTranslations from './collections/CrowdInCollectionTranslations'
+import CrowdInGlobalTranslations from './collections/CrowdInGlobalTranslations'
 import { 
   containsLocalizedFields,
 } from './utilities'
@@ -74,8 +75,40 @@ export const crowdInSync =
           ],
           endpoints: [
             ...(CrowdInGlobalTranslations.endpoints || []),
-            getReviewTranslationEndpoint(pluginOptions),
-            getReviewTranslationEndpoint(pluginOptions, 'update'),
+            getReviewTranslationEndpoint({
+              pluginOptions,
+              global: true,
+            }),
+            getReviewTranslationEndpoint({
+              pluginOptions,
+              global: true,
+              type: 'update'
+            }),
+          ],
+        },
+        {
+          ...CrowdInCollectionTranslations,
+          fields: [
+            ...(CrowdInCollectionTranslations.fields || []),
+            {
+              name: 'excludeLocales',
+              type: 'select',
+              options: Object.keys(pluginOptions.localeMap),
+              hasMany: true,
+              admin: {
+                description: 'Select locales to exclude from translation synchronization.',
+              }
+            },
+          ],
+          endpoints: [
+            ...(CrowdInCollectionTranslations.endpoints || []),
+            getReviewTranslationEndpoint({
+              pluginOptions
+            }),
+            getReviewTranslationEndpoint({
+              pluginOptions,
+              type: 'update'
+            }),
           ],
         },
       ],

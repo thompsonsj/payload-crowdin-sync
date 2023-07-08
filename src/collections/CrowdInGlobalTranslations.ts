@@ -1,7 +1,7 @@
 import { CollectionConfig } from 'payload/types'
 
 const CrowdInGlobalTranslations: CollectionConfig = {
-  slug: 'crowdin-translations',
+  slug: 'crowdin-global-translations',
   admin: {
     defaultColumns: ['slug', 'updatedAt'],
     useAsTitle: 'slug',

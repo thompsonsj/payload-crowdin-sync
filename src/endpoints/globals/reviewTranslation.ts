@@ -2,7 +2,11 @@ import { Endpoint } from 'payload/config'
 import { PluginOptions } from '../../types'
 import { payloadCrowdInSyncTranslationsApi } from '../../api/payload-crowdin-sync/translations'
 
-export const getReviewTranslationEndpoint = (pluginOptions: PluginOptions, type: 'review' | 'update' = 'review'): Endpoint => ({
+export const getReviewTranslationEndpoint = ({
+  pluginOptions,
+  global = false,
+  type = 'review',
+}: {pluginOptions: PluginOptions, global?: boolean, type?: 'review' | 'update'}): Endpoint => ({
   path: `/:id/${type}`,
   method: "get",
   handler: async (req, res, next) => {
@@ -16,9 +20,9 @@ export const getReviewTranslationEndpoint = (pluginOptions: PluginOptions, type:
     )
     try {
       const translations = await translationsApi.updateTranslation({
-        documentId: '',
-        collection: translation.slug as string,
-        global: true,
+        documentId: !global && translation.documentId,
+        collection: global ? translation.slug as string : translation.collection as string,
+        global,
         dryRun: type === 'update' ? false : true,
         excludeLocales: translation.excludeLocales || [],
       })
