@@ -13,6 +13,7 @@ import {
   getLocalizedRequiredFields
 } from '../../utilities'
 import dot from 'dot-object'
+import { clone, map } from 'lodash'
 
 interface IgetLatestDocumentTranslation {
   collection: string
@@ -185,7 +186,8 @@ export class payloadCrowdInSyncTranslationsApi {
     for (const field of localizedHtmlFields) {
       dot.copy(field, field, document, docTranslations);
     }
-    return docTranslations;
+    const parsedDocTranslations = this.restoreIdAndBlockType(doc, docTranslations)
+    return parsedDocTranslations
   }
   
   /**
@@ -241,7 +243,8 @@ export class payloadCrowdInSyncTranslationsApi {
         }
       })
     }
-    return docTranslations
+    const parsedDocTranslations = this.restoreIdAndBlockType(doc, docTranslations)
+    return parsedDocTranslations
   }
 
   async getHtmlFieldSlugs(documentId: string) {
@@ -281,5 +284,32 @@ export class payloadCrowdInSyncTranslationsApi {
     const response = await fetch(url)
     const body = await response.text()
     return body
+  }
+
+  /**
+   * Restore id and blockType to translations
+   * 
+   * In order to update a document, we need to know the id and blockType of each block.
+   * 
+   * Ideally, id and blockType are not sent to CrowdIn - hence
+   * we need to restore them from the original document.
+   * 
+   * This currently only works for a top-level `layout` blocks field.
+   * 
+   * TODO: make this work for nested blocks. 
+   */
+  restoreIdAndBlockType = (
+    document: any,
+    translations: any,
+    key: string = 'layout',
+  ) => {
+    if (translations.hasOwnProperty(key)) {
+      translations[key] = translations[key].map((block: any, index: number) => ({
+        ...block,
+        id: document[key][index].id,
+        blockType: document[key][index].blockType,
+      }))
+    }
+    return translations;
   }
 }

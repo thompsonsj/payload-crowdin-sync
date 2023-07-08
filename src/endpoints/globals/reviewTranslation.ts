@@ -5,7 +5,7 @@ import { payloadCrowdInSyncTranslationsApi } from '../../api/payload-crowdin-syn
 export const getReviewTranslationEndpoint = ({
   pluginOptions,
   type = 'review',
-}: {pluginOptions: PluginOptions, global?: boolean, type?: 'review' | 'update'}): Endpoint => ({
+}: {pluginOptions: PluginOptions, type?: 'review' | 'update'}): Endpoint => ({
   path: `/:id/${type}`,
   method: "get",
   handler: async (req, res, next) => {
@@ -13,7 +13,7 @@ export const getReviewTranslationEndpoint = ({
       id: req.params.id,
       collection: req.collection?.config.slug as string,
     })
-    const global = articleDirectory.crowdinCollectionDirectory.slug === 'globals'
+    const global = articleDirectory.crowdinCollectionDirectory.collectionSlug === 'globals'
     const translationsApi = new payloadCrowdInSyncTranslationsApi(
       pluginOptions,
       req.payload,
@@ -21,7 +21,7 @@ export const getReviewTranslationEndpoint = ({
     try {
       const translations = await translationsApi.updateTranslation({
         documentId: !global && articleDirectory.name,
-        collection: global ? articleDirectory.name : articleDirectory.crowdinCollectionDirectory.slug,
+        collection: global ? articleDirectory.name : articleDirectory.crowdinCollectionDirectory.collectionSlug,
         global,
         dryRun: type === 'update' ? false : true,
         excludeLocales: articleDirectory.excludeLocales || [],
