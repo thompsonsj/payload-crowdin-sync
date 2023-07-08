@@ -16,7 +16,7 @@ const CrowdInCollectionTranslations: CollectionConfig = {
       type: 'text',
     },
     {
-      name: 'collection',
+      name: 'collectionSlug',
       type: 'text',
     },
   ],

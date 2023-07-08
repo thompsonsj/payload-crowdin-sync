@@ -21,7 +21,7 @@ export const getReviewTranslationEndpoint = ({
     try {
       const translations = await translationsApi.updateTranslation({
         documentId: !global && translation.documentId,
-        collection: global ? translation.slug as string : translation.collection as string,
+        collection: global ? translation.slug as string : translation.collectionSlug as string,
         global,
         dryRun: type === 'update' ? false : true,
         excludeLocales: translation.excludeLocales || [],
