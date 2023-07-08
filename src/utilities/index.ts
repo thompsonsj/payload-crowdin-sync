@@ -218,33 +218,7 @@ export const buildCrowdinJsonObject = ({
         topLevel: false,
       })).filter((item: any) => !isEmpty(item))
     } else {
-      /**
-       * Kept the following comments from when the plugin
-       * used to manually check for doc.meta[key].en to
-       * support @payloadcms/plugin-seo. Is the `en` key
-       * check a thing? This wouldn't be appropriate for
-       * other installations without an `en` default locale.
-       * Maybe this was in response to a behaviour that does
-       * not exist now?
-       * 
-       * --
-       * 
-       * prevDocument in afterChange hook returns
-       * localization keys in meta fields only.
-       * Normalize.
-       * 
-       * should be stronger
-       * 
-       * * what if the default locale key is different?
-       * * what happens if there's a field called 'en' (
-       * not likely because there are defined fields
-       * on the seo plugin)
-       *  */ 
-      if (doc[field.name]?.en) {
-        response[field.name] = doc[field.name].en
-      } else {
-        response[field.name] = doc[field.name]
-      }
+      response[field.name] = doc[field.name]
     }
   })
   return omitBy(response, isEmpty)

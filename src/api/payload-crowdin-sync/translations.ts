@@ -50,6 +50,7 @@ export class payloadCrowdInSyncTranslationsApi {
   directoryId?: number;
   payload: Payload;
   localeMap: PluginOptions['localeMap'];
+  sourceLocale: PluginOptions['sourceLocale'];
 
   constructor(pluginOptions: PluginOptions, payload: Payload) {
     // credentials
@@ -65,6 +66,7 @@ export class payloadCrowdInSyncTranslationsApi {
     this.filesApi = new payloadCrowdInSyncFilesApi(pluginOptions, payload);
     this.payload = payload;
     this.localeMap = pluginOptions.localeMap;
+    this.sourceLocale = pluginOptions.sourceLocale;
   }
 
   async updateTranslation({
@@ -85,13 +87,13 @@ export class payloadCrowdInSyncTranslationsApi {
     if (global) {
       doc = await this.payload.findGlobal({
         slug: collection,
-        locale: "en"
+        locale: this.sourceLocale,
       })
     } else {
       doc = await this.payload.findByID({
         collection: collection,
         id: documentId,
-        locale: "en"
+        locale: this.sourceLocale,
       })
     }
     const report: {[key: string]: any} = {}

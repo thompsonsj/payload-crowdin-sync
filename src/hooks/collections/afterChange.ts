@@ -108,7 +108,7 @@ const performAfterChange = async ({
    * is an update from the API to the source
    * locale.
    */
-  if (!req.locale || req.locale !== 'en') {
+  if (!req.locale || req.locale !== pluginOptions.sourceLocale) {
     return doc
   }
 
@@ -200,11 +200,6 @@ const performAfterChange = async ({
     })
   }
   // END: function definitions
-
-  // the 'create' operation is run separately from 'update' - without
-  // this separation, there is a risk of duplicated CrowdIn files
-  // as the asynchronous operations will run twice almost instantaneously
-  // on create.
 
   await createOrUpdateJsonSource()
   await createOrUpdateHtmlSource()
