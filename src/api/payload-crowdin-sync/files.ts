@@ -3,7 +3,7 @@ import { mockCrowdinClient } from '../mock/crowdin-client';
 import { Payload } from 'payload';
 import { PluginOptions } from '../../types';
 import { toWords } from 'payload/dist/utilities/formatLabels'
-import { getArticleDirectory, getFile, getFiles } from '../helpers';
+import { getArticleDirectory, getFile, getFiles, getFileByDocumentID, getFilesByDocumentID } from '../helpers';
 import { isEmpty } from 'lodash';
 
 interface IcrowdinFile {
@@ -377,6 +377,17 @@ export class payloadCrowdInSyncFilesApi {
   }
 
   async getArticleDirectory(documentId: string) {
-    return getArticleDirectory(documentId, this.payload)
+    const result = await getArticleDirectory(documentId, this.payload)
+    return result
+  }
+
+  async getFileByDocumentID(name: string, documentId: string) {
+    const result = await getFileByDocumentID(name, documentId, this.payload)
+    return result
+  }
+
+  async getFilesByDocumentID(documentId: string) {
+    const result = await getFilesByDocumentID(documentId, this.payload)
+    return result
   }
 }
