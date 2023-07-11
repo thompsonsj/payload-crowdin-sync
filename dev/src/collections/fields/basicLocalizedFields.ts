@@ -2,18 +2,18 @@ import { Field } from "payload/types";
 
 export const basicLocalizedFields: Field[] = [
   {
-    name: "title",
+    name: "textField",
     type: "text",
     localized: true,
   },
   {
-    name: "content",
+    name: "richTextField",
     type: "richText",
     localized: true,
   },
   {
-    name: "metaDescription",
+    name: "textareaField",
     type: "textarea",
-    // localized: true,
+    localized: true,
   },
 ];
