@@ -1,33 +1,154 @@
 type Query {
-  Category(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Category
-  Categories(where: Category_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): Categories
+  Category(
+    id: String!
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): Category
+  Categories(
+    where: Category_where
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+    page: Int
+    limit: Int
+    sort: String
+  ): Categories
   docAccessCategory(id: String!): categoriesDocAccess
-  LocalizedPost(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): LocalizedPost
-  LocalizedPosts(where: LocalizedPost_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): LocalizedPosts
+  LocalizedPost(
+    id: String!
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): LocalizedPost
+  LocalizedPosts(
+    where: LocalizedPost_where
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+    page: Int
+    limit: Int
+    sort: String
+  ): LocalizedPosts
   docAccessLocalizedPost(id: String!): localized_postsDocAccess
-  NestedFieldCollection(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): NestedFieldCollection
-  NestedFieldCollections(where: NestedFieldCollection_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): NestedFieldCollections
+  NestedFieldCollection(
+    id: String!
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): NestedFieldCollection
+  NestedFieldCollections(
+    where: NestedFieldCollection_where
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+    page: Int
+    limit: Int
+    sort: String
+  ): NestedFieldCollections
   docAccessNestedFieldCollection(id: String!): nested_field_collectionDocAccess
-  Post(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Post
-  Posts(where: Post_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): Posts
+  Post(
+    id: String!
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): Post
+  Posts(
+    where: Post_where
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+    page: Int
+    limit: Int
+    sort: String
+  ): Posts
   docAccessPost(id: String!): postsDocAccess
-  Tag(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Tag
-  Tags(where: Tag_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): Tags
+  Tag(
+    id: String!
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): Tag
+  Tags(
+    where: Tag_where
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+    page: Int
+    limit: Int
+    sort: String
+  ): Tags
   docAccessTag(id: String!): tagsDocAccess
-  User(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): User
-  Users(where: User_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): Users
+  User(
+    id: String!
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): User
+  Users(
+    where: User_where
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+    page: Int
+    limit: Int
+    sort: String
+  ): Users
   docAccessUser(id: String!): usersDocAccess
   meUser: usersMe
   initializedUser: Boolean
-  CrowdinFile(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinFile
-  CrowdinFiles(where: CrowdinFile_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): CrowdinFiles
+  CrowdinFile(
+    id: String!
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): CrowdinFile
+  CrowdinFiles(
+    where: CrowdinFile_where
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+    page: Int
+    limit: Int
+    sort: String
+  ): CrowdinFiles
   docAccessCrowdinFile(id: String!): crowdin_filesDocAccess
-  CrowdinCollectionDirectory(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinCollectionDirectory
-  CrowdinCollectionDirectories(where: CrowdinCollectionDirectory_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): CrowdinCollectionDirectories
-  docAccessCrowdinCollectionDirectory(id: String!): crowdin_collection_directoriesDocAccess
-  CrowdinArticleDirectory(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinArticleDirectory
-  CrowdinArticleDirectories(where: CrowdinArticleDirectory_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): CrowdinArticleDirectories
-  docAccessCrowdinArticleDirectory(id: String!): crowdin_article_directoriesDocAccess
+  CrowdinCollectionDirectory(
+    id: String!
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): CrowdinCollectionDirectory
+  CrowdinCollectionDirectories(
+    where: CrowdinCollectionDirectory_where
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+    page: Int
+    limit: Int
+    sort: String
+  ): CrowdinCollectionDirectories
+  docAccessCrowdinCollectionDirectory(
+    id: String!
+  ): crowdin_collection_directoriesDocAccess
+  CrowdinArticleDirectory(
+    id: String!
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): CrowdinArticleDirectory
+  CrowdinArticleDirectories(
+    where: CrowdinArticleDirectory_where
+    draft: Boolean
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+    page: Int
+    limit: Int
+    sort: String
+  ): CrowdinArticleDirectories
+  docAccessCrowdinArticleDirectory(
+    id: String!
+  ): crowdin_article_directoriesDocAccess
   Preference(key: String): Preference
   Access: Access
 }
@@ -168,11 +289,17 @@ type LocalizedPost {
   title: String
   author(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): User
   publishedDate: DateTime
-  category(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Category
+  category(
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): Category
   tags(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [Tag!]
   content(depth: Int): JSON
   status: LocalizedPost_status
-  crowdinArticleDirectory(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinArticleDirectory
+  crowdinArticleDirectory(
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): CrowdinArticleDirectory
   updatedAt: DateTime
   createdAt: DateTime
 }
@@ -200,7 +327,10 @@ scalar DateTime
 """
 A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
 """
-scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
+scalar EmailAddress
+  @specifiedBy(
+    url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address"
+  )
 
 type Tag {
   id: String
@@ -220,8 +350,14 @@ enum LocalizedPost_status {
 type CrowdinArticleDirectory {
   id: String
   name: String
-  crowdinCollectionDirectory(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinCollectionDirectory
-  crowdInFiles(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [CrowdinFile!]
+  crowdinCollectionDirectory(
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): CrowdinCollectionDirectory
+  crowdInFiles(
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): [CrowdinFile!]
   createdAt: DateTime
   updatedAt: DateTime
   originalId: Float
@@ -245,7 +381,10 @@ type CrowdinFile {
   id: String
   title: String
   field: String
-  crowdinArticleDirectory(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinArticleDirectory
+  crowdinArticleDirectory(
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): CrowdinArticleDirectory
   createdAt: DateTime
   updatedAt: DateTime
   originalId: Float
@@ -710,7 +849,10 @@ type NestedFieldCollection {
   tabOneTitle: String
   tabOneContent(depth: Int): JSON
   tabTwo: NestedFieldCollection_TabTwo
-  crowdinArticleDirectory(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinArticleDirectory
+  crowdinArticleDirectory(
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): CrowdinArticleDirectory
   updatedAt: DateTime
   createdAt: DateTime
 }
@@ -1483,7 +1625,10 @@ type Post {
   title: String
   author(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): User
   publishedDate: DateTime
-  category(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Category
+  category(
+    locale: LocaleInputType
+    fallbackLocale: FallbackLocaleInputType
+  ): Category
   tags(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [Tag!]
   content(depth: Int): JSON
   status: Post_status
@@ -5568,39 +5713,133 @@ type CrowdinArticleDirectoriesDeleteAccess {
 }
 
 type Mutation {
-  createCategory(data: mutationCategoryInput!, draft: Boolean, locale: LocaleInputType): Category
-  updateCategory(id: String!, data: mutationCategoryUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): Category
+  createCategory(
+    data: mutationCategoryInput!
+    draft: Boolean
+    locale: LocaleInputType
+  ): Category
+  updateCategory(
+    id: String!
+    data: mutationCategoryUpdateInput!
+    draft: Boolean
+    autosave: Boolean
+    locale: LocaleInputType
+  ): Category
   deleteCategory(id: String!): Category
-  createLocalizedPost(data: mutationLocalizedPostInput!, draft: Boolean, locale: LocaleInputType): LocalizedPost
-  updateLocalizedPost(id: String!, data: mutationLocalizedPostUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): LocalizedPost
+  createLocalizedPost(
+    data: mutationLocalizedPostInput!
+    draft: Boolean
+    locale: LocaleInputType
+  ): LocalizedPost
+  updateLocalizedPost(
+    id: String!
+    data: mutationLocalizedPostUpdateInput!
+    draft: Boolean
+    autosave: Boolean
+    locale: LocaleInputType
+  ): LocalizedPost
   deleteLocalizedPost(id: String!): LocalizedPost
-  createNestedFieldCollection(data: mutationNestedFieldCollectionInput!, draft: Boolean, locale: LocaleInputType): NestedFieldCollection
-  updateNestedFieldCollection(id: String!, data: mutationNestedFieldCollectionUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): NestedFieldCollection
+  createNestedFieldCollection(
+    data: mutationNestedFieldCollectionInput!
+    draft: Boolean
+    locale: LocaleInputType
+  ): NestedFieldCollection
+  updateNestedFieldCollection(
+    id: String!
+    data: mutationNestedFieldCollectionUpdateInput!
+    draft: Boolean
+    autosave: Boolean
+    locale: LocaleInputType
+  ): NestedFieldCollection
   deleteNestedFieldCollection(id: String!): NestedFieldCollection
-  createPost(data: mutationPostInput!, draft: Boolean, locale: LocaleInputType): Post
-  updatePost(id: String!, data: mutationPostUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): Post
+  createPost(
+    data: mutationPostInput!
+    draft: Boolean
+    locale: LocaleInputType
+  ): Post
+  updatePost(
+    id: String!
+    data: mutationPostUpdateInput!
+    draft: Boolean
+    autosave: Boolean
+    locale: LocaleInputType
+  ): Post
   deletePost(id: String!): Post
-  createTag(data: mutationTagInput!, draft: Boolean, locale: LocaleInputType): Tag
-  updateTag(id: String!, data: mutationTagUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): Tag
+  createTag(
+    data: mutationTagInput!
+    draft: Boolean
+    locale: LocaleInputType
+  ): Tag
+  updateTag(
+    id: String!
+    data: mutationTagUpdateInput!
+    draft: Boolean
+    autosave: Boolean
+    locale: LocaleInputType
+  ): Tag
   deleteTag(id: String!): Tag
-  createUser(data: mutationUserInput!, draft: Boolean, locale: LocaleInputType): User
-  updateUser(id: String!, data: mutationUserUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): User
+  createUser(
+    data: mutationUserInput!
+    draft: Boolean
+    locale: LocaleInputType
+  ): User
+  updateUser(
+    id: String!
+    data: mutationUserUpdateInput!
+    draft: Boolean
+    autosave: Boolean
+    locale: LocaleInputType
+  ): User
   deleteUser(id: String!): User
   refreshTokenUser(token: String): usersRefreshedUser
   logoutUser: String
   unlockUser(email: String!): Boolean!
   loginUser(email: String, password: String): usersLoginResult
-  forgotPasswordUser(email: String!, disableEmail: Boolean, expiration: Int): Boolean!
+  forgotPasswordUser(
+    email: String!
+    disableEmail: Boolean
+    expiration: Int
+  ): Boolean!
   resetPasswordUser(token: String, password: String): usersResetPassword
   verifyEmailUser(token: String): Boolean
-  createCrowdinFile(data: mutationCrowdinFileInput!, draft: Boolean, locale: LocaleInputType): CrowdinFile
-  updateCrowdinFile(id: String!, data: mutationCrowdinFileUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): CrowdinFile
+  createCrowdinFile(
+    data: mutationCrowdinFileInput!
+    draft: Boolean
+    locale: LocaleInputType
+  ): CrowdinFile
+  updateCrowdinFile(
+    id: String!
+    data: mutationCrowdinFileUpdateInput!
+    draft: Boolean
+    autosave: Boolean
+    locale: LocaleInputType
+  ): CrowdinFile
   deleteCrowdinFile(id: String!): CrowdinFile
-  createCrowdinCollectionDirectory(data: mutationCrowdinCollectionDirectoryInput!, draft: Boolean, locale: LocaleInputType): CrowdinCollectionDirectory
-  updateCrowdinCollectionDirectory(id: String!, data: mutationCrowdinCollectionDirectoryUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): CrowdinCollectionDirectory
+  createCrowdinCollectionDirectory(
+    data: mutationCrowdinCollectionDirectoryInput!
+    draft: Boolean
+    locale: LocaleInputType
+  ): CrowdinCollectionDirectory
+  updateCrowdinCollectionDirectory(
+    id: String!
+    data: mutationCrowdinCollectionDirectoryUpdateInput!
+    draft: Boolean
+    autosave: Boolean
+    locale: LocaleInputType
+  ): CrowdinCollectionDirectory
   deleteCrowdinCollectionDirectory(id: String!): CrowdinCollectionDirectory
-  createCrowdinArticleDirectory(data: mutationCrowdinArticleDirectoryInput!, draft: Boolean, locale: LocaleInputType): CrowdinArticleDirectory
-  updateCrowdinArticleDirectory(id: String!, data: mutationCrowdinArticleDirectoryUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): CrowdinArticleDirectory
+  createCrowdinArticleDirectory(
+    data: mutationCrowdinArticleDirectoryInput!
+    draft: Boolean
+    locale: LocaleInputType
+  ): CrowdinArticleDirectory
+  updateCrowdinArticleDirectory(
+    id: String!
+    data: mutationCrowdinArticleDirectoryUpdateInput!
+    draft: Boolean
+    autosave: Boolean
+    locale: LocaleInputType
+  ): CrowdinArticleDirectory
   deleteCrowdinArticleDirectory(id: String!): CrowdinArticleDirectory
   updatePreference(key: String!, value: JSON): Preference
   deletePreference(key: String!): Preference

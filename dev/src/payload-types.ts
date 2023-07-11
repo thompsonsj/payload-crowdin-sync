@@ -9,14 +9,14 @@
 export interface Config {
   collections: {
     categories: Category;
-    'localized-posts': LocalizedPost;
-    'nested-field-collection': NestedFieldCollection;
+    "localized-posts": LocalizedPost;
+    "nested-field-collection": NestedFieldCollection;
     posts: Post;
     tags: Tag;
     users: User;
-    'crowdin-files': CrowdinFile;
-    'crowdin-collection-directories': CrowdinCollectionDirectory;
-    'crowdin-article-directories': CrowdinArticleDirectory;
+    "crowdin-files": CrowdinFile;
+    "crowdin-collection-directories": CrowdinCollectionDirectory;
+    "crowdin-article-directories": CrowdinArticleDirectory;
   };
   globals: {};
 }
@@ -34,7 +34,7 @@ export interface LocalizedPost {
   content?: {
     [k: string]: unknown;
   }[];
-  status?: 'draft' | 'published';
+  status?: "draft" | "published";
   crowdinArticleDirectory?: string | CrowdinArticleDirectory;
   updatedAt: string;
   createdAt: string;
@@ -117,7 +117,7 @@ export interface NestedFieldCollection {
     metaDescription?: string;
     id?: string;
     blockName?: string;
-    blockType: 'Block';
+    blockType: "Block";
   }[];
   group?: {
     title?: string;
@@ -151,7 +151,7 @@ export interface Post {
   content?: {
     [k: string]: unknown;
   }[];
-  status?: 'draft' | 'published';
+  status?: "draft" | "published";
   updatedAt: string;
   createdAt: string;
 }

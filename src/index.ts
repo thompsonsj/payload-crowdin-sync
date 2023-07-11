@@ -1,5 +1,3 @@
-import { crowdInSync } from './plugin'
+import { crowdInSync } from "./plugin";
 
-export {
-  crowdInSync,
-}
+export { crowdInSync };

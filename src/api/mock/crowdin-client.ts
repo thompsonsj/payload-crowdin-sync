@@ -1,5 +1,10 @@
-import { PluginOptions } from '../../types'
-import { ResponseObject, SourceFilesModel, UploadStorageModel, TranslationsModel } from '@crowdin/crowdin-api-client'
+import { PluginOptions } from "../../types";
+import {
+  ResponseObject,
+  SourceFilesModel,
+  UploadStorageModel,
+  TranslationsModel,
+} from "@crowdin/crowdin-api-client";
 
 /*
   CrowdIn Service mock
@@ -22,22 +27,25 @@ class crowdinAPIWrapper {
   branchId: number;
 
   constructor(pluginOptions: PluginOptions) {
-    this.projectId = pluginOptions.projectId
-    this.directoryId = pluginOptions.directoryId
-    this.branchId = 4
+    this.projectId = pluginOptions.projectId;
+    this.directoryId = pluginOptions.directoryId;
+    this.branchId = 4;
   }
 
   async listFileRevisions(projectId: number, fileId: number) {
-    return await Promise.resolve(1).then(() => undefined)
+    return await Promise.resolve(1).then(() => undefined);
   }
 
-  async createDirectory(projectId: number,{
-    directoryId = 1179,
-    name,
-    title = 'undefined',
-  }: SourceFilesModel.CreateDirectoryRequest): Promise<ResponseObject<SourceFilesModel.Directory>> {
+  async createDirectory(
+    projectId: number,
+    {
+      directoryId = 1179,
+      name,
+      title = "undefined",
+    }: SourceFilesModel.CreateDirectoryRequest,
+  ): Promise<ResponseObject<SourceFilesModel.Directory>> {
     return await Promise.resolve(1).then(() => {
-      const date = new Date().toISOString()
+      const date = new Date().toISOString();
       return {
         data: {
           id: 1169,
@@ -46,13 +54,13 @@ class crowdinAPIWrapper {
           directoryId,
           name: name,
           title: title,
-          exportPattern: '**',
-          priority: 'normal',
+          exportPattern: "**",
+          priority: "normal",
           createdAt: date,
           updatedAt: date,
-        }
-      }
-    })
+        },
+      };
+    });
   }
 
   async addStorage(
@@ -65,34 +73,37 @@ class crowdinAPIWrapper {
         data: {
           id: 1788135621,
           fileName,
-        }
-      }
-    })
-    return storage
+        },
+      };
+    });
+    return storage;
   }
 
   async deleteFile(projectId: number, fileId: number): Promise<void> {
-    await Promise.resolve(1).then(() => undefined)
+    await Promise.resolve(1).then(() => undefined);
   }
 
-  async createFile(projectId: number, {
-    directoryId = 1172,
-    name,
-    storageId,
-    type = 'html',
-  }: SourceFilesModel.CreateFileRequest ): Promise<ResponseObject<SourceFilesModel.File>> {
+  async createFile(
+    projectId: number,
+    {
+      directoryId = 1172,
+      name,
+      storageId,
+      type = "html",
+    }: SourceFilesModel.CreateFileRequest,
+  ): Promise<ResponseObject<SourceFilesModel.File>> {
     /*const storageId = await this.addStorage({
       name,
       fileData,
       fileType,
     })*/
     const file = await Promise.resolve(1).then(() => {
-      const date = new Date().toISOString()
+      const date = new Date().toISOString();
       return {
         data: {
           revisionId: 5,
-          status: 'active',
-          priority: 'normal' as SourceFilesModel.Priority,
+          status: "active",
+          priority: "normal" as SourceFilesModel.Priority,
           importOptions: {} as any,
           exportOptions: {} as any,
           excludedTargetLanguages: [],
@@ -107,27 +118,29 @@ class crowdinAPIWrapper {
           type,
           path: `/policies/security-and-privacy/${name}`,
           parserVersion: 3,
-        }
-      }
-    })
-    return file
+        },
+      };
+    });
+    return file;
   }
 
-  async updateOrRestoreFile(projectId: number, fileId: number, {
-    storageId,
-  }: SourceFilesModel.ReplaceFileFromStorageRequest ): Promise<ResponseObject<SourceFilesModel.File>> {
+  async updateOrRestoreFile(
+    projectId: number,
+    fileId: number,
+    { storageId }: SourceFilesModel.ReplaceFileFromStorageRequest,
+  ): Promise<ResponseObject<SourceFilesModel.File>> {
     /*const storageId = await this.addStorage({
       name,
       fileData,
       fileType,
     })*/
     const file = await Promise.resolve(1).then(() => {
-      const date = new Date().toISOString()
+      const date = new Date().toISOString();
       return {
         data: {
           revisionId: 5,
-          status: 'active',
-          priority: 'normal' as SourceFilesModel.Priority,
+          status: "active",
+          priority: "normal" as SourceFilesModel.Priority,
           importOptions: {} as any,
           exportOptions: {} as any,
           excludedTargetLanguages: [],
@@ -137,43 +150,47 @@ class crowdinAPIWrapper {
           projectId,
           branchId: this.branchId,
           directoryId: this.directoryId as number,
-          name: 'file',
-          title: 'file',
-          type: 'html',
+          name: "file",
+          title: "file",
+          type: "html",
           path: `/policies/security-and-privacy/file.filetype`,
           parserVersion: 3,
-        }
-      }
-    })
-    return file
+        },
+      };
+    });
+    return file;
   }
 
-  async buildProjectFileTranslation(projectId: number, fileId: number, {
-    targetLanguageId,
-  }: TranslationsModel.BuildProjectFileTranslationRequest): Promise<ResponseObject<TranslationsModel.BuildProjectFileTranslationResponse>> {
+  async buildProjectFileTranslation(
+    projectId: number,
+    fileId: number,
+    { targetLanguageId }: TranslationsModel.BuildProjectFileTranslationRequest,
+  ): Promise<
+    ResponseObject<TranslationsModel.BuildProjectFileTranslationResponse>
+  > {
     const build = await Promise.resolve(1).then(() => {
-      const date = new Date().toISOString()
+      const date = new Date().toISOString();
       return {
         data: {
           id: 1,
           projectId,
           branchId: this.branchId,
           fileId,
-          languageId: 'en',
-          status: 'inProgress',
+          languageId: "en",
+          status: "inProgress",
           progress: 0,
           createdAt: date,
           updatedAt: date,
-          etag: 'string',
+          etag: "string",
           url: `https://api.crowdin.com/api/v2/projects/1/translations/builds/1/download?targetLanguageId=${targetLanguageId}`,
-          expireIn: 'string',
-        }
-      }
-    })
-    return build
+          expireIn: "string",
+        },
+      };
+    });
+    return build;
   }
 }
 
 export function mockCrowdinClient(pluginOptions: PluginOptions) {
-  return new crowdinAPIWrapper(pluginOptions)
+  return new crowdinAPIWrapper(pluginOptions);
 }

@@ -21,7 +21,7 @@ yarn add payload-crowdin-sync
 Add the plugin to your Payload configuration.
 
 ```ts
-import { crowdInSync, crowdinClient } from 'payload-crowdin-sync';
+import { crowdInSync, crowdinClient } from "payload-crowdin-sync";
 
 export default buildConfig({
   plugins: [

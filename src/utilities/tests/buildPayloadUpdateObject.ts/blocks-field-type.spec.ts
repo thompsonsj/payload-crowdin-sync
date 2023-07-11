@@ -1,5 +1,9 @@
-import { Block } from "payload/types";
-import { buildCrowdinJsonObject, getLocalizedFields } from "../..";
+import { Block, Field } from "payload/types";
+import {
+  buildCrowdinJsonObject,
+  buildPayloadUpdateObject,
+  getLocalizedFields,
+} from "../..";
 import { FieldWithName } from "../../../types";
 
 const TestBlockOne: Block = {
@@ -45,26 +49,29 @@ const TestBlockTwoNonLocalized: Block = {
   ],
 };
 
-describe("fn: buildCrowdinJsonObject: blocks field type", () => {
+describe("fn: buildPayloadUpdateObject: blocks field type", () => {
   it("includes localized fields nested in blocks", () => {
-    const doc = {
+    const crowdinJsonObject = {
       title: "Test Policy created with title",
       blocksField: [
         {
-          title: "Block field title content one",
-          text: "Block field text content one",
-          select: "two",
-          id: "64735620230d57bce946d370",
-          blockType: "testBlockOne",
+          "64735620230d57bce946d370": {
+            testBlockOne: {
+              title: "Block field title content one",
+              text: "Block field text content one",
+            },
+          },
         },
         {
-          url: "https://github.com/thompsonsj/payload-crowdin-sync",
-          id: "64735621230d57bce946d371",
-          blockType: "testBlockTwo",
+          "64735621230d57bce946d371": {
+            testBlockTwo: {
+              url: "https://github.com/thompsonsj/payload-crowdin-sync",
+            },
+          },
         },
       ],
     };
-    const fields: FieldWithName[] = [
+    const fields: Field[] = [
       {
         name: "title",
         type: "text",
@@ -88,66 +95,25 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
       title: "Test Policy created with title",
       blocksField: [
         {
-          "64735620230d57bce946d370": {
-            testBlockOne: {
-              title: "Block field title content one",
-              text: "Block field text content one",
-            },
-          },
+          title: "Block field title content one",
+          text: "Block field text content one",
+          id: "64735620230d57bce946d370",
+          blockType: "testBlockOne",
         },
         {
-          "64735621230d57bce946d371": {
-            testBlockTwo: {
-              url: "https://github.com/thompsonsj/payload-crowdin-sync",
-            },
-          },
+          url: "https://github.com/thompsonsj/payload-crowdin-sync",
+          id: "64735621230d57bce946d371",
+          blockType: "testBlockTwo",
         },
       ],
     };
-    expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
-    );
+    expect(
+      buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields }),
+    ).toEqual(expected);
   });
 
   it("excludes block with no localized fields", () => {
-    const doc = {
-      title: "Test Policy created with title",
-      blocksField: [
-        {
-          title: "Block field title content one",
-          text: "Block field text content one",
-          select: "two",
-          id: "64735620230d57bce946d370",
-          blockType: "testBlockOne",
-        },
-        {
-          url: "https://github.com/thompsonsj/payload-crowdin-sync",
-          id: "64735621230d57bce946d371",
-          blockType: "testBlockTwo",
-        },
-      ],
-    };
-    const fields: FieldWithName[] = [
-      {
-        name: "title",
-        type: "text",
-        localized: true,
-      },
-      // select not supported yet
-      {
-        name: "select",
-        type: "select",
-        localized: true,
-        options: ["one", "two"],
-      },
-      {
-        name: "blocksField",
-        type: "blocks",
-        blocks: [TestBlockOne, TestBlockTwoNonLocalized],
-      },
-    ];
-    const localizedFields = getLocalizedFields({ fields });
-    const expected = {
+    const crowdinJsonObject = {
       title: "Test Policy created with title",
       blocksField: [
         {
@@ -160,37 +126,7 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
         },
       ],
     };
-    expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
-    );
-  });
-
-  it("excludes block with no localized fields - more blocks", () => {
-    const doc = {
-      title: "Test Policy created with title",
-      blocksField: [
-        {
-          title: "Block field title content one",
-          text: "Block field text content one",
-          select: "two",
-          id: "64735620230d57bce946d370",
-          blockType: "testBlockOne",
-        },
-        {
-          url: "https://github.com/thompsonsj/payload-crowdin-sync",
-          id: "64735621230d57bce946d371",
-          blockType: "testBlockTwo",
-        },
-        {
-          title: "Block field title content two",
-          text: "Block field text content two",
-          select: "two",
-          id: "64a535cdf1eaa5498709c906",
-          blockType: "testBlockOne",
-        },
-      ],
-    };
-    const fields: FieldWithName[] = [
+    const fields: Field[] = [
       {
         name: "title",
         type: "text",
@@ -211,6 +147,23 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
     ];
     const localizedFields = getLocalizedFields({ fields });
     const expected = {
+      title: "Test Policy created with title",
+      blocksField: [
+        {
+          title: "Block field title content one",
+          text: "Block field text content one",
+          id: "64735620230d57bce946d370",
+          blockType: "testBlockOne",
+        },
+      ],
+    };
+    expect(
+      buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields }),
+    ).toEqual(expected);
+  });
+
+  it("excludes block with no localized fields - more blocks", () => {
+    const crowdinJsonObject = {
       title: "Test Policy created with title",
       blocksField: [
         {
@@ -231,9 +184,46 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
         },
       ],
     };
-    expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
-    );
+    const fields: FieldWithName[] = [
+      {
+        name: "title",
+        type: "text",
+        localized: true,
+      },
+      // select not supported yet
+      {
+        name: "select",
+        type: "select",
+        localized: true,
+        options: ["one", "two"],
+      },
+      {
+        name: "blocksField",
+        type: "blocks",
+        blocks: [TestBlockOne, TestBlockTwoNonLocalized],
+      },
+    ];
+    const localizedFields = getLocalizedFields({ fields });
+    const expected = {
+      title: "Test Policy created with title",
+      blocksField: [
+        {
+          title: "Block field title content one",
+          text: "Block field text content one",
+          id: "64735620230d57bce946d370",
+          blockType: "testBlockOne",
+        },
+        {
+          title: "Block field title content two",
+          text: "Block field text content two",
+          id: "64a535cdf1eaa5498709c906",
+          blockType: "testBlockOne",
+        },
+      ],
+    };
+    expect(
+      buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields }),
+    ).toEqual(expected);
   });
 
   it("does not include localized fields richText fields nested in an array field within a block in the `fields.json` file", () => {
@@ -254,45 +244,10 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
       ],
     };
 
-    const doc = {
-      id: "638641358b1a140462752076",
+    const crowdinJsonObject = {
       title: "Test Policy created with title",
-      blocksField: [
-        {
-          arrayField: [
-            {
-              content: [
-                {
-                  children: [
-                    {
-                      text: "Test content 1",
-                    },
-                  ],
-                },
-              ],
-              id: "64735620230d57bce946d370",
-            },
-            {
-              content: [
-                {
-                  children: [
-                    {
-                      text: "Test content 1",
-                    },
-                  ],
-                },
-              ],
-              id: "64735621230d57bce946d371",
-            },
-          ],
-          blockType: "testBlockArrayOfRichText",
-        },
-      ],
-      status: "draft",
-      createdAt: "2022-11-29T17:28:21.644Z",
-      updatedAt: "2022-11-29T17:28:21.644Z",
     };
-    const fields: FieldWithName[] = [
+    const fields: Field[] = [
       {
         name: "title",
         type: "text",
@@ -315,9 +270,9 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
     const expected = {
       title: "Test Policy created with title",
     };
-    expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
-    );
+    expect(
+      buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields }),
+    ).toEqual(expected);
   });
 
   it("does not include localized fields richText fields nested in an array field within a block in the `fields.json` file 2", () => {
@@ -349,46 +304,28 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
       ],
     };
 
-    const doc = {
-      id: "638641358b1a140462752076",
+    const crowdinJsonObject = {
       title: "Test Policy created with title",
       blocksField: [
         {
-          messages: [
-            {
-              title: "Test title 1",
-              message: [
+          "649cd1ecbac7445191be36af": {
+            testBlockArrayOfRichText: {
+              messages: [
                 {
-                  children: [
-                    {
-                      text: "Test content 1",
-                    },
-                  ],
+                  "64735620230d57bce946d370": {
+                    title: "Test title 1",
+                  },
+                },
+                {
+                  "64735621230d57bce946d371": {
+                    title: "Test title 2",
+                  },
                 },
               ],
-              id: "64735620230d57bce946d370",
             },
-            {
-              title: "Test title 2",
-              message: [
-                {
-                  children: [
-                    {
-                      text: "Test content 1",
-                    },
-                  ],
-                },
-              ],
-              id: "64735621230d57bce946d371",
-            },
-          ],
-          id: "649cd1ecbac7445191be36af",
-          blockType: "testBlockArrayOfRichText",
+          },
         },
       ],
-      status: "draft",
-      createdAt: "2022-11-29T17:28:21.644Z",
-      updatedAt: "2022-11-29T17:28:21.644Z",
     };
     const fields: FieldWithName[] = [
       {
@@ -414,27 +351,23 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
       title: "Test Policy created with title",
       blocksField: [
         {
-          "649cd1ecbac7445191be36af": {
-            testBlockArrayOfRichText: {
-              messages: [
-                {
-                  "64735620230d57bce946d370": {
-                    title: "Test title 1",
-                  },
-                },
-                {
-                  "64735621230d57bce946d371": {
-                    title: "Test title 2",
-                  },
-                },
-              ],
+          messages: [
+            {
+              title: "Test title 1",
+              id: "64735620230d57bce946d370",
             },
-          },
+            {
+              title: "Test title 2",
+              id: "64735621230d57bce946d371",
+            },
+          ],
+          id: "649cd1ecbac7445191be36af",
+          blockType: "testBlockArrayOfRichText",
         },
       ],
     };
-    expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
-    );
+    expect(
+      buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields }),
+    ).toEqual(expected);
   });
 });

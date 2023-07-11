@@ -1,10 +1,15 @@
-import { CollectionConfig } from 'payload/types'
+import { CollectionConfig } from "payload/types";
 
 const CrowdInArticleDirectories: CollectionConfig = {
-  slug: 'crowdin-article-directories',
+  slug: "crowdin-article-directories",
   admin: {
-    defaultColumns: ['name', 'title', 'crowdinCollectionDirectory', 'createdAt'],
-    useAsTitle: 'name',
+    defaultColumns: [
+      "name",
+      "title",
+      "crowdinCollectionDirectory",
+      "createdAt",
+    ],
+    useAsTitle: "name",
     group: "CrowdIn Admin",
   },
   access: {
@@ -13,44 +18,44 @@ const CrowdInArticleDirectories: CollectionConfig = {
   fields: [
     /* CrowdIn field */
     {
-      name: 'name',
-      type: 'text'
+      name: "name",
+      type: "text",
     },
     /* Internal fields  */
     {
-      name: 'crowdinCollectionDirectory',
-      type: 'relationship',
-      relationTo: 'crowdin-collection-directories',
+      name: "crowdinCollectionDirectory",
+      type: "relationship",
+      relationTo: "crowdin-collection-directories",
       hasMany: false,
     },
     {
-      name: 'crowdInFiles',
-      type: 'relationship',
-      relationTo: 'crowdin-files',
+      name: "crowdInFiles",
+      type: "relationship",
+      relationTo: "crowdin-files",
       hasMany: true,
     },
     /* CrowdIn fields */
     {
-      name: 'createdAt',
-      type: 'date',
+      name: "createdAt",
+      type: "date",
     },
     {
-      name: 'updatedAt',
-      type: 'date',
+      name: "updatedAt",
+      type: "date",
     },
     {
-      name: 'originalId',
-      type: 'number'
+      name: "originalId",
+      type: "number",
     },
     {
-      name: 'projectId',
-      type: 'number'
+      name: "projectId",
+      type: "number",
     },
     {
-      name: 'directoryId',
-      type: 'number'
+      name: "directoryId",
+      type: "number",
     },
   ],
-}
+};
 
-export default CrowdInArticleDirectories
+export default CrowdInArticleDirectories;

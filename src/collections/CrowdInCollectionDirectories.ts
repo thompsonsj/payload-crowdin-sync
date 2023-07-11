@@ -1,10 +1,10 @@
-import { CollectionConfig } from 'payload/types'
+import { CollectionConfig } from "payload/types";
 
 const CrowdInCollectionDirectories: CollectionConfig = {
-  slug: 'crowdin-collection-directories',
+  slug: "crowdin-collection-directories",
   admin: {
-    defaultColumns: ['name', 'title', 'collectionSlug', 'updatedAt'],
-    useAsTitle: 'name',
+    defaultColumns: ["name", "title", "collectionSlug", "updatedAt"],
+    useAsTitle: "name",
     group: "CrowdIn Admin",
   },
   access: {
@@ -13,41 +13,41 @@ const CrowdInCollectionDirectories: CollectionConfig = {
   fields: [
     /* CrowdIn field */
     {
-      name: 'name',
-      type: 'text'
+      name: "name",
+      type: "text",
     },
     {
-      name: 'title',
-      type: 'text'
+      name: "title",
+      type: "text",
     },
     /* Internal fields  */
     {
-      name: 'collectionSlug',
-      type: 'text',
+      name: "collectionSlug",
+      type: "text",
     },
-    
+
     /* CrowdIn fields */
     {
-      name: 'createdAt',
-      type: 'date',
+      name: "createdAt",
+      type: "date",
     },
     {
-      name: 'updatedAt',
-      type: 'date',
+      name: "updatedAt",
+      type: "date",
     },
     {
-      name: 'originalId',
-      type: 'number'
+      name: "originalId",
+      type: "number",
     },
     {
-      name: 'projectId',
-      type: 'number'
+      name: "projectId",
+      type: "number",
     },
     {
-      name: 'directoryId',
-      type: 'number'
+      name: "directoryId",
+      type: "number",
     },
   ],
-}
+};
 
-export default CrowdInCollectionDirectories
+export default CrowdInCollectionDirectories;

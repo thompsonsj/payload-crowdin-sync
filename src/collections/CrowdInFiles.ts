@@ -1,5 +1,9 @@
-import { CollectionConfig } from 'payload/types'
-import { buildCrowdinHtmlObject, buildCrowdinJsonObject, getLocalizedFields } from '../utilities'
+import { CollectionConfig } from "payload/types";
+import {
+  buildCrowdinHtmlObject,
+  buildCrowdinJsonObject,
+  getLocalizedFields,
+} from "../utilities";
 
 /*
   Sample data returned from CrowdIn API
@@ -28,10 +32,10 @@ import { buildCrowdinHtmlObject, buildCrowdinJsonObject, getLocalizedFields } fr
 */
 
 const CrowdInFiles: CollectionConfig = {
-  slug: 'crowdin-files',
+  slug: "crowdin-files",
   admin: {
-    defaultColumns: ['path', 'title', 'field', 'revisionId', 'updatedAt'],
-    useAsTitle: 'path',
+    defaultColumns: ["path", "title", "field", "revisionId", "updatedAt"],
+    useAsTitle: "path",
     group: "CrowdIn Admin",
   },
   access: {
@@ -40,75 +44,75 @@ const CrowdInFiles: CollectionConfig = {
   fields: [
     /* CrowdIn field */
     {
-      name: 'title',
-      type: 'text',
+      name: "title",
+      type: "text",
     },
     /* Internal fields  */
     {
-      name: 'field',
-      type: 'text',
+      name: "field",
+      type: "text",
     },
     {
-      name: 'crowdinArticleDirectory',
-      type: 'relationship',
-      relationTo: 'crowdin-article-directories',
+      name: "crowdinArticleDirectory",
+      type: "relationship",
+      relationTo: "crowdin-article-directories",
       hasMany: false,
     },
     /* CrowdIn fields */
     {
-      name: 'createdAt',
-      type: 'date',
+      name: "createdAt",
+      type: "date",
     },
     {
-      name: 'updatedAt',
-      type: 'date',
+      name: "updatedAt",
+      type: "date",
     },
     {
-      name: 'originalId',
-      type: 'number'
+      name: "originalId",
+      type: "number",
     },
     {
-      name: 'projectId',
-      type: 'number'
+      name: "projectId",
+      type: "number",
     },
     {
-      name: 'directoryId',
-      type: 'number'
+      name: "directoryId",
+      type: "number",
     },
     {
-      name: 'revisionId',
-      type: 'number'
+      name: "revisionId",
+      type: "number",
     },
     {
-      name: 'name',
-      type: 'text'
+      name: "name",
+      type: "text",
     },
     {
-      name: 'type',
-      type: 'text'
+      name: "type",
+      type: "text",
     },
     {
-      name: 'path',
-      type: 'text'
+      name: "path",
+      type: "text",
     },
     {
-      name: 'fileData',
-      type: 'group',
+      name: "fileData",
+      type: "group",
       admin: {
-        description: 'The file data submitted to the CrowdIn API',
+        description: "The file data submitted to the CrowdIn API",
       },
       fields: [
         {
-          name: 'json',
-          type: 'json'
+          name: "json",
+          type: "json",
         },
         {
-          name: 'html',
-          type: 'textarea',
-        }
-      ]
-    }
+          name: "html",
+          type: "textarea",
+        },
+      ],
+    },
   ],
-}
+};
 
-export default CrowdInFiles
+export default CrowdInFiles;
