@@ -240,7 +240,6 @@ describe("Translations", () => {
         collection: collections.nestedFields,
         dryRun: false,
       });
-      // console.log(translation, translation.translations._DE.latestTranslations);
       // retrieve translated post from Payload
       const resultDe = await payload.findByID({
         collection: collections.nestedFields,
@@ -359,7 +358,6 @@ describe("Translations", () => {
         collection: collections.nestedFields,
         dryRun: false,
       });
-      // console.log(translation, translation.translations._DE.latestTranslations);
       // retrieve translated post from Payload
       const resultDe = await payload.findByID({
         collection: collections.nestedFields,
