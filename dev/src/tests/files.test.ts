@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import payload from "payload";
 import { initPayloadTest } from "./helpers/config";
 import {
@@ -22,8 +23,14 @@ const collections = {
 };
 
 describe(`CrowdIn file create, update and delete`, () => {
-  beforeEach(async () => {
+  beforeAll(async () => {
     await initPayloadTest({ __dirname });
+  });
+
+  afterAll(async () => {
+    await mongoose.connection.dropDatabase();
+    await mongoose.connection.close();
+    await payload.mongoMemoryServer.stop();
   });
 
   describe(`Collection: ${collections.localized}`, () => {
@@ -69,8 +76,8 @@ describe(`CrowdIn file create, update and delete`, () => {
         collection: collections.nestedFields,
         locale: "en",
         data: {
-          title: "Test title",
-          content: [
+          textField: "Test title",
+          richTextField: [
             {
               children: [
                 {
@@ -79,13 +86,13 @@ describe(`CrowdIn file create, update and delete`, () => {
               ],
             },
           ],
-          metaDescription: "Test meta description",
+          textareaField: "Test meta description",
         },
       });
       const crowdInFiles = await getFilesByDocumentID(article.id, payload);
       expect(crowdInFiles.length).toEqual(2);
       expect(
-        crowdInFiles.find((file) => file.name === "content.html"),
+        crowdInFiles.find((file) => file.name === "richTextField.html"),
       ).toBeDefined();
       expect(
         crowdInFiles.find((file) => file.name === "fields.json"),
@@ -98,8 +105,8 @@ describe(`CrowdIn file create, update and delete`, () => {
         data: {
           arrayField: [
             {
-              title: "Test title 1",
-              content: [
+              textField: "Test title 1",
+              richTextField: [
                 {
                   children: [
                     {
@@ -108,11 +115,11 @@ describe(`CrowdIn file create, update and delete`, () => {
                   ],
                 },
               ],
-              metaDescription: "Test meta description 1",
+              textareaField: "Test meta description 1",
             },
             {
-              title: "Test title 2",
-              content: [
+              textField: "Test title 2",
+              richTextField: [
                 {
                   children: [
                     {
@@ -121,7 +128,7 @@ describe(`CrowdIn file create, update and delete`, () => {
                   ],
                 },
               ],
-              metaDescription: "Test meta description 2",
+              textareaField: "Test meta description 2",
             },
           ],
         },
@@ -129,10 +136,14 @@ describe(`CrowdIn file create, update and delete`, () => {
       const crowdInFiles = await getFilesByDocumentID(article.id, payload);
       expect(crowdInFiles.length).toEqual(3);
       expect(
-        crowdInFiles.find((file) => file.name === "arrayField[0].content.html"),
+        crowdInFiles.find(
+          (file) => file.name === "arrayField[0].richTextField.html",
+        ),
       ).toBeDefined();
       expect(
-        crowdInFiles.find((file) => file.name === "arrayField[1].content.html"),
+        crowdInFiles.find(
+          (file) => file.name === "arrayField[1].richTextField.html",
+        ),
       ).toBeDefined();
       expect(
         crowdInFiles.find((file) => file.name === "fields.json"),
@@ -145,8 +156,8 @@ describe(`CrowdIn file create, update and delete`, () => {
         data: {
           layout: [
             {
-              title: "Test title 1",
-              content: [
+              textField: "Test title 1",
+              richTextField: [
                 {
                   children: [
                     {
@@ -155,7 +166,7 @@ describe(`CrowdIn file create, update and delete`, () => {
                   ],
                 },
               ],
-              metaDescription: "Test meta description 1",
+              textareaField: "Test meta description 1",
               blockType: "basicBlock",
             },
             {
@@ -195,7 +206,9 @@ describe(`CrowdIn file create, update and delete`, () => {
       expect(crowdInFiles.length).toEqual(4);
       const jsonFile = crowdInFiles.find((file) => file.name === "fields.json");
       expect(
-        crowdInFiles.find((file) => file.name === "layout[0].content.html"),
+        crowdInFiles.find(
+          (file) => file.name === "layout[0].richTextField.html",
+        ),
       ).toBeDefined();
       expect(
         crowdInFiles.find(
@@ -213,7 +226,8 @@ describe(`CrowdIn file create, update and delete`, () => {
           {
             [firstBlockId]: {
               basicBlock: {
-                title: "Test title 1",
+                textareaField: "Test meta description 1",
+                textField: "Test title 1",
               },
             },
           },

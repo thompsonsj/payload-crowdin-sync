@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import payload from "payload";
 import { initPayloadTest } from "./helpers/config";
 import {
@@ -30,8 +31,14 @@ const collections = {
 };
 
 describe("Collections", () => {
-  beforeEach(async () => {
+  beforeAll(async () => {
     await initPayloadTest({ __dirname });
+  });
+
+  afterAll(async () => {
+    await mongoose.connection.dropDatabase();
+    await mongoose.connection.close();
+    await payload.mongoMemoryServer.stop();
   });
 
   describe("Non-localized collections", () => {

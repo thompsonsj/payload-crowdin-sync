@@ -13,6 +13,7 @@ import {
   getLocalizedFields,
   getFieldSlugs,
   buildCrowdinJsonObject,
+  buildPayloadUpdateObject,
   getLocalizedRequiredFields,
 } from "../../utilities";
 import dot from "dot-object";
@@ -195,6 +196,10 @@ export class payloadCrowdInSyncTranslationsApi {
       doc: document,
       fields: localizedFields,
     });
+    docTranslations = buildPayloadUpdateObject({
+      crowdinJsonObject: docTranslations,
+      fields: localizedFields,
+    });
 
     // add html fields
     // globals have a document id - would using document id be more elegant?
@@ -246,6 +251,11 @@ export class payloadCrowdInSyncTranslationsApi {
         fieldName: "fields",
         locale: locale,
       })) || {};
+    docTranslations = buildPayloadUpdateObject({
+      crowdinJsonObject: docTranslations,
+      fields: localizedFields,
+    });
+
     // add html fields
     const localizedHtmlFields = await this.getHtmlFieldSlugs(
       global ? collectionConfig.slug : doc.id,
@@ -275,11 +285,7 @@ export class payloadCrowdInSyncTranslationsApi {
         }
       });
     }
-    const parsedDocTranslations = this.restoreIdAndBlockType(
-      doc,
-      docTranslations,
-    );
-    return parsedDocTranslations;
+    return docTranslations;
   }
 
   async getHtmlFieldSlugs(documentId: string) {
