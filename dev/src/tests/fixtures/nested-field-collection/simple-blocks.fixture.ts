@@ -11,4 +11,4 @@ export const payloadCreateData = {
       blockType: "basicBlock",
     },
   ],
-}
+};

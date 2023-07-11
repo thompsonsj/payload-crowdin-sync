@@ -11,7 +11,8 @@
     "build": "tsc",
     "develop": "tsc --watch",
     "test": "jest --forceExit --detectOpenHandles",
-    "prepare": "yarn build"
+    "prepare": "yarn build",
+    "prettier": "npx prettier . --write"
   },
   "repository": {
     "type": "git",

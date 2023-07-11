@@ -136,10 +136,14 @@ describe(`CrowdIn file create, update and delete`, () => {
       const crowdInFiles = await getFilesByDocumentID(article.id, payload);
       expect(crowdInFiles.length).toEqual(3);
       expect(
-        crowdInFiles.find((file) => file.name === "arrayField[0].richTextField.html"),
+        crowdInFiles.find(
+          (file) => file.name === "arrayField[0].richTextField.html",
+        ),
       ).toBeDefined();
       expect(
-        crowdInFiles.find((file) => file.name === "arrayField[1].richTextField.html"),
+        crowdInFiles.find(
+          (file) => file.name === "arrayField[1].richTextField.html",
+        ),
       ).toBeDefined();
       expect(
         crowdInFiles.find((file) => file.name === "fields.json"),
@@ -202,7 +206,9 @@ describe(`CrowdIn file create, update and delete`, () => {
       expect(crowdInFiles.length).toEqual(4);
       const jsonFile = crowdInFiles.find((file) => file.name === "fields.json");
       expect(
-        crowdInFiles.find((file) => file.name === "layout[0].richTextField.html"),
+        crowdInFiles.find(
+          (file) => file.name === "layout[0].richTextField.html",
+        ),
       ).toBeDefined();
       expect(
         crowdInFiles.find(
