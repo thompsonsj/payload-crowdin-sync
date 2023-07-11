@@ -1,13 +1,13 @@
-import { CollectionConfig, GlobalConfig } from 'payload/types'
-import { getLocalizedFields, getFieldSlugs } from '.'
+import { CollectionConfig, GlobalConfig } from "payload/types";
+import { getLocalizedFields, getFieldSlugs } from ".";
 
 describe("Function: getFieldSlugs", () => {
-  it ("detects top-level richText fields", () => {
+  it("detects top-level richText fields", () => {
     const Policies: CollectionConfig = {
-      slug: 'policies',
+      slug: "policies",
       admin: {
-        defaultColumns: ['title', 'updatedDate'],
-        useAsTitle: 'title',
+        defaultColumns: ["title", "updatedDate"],
+        useAsTitle: "title",
         group: "Pages",
       },
       access: {
@@ -18,29 +18,33 @@ describe("Function: getFieldSlugs", () => {
       },
       fields: [
         {
-          name: 'title',
-          type: 'text',
+          name: "title",
+          type: "text",
           localized: true,
         },
         {
-          name: 'updatedDate',
-          type: 'date',
+          name: "updatedDate",
+          type: "date",
           admin: {
-            description: "If set, this updated date/time will be displayed on the policy page."
-          }
+            description:
+              "If set, this updated date/time will be displayed on the policy page.",
+          },
         },
         {
-          name: 'content',
-          type: 'richText',
+          name: "content",
+          type: "richText",
           localized: true,
         },
       ],
-    }
-    const htmlFields = getLocalizedFields({ fields: Policies.fields, type: 'html'})
-    expect(getFieldSlugs(htmlFields)).toEqual(['content'])
-  })
+    };
+    const htmlFields = getLocalizedFields({
+      fields: Policies.fields,
+      type: "html",
+    });
+    expect(getFieldSlugs(htmlFields)).toEqual(["content"]);
+  });
 
-  it ("returns an empty array if no rich text fields", () => {
+  it("returns an empty array if no rich text fields", () => {
     const Statistics: GlobalConfig = {
       slug: "statistics",
       access: {
@@ -62,8 +66,9 @@ describe("Function: getFieldSlugs", () => {
               min: 0,
               admin: {
                 step: 100,
-                description: "Restricted to multiples of 100 in order to simplify localization."
-              }
+                description:
+                  "Restricted to multiples of 100 in order to simplify localization.",
+              },
             },
           ],
         },
@@ -82,8 +87,9 @@ describe("Function: getFieldSlugs", () => {
               min: 0,
               admin: {
                 step: 100,
-                description: "Restricted to multiples of 100 in order to simplify localization."
-              }
+                description:
+                  "Restricted to multiples of 100 in order to simplify localization.",
+              },
             },
           ],
         },
@@ -101,8 +107,8 @@ describe("Function: getFieldSlugs", () => {
               type: "number",
               min: 0,
               admin: {
-                step: 1
-              }
+                step: 1,
+              },
             },
           ],
         },
@@ -121,14 +127,18 @@ describe("Function: getFieldSlugs", () => {
               min: 0,
               admin: {
                 step: 100,
-                description: "Restricted to multiples of 100 in order to simplify localization."
-              }
+                description:
+                  "Restricted to multiples of 100 in order to simplify localization.",
+              },
             },
           ],
         },
       ],
-    }
-    const htmlFields = getLocalizedFields({ fields: Statistics.fields, type: 'html'})
-    expect(getFieldSlugs(htmlFields)).toEqual([])
-  })
-})
+    };
+    const htmlFields = getLocalizedFields({
+      fields: Statistics.fields,
+      type: "html",
+    });
+    expect(getFieldSlugs(htmlFields)).toEqual([]);
+  });
+});

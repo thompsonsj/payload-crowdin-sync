@@ -2,32 +2,39 @@ import { Payload } from "payload";
 
 /**
  * get CrowdIn Article Directory for a given documentId
- * 
+ *
  * The CrowdIn Article Directory is associated with a document,
  * so is easy to retrieve. Use this function when you only have
  * a document id.
  */
-export async function getArticleDirectory(documentId: string, payload: Payload) {
+export async function getArticleDirectory(
+  documentId: string,
+  payload: Payload,
+) {
   // Get directory
   const crowdInPayloadArticleDirectory = await payload.find({
-    collection: 'crowdin-article-directories',
+    collection: "crowdin-article-directories",
     where: {
       name: {
         equals: documentId,
       },
     },
-  })
+  });
   if (crowdInPayloadArticleDirectory.totalDocs === 0) {
     // a thrown error won't be reported in an api call, so console.log it as well.
-    console.log(`No article directory found for document ${documentId}`)
+    console.log(`No article directory found for document ${documentId}`);
     throw new Error(
-      'This article does not have a corresponding entry in the  crowdin-article-directories collection.'
-    )
+      "This article does not have a corresponding entry in the  crowdin-article-directories collection.",
+    );
   }
-  return crowdInPayloadArticleDirectory.docs[0]
+  return crowdInPayloadArticleDirectory.docs[0];
 }
 
-export async function getFile(name: string, crowdinArticleDirectoryId: string, payload: Payload): Promise<any> {
+export async function getFile(
+  name: string,
+  crowdinArticleDirectoryId: string,
+  payload: Payload,
+): Promise<any> {
   const result = await payload.find({
     collection: "crowdin-files",
     where: {
@@ -36,11 +43,14 @@ export async function getFile(name: string, crowdinArticleDirectoryId: string, p
         equals: crowdinArticleDirectoryId,
       },
     },
-  })
-  return result.docs[0]
+  });
+  return result.docs[0];
 }
 
-export async function getFiles(crowdinArticleDirectoryId: string, payload: Payload): Promise<any> {
+export async function getFiles(
+  crowdinArticleDirectoryId: string,
+  payload: Payload,
+): Promise<any> {
   const result = await payload.find({
     collection: "crowdin-files",
     where: {
@@ -48,17 +58,24 @@ export async function getFiles(crowdinArticleDirectoryId: string, payload: Paylo
         equals: crowdinArticleDirectoryId,
       },
     },
-  })
-  return result.docs
+  });
+  return result.docs;
 }
 
-export async function getFileByDocumentID(name: string, documentId: string, payload: Payload): Promise<any> {
-  const articleDirectory = await getArticleDirectory(documentId, payload)
-  return getFile(name, articleDirectory.id, payload)
+export async function getFileByDocumentID(
+  name: string,
+  documentId: string,
+  payload: Payload,
+): Promise<any> {
+  const articleDirectory = await getArticleDirectory(documentId, payload);
+  return getFile(name, articleDirectory.id, payload);
 }
 
-export async function getFilesByDocumentID(documentId: string, payload: Payload): Promise<any> {
-  const articleDirectory = await getArticleDirectory(documentId, payload)
-  const files = await getFiles(articleDirectory.id, payload)
-  return files
+export async function getFilesByDocumentID(
+  documentId: string,
+  payload: Payload,
+): Promise<any> {
+  const articleDirectory = await getArticleDirectory(documentId, payload);
+  const files = await getFiles(articleDirectory.id, payload);
+  return files;
 }

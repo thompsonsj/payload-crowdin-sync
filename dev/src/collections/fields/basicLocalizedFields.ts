@@ -1,19 +1,19 @@
-import { Field } from "payload/types"
+import { Field } from "payload/types";
 
 export const basicLocalizedFields: Field[] = [
   {
-    name: 'title',
-    type: 'text',
+    name: "title",
+    type: "text",
     localized: true,
   },
   {
-    name: 'content',
-    type: 'richText',
+    name: "content",
+    type: "richText",
     localized: true,
   },
   {
-    name: 'metaDescription',
-    type: 'textarea',
+    name: "metaDescription",
+    type: "textarea",
     // localized: true,
-  }
-]
+  },
+];

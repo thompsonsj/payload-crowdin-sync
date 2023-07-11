@@ -1,19 +1,19 @@
-import payload from 'payload';
-import { initPayloadTest } from './helpers/config';
-import { payloadCrowdInSyncTranslationsApi } from '../../../dist/api/payload-crowdin-sync/translations';
-import nock from 'nock';
+import payload from "payload";
+import { initPayloadTest } from "./helpers/config";
+import { payloadCrowdInSyncTranslationsApi } from "../../../dist/api/payload-crowdin-sync/translations";
+import nock from "nock";
 
 /**
  * Test translations
- * 
+ *
  * Ensure translations are retrieved, compared, and
  * stored as expected.
  */
 
 const collections = {
-  nonLocalized: 'posts',
-  localized: 'localized-posts',
-}
+  nonLocalized: "posts",
+  localized: "localized-posts",
+};
 
 const pluginOptions = {
   projectId: 323731,
@@ -25,121 +25,134 @@ const pluginOptions = {
     },
     fr_FR: {
       crowdinId: "fr",
-    }
+    },
   },
-}
+  sourceLocale: "en",
+};
 
-describe('Translations', () => {
+describe("Translations", () => {
   beforeEach(async () => {
     await initPayloadTest({ __dirname });
   });
 
-  describe('fn: getTranslation', () => {
-    it('retrieves a translation from CrowdIn', async () => {
+  describe("fn: getTranslation", () => {
+    it("retrieves a translation from CrowdIn", async () => {
       const post = await payload.create({
         collection: collections.localized,
-        data: { title: 'Test post' },
+        data: { title: "Test post" },
       });
       const translationsApi = new payloadCrowdInSyncTranslationsApi(
         pluginOptions,
         payload,
-      )
-      const scope = nock('https://api.crowdin.com')
-        .get('/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de')
+      );
+      const scope = nock("https://api.crowdin.com")
+        .get(
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de",
+        )
         .reply(200, {
           title: "Testbeitrag",
         })
-        .get('/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr')
+        .get(
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr",
+        )
         .reply(200, {
           title: "Poste d'essai",
-        })
+        });
       const translation = await translationsApi.getTranslation({
         documentId: post.id,
-        fieldName: 'fields',
-        locale: 'de_DE',
-      })
+        fieldName: "fields",
+        locale: "de_DE",
+      });
       expect(translation).toEqual({
         title: "Testbeitrag",
-      })
+      });
     });
-  })
+  });
 
-  describe('fn: updateTranslation', () => {
-    it('updates a Payload article with a `text` field translation retrieved from CrowdIn', async () => {
+  describe("fn: updateTranslation", () => {
+    it("updates a Payload article with a `text` field translation retrieved from CrowdIn", async () => {
       const post = await payload.create({
         collection: collections.localized,
-        data: { title: 'Test post' },
+        data: { title: "Test post" },
       });
       const translationsApi = new payloadCrowdInSyncTranslationsApi(
         pluginOptions,
         payload,
-      )
-      const scope = nock('https://api.crowdin.com')
-        .get(`/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de`)
+      );
+      const scope = nock("https://api.crowdin.com")
+        .get(
+          `/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de`,
+        )
         .reply(200, {
           title: "Testbeitrag",
         })
-        .get('/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr')
+        .get(
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr",
+        )
         .reply(200, {
           title: "Poste d'essai",
-        })
+        });
       const translation = await translationsApi.updateTranslation({
         documentId: post.id,
         collection: collections.localized,
         dryRun: false,
-      })
+      });
       // retrieve translated post from Payload
       const result = await payload.findByID({
         collection: collections.localized,
         id: post.id,
-        locale: 'de_DE',
+        locale: "de_DE",
       });
-      expect(result.title).toEqual("Testbeitrag")
+      expect(result.title).toEqual("Testbeitrag");
     });
-  })
+  });
 
-  it('updates a Payload article with a `richText` field translation retrieved from CrowdIn', async () => {
+  it("updates a Payload article with a `richText` field translation retrieved from CrowdIn", async () => {
     const post = await payload.create({
       collection: collections.localized,
       data: {
-        content: [{
-          children: [
-            {
-              text: "Test content"
-            }
-          ]
-        }],
+        content: [
+          {
+            children: [
+              {
+                text: "Test content",
+              },
+            ],
+          },
+        ],
       },
     });
     const translationsApi = new payloadCrowdInSyncTranslationsApi(
       pluginOptions,
       payload,
-    )
-    const scope = nock('https://api.crowdin.com')
-      .get('/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de')
-      .reply(200, 
-        "<p>Testbeitrag</p>"
+    );
+    const scope = nock("https://api.crowdin.com")
+      .get(
+        "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de",
       )
-      .get('/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr')
-        .reply(200, {
-          title: "Poste d'essai",
-        })
+      .reply(200, "<p>Testbeitrag</p>")
+      .get(
+        "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr",
+      )
+      .reply(200, {
+        title: "Poste d'essai",
+      });
     const translation = await translationsApi.updateTranslation({
       documentId: post.id,
       collection: collections.localized,
       dryRun: false,
-    })
+    });
     // retrieve translated post from Payload
     const result = await payload.findByID({
       collection: collections.localized,
       id: post.id,
-      locale: 'de_DE',
+      locale: "de_DE",
     });
-    expect(result.content).toEqual([{
-      "children": [
-        {"text": "Testbeitrag"
-      },],
-      "type": "p",
-  }])
+    expect(result.content).toEqual([
+      {
+        children: [{ text: "Testbeitrag" }],
+        type: "p",
+      },
+    ]);
   });
 });

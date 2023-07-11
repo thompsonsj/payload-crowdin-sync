@@ -1,39 +1,41 @@
-import { Block, CollectionConfig } from 'payload/types';
-import { basicLocalizedFields } from './fields/basicLocalizedFields';
+import { Block, CollectionConfig } from "payload/types";
+import { basicLocalizedFields } from "./fields/basicLocalizedFields";
 
 const LocalizedBlock: Block = {
-  slug: 'basicBlock', // required
+  slug: "basicBlock", // required
   fields: basicLocalizedFields,
 };
 
 const TestBlockArrayOfRichText: Block = {
-  slug: 'testBlockArrayOfRichText',
-  fields: [{
-    name: 'title',
-    type: 'text',
-    localized: true,
-  },
-  {
-    name: 'messages',
-    type: 'array',
-    localized: true,
-    maxRows: 3,
-    fields: [
-      {
-        name: 'title',
-        type: 'text',
-        localized: true,
-      },
-      {
-        name: 'message',
-        type: 'richText'
-      }
-    ]
-  },],
-}
+  slug: "testBlockArrayOfRichText",
+  fields: [
+    {
+      name: "title",
+      type: "text",
+      localized: true,
+    },
+    {
+      name: "messages",
+      type: "array",
+      localized: true,
+      maxRows: 3,
+      fields: [
+        {
+          name: "title",
+          type: "text",
+          localized: true,
+        },
+        {
+          name: "message",
+          type: "richText",
+        },
+      ],
+    },
+  ],
+};
 
 const NestedFieldCollection: CollectionConfig = {
-  slug: 'nested-field-collection',
+  slug: "nested-field-collection",
   access: {
     read: () => true,
   },
@@ -41,20 +43,15 @@ const NestedFieldCollection: CollectionConfig = {
     ...basicLocalizedFields,
     // array
     {
-      name: 'arrayField',
-      type: 'array',
-      fields: [
-        ...basicLocalizedFields,
-      ],
+      name: "arrayField",
+      type: "array",
+      fields: [...basicLocalizedFields],
     },
     // blocks
     {
-      name: 'layout', // required
-      type: 'blocks', // required
-      blocks: [
-        LocalizedBlock,
-        TestBlockArrayOfRichText,
-      ],
+      name: "layout", // required
+      type: "blocks", // required
+      blocks: [LocalizedBlock, TestBlockArrayOfRichText],
     },
     // collapsible
     /*{
@@ -76,13 +73,13 @@ const NestedFieldCollection: CollectionConfig = {
           label: "Tab One Label", // required
           fields: [
             {
-              name: 'tabOneTitle',
-              type: 'text',
+              name: "tabOneTitle",
+              type: "text",
               localized: true,
             },
             {
-              name: 'tabOneContent',
-              type: 'richText',
+              name: "tabOneContent",
+              type: "richText",
               localized: true,
             },
           ],
@@ -92,13 +89,13 @@ const NestedFieldCollection: CollectionConfig = {
           label: "Tab Two Label",
           fields: [
             {
-              name: 'tabTwoTitle',
-              type: 'text',
+              name: "tabTwoTitle",
+              type: "text",
               localized: true,
             },
             {
-              name: 'tabTwoContent',
-              type: 'richText',
+              name: "tabTwoContent",
+              type: "richText",
               localized: true,
             },
           ],
@@ -106,6 +103,6 @@ const NestedFieldCollection: CollectionConfig = {
       ],
     },
   ],
-}
+};
 
 export default NestedFieldCollection;

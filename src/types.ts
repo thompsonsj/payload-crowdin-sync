@@ -1,20 +1,22 @@
-import { Field } from "payload/types"
+import { Field } from "payload/types";
 
 export interface CollectionOptions {
-  directory?: string
+  directory?: string;
 }
 
 export interface PluginOptions {
-  projectId: number
+  projectId: number;
   /** This should be optional? */
-  directoryId?: number
-  token: string
+  directoryId?: number;
+  token: string;
   //client: crowdinAPIService,
-  localeMap: {[key: string]: {
-    crowdinId: string
-  }}
-  sourceLocale: string
-  collections?: Record<string, CollectionOptions>
+  localeMap: {
+    [key: string]: {
+      crowdinId: string;
+    };
+  };
+  sourceLocale: string;
+  collections?: Record<string, CollectionOptions>;
 }
 
-export type FieldWithName = Field & { name: string } 
+export type FieldWithName = Field & { name: string };

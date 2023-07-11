@@ -1,11 +1,11 @@
-import type {Config} from 'jest';
+import type { Config } from "jest";
 
 const config: Config = {
   verbose: true,
   modulePathIgnorePatterns: ["dist"],
-  testEnvironment: 'node',
+  testEnvironment: "node",
   // globalSetup: '<rootDir>/dev/src/tests/globalSetup.ts',
-  roots: ['<rootDir>/src/', '<rootDir>/dev/'],
+  roots: ["<rootDir>/src/", "<rootDir>/dev/"],
 };
 
 export default config;

@@ -1,26 +1,24 @@
-import type { CollectionConfig, Field, GlobalConfig} from 'payload/types'
+import type { CollectionConfig, Field, GlobalConfig } from "payload/types";
 
 interface Args {
-  collection: CollectionConfig | GlobalConfig
+  collection: CollectionConfig | GlobalConfig;
 }
 
-export const getFields = ({
-  collection,
-}: Args): Field[] => {
-  const fields = [...collection.fields]
-  
+export const getFields = ({ collection }: Args): Field[] => {
+  const fields = [...collection.fields];
+
   const crowdInArticleDirectoryField: Field = {
-    name: 'crowdinArticleDirectory',
-    type: 'relationship',
-    relationTo: 'crowdin-article-directories',
-    hasMany: false
+    name: "crowdinArticleDirectory",
+    type: "relationship",
+    relationTo: "crowdin-article-directories",
+    hasMany: false,
     /*admin: {
       readOnly: true,
       disabled: true,
     },*/
-  }
+  };
 
-  fields.push(crowdInArticleDirectoryField)
+  fields.push(crowdInArticleDirectoryField);
 
-  return fields
-}
+  return fields;
+};
