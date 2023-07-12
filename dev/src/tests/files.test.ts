@@ -225,7 +225,7 @@ describe(`CrowdIn file create, update and delete`, () => {
       ).toBeDefined();
       expect(jsonFile).toBeDefined();
       expect(jsonFile.fileData.json).toEqual({
-        layout: [
+        layout:
           {
             [blockIds[0]]: {
               basicBlock: {
@@ -234,7 +234,6 @@ describe(`CrowdIn file create, update and delete`, () => {
               },
             },
           },
-        ],
       });
     });
   });

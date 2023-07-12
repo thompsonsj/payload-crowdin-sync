@@ -129,20 +129,17 @@ describe("fn: buildCrowdinJsonObject: array field type", () => {
     const localizedFields = getLocalizedFields({ fields });
     const expected = {
       title: "Test Policy created with title",
-      arrayField: [
+      arrayField: 
         {
           "64735620230d57bce946d370": {
             title: "Array field title content one",
             text: "Array field text content one",
           },
-        },
-        {
           "64735621230d57bce946d371": {
             title: "Array field title content two",
             text: "Array field text content two",
           },
         },
-      ],
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
       expected,
@@ -208,20 +205,17 @@ describe("fn: buildCrowdinJsonObject: array field type", () => {
     const localizedFields = getLocalizedFields({ fields });
     const expected = {
       title: "Test Policy created with title",
-      arrayField: [
+      arrayField:
         {
           "64735620230d57bce946d370": {
             title: "Array field title content one",
             text: "Array field text content one",
           },
-        },
-        {
           "64735621230d57bce946d371": {
             title: "Array field title content two",
             text: "Array field text content two",
           },
         },
-      ],
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
       expected,

@@ -1,4 +1,5 @@
 import { Block, Field } from "payload/types";
+import dot from "dot-object";
 
 const basicLocalizedFields: Field[] = [
   {
@@ -122,7 +123,41 @@ export const fieldDocValue = [
   },
 ]
 
-export const fieldCrowdinObject = (prefix?: string) => ({
+export const fieldJsonCrowdinObject = (prefix?: string) => {
+  const value = { 
+    blocksField:
+      {
+        "63ea42b06ff825cddad3c133": {
+          "basicBlock" : {
+              textField: "Text field content in basicBlock at layout index 0",
+              textareaField: "Textarea field content in basicBlock at layout index 0",
+            },
+          },
+        "63ea373fb725d8a50646952e": {
+          "basicBlock" : {
+            textField: "Text field content in basicBlock at layout index 2",
+            textareaField: "Textarea field content in basicBlock at layout index 2",
+          },
+      },
+      
+        "63ea40106ff825cddad3c10b": {
+          "basicBlockMixed" : {
+
+            textField: "Text field content in basicBlockMixed at layout index 4",
+            textareaField: "Textarea field content in basicBlockMixed at layout index 4",
+          },
+        },
+      },
+  }
+  if (prefix) {
+    var tgt = {};
+    dot.str(prefix, value, tgt);
+    return tgt;
+  }
+  return value;
+}
+
+export const fieldHtmlCrowdinObject = (prefix?: string) => ({
   [`${prefix || ''}blocksField.63d169d3d9dfd46d37c649e4.basicBlockRichText.richTextField`]: [
     {
       type: "h1",

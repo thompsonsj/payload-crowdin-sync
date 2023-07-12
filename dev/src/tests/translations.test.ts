@@ -178,7 +178,7 @@ describe("Translations", () => {
       const blockIds = post.layout.map((block) => block.id);
       const blockTypes = post.layout.map((block) => block.blockType);
       const responseDe = {
-        layout: [
+        layout:
           {
             [blockIds[0]]: {
               [blockTypes[0]]: {
@@ -187,8 +187,6 @@ describe("Translations", () => {
                   "Textbereichsfeldinhalt im Block bei Layoutindex 0",
               },
             },
-          },
-          {
             [blockIds[1]]: {
               [blockTypes[1]]: {
                 textField: "Textfeldinhalt im Block bei Layoutindex 1",
@@ -197,10 +195,10 @@ describe("Translations", () => {
               },
             },
           },
-        ],
+
       };
       const responseFr = {
-        layout: [
+        layout:
           {
             [blockIds[0]]: {
               [blockTypes[0]]: {
@@ -210,8 +208,6 @@ describe("Translations", () => {
                   "Contenu du champ Textarea dans le bloc à l'index de mise en page 0",
               },
             },
-          },
-          {
             [blockIds[1]]: {
               [blockTypes[1]]: {
                 textField:
@@ -221,7 +217,6 @@ describe("Translations", () => {
               },
             },
           },
-        ],
       };
       const translationsApi = new payloadCrowdInSyncTranslationsApi(
         pluginOptions,
@@ -296,7 +291,7 @@ describe("Translations", () => {
       const blockIds = post.layout.map((block) => block.id);
       const blockTypes = post.layout.map((block) => block.blockType);
       const responseDe = {
-        layout: [
+        layout:
           {
             [blockIds[0]]: {
               [blockTypes[0]]: {
@@ -305,8 +300,6 @@ describe("Translations", () => {
                   "Textbereichsfeldinhalt im Block bei Layoutindex 0",
               },
             },
-          },
-          {
             [blockIds[1]]: {
               [blockTypes[1]]: {
                 textField: "Textfeldinhalt im Block bei Layoutindex 1",
@@ -315,10 +308,9 @@ describe("Translations", () => {
               },
             },
           },
-        ],
       };
       const responseFr = {
-        layout: [
+        layout:
           {
             [blockIds[0]]: {
               [blockTypes[0]]: {
@@ -328,8 +320,6 @@ describe("Translations", () => {
                   "Contenu du champ Textarea dans le bloc à l'index de mise en page 0",
               },
             },
-          },
-          {
             [blockIds[1]]: {
               [blockTypes[1]]: {
                 textField:
@@ -339,7 +329,6 @@ describe("Translations", () => {
               },
             },
           },
-        ],
       };
       const translationsApi = new payloadCrowdInSyncTranslationsApi(
         pluginOptions,
@@ -441,19 +430,19 @@ describe("Translations", () => {
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de",
         )
-        .reply(200, responseDeOne)
+        .reply(200, responseDeTwo)
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de",
         )
-        .reply(200, responseDeTwo)
+        .reply(200, responseDeOne)
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr",
         )
-        .reply(200, responseFrOne)
+        .reply(200, responseFrTwo)
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr",
         )
-        .reply(200, responseFrTwo);
+        .reply(200, responseFrOne);
       const translation = await translationsApi.updateTranslation({
         documentId: post.id,
         collection: collections.nestedFields,
@@ -467,16 +456,32 @@ describe("Translations", () => {
       });
       expect(resultDe.layout).toEqual([
         {
-          textField: "Textfeldinhalt im Block bei Layoutindex 0",
-          textareaField: "Textbereichsfeldinhalt im Block bei Layoutindex 0",
+          richTextField: [
+            {
+              children: [
+                {
+                  text: "Rich-Text-Inhalt im Blocklayout bei Index 0.",
+                },
+              ],
+              "type": "p",
+            },
+          ],
           id: blockIds[0],
-          blockType: "basicBlock",
+          blockType: "basicBlockRichText",
         },
         {
-          textField: "Textfeldinhalt im Block bei Layoutindex 1",
-          textareaField: "Textbereichsfeldinhalt im Block bei Layoutindex 1",
+          richTextField: [
+            {
+              children: [
+                {
+                  text: "Rich-Text-Inhalt im Blocklayout bei Index 1.",
+                },
+              ],
+              "type": "p",
+            },
+          ],
           id: blockIds[1],
-          blockType: "basicBlock",
+          blockType: "basicBlockRichText",
         },
       ]);
       // retrieve translated post from Payload
@@ -487,20 +492,32 @@ describe("Translations", () => {
       });
       expect(resultFr.layout).toEqual([
         {
-          textField:
-            "Contenu du champ de texte dans le bloc à l'index de mise en page 0",
-          textareaField:
-            "Contenu du champ Textarea dans le bloc à l'index de mise en page 0",
+          richTextField: [
+            {
+              children: [
+                {
+                  text: "Contenu de texte enrichi dans la disposition des blocs à l'index 0.",
+                },
+              ],
+              "type": "p",
+            },
+          ],
           id: blockIds[0],
-          blockType: "basicBlock",
+          blockType: "basicBlockRichText",
         },
         {
-          textField:
-            "Contenu du champ de texte dans le bloc à l'index de mise en page 1",
-          textareaField:
-            "Contenu du champ Textarea dans le bloc à l'index de mise en page 1",
+          richTextField: [
+            {
+              children: [
+                {
+                  text: "Contenu de texte enrichi dans la disposition des blocs à l'index 1.",
+                },
+              ],
+              "type": "p",
+            },
+          ],
           id: blockIds[1],
-          blockType: "basicBlock",
+          blockType: "basicBlockRichText",
         },
       ]);
     });

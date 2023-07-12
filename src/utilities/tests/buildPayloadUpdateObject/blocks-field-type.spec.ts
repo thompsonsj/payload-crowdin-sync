@@ -53,7 +53,7 @@ describe("fn: buildPayloadUpdateObject: blocks field type", () => {
   it("includes localized fields nested in blocks", () => {
     const crowdinJsonObject = {
       title: "Test Policy created with title",
-      blocksField: [
+      blocksField:
         {
           "64735620230d57bce946d370": {
             testBlockOne: {
@@ -61,15 +61,12 @@ describe("fn: buildPayloadUpdateObject: blocks field type", () => {
               text: "Block field text content one",
             },
           },
-        },
-        {
           "64735621230d57bce946d371": {
             testBlockTwo: {
               url: "https://github.com/thompsonsj/payload-crowdin-sync",
             },
           },
         },
-      ],
     };
     const fields: Field[] = [
       {
@@ -115,7 +112,7 @@ describe("fn: buildPayloadUpdateObject: blocks field type", () => {
   it("excludes block with no localized fields", () => {
     const crowdinJsonObject = {
       title: "Test Policy created with title",
-      blocksField: [
+      blocksField: 
         {
           "64735620230d57bce946d370": {
             testBlockOne: {
@@ -124,7 +121,6 @@ describe("fn: buildPayloadUpdateObject: blocks field type", () => {
             },
           },
         },
-      ],
     };
     const fields: Field[] = [
       {
@@ -165,7 +161,7 @@ describe("fn: buildPayloadUpdateObject: blocks field type", () => {
   it("excludes block with no localized fields - more blocks", () => {
     const crowdinJsonObject = {
       title: "Test Policy created with title",
-      blocksField: [
+      blocksField:
         {
           "64735620230d57bce946d370": {
             testBlockOne: {
@@ -173,8 +169,6 @@ describe("fn: buildPayloadUpdateObject: blocks field type", () => {
               text: "Block field text content one",
             },
           },
-        },
-        {
           "64a535cdf1eaa5498709c906": {
             testBlockOne: {
               title: "Block field title content two",
@@ -182,7 +176,6 @@ describe("fn: buildPayloadUpdateObject: blocks field type", () => {
             },
           },
         },
-      ],
     };
     const fields: FieldWithName[] = [
       {
@@ -306,26 +299,23 @@ describe("fn: buildPayloadUpdateObject: blocks field type", () => {
 
     const crowdinJsonObject = {
       title: "Test Policy created with title",
-      blocksField: [
+      blocksField:
         {
           "649cd1ecbac7445191be36af": {
             testBlockArrayOfRichText: {
-              messages: [
+              messages:
                 {
                   "64735620230d57bce946d370": {
                     title: "Test title 1",
                   },
-                },
-                {
                   "64735621230d57bce946d371": {
                     title: "Test title 2",
                   },
                 },
-              ],
+              
             },
           },
         },
-      ],
     };
     const fields: FieldWithName[] = [
       {

@@ -1,6 +1,6 @@
 import { CollectionConfig, Field } from "payload/types";
-import { buildCrowdinHtmlObject } from "../..";
-import { field, fieldHtmlCrowdinObject, fieldDocValue } from "../fixtures/blocks-field-type.fixture";
+import { buildCrowdinJsonObject } from "../..";
+import { field, fieldJsonCrowdinObject, fieldDocValue } from "../fixtures/blocks-field-type.fixture";
 
 describe("fn: buildCrowdinHtmlObject: blocks field type", () => {
   it("includes localized fields", () => {
@@ -27,8 +27,11 @@ describe("fn: buildCrowdinHtmlObject: blocks field type", () => {
       },
       field,
     ];
-    const expected = fieldHtmlCrowdinObject();
-    expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
+    const expected = {
+      title: "Test Policy created with title",
+      ...fieldJsonCrowdinObject(),
+    }
+    expect(buildCrowdinJsonObject({ doc, fields })).toEqual(expected);
   });
 
   it("includes localized fields within a collapsible field", () => {
@@ -61,8 +64,11 @@ describe("fn: buildCrowdinHtmlObject: blocks field type", () => {
         ],
       },
     ];
-    const expected = fieldHtmlCrowdinObject();
-    expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
+    const expected = {
+      title: "Test Policy created with title",
+      ...fieldJsonCrowdinObject(),
+    }
+    expect(buildCrowdinJsonObject({ doc, fields })).toEqual(expected);
   });
 
   it("includes localized fields within an array field", () => {
@@ -99,7 +105,10 @@ describe("fn: buildCrowdinHtmlObject: blocks field type", () => {
         ],
       },
     ];
-    const expected = fieldHtmlCrowdinObject('arrayField.63ea4adb6ff825cddad3c1f2.');
-    expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
+    const expected = {
+      title: "Test Policy created with title",
+      ...fieldJsonCrowdinObject('arrayField.63ea4adb6ff825cddad3c1f2'),
+    }
+    expect(buildCrowdinJsonObject({ doc, fields })).toEqual(expected);
   });
 });
