@@ -11,6 +11,7 @@ import CrowdInArticleDirectories from "./collections/CrowdInArticleDirectories";
 import { containsLocalizedFields } from "./utilities";
 import { getReviewTranslationEndpoint } from "./endpoints/globals/reviewTranslation";
 import Joi from "joi";
+import { getReviewFieldsEndpoint } from "./endpoints/globals/reviewFieldsJson";
 
 /**
  * This plugin extends all collections that contain localized fields
@@ -109,6 +110,13 @@ export const crowdInSync =
               pluginOptions,
               type: "update",
             }),
+            getReviewFieldsEndpoint({
+              pluginOptions,
+            }),
+            getReviewFieldsEndpoint({
+              pluginOptions,
+              type: "json",
+            })
           ],
         },
       ],
