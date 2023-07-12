@@ -1,18 +1,6 @@
 import { Block, Field } from "payload/types";
+import { basicLocalizedFields } from "./basic-localized-fields.fixture";
 import dot from "dot-object";
-
-const basicLocalizedFields: Field[] = [
-  {
-    name: "textField",
-    type: "text",
-    localized: true,
-  },
-  {
-    name: "textareaField",
-    type: "textarea",
-    localized: true,
-  },
-];
 
 const BasicBlockTextFields: Block = {
   slug: "basicBlock", // required
