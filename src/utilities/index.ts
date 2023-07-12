@@ -246,10 +246,6 @@ export const restoreOrder = ({
   if (!document) {
     return updateDocument;
   }
-  // consider removing - may have been a hack due to unexpected data formats in tests duirng refactor
-  /*if (!updateDocument) {
-    return;
-  }*/
   fields.forEach((field: any) => {
     if (!updateDocument[field.name]) {
       return;
