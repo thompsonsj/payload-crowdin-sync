@@ -1,62 +1,33 @@
-import { CollectionConfig, Field } from "payload/types";
+import { Field } from "payload/types";
 import { buildCrowdinJsonObject, getLocalizedFields } from "../..";
-import { FieldWithName } from "../../../types";
+import {
+  basicNonLocalizedFields,
+  basicLocalizedFields,
+  emptyFieldDocValue,
+  fieldJsonCrowdinObject,
+  fieldDocValue,
+} from "../../tests/fixtures/basic-localized-fields.fixture";
 
 describe("fn: buildCrowdinJsonObject: group field type", () => {
   it("creates an empty JSON object if fields are empty", () => {
     const doc = {
       id: "638641358b1a140462752076",
       title: "",
-      groupField: {
-        title: "",
-        text: "",
-        description: "",
-        select: "one",
-      },
+      groupField: emptyFieldDocValue,
       status: "draft",
       createdAt: "2022-11-29T17:28:21.644Z",
       updatedAt: "2022-11-29T17:28:21.644Z",
     };
-    const fields: FieldWithName[] = [
+    const fields: Field[] = [
       {
         name: "title",
         type: "text",
         localized: true,
       },
-      // select not supported yet
-      {
-        name: "select",
-        type: "select",
-        localized: true,
-        options: ["one", "two"],
-      },
       {
         name: "groupField",
         type: "group",
-        fields: [
-          {
-            name: "title",
-            type: "text",
-            localized: true,
-          },
-          {
-            name: "text",
-            type: "text",
-            localized: true,
-          },
-          {
-            name: "description",
-            type: "textarea",
-            localized: true,
-          },
-          // select not supported yet
-          {
-            name: "select",
-            type: "select",
-            localized: true,
-            options: ["one", "two"],
-          },
-        ],
+        fields: basicLocalizedFields,
       },
     ];
     const localizedFields = getLocalizedFields({ fields });
@@ -70,66 +41,27 @@ describe("fn: buildCrowdinJsonObject: group field type", () => {
     const doc = {
       id: "638641358b1a140462752076",
       title: "Test Policy created with title",
-      groupField: {
-        title: "Group title field content",
-        text: "Group text field content",
-        description: "A textarea value.\nWith a new line.",
-        select: "one",
-      },
+      groupField: fieldDocValue,
       status: "draft",
       createdAt: "2022-11-29T17:28:21.644Z",
       updatedAt: "2022-11-29T17:28:21.644Z",
     };
-    const fields: FieldWithName[] = [
+    const fields: Field[] = [
       {
         name: "title",
         type: "text",
         localized: true,
       },
-      // select not supported yet
-      {
-        name: "select",
-        type: "select",
-        localized: true,
-        options: ["one", "two"],
-      },
       {
         name: "groupField",
         type: "group",
-        fields: [
-          {
-            name: "title",
-            type: "text",
-            localized: true,
-          },
-          {
-            name: "text",
-            type: "text",
-            localized: true,
-          },
-          {
-            name: "description",
-            type: "textarea",
-            localized: true,
-          },
-          // select not supported yet
-          {
-            name: "select",
-            type: "select",
-            localized: true,
-            options: ["one", "two"],
-          },
-        ],
+        fields: basicLocalizedFields,
       },
     ];
     const localizedFields = getLocalizedFields({ fields });
     const expected = {
       title: "Test Policy created with title",
-      groupField: {
-        title: "Group title field content",
-        text: "Group text field content",
-        description: "A textarea value.\nWith a new line.",
-      },
+      groupField: fieldJsonCrowdinObject(),
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
       expected,
@@ -140,57 +72,28 @@ describe("fn: buildCrowdinJsonObject: group field type", () => {
     const doc = {
       id: "638641358b1a140462752076",
       title: "Test Policy created with title",
-      groupField: {
-        title: "Group title field content",
-        text: "Group text field content",
-        select: "one",
-      },
+      groupField: fieldDocValue,
       status: "draft",
       createdAt: "2022-11-29T17:28:21.644Z",
       updatedAt: "2022-11-29T17:28:21.644Z",
     };
-    const fields: FieldWithName[] = [
+    const fields: Field[] = [
       {
         name: "title",
         type: "text",
         localized: true,
       },
-      // select not supported yet
-      {
-        name: "select",
-        type: "select",
-        localized: true,
-        options: ["one", "two"],
-      },
       {
         name: "groupField",
         type: "group",
         localized: true,
-        fields: [
-          {
-            name: "title",
-            type: "text",
-          },
-          {
-            name: "text",
-            type: "text",
-          },
-          // select not supported yet
-          {
-            name: "select",
-            type: "select",
-            options: ["one", "two"],
-          },
-        ],
+        fields: basicNonLocalizedFields,
       },
     ];
     const localizedFields = getLocalizedFields({ fields });
     const expected = {
       title: "Test Policy created with title",
-      groupField: {
-        title: "Group title field content",
-        text: "Group text field content",
-      },
+      groupField: fieldJsonCrowdinObject(),
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
       expected,
@@ -209,7 +112,7 @@ describe("fn: buildCrowdinJsonObject: group field type", () => {
       createdAt: "2022-11-29T17:28:21.644Z",
       updatedAt: "2022-11-29T17:28:21.644Z",
     };
-    const localizedFields: FieldWithName[] = [
+    const localizedFields: Field[] = [
       {
         name: "title",
         type: "text",
@@ -244,6 +147,54 @@ describe("fn: buildCrowdinJsonObject: group field type", () => {
       meta: {
         title: "Meta title value",
         description: "Meta description value.\nCan contain new lines.",
+      },
+    };
+    expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
+      expected,
+    );
+  });
+
+  it("includes localized fields nested in groups nested in a group", () => {
+    const doc = {
+      id: "638641358b1a140462752076",
+      title: "Test Policy created with title",
+      groupField: {
+        nestedGroupField: fieldDocValue,
+        secondNestedGroupField: fieldDocValue,
+      },
+      status: "draft",
+      createdAt: "2022-11-29T17:28:21.644Z",
+      updatedAt: "2022-11-29T17:28:21.644Z",
+    };
+    const fields: Field[] = [
+      {
+        name: "title",
+        type: "text",
+        localized: true,
+      },
+      {
+        name: "groupField",
+        type: "group",
+        fields: [
+          {
+            name: "nestedGroupField",
+            type: "group",
+            fields: basicLocalizedFields,
+          },
+          {
+            name: "secondNestedGroupField",
+            type: "group",
+            fields: basicLocalizedFields,
+          },
+        ],
+      },
+    ];
+    const localizedFields = getLocalizedFields({ fields });
+    const expected = {
+      title: "Test Policy created with title",
+      groupField: {
+        nestedGroupField: fieldJsonCrowdinObject(),
+        secondNestedGroupField: fieldJsonCrowdinObject(),
       },
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
