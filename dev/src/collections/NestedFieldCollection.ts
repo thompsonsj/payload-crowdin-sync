@@ -1,9 +1,32 @@
 import { Block, CollectionConfig } from "payload/types";
 import { basicLocalizedFields } from "./fields/basicLocalizedFields";
 
-const LocalizedBlock: Block = {
+const BasicBlockTextFields: Block = {
   slug: "basicBlock", // required
   fields: basicLocalizedFields,
+};
+
+const BasicBlockRichTextField: Block = {
+  slug: "basicBlockRichText", // required
+  fields: [
+    {
+      name: "richTextField",
+      type: "richText",
+      localized: true,
+    },
+  ],
+};
+
+const BasicBlockMixedFields: Block = {
+  slug: "basicBlockMixed", // required
+  fields: [
+    ...basicLocalizedFields,
+    {
+      name: "richTextField",
+      type: "richText",
+      localized: true,
+    },
+  ],
 };
 
 const TestBlockArrayOfRichText: Block = {
@@ -51,7 +74,12 @@ const NestedFieldCollection: CollectionConfig = {
     {
       name: "layout", // required
       type: "blocks", // required
-      blocks: [LocalizedBlock, TestBlockArrayOfRichText],
+      blocks: [
+        BasicBlockTextFields,
+        BasicBlockRichTextField,
+        BasicBlockMixedFields,
+        TestBlockArrayOfRichText,
+      ],
     },
     // collapsible
     /*{

@@ -7,12 +7,18 @@ import { mockCrowdinClient } from "../mock/crowdin-client";
 import { Payload } from "payload";
 import { PluginOptions } from "../../types";
 import deepEqual from "deep-equal";
-import { CollectionConfig, GlobalConfig } from "payload/types";
+import {
+  CollectionConfig,
+  GlobalConfig,
+  SanitizedCollectionConfig,
+  SanitizedGlobalConfig,
+} from "payload/types";
 import { htmlToSlate, payloadHtmlToSlateConfig } from "slate-serializers";
 import {
   getLocalizedFields,
   getFieldSlugs,
   buildCrowdinJsonObject,
+  buildCrowdinHtmlObject,
   buildPayloadUpdateObject,
   getLocalizedRequiredFields,
 } from "../../utilities";
@@ -89,7 +95,7 @@ export class payloadCrowdInSyncTranslationsApi {
      * * check for `meta` field (which can be added by @payloadcms/seo)
      *
      */
-    let doc;
+    let doc: { crowdinArticleDirectory: { id: any } };
     if (global) {
       doc = await this.payload.findGlobal({
         slug: collection,
@@ -154,12 +160,35 @@ export class payloadCrowdInSyncTranslationsApi {
     };
   }
 
+  getCollectionConfig(
+    collection: string,
+    global: boolean,
+  ): CollectionConfig | GlobalConfig {
+    let collectionConfig:
+      | SanitizedGlobalConfig
+      | SanitizedCollectionConfig
+      | undefined;
+    if (global) {
+      collectionConfig = this.payload.config.globals.find(
+        (col: GlobalConfig) => col.slug === collection,
+      );
+    } else {
+      collectionConfig = this.payload.config.collections.find(
+        (col: CollectionConfig) => col.slug === collection,
+      );
+    }
+    if (!collectionConfig)
+      throw new Error(`Collection ${collection} not found in payload config`);
+    return collectionConfig;
+  }
+
   async getCurrentDocumentTranslation({
     doc,
     collection,
     locale,
     global = false,
   }: IgetCurrentDocumentTranslation) {
+    // get document
     let document: any;
     if (global) {
       document = await this.payload.findGlobal({
@@ -174,46 +203,29 @@ export class payloadCrowdInSyncTranslationsApi {
       });
     }
 
-    let collectionConfig;
-    if (global) {
-      collectionConfig = this.payload.config.globals.find(
-        (col: GlobalConfig) => col.slug === collection,
-      );
-    } else {
-      collectionConfig = this.payload.config.collections.find(
-        (col: CollectionConfig) => col.slug === collection,
-      );
-    }
-    if (!collectionConfig)
-      throw new Error(`Collection ${collection} not found in payload config`);
+    const collectionConfig = this.getCollectionConfig(collection, global);
 
     const localizedFields = getLocalizedFields({
       fields: collectionConfig.fields,
     });
 
-    let docTranslations: { [key: string]: any } = {};
-    docTranslations = buildCrowdinJsonObject({
+    // build crowdin json object
+    const crowdinJsonObject = buildCrowdinJsonObject({
       doc: document,
       fields: localizedFields,
     });
-    docTranslations = buildPayloadUpdateObject({
-      crowdinJsonObject: docTranslations,
+    const crowdinHtmlObject = buildCrowdinHtmlObject({
+      doc: document,
       fields: localizedFields,
     });
+    const docTranslations = buildPayloadUpdateObject({
+      crowdinJsonObject,
+      crowdinHtmlObject,
+      fields: localizedFields,
+      document,
+    });
 
-    // add html fields
-    // globals have a document id - would using document id be more elegant?
-    const localizedHtmlFields = await this.getHtmlFieldSlugs(
-      global ? collectionConfig.slug : doc.id,
-    );
-    for (const field of localizedHtmlFields) {
-      dot.copy(field, field, document, docTranslations);
-    }
-    const parsedDocTranslations = this.restoreIdAndBlockType(
-      doc,
-      docTranslations,
-    );
-    return parsedDocTranslations;
+    return docTranslations;
   }
 
   /**
@@ -225,16 +237,8 @@ export class payloadCrowdInSyncTranslationsApi {
     locale,
     global = false,
   }: IgetLatestDocumentTranslation) {
-    let collectionConfig: any;
-    if (global) {
-      collectionConfig = this.payload.config.globals.find(
-        (col: GlobalConfig) => col.slug === collection,
-      );
-    } else {
-      collectionConfig = this.payload.config.collections.find(
-        (col: CollectionConfig) => col.slug === collection,
-      );
-    }
+    const collectionConfig = this.getCollectionConfig(collection, global);
+
     const localizedFields = getLocalizedFields({
       fields: collectionConfig.fields,
     });
@@ -245,29 +249,32 @@ export class payloadCrowdInSyncTranslationsApi {
 
     let docTranslations: { [key: string]: any } = {};
     // add json fields
-    docTranslations =
+    const crowdinJsonObject =
       (await this.getTranslation({
         documentId: global ? collectionConfig.slug : doc.id,
         fieldName: "fields",
         locale: locale,
       })) || {};
-    docTranslations = buildPayloadUpdateObject({
-      crowdinJsonObject: docTranslations,
-      fields: localizedFields,
-    });
-
     // add html fields
     const localizedHtmlFields = await this.getHtmlFieldSlugs(
       global ? collectionConfig.slug : doc.id,
     );
+    let crowdinHtmlObject: { [key: string]: any } = {};
     for (const field of localizedHtmlFields) {
-      const translation = await this.getTranslation({
+      crowdinHtmlObject[field] = await this.getTranslation({
         documentId: global ? collectionConfig.slug : doc.id,
         fieldName: field,
         locale: locale,
       });
-      dot.str(field, translation, docTranslations);
     }
+
+    docTranslations = buildPayloadUpdateObject({
+      crowdinJsonObject,
+      crowdinHtmlObject,
+      fields: localizedFields,
+      document: doc,
+    });
+
     // Add required fields if not present
     const requiredFieldSlugs = getFieldSlugs(
       getLocalizedRequiredFields(collectionConfig),

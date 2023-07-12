@@ -9,7 +9,8 @@ import deepEqual from "deep-equal";
 import { FieldWithName } from "../types";
 import { slateToHtml, payloadSlateToDomConfig } from "slate-serializers";
 import type { Descendant } from "slate";
-import { get, isEmpty, merge, omitBy } from "lodash";
+import { get, isEmpty, map, merge, omitBy } from "lodash";
+import dot from "dot-object";
 
 const localizedFieldTypes = ["richText", "text", "textarea"];
 
@@ -156,7 +157,7 @@ export const getCollapsibleLocalizedFields = ({
     );
 
 export const getLocalizedRequiredFields = (
-  collection: CollectionConfig,
+  collection: CollectionConfig | GlobalConfig,
   type?: "json" | "html",
 ): any[] => {
   const fields = getLocalizedFields({ fields: collection.fields, type });
@@ -228,20 +229,94 @@ export const removeLineBreaks = (string: string) =>
 export const fieldCrowdinFileType = (field: FieldWithName): "json" | "html" =>
   field.type === "richText" ? "html" : "json";
 
+/**
+ * Reorder blocks and array values based on the order of the original document.
+ */
+export const restoreOrder = ({
+  updateDocument,
+  document,
+  fields,
+}: {
+  updateDocument: { [key: string]: any };
+  document: { [key: string]: any };
+  fields: Field[];
+}) => {
+  let response: { [key: string]: any } = {};
+  // it is possible the original document is empty (e.g. new document)
+  if (!document) {
+    return updateDocument;
+  }
+  fields.forEach((field: any) => {
+    if (!updateDocument[field.name]) {
+      return;
+    }
+    if (field.type === "group") {
+      response[field.name] = restoreOrder({
+        updateDocument: updateDocument[field.name],
+        document: document[field.name],
+        fields: field.fields,
+      });
+    } else if (field.type === "array" || field.type === "blocks") {
+      response[field.name] = document[field.name].map((item: any) => {
+        const arrayItem = updateDocument[field.name].find((updateItem: any) => {
+          return updateItem.id === item.id;
+        });
+        const subFields =
+          field.type === "blocks"
+            ? field.blocks.find((block: Block) => block.slug === item.blockType)
+                ?.fields || []
+            : field.fields;
+        return {
+          ...restoreOrder({
+            updateDocument: arrayItem,
+            document: item,
+            fields: subFields,
+          }),
+          id: arrayItem.id,
+          ...(field.type === "blocks" && { blockType: arrayItem.blockType }),
+        };
+      });
+    } else {
+      response[field.name] = updateDocument[field.name];
+    }
+  });
+  return response;
+};
+
+/**
+ * Convert CrowdIn objects to Payload CMS data objects.
+ *
+ * * `crowdinJsonObject` is the JSON object returned from CrowdIn.
+ * * `crowdinHtmlObject` is the HTML object returned from CrowdIn. Optional. Merged into resulting object if provided.
+ * * `fields` is the collection or global fields array.
+ * * `topLevel` is a flag used internally to filter json fields before recursion.
+ * * `document` is the document object. Optional. Used to restore the order of `array` and `blocks` field values.
+ */
 export const buildPayloadUpdateObject = ({
   crowdinJsonObject,
+  crowdinHtmlObject,
   fields,
   topLevel = true,
+  document,
 }: {
   crowdinJsonObject: { [key: string]: any };
+  crowdinHtmlObject?: { [key: string]: any };
   /** Use getLocalizedFields to pass localized fields only */
   fields: Field[];
   /** Flag used internally to filter json fields before recursion. */
   topLevel?: boolean;
+  document?: { [key: string]: any };
 }) => {
   let response: { [key: string]: any } = {};
+  if (crowdinHtmlObject) {
+    const destructured = dot.object(crowdinHtmlObject);
+    merge(crowdinJsonObject, destructured);
+  }
   const filteredFields = topLevel
-    ? getLocalizedFields({ fields, type: "json" })
+    ? getLocalizedFields({
+        fields,
+        type: !crowdinHtmlObject ? "json" : undefined,
+      })
     : fields;
   filteredFields.forEach((field) => {
     if (!crowdinJsonObject[field.name]) {
@@ -254,46 +329,45 @@ export const buildPayloadUpdateObject = ({
         topLevel: false,
       });
     } else if (field.type === "array") {
-      response[field.name] = crowdinJsonObject[field.name]
-        .map((item: any) => {
-          // get first and only object key
-          const id = Object.keys(item)[0];
-          const payloadUpdateObject = buildPayloadUpdateObject({
-            crowdinJsonObject: item[id],
-            fields: field.fields,
-            topLevel: false,
-          });
-          return {
-            ...payloadUpdateObject,
-            id,
-          };
-        })
-        .filter((item: any) => !isEmpty(item));
+      response[field.name] = map(crowdinJsonObject[field.name], (item, id) => {
+        const payloadUpdateObject = buildPayloadUpdateObject({
+          crowdinJsonObject: item,
+          fields: field.fields,
+          topLevel: false,
+        });
+        return {
+          ...payloadUpdateObject,
+          id,
+        };
+      }).filter((item: any) => !isEmpty(item));
     } else if (field.type === "blocks") {
-      response[field.name] = crowdinJsonObject[field.name]
-        .map((item: any) => {
-          // get first and only object key
-          const id = Object.keys(item)[0];
-          // get nested only key
-          const blockType = Object.keys(item[id])[0];
-          const payloadUpdateObject = buildPayloadUpdateObject({
-            crowdinJsonObject: item[id][blockType],
-            fields:
-              field.blocks.find((block: Block) => block.slug === blockType)
-                ?.fields || [],
-            topLevel: false,
-          });
-          return {
-            ...payloadUpdateObject,
-            id,
-            blockType,
-          };
-        })
-        .filter((item: any) => !isEmpty(item));
+      response[field.name] = map(crowdinJsonObject[field.name], (item, id) => {
+        // get first and only object key
+        const blockType = Object.keys(item)[0];
+        const payloadUpdateObject = buildPayloadUpdateObject({
+          crowdinJsonObject: item[blockType],
+          fields:
+            field.blocks.find((block: Block) => block.slug === blockType)
+              ?.fields || [],
+          topLevel: false,
+        });
+        return {
+          ...payloadUpdateObject,
+          id,
+          blockType,
+        };
+      }).filter((item: any) => !isEmpty(item));
     } else {
       response[field.name] = crowdinJsonObject[field.name];
     }
   });
+  if (document) {
+    response = restoreOrder({
+      updateDocument: response,
+      document,
+      fields,
+    });
+  }
   return omitBy(response, isEmpty);
 };
 
@@ -336,7 +410,8 @@ export const buildCrowdinJsonObject = ({
             };
           }
         })
-        .filter((item: any) => !isEmpty(item));
+        .filter((item: any) => !isEmpty(item))
+        .reduce((acc: object, item: any) => ({ ...acc, ...item }), {});
     } else if (field.type === "blocks") {
       response[field.name] = doc[field.name]
         .map((item: any) => {
@@ -355,7 +430,8 @@ export const buildCrowdinJsonObject = ({
             };
           }
         })
-        .filter((item: any) => !isEmpty(item));
+        .filter((item: any) => !isEmpty(item))
+        .reduce((acc: object, item: any) => ({ ...acc, ...item }), {});
     } else {
       response[field.name] = doc[field.name];
     }
@@ -404,7 +480,7 @@ export const buildCrowdinHtmlObject = ({
       };
     } else if (field.type === "array") {
       const arrayValues = doc[field.name].map((item: any, index: number) => {
-        const subPrefix = `${[prefix, `${field.name}[${index}]`]
+        const subPrefix = `${[prefix, `${field.name}`, `${item.id}`]
           .filter((string) => string)
           .join(".")}`;
         return buildCrowdinHtmlObject({
@@ -420,7 +496,12 @@ export const buildCrowdinHtmlObject = ({
       };
     } else if (field.type === "blocks") {
       const arrayValues = doc[field.name].map((item: any, index: number) => {
-        const subPrefix = `${[prefix, `${field.name}[${index}]`]
+        const subPrefix = `${[
+          prefix,
+          `${field.name}`,
+          `${item.id}`,
+          `${item.blockType}`,
+        ]
           .filter((string) => string)
           .join(".")}`;
         return buildCrowdinHtmlObject({

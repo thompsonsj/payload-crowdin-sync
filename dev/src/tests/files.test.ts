@@ -133,16 +133,17 @@ describe(`CrowdIn file create, update and delete`, () => {
           ],
         },
       });
+      const ids = article.arrayField.map((item) => item.id);
       const crowdInFiles = await getFilesByDocumentID(article.id, payload);
       expect(crowdInFiles.length).toEqual(3);
       expect(
         crowdInFiles.find(
-          (file) => file.name === "arrayField[0].richTextField.html",
+          (file) => file.name === `arrayField.${ids[0]}.richTextField.html`,
         ),
       ).toBeDefined();
       expect(
         crowdInFiles.find(
-          (file) => file.name === "arrayField[1].richTextField.html",
+          (file) => file.name === `arrayField.${ids[1]}.richTextField.html`,
         ),
       ).toBeDefined();
       expect(
@@ -201,37 +202,43 @@ describe(`CrowdIn file create, update and delete`, () => {
           ],
         },
       });
-      const firstBlockId = article.layout[0].id;
+      const blockIds = article.layout.map((item) => item.id);
+      const blockTypes = article.layout.map((item) => item.blockType);
+      const arrayIds = article.layout[1].messages.map((item) => item.id);
       const crowdInFiles = await getFilesByDocumentID(article.id, payload);
       expect(crowdInFiles.length).toEqual(4);
       const jsonFile = crowdInFiles.find((file) => file.name === "fields.json");
       expect(
         crowdInFiles.find(
-          (file) => file.name === "layout[0].richTextField.html",
+          (file) =>
+            file.name ===
+            `layout.${blockIds[0]}.${blockTypes[0]}.richTextField.html`,
         ),
       ).toBeDefined();
       expect(
         crowdInFiles.find(
-          (file) => file.name === "layout[1].messages[0].message.html",
+          (file) =>
+            file.name ===
+            `layout.${blockIds[1]}.${blockTypes[1]}.messages.${arrayIds[0]}.message.html`,
         ),
       ).toBeDefined();
       expect(
         crowdInFiles.find(
-          (file) => file.name === "layout[1].messages[1].message.html",
+          (file) =>
+            file.name ===
+            `layout.${blockIds[1]}.${blockTypes[1]}.messages.${arrayIds[1]}.message.html`,
         ),
       ).toBeDefined();
       expect(jsonFile).toBeDefined();
       expect(jsonFile.fileData.json).toEqual({
-        layout: [
-          {
-            [firstBlockId]: {
-              basicBlock: {
-                textareaField: "Test meta description 1",
-                textField: "Test title 1",
-              },
+        layout: {
+          [blockIds[0]]: {
+            basicBlock: {
+              textareaField: "Test meta description 1",
+              textField: "Test title 1",
             },
           },
-        ],
+        },
       });
     });
   });
