@@ -404,7 +404,7 @@ export const buildCrowdinHtmlObject = ({
       };
     } else if (field.type === "array") {
       const arrayValues = doc[field.name].map((item: any, index: number) => {
-        const subPrefix = `${[prefix, `${field.name}[${index}]`]
+        const subPrefix = `${[prefix, `${field.name}`, `${item.id}`]
           .filter((string) => string)
           .join(".")}`;
         return buildCrowdinHtmlObject({
@@ -420,7 +420,8 @@ export const buildCrowdinHtmlObject = ({
       };
     } else if (field.type === "blocks") {
       const arrayValues = doc[field.name].map((item: any, index: number) => {
-        const subPrefix = `${[prefix, `${field.name}[${index}]`]
+        
+        const subPrefix = `${[prefix, `${field.name}`, `${item.id}`, `${item.blockType}`]
           .filter((string) => string)
           .join(".")}`;
         return buildCrowdinHtmlObject({
