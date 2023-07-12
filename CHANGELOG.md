@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.12.1...v0.13.0) (2023-07-12)
+
+
+### Features
+
+* **plugin:** add sourceLocale option ([#78](https://github.com/thompsonsj/payload-crowdin-sync/issues/78)) ([95943a7](https://github.com/thompsonsj/payload-crowdin-sync/commit/95943a786c50984c96008391d2af7ef4d11e2611))
+* **translations:** move endpoints, send id and blockType to CrowdIn for arrays and blocks ([#80](https://github.com/thompsonsj/payload-crowdin-sync/issues/80)) ([2c0fcbd](https://github.com/thompsonsj/payload-crowdin-sync/commit/2c0fcbdfb19a7890ddf06a11f2564d7abb4bf762))
+* **translations:** update fn works with json and html ([#82](https://github.com/thompsonsj/payload-crowdin-sync/issues/82)) ([78c2adc](https://github.com/thompsonsj/payload-crowdin-sync/commit/78c2adcb56d180fd1cafd71eb586bb39eb6e65a9))
+
+
+### Bug Fixes
+
+* **translations:** update translations with new CrowdIn JSON structure ([#81](https://github.com/thompsonsj/payload-crowdin-sync/issues/81)) ([6ef4331](https://github.com/thompsonsj/payload-crowdin-sync/commit/6ef43316881f52e466eee4dd40ffbd3b6ae343e0))
+
 ## [0.12.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.12.0...v0.12.1) (2023-07-08)
 
 ### Bug Fixes
