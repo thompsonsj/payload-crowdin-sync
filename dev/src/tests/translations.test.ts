@@ -178,45 +178,42 @@ describe("Translations", () => {
       const blockIds = post.layout.map((block) => block.id);
       const blockTypes = post.layout.map((block) => block.blockType);
       const responseDe = {
-        layout:
-          {
-            [blockIds[0]]: {
-              [blockTypes[0]]: {
-                textField: "Textfeldinhalt im Block bei Layoutindex 0",
-                textareaField:
-                  "Textbereichsfeldinhalt im Block bei Layoutindex 0",
-              },
-            },
-            [blockIds[1]]: {
-              [blockTypes[1]]: {
-                textField: "Textfeldinhalt im Block bei Layoutindex 1",
-                textareaField:
-                  "Textbereichsfeldinhalt im Block bei Layoutindex 1",
-              },
+        layout: {
+          [blockIds[0]]: {
+            [blockTypes[0]]: {
+              textField: "Textfeldinhalt im Block bei Layoutindex 0",
+              textareaField:
+                "Textbereichsfeldinhalt im Block bei Layoutindex 0",
             },
           },
-
+          [blockIds[1]]: {
+            [blockTypes[1]]: {
+              textField: "Textfeldinhalt im Block bei Layoutindex 1",
+              textareaField:
+                "Textbereichsfeldinhalt im Block bei Layoutindex 1",
+            },
+          },
+        },
       };
       const responseFr = {
-        layout:
-          {
-            [blockIds[0]]: {
-              [blockTypes[0]]: {
-                textField:
-                  "Contenu du champ de texte dans le bloc à l'index de mise en page 0",
-                textareaField:
-                  "Contenu du champ Textarea dans le bloc à l'index de mise en page 0",
-              },
-            },
-            [blockIds[1]]: {
-              [blockTypes[1]]: {
-                textField:
-                  "Contenu du champ de texte dans le bloc à l'index de mise en page 1",
-                textareaField:
-                  "Contenu du champ Textarea dans le bloc à l'index de mise en page 1",
-              },
+        layout: {
+          [blockIds[0]]: {
+            [blockTypes[0]]: {
+              textField:
+                "Contenu du champ de texte dans le bloc à l'index de mise en page 0",
+              textareaField:
+                "Contenu du champ Textarea dans le bloc à l'index de mise en page 0",
             },
           },
+          [blockIds[1]]: {
+            [blockTypes[1]]: {
+              textField:
+                "Contenu du champ de texte dans le bloc à l'index de mise en page 1",
+              textareaField:
+                "Contenu du champ Textarea dans le bloc à l'index de mise en page 1",
+            },
+          },
+        },
       };
       const translationsApi = new payloadCrowdInSyncTranslationsApi(
         pluginOptions,
@@ -291,44 +288,42 @@ describe("Translations", () => {
       const blockIds = post.layout.map((block) => block.id);
       const blockTypes = post.layout.map((block) => block.blockType);
       const responseDe = {
-        layout:
-          {
-            [blockIds[0]]: {
-              [blockTypes[0]]: {
-                textField: "Textfeldinhalt im Block bei Layoutindex 0",
-                textareaField:
-                  "Textbereichsfeldinhalt im Block bei Layoutindex 0",
-              },
-            },
-            [blockIds[1]]: {
-              [blockTypes[1]]: {
-                textField: "Textfeldinhalt im Block bei Layoutindex 1",
-                textareaField:
-                  "Textbereichsfeldinhalt im Block bei Layoutindex 1",
-              },
+        layout: {
+          [blockIds[0]]: {
+            [blockTypes[0]]: {
+              textField: "Textfeldinhalt im Block bei Layoutindex 0",
+              textareaField:
+                "Textbereichsfeldinhalt im Block bei Layoutindex 0",
             },
           },
+          [blockIds[1]]: {
+            [blockTypes[1]]: {
+              textField: "Textfeldinhalt im Block bei Layoutindex 1",
+              textareaField:
+                "Textbereichsfeldinhalt im Block bei Layoutindex 1",
+            },
+          },
+        },
       };
       const responseFr = {
-        layout:
-          {
-            [blockIds[0]]: {
-              [blockTypes[0]]: {
-                textField:
-                  "Contenu du champ de texte dans le bloc à l'index de mise en page 0",
-                textareaField:
-                  "Contenu du champ Textarea dans le bloc à l'index de mise en page 0",
-              },
-            },
-            [blockIds[1]]: {
-              [blockTypes[1]]: {
-                textField:
-                  "Contenu du champ de texte dans le bloc à l'index de mise en page 1",
-                textareaField:
-                  "Contenu du champ Textarea dans le bloc à l'index de mise en page 1",
-              },
+        layout: {
+          [blockIds[0]]: {
+            [blockTypes[0]]: {
+              textField:
+                "Contenu du champ de texte dans le bloc à l'index de mise en page 0",
+              textareaField:
+                "Contenu du champ Textarea dans le bloc à l'index de mise en page 0",
             },
           },
+          [blockIds[1]]: {
+            [blockTypes[1]]: {
+              textField:
+                "Contenu du champ de texte dans le bloc à l'index de mise en page 1",
+              textareaField:
+                "Contenu du champ Textarea dans le bloc à l'index de mise en page 1",
+            },
+          },
+        },
       };
       const translationsApi = new payloadCrowdInSyncTranslationsApi(
         pluginOptions,
@@ -418,10 +413,14 @@ describe("Translations", () => {
       // we need the ids created by Payload to update the blocks
       const blockIds = post.layout.map((block) => block.id);
       const blockTypes = post.layout.map((block) => block.blockType);
-      const responseDeOne = "<p>Rich-Text-Inhalt im Blocklayout bei Index 0.</p>";
-      const responseDeTwo = "<p>Rich-Text-Inhalt im Blocklayout bei Index 1.</p>";
-      const responseFrOne = "<p>Contenu de texte enrichi dans la disposition des blocs à l'index 0.</p>";
-      const responseFrTwo = "<p>Contenu de texte enrichi dans la disposition des blocs à l'index 1.</p>";
+      const responseDeOne =
+        "<p>Rich-Text-Inhalt im Blocklayout bei Index 0.</p>";
+      const responseDeTwo =
+        "<p>Rich-Text-Inhalt im Blocklayout bei Index 1.</p>";
+      const responseFrOne =
+        "<p>Contenu de texte enrichi dans la disposition des blocs à l'index 0.</p>";
+      const responseFrTwo =
+        "<p>Contenu de texte enrichi dans la disposition des blocs à l'index 1.</p>";
       const translationsApi = new payloadCrowdInSyncTranslationsApi(
         pluginOptions,
         payload,
@@ -463,7 +462,7 @@ describe("Translations", () => {
                   text: "Rich-Text-Inhalt im Blocklayout bei Index 0.",
                 },
               ],
-              "type": "p",
+              type: "p",
             },
           ],
           id: blockIds[0],
@@ -477,7 +476,7 @@ describe("Translations", () => {
                   text: "Rich-Text-Inhalt im Blocklayout bei Index 1.",
                 },
               ],
-              "type": "p",
+              type: "p",
             },
           ],
           id: blockIds[1],
@@ -499,7 +498,7 @@ describe("Translations", () => {
                   text: "Contenu de texte enrichi dans la disposition des blocs à l'index 0.",
                 },
               ],
-              "type": "p",
+              type: "p",
             },
           ],
           id: blockIds[0],
@@ -513,7 +512,7 @@ describe("Translations", () => {
                   text: "Contenu de texte enrichi dans la disposition des blocs à l'index 1.",
                 },
               ],
-              "type": "p",
+              type: "p",
             },
           ],
           id: blockIds[1],

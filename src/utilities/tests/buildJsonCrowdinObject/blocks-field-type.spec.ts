@@ -86,22 +86,20 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
     const localizedFields = getLocalizedFields({ fields });
     const expected = {
       title: "Test Policy created with title",
-      blocksField: 
-        {
-          "64735620230d57bce946d370": {
-            testBlockOne: {
-              title: "Block field title content one",
-              text: "Block field text content one",
-            },
-          },
-
-          "64735621230d57bce946d371": {
-            testBlockTwo: {
-              url: "https://github.com/thompsonsj/payload-crowdin-sync",
-            },
+      blocksField: {
+        "64735620230d57bce946d370": {
+          testBlockOne: {
+            title: "Block field title content one",
+            text: "Block field text content one",
           },
         },
 
+        "64735621230d57bce946d371": {
+          testBlockTwo: {
+            url: "https://github.com/thompsonsj/payload-crowdin-sync",
+          },
+        },
+      },
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
       expected,
@@ -148,15 +146,14 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
     const localizedFields = getLocalizedFields({ fields });
     const expected = {
       title: "Test Policy created with title",
-      blocksField: 
-        {
-          "64735620230d57bce946d370": {
-            testBlockOne: {
-              title: "Block field title content one",
-              text: "Block field text content one",
-            },
+      blocksField: {
+        "64735620230d57bce946d370": {
+          testBlockOne: {
+            title: "Block field title content one",
+            text: "Block field text content one",
           },
         },
+      },
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
       expected,
@@ -210,22 +207,20 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
     const localizedFields = getLocalizedFields({ fields });
     const expected = {
       title: "Test Policy created with title",
-      blocksField: 
-        {
-          "64735620230d57bce946d370": {
-            testBlockOne: {
-              title: "Block field title content one",
-              text: "Block field text content one",
-            },
-          },
-          "64a535cdf1eaa5498709c906": {
-            testBlockOne: {
-              title: "Block field title content two",
-              text: "Block field text content two",
-            },
+      blocksField: {
+        "64735620230d57bce946d370": {
+          testBlockOne: {
+            title: "Block field title content one",
+            text: "Block field text content one",
           },
         },
-      
+        "64a535cdf1eaa5498709c906": {
+          testBlockOne: {
+            title: "Block field title content two",
+            text: "Block field text content two",
+          },
+        },
+      },
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
       expected,
@@ -408,24 +403,21 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
     const localizedFields = getLocalizedFields({ fields });
     const expected = {
       title: "Test Policy created with title",
-      blocksField:
-        {
-          "649cd1ecbac7445191be36af": {
-            testBlockArrayOfRichText: {
-              messages: 
-                {
-                  "64735620230d57bce946d370": {
-                    title: "Test title 1",
-                  },
+      blocksField: {
+        "649cd1ecbac7445191be36af": {
+          testBlockArrayOfRichText: {
+            messages: {
+              "64735620230d57bce946d370": {
+                title: "Test title 1",
+              },
 
-                  "64735621230d57bce946d371": {
-                    title: "Test title 2",
-                  },
-                },
-              
+              "64735621230d57bce946d371": {
+                title: "Test title 2",
+              },
             },
           },
         },
+      },
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
       expected,

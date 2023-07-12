@@ -100,20 +100,19 @@ describe("fn: buildCrowdinJsonObject: group nested in array", () => {
   };
 
   const expected: any = {
-    ctas: 
-      {
-        "6474a80221baea4f5f169757": {
-          link: {
-            text: "Talk to us",
-          },
-        },
-        "6474a81021baea4f5f169758": {
-          link: {
-            text: "Try for free",
-          },
+    ctas: {
+      "6474a80221baea4f5f169757": {
+        link: {
+          text: "Talk to us",
         },
       },
-    
+      "6474a81021baea4f5f169758": {
+        link: {
+          text: "Try for free",
+        },
+      },
+    },
+
     text: "Get in touch with us or try it out yourself",
     title: "Experience the magic of our product!",
   };

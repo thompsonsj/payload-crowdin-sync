@@ -13,7 +13,7 @@ const BasicBlockRichTextField: Block = {
       name: "richTextField",
       type: "richText",
       localized: true,
-    }
+    },
   ],
 };
 
@@ -25,7 +25,7 @@ const BasicBlockMixedFields: Block = {
       name: "richTextField",
       type: "richText",
       localized: true,
-    }
+    },
   ],
 };
 
@@ -78,7 +78,7 @@ const NestedFieldCollection: CollectionConfig = {
         BasicBlockTextFields,
         BasicBlockRichTextField,
         BasicBlockMixedFields,
-        TestBlockArrayOfRichText
+        TestBlockArrayOfRichText,
       ],
     },
     // collapsible

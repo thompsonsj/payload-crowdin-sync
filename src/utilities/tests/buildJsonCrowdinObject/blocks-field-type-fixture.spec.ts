@@ -1,6 +1,10 @@
 import { CollectionConfig, Field } from "payload/types";
 import { buildCrowdinJsonObject } from "../..";
-import { field, fieldJsonCrowdinObject, fieldDocValue } from "../fixtures/blocks-field-type.fixture";
+import {
+  field,
+  fieldJsonCrowdinObject,
+  fieldDocValue,
+} from "../fixtures/blocks-field-type.fixture";
 
 describe("fn: buildCrowdinHtmlObject: blocks field type", () => {
   it("includes localized fields", () => {
@@ -30,7 +34,7 @@ describe("fn: buildCrowdinHtmlObject: blocks field type", () => {
     const expected = {
       title: "Test Policy created with title",
       ...fieldJsonCrowdinObject(),
-    }
+    };
     expect(buildCrowdinJsonObject({ doc, fields })).toEqual(expected);
   });
 
@@ -59,15 +63,13 @@ describe("fn: buildCrowdinHtmlObject: blocks field type", () => {
       {
         label: "Array fields",
         type: "collapsible",
-        fields: [
-          field,
-        ],
+        fields: [field],
       },
     ];
     const expected = {
       title: "Test Policy created with title",
       ...fieldJsonCrowdinObject(),
-    }
+    };
     expect(buildCrowdinJsonObject({ doc, fields })).toEqual(expected);
   });
 
@@ -75,10 +77,11 @@ describe("fn: buildCrowdinHtmlObject: blocks field type", () => {
     const doc = {
       id: "638641358b1a140462752076",
       title: "Test Policy created with title",
-      arrayField: [{
+      arrayField: [
+        {
           blocksField: fieldDocValue,
           id: "63ea4adb6ff825cddad3c1f2",
-        }
+        },
       ],
       status: "draft",
       createdAt: "2022-11-29T17:28:21.644Z",
@@ -100,15 +103,13 @@ describe("fn: buildCrowdinHtmlObject: blocks field type", () => {
       {
         name: "arrayField",
         type: "array",
-        fields: [
-          field,
-        ],
+        fields: [field],
       },
     ];
     const expected = {
       title: "Test Policy created with title",
-      ...fieldJsonCrowdinObject('arrayField.63ea4adb6ff825cddad3c1f2'),
-    }
+      ...fieldJsonCrowdinObject("arrayField.63ea4adb6ff825cddad3c1f2"),
+    };
     expect(buildCrowdinJsonObject({ doc, fields })).toEqual(expected);
   });
 });

@@ -26,7 +26,7 @@ const BasicBlockRichTextField: Block = {
       name: "richTextField",
       type: "richText",
       localized: true,
-    }
+    },
   ],
 };
 
@@ -38,7 +38,7 @@ const BasicBlockMixedFields: Block = {
       name: "richTextField",
       type: "richText",
       localized: true,
-    }
+    },
   ],
 };
 
@@ -50,7 +50,7 @@ export const field: Field = {
     BasicBlockRichTextField,
     BasicBlockMixedFields,
   ],
-}
+};
 
 export const fieldDocValue = [
   {
@@ -108,7 +108,8 @@ export const fieldDocValue = [
   },
   {
     textField: "Text field content in basicBlockMixed at layout index 4",
-    textareaField: "Textarea field content in basicBlockMixed at layout index 4",
+    textareaField:
+      "Textarea field content in basicBlockMixed at layout index 4",
     richTextField: [
       {
         children: [
@@ -121,44 +122,47 @@ export const fieldDocValue = [
     id: "63ea40106ff825cddad3c10b",
     blockType: "basicBlockMixed",
   },
-]
+];
 
 export const fieldJsonCrowdinObject = (prefix?: string) => {
-  const value = { 
-    blocksField:
-      {
-        "63ea42b06ff825cddad3c133": {
-          "basicBlock" : {
-              textField: "Text field content in basicBlock at layout index 0",
-              textareaField: "Textarea field content in basicBlock at layout index 0",
-            },
-          },
-        "63ea373fb725d8a50646952e": {
-          "basicBlock" : {
-            textField: "Text field content in basicBlock at layout index 2",
-            textareaField: "Textarea field content in basicBlock at layout index 2",
-          },
-      },
-      
-        "63ea40106ff825cddad3c10b": {
-          "basicBlockMixed" : {
-
-            textField: "Text field content in basicBlockMixed at layout index 4",
-            textareaField: "Textarea field content in basicBlockMixed at layout index 4",
-          },
+  const value = {
+    blocksField: {
+      "63ea42b06ff825cddad3c133": {
+        basicBlock: {
+          textField: "Text field content in basicBlock at layout index 0",
+          textareaField:
+            "Textarea field content in basicBlock at layout index 0",
         },
       },
-  }
+      "63ea373fb725d8a50646952e": {
+        basicBlock: {
+          textField: "Text field content in basicBlock at layout index 2",
+          textareaField:
+            "Textarea field content in basicBlock at layout index 2",
+        },
+      },
+
+      "63ea40106ff825cddad3c10b": {
+        basicBlockMixed: {
+          textField: "Text field content in basicBlockMixed at layout index 4",
+          textareaField:
+            "Textarea field content in basicBlockMixed at layout index 4",
+        },
+      },
+    },
+  };
   if (prefix) {
     var tgt = {};
     dot.str(prefix, value, tgt);
     return tgt;
   }
   return value;
-}
+};
 
 export const fieldHtmlCrowdinObject = (prefix?: string) => ({
-  [`${prefix || ''}blocksField.63d169d3d9dfd46d37c649e4.basicBlockRichText.richTextField`]: [
+  [`${
+    prefix || ""
+  }blocksField.63d169d3d9dfd46d37c649e4.basicBlockRichText.richTextField`]: [
     {
       type: "h1",
       children: [
@@ -182,7 +186,9 @@ export const fieldHtmlCrowdinObject = (prefix?: string) => ({
       ],
     },
   ],
-  [`${prefix || ''}blocksField.63ea3e7fb725d8a50646956a.basicBlockRichText.richTextField`]: [
+  [`${
+    prefix || ""
+  }blocksField.63ea3e7fb725d8a50646956a.basicBlockRichText.richTextField`]: [
     {
       children: [
         {
@@ -191,7 +197,9 @@ export const fieldHtmlCrowdinObject = (prefix?: string) => ({
       ],
     },
   ],
-  [`${prefix || ''}blocksField.63ea40106ff825cddad3c10b.basicBlockMixed.richTextField`]: [
+  [`${
+    prefix || ""
+  }blocksField.63ea40106ff825cddad3c10b.basicBlockMixed.richTextField`]: [
     {
       children: [
         {

@@ -10,7 +10,7 @@ For each article/global:
 
 ## `blocks` and `array` field types
 
-The `fields.json` file contents and HTML file names include the following non-localized fields: 
+The `fields.json` file contents and HTML file names include the following non-localized fields:
 
 - `id` and `blockType` for `blocks` fields; and
 - `id` for `array` fields.
@@ -103,7 +103,7 @@ Let's take the following example of a Payload document:
 For this example, the following JSON structure is sent to CrowdIn:
 
 ```ts
-{ 
+{
     blocksField:
       {
         "63ea42b06ff825cddad3c133": {
@@ -118,7 +118,7 @@ For this example, the following JSON structure is sent to CrowdIn:
             textareaField: "Textarea field content in basicBlock at layout index 2",
           },
       },
-      
+
         "63ea40106ff825cddad3c10b": {
           "basicBlockMixed" : {
 
@@ -137,7 +137,10 @@ blocksField.63d169d3d9dfd46d37c649e4.basicBlockRichText.richTextField.html
 ```
 
 ```html
-<h1>Rich text content in <strong>basicBlockRichText</strong> layout at index 1.</h1><p>An extra paragraph for good measure.</p>
+<h1>
+  Rich text content in <strong>basicBlockRichText</strong> layout at index 1.
+</h1>
+<p>An extra paragraph for good measure.</p>
 ```
 
 The `buildPayloadUpdateObject` transforms this data to a structure acceptable for Payload update operations by:

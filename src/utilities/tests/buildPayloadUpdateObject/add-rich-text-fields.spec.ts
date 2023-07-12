@@ -6,7 +6,12 @@ import {
   restoreOrder,
 } from "../..";
 import { FieldWithName } from "../../../types";
-import { field, fieldHtmlCrowdinObject, fieldJsonCrowdinObject, fieldDocValue } from "../fixtures/blocks-field-type.fixture";
+import {
+  field,
+  fieldHtmlCrowdinObject,
+  fieldJsonCrowdinObject,
+  fieldDocValue,
+} from "../fixtures/blocks-field-type.fixture";
 import dot from "dot-object";
 
 describe("fn: buildPayloadUpdateObject: blocks field type", () => {
@@ -37,15 +42,20 @@ describe("fn: buildPayloadUpdateObject: blocks field type", () => {
     const crowdinJsonObject = {
       title: "Test Policy created with title",
       ...fieldJsonCrowdinObject(),
-    }
-    const crowdinHtmlObject = fieldHtmlCrowdinObject()
+    };
+    const crowdinHtmlObject = fieldHtmlCrowdinObject();
     const expected = {
       title: "Test Policy created with title",
       blocksField: fieldDocValue,
-    }
+    };
 
     expect(
-      buildPayloadUpdateObject({ crowdinJsonObject, crowdinHtmlObject, fields, document: doc }),
+      buildPayloadUpdateObject({
+        crowdinJsonObject,
+        crowdinHtmlObject,
+        fields,
+        document: doc,
+      }),
     ).toEqual(expected);
   });
 });

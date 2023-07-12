@@ -7,7 +7,12 @@ import { mockCrowdinClient } from "../mock/crowdin-client";
 import { Payload } from "payload";
 import { PluginOptions } from "../../types";
 import deepEqual from "deep-equal";
-import { CollectionConfig, GlobalConfig, SanitizedCollectionConfig, SanitizedGlobalConfig } from "payload/types";
+import {
+  CollectionConfig,
+  GlobalConfig,
+  SanitizedCollectionConfig,
+  SanitizedGlobalConfig,
+} from "payload/types";
 import { htmlToSlate, payloadHtmlToSlateConfig } from "slate-serializers";
 import {
   getLocalizedFields,
@@ -90,7 +95,7 @@ export class payloadCrowdInSyncTranslationsApi {
      * * check for `meta` field (which can be added by @payloadcms/seo)
      *
      */
-    let doc: { crowdinArticleDirectory: { id: any; }; };
+    let doc: { crowdinArticleDirectory: { id: any } };
     if (global) {
       doc = await this.payload.findGlobal({
         slug: collection,
@@ -155,8 +160,14 @@ export class payloadCrowdInSyncTranslationsApi {
     };
   }
 
-  getCollectionConfig(collection: string, global: boolean): CollectionConfig | GlobalConfig {
-    let collectionConfig: SanitizedGlobalConfig | SanitizedCollectionConfig | undefined;
+  getCollectionConfig(
+    collection: string,
+    global: boolean,
+  ): CollectionConfig | GlobalConfig {
+    let collectionConfig:
+      | SanitizedGlobalConfig
+      | SanitizedCollectionConfig
+      | undefined;
     if (global) {
       collectionConfig = this.payload.config.globals.find(
         (col: GlobalConfig) => col.slug === collection,
@@ -177,7 +188,6 @@ export class payloadCrowdInSyncTranslationsApi {
     locale,
     global = false,
   }: IgetCurrentDocumentTranslation) {
-
     // get document
     let document: any;
     if (global) {
@@ -227,7 +237,6 @@ export class payloadCrowdInSyncTranslationsApi {
     locale,
     global = false,
   }: IgetLatestDocumentTranslation) {
-    
     const collectionConfig = this.getCollectionConfig(collection, global);
 
     const localizedFields = getLocalizedFields({
@@ -266,7 +275,6 @@ export class payloadCrowdInSyncTranslationsApi {
       document: doc,
     });
 
-    
     // Add required fields if not present
     const requiredFieldSlugs = getFieldSlugs(
       getLocalizedRequiredFields(collectionConfig),

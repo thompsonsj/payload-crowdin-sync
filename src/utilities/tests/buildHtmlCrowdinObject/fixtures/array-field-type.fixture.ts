@@ -21,7 +21,7 @@ export const field: Field = {
       options: ["one", "two"],
     },
   ],
-}
+};
 
 export const fieldLocalizedTopLevel: Field = {
   name: "arrayField",
@@ -42,7 +42,7 @@ export const fieldLocalizedTopLevel: Field = {
       options: ["one", "two"],
     },
   ],
-}
+};
 
 export const fieldDocValue = [
   {
@@ -107,7 +107,7 @@ export const fieldDocValue = [
     select: "two",
     id: "64735621230d57bce946d371",
   },
-]
+];
 
 export const fieldCrowdinObject = {
   ["arrayField.64735620230d57bce946d370.title"]: [

@@ -1,6 +1,11 @@
 import { CollectionConfig, Field } from "payload/types";
 import { buildCrowdinHtmlObject } from "../..";
-import { field, fieldCrowdinObject, fieldDocValue, fieldLocalizedTopLevel } from "./fixtures/array-field-type.fixture";
+import {
+  field,
+  fieldCrowdinObject,
+  fieldDocValue,
+  fieldLocalizedTopLevel,
+} from "./fixtures/array-field-type.fixture";
 
 describe("fn: buildCrowdinHtmlObject: array field type", () => {
   it("includes localized fields", () => {
@@ -84,9 +89,7 @@ describe("fn: buildCrowdinHtmlObject: array field type", () => {
       {
         label: "Array fields",
         type: "collapsible",
-        fields: [
-          field,
-        ],
+        fields: [field],
       },
     ];
     const expected = fieldCrowdinObject;
@@ -118,9 +121,7 @@ describe("fn: buildCrowdinHtmlObject: array field type", () => {
       {
         label: "Array fields",
         type: "collapsible",
-        fields: [
-          fieldLocalizedTopLevel,
-        ],
+        fields: [fieldLocalizedTopLevel],
       },
     ];
     const expected = fieldCrowdinObject;

@@ -210,30 +210,35 @@ describe(`CrowdIn file create, update and delete`, () => {
       const jsonFile = crowdInFiles.find((file) => file.name === "fields.json");
       expect(
         crowdInFiles.find(
-          (file) => file.name === `layout.${blockIds[0]}.${blockTypes[0]}.richTextField.html`,
+          (file) =>
+            file.name ===
+            `layout.${blockIds[0]}.${blockTypes[0]}.richTextField.html`,
         ),
       ).toBeDefined();
       expect(
         crowdInFiles.find(
-          (file) => file.name === `layout.${blockIds[1]}.${blockTypes[1]}.messages.${arrayIds[0]}.message.html`,
+          (file) =>
+            file.name ===
+            `layout.${blockIds[1]}.${blockTypes[1]}.messages.${arrayIds[0]}.message.html`,
         ),
       ).toBeDefined();
       expect(
         crowdInFiles.find(
-          (file) => file.name === `layout.${blockIds[1]}.${blockTypes[1]}.messages.${arrayIds[1]}.message.html`,
+          (file) =>
+            file.name ===
+            `layout.${blockIds[1]}.${blockTypes[1]}.messages.${arrayIds[1]}.message.html`,
         ),
       ).toBeDefined();
       expect(jsonFile).toBeDefined();
       expect(jsonFile.fileData.json).toEqual({
-        layout:
-          {
-            [blockIds[0]]: {
-              basicBlock: {
-                textareaField: "Test meta description 1",
-                textField: "Test title 1",
-              },
+        layout: {
+          [blockIds[0]]: {
+            basicBlock: {
+              textareaField: "Test meta description 1",
+              textField: "Test title 1",
             },
           },
+        },
       });
     });
   });

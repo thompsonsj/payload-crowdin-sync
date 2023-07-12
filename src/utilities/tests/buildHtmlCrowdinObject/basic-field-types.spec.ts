@@ -358,5 +358,3 @@ describe("fn: buildCrowdinHtmlObject", () => {
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
 });
-
-
