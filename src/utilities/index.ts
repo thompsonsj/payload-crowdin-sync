@@ -31,7 +31,7 @@ export const getLocalizedFields = ({
   // flatten the presetational only tabs field
   // TODO: check this is correct. Docs at https://payloadcms.com/docs/fields/tabs suggest that subsequent tabs can be accessed using a prefix, but documents saved with tabs seem to retain their structure as if they didn't have tabs.
   let flattenedFields = fields;
-  if (fields.length === 1 && fields[0].type === "tabs") {
+  if (fields.length > 1 && fields[0].type === "tabs") {
     flattenedFields = fields[0].tabs.map((tab) => tab.fields).flat();
   }
   const localizedFields = getLocalizedFieldsRecursive({
@@ -39,8 +39,9 @@ export const getLocalizedFields = ({
     type,
     localizedParent,
   });
+  const allLocalizedFields = type ? getLocalizedFields({ fields: fields }) : fields;
   if (
-    localizedFields.length === 1 &&
+    allLocalizedFields.length === 1 &&
     get(localizedFields[0], "name") === "meta"
   ) {
     return [];
