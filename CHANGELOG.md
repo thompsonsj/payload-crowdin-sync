@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.13.0...v0.13.1) (2023-07-21)
+
+
+### Bug Fixes
+
+* **getlocalizedfields:** relax tab field detection ([#85](https://github.com/thompsonsj/payload-crowdin-sync/issues/85)) ([29ecd1a](https://github.com/thompsonsj/payload-crowdin-sync/commit/29ecd1a24864deee17dfae891b43d451191764f1))
+
 ## [0.13.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.12.1...v0.13.0) (2023-07-12)
 
 ### Features
