@@ -26,7 +26,7 @@ describe("fn: getLocalizedFields", () => {
           type: "text",
           localized: true,
           admin: {
-            description: "Not sent to CrowdIn. Localize in the CMS.",
+            description: "Not sent to Crowdin. Localize in the CMS.",
           },
         },
       ];
@@ -868,7 +868,7 @@ describe("fn: getLocalizedFields", () => {
    *
    * payloadcms/plugin-seo adds localized fields.
    * If there are no other localized fields, we don't
-   * want to submit to CrowdIn.
+   * want to submit to Crowdin.
    */
   describe("payloadcms/plugin-seo tests", () => {
     const seoFields: Field[] = [

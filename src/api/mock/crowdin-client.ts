@@ -7,17 +7,17 @@ import {
 } from "@crowdin/crowdin-api-client";
 
 /*
-  CrowdIn Service mock
+  Crowdin Service mock
 
   Although it is against best practice to mock an API
-  response, CrowdIn and Payload CMS need to perform
+  response, Crowdin and Payload CMS need to perform
   multiple interdependent operations.
 
   As a result, for effective testing, mocks are required
   to provide Payload with expected data for subsequent
   operations.
 
-  Importing types from the CrowdIn API client provides
+  Importing types from the Crowdin API client provides
   assurance that the mock returns expected data structures.
 */
 

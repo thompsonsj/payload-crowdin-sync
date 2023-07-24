@@ -1,3 +1,3 @@
-import { crowdInSync } from "./plugin";
+import { crowdinSync } from "./plugin";
 
-export { crowdInSync };
+export { crowdinSync };

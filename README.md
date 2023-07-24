@@ -1,6 +1,6 @@
-# Payload CrowdIn Sync Plugin
+# Payload Crowdin Sync Plugin
 
-Automatically upload/sync localized fields from the default locale to CrowdIn. Make these fields read-only in other locales and update them using CrowdIn translations.
+Automatically upload/sync localized fields from the default locale to Crowdin. Make these fields read-only in other locales and update them using Crowdin translations.
 
 Note: This plugin is still in development. A todo list is maintained at [/docs/development.md](/docs/development.md).
 
@@ -21,18 +21,18 @@ yarn add payload-crowdin-sync
 Add the plugin to your Payload configuration.
 
 ```ts
-import { crowdInSync, crowdinClient } from "payload-crowdin-sync";
+import { crowdinSync, crowdinClient } from "payload-crowdin-sync";
 
 export default buildConfig({
   plugins: [
-    crowdInSync({
-      /* Required: Your CrowdIn project ID. */
+    crowdinSync({
+      /* Required: Your Crowdin project ID. */
       projectId: 323731,
-      /* Optional: CrowdIn directory ID to store translations. */
+      /* Optional: Crowdin directory ID to store translations. */
       directoryId: 1169,
-      /* Optional: Your CrowdIn API token. If empty, changes to files are disabled. */
+      /* Optional: Your Crowdin API token. If empty, changes to files are disabled. */
       token: process.env.CROWDIN_TOKEN,
-      /* Required: Map your Payload locales to CrowdIn locale ids. */
+      /* Required: Map your Payload locales to Crowdin locale ids. */
       localeMap: {
         de_DE: {
           crowdinId: "de",
@@ -41,7 +41,7 @@ export default buildConfig({
           crowdinId: "fr",
         },
       },
-      /* Required: The Payload locale that syncs to source translations (files) on CrowdIn. */
+      /* Required: The Payload locale that syncs to source translations (files) on Crowdin. */
       sourceLocale: "en",
     }),
   ],
@@ -51,20 +51,20 @@ export default buildConfig({
 
 ### Environment variables
 
-Set `PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE=true` to update all localized fields in CrowdIn when an article is created/updated.
+Set `PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE=true` to update all localized fields in Crowdin when an article is created/updated.
 
-By default, updates will only be sent to CrowdIn in the following scenarios.
+By default, updates will only be sent to Crowdin in the following scenarios.
 
-- At least one of the localized text fields has changed: any change to a localized `text` field updates the compiled `fields.json` that is sent to CrowdIn.
-- A `richText` field is changed. Individual `richText` fields will only be updated on CrowdIn if the content has changed - each field has its own file on CrowdIn.
+- At least one of the localized text fields has changed: any change to a localized `text` field updates the compiled `fields.json` that is sent to Crowdin.
+- A `richText` field is changed. Individual `richText` fields will only be updated on Crowdin if the content has changed - each field has its own file on Crowdin.
 
-It is useful to have a convenient way of forcing all localized fields to update at once. For example, if the plugin is activated on an existing install, it is convenient to trigger all updates on CrowdIn for a given article without having to change every `richText` field or one of the `text` fields.
+It is useful to have a convenient way of forcing all localized fields to update at once. For example, if the plugin is activated on an existing install, it is convenient to trigger all updates on Crowdin for a given article without having to change every `richText` field or one of the `text` fields.
 
 ## Details
 
-### CrowdIn collections
+### Crowdin collections
 
-By default, files are uploaded to CrowdIn using the following folder/file structure.
+By default, files are uploaded to Crowdin using the following folder/file structure.
 
 ```
 "Payload CMS" > [collectionSlug] > [articleSlug] > [fieldSlug]
@@ -77,18 +77,18 @@ For each entry in a collection that contains localized fields, an additonal fiel
 
 When a localized field is changed, a file is created/updated in the `crowdin-files` collection for that field. Details of the file are stored in Payload so that this file can be updated or deleted in the future. Each entry in the `crowdin-files` collection has a one-to-one relationship with the appropriate entry in the `crowdin-article-directories` collection.
 
-- `richText` fields have their own CrowdIn file. e.g. `content.html`. For ease-of-editing in CrowdIn, Slate JSON is converted to HTML. When translated HTML is synced back into Payload, it is converted back to Slate JSON.
-- All other fields are compiled into a single `fields.json` file for ease-of-editing in CrowdIn.
+- `richText` fields have their own Crowdin file. e.g. `content.html`. For ease-of-editing in Crowdin, Slate JSON is converted to HTML. When translated HTML is synced back into Payload, it is converted back to Slate JSON.
+- All other fields are compiled into a single `fields.json` file for ease-of-editing in Crowdin.
 
 Each entry in the `crowdin-article-directories` collection has a one-to-one relationship with an entry in the `crowdin-collection-directories` collection.
 
 One-to-one relationships help preserve database integrity and simplify the operations needed to perform CRUD operations on all related entries.
 
-All of the collections created by this plugin are designed to emulate the structure of API calls needed to communicate with crowdIn. Each directory/file is created in a single API operation on cRowdIn, and it is necessary to keep track of the details of each directory and file for future interactions.
+All of the collections created by this plugin are designed to emulate the structure of API calls needed to communicate with crowdin. Each directory/file is created in a single API operation on cRowdIn, and it is necessary to keep track of the details of each directory and file for future interactions.
 
 ### Sync translations
 
-Translation synchronisation refers to the process of loading translations from CrowdIn into Payload CMS. If [drafts](https://payloadcms.com/docs/versions/drafts) are enabled, this will create a new version in Payload CMS for each locale. The source locale (e.g. `en`) is not affected.
+Translation synchronisation refers to the process of loading translations from Crowdin into Payload CMS. If [drafts](https://payloadcms.com/docs/versions/drafts) are enabled, this will create a new version in Payload CMS for each locale. The source locale (e.g. `en`) is not affected.
 
 **A UI has not been developed for this feature yet**. To perform updates now, use custom REST API endpoints that are made available by this plugin.
 
@@ -112,8 +112,8 @@ A JSON object is returned that allows you to review what will be updated in the 
 - `translations`
   - `<locale>` e.g. `es_ES`
     - `currentTranslations` all current localized fields and values.
-    - `currentTranslations` localized fields populated with values from CrowdIn.
-    - `changed` boolean to indicate whether any changes have been made in CrowdIn.
+    - `currentTranslations` localized fields populated with values from Crowdin.
+    - `changed` boolean to indicate whether any changes have been made in Crowdin.
 
 #### Update
 

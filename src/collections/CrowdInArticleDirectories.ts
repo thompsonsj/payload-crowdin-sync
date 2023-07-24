@@ -1,6 +1,6 @@
 import { CollectionConfig } from "payload/types";
 
-const CrowdInArticleDirectories: CollectionConfig = {
+const CrowdinArticleDirectories: CollectionConfig = {
   slug: "crowdin-article-directories",
   admin: {
     defaultColumns: [
@@ -10,13 +10,13 @@ const CrowdInArticleDirectories: CollectionConfig = {
       "createdAt",
     ],
     useAsTitle: "name",
-    group: "CrowdIn Admin",
+    group: "Crowdin Admin",
   },
   access: {
     read: () => true,
   },
   fields: [
-    /* CrowdIn field */
+    /* Crowdin field */
     {
       name: "name",
       type: "text",
@@ -29,12 +29,12 @@ const CrowdInArticleDirectories: CollectionConfig = {
       hasMany: false,
     },
     {
-      name: "crowdInFiles",
+      name: "crowdinFiles",
       type: "relationship",
       relationTo: "crowdin-files",
       hasMany: true,
     },
-    /* CrowdIn fields */
+    /* Crowdin fields */
     {
       name: "createdAt",
       type: "date",
@@ -58,4 +58,4 @@ const CrowdInArticleDirectories: CollectionConfig = {
   ],
 };
 
-export default CrowdInArticleDirectories;
+export default CrowdinArticleDirectories;

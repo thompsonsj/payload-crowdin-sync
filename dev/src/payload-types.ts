@@ -61,7 +61,7 @@ export interface CrowdinArticleDirectory {
   id: string;
   name?: string;
   crowdinCollectionDirectory?: string | CrowdinCollectionDirectory;
-  crowdInFiles?: string[] | CrowdinFile[];
+  crowdinFiles?: string[] | CrowdinFile[];
   createdAt: string;
   updatedAt: string;
   originalId?: number;

@@ -16,10 +16,10 @@ import {
 } from "../../utilities";
 import deepEqual from "deep-equal";
 import { getLocalizedFields } from "../../utilities";
-import { payloadCrowdInSyncFilesApi } from "../../api/payload-crowdin-sync/files";
+import { payloadCrowdinSyncFilesApi } from "../../api/payload-crowdin-sync/files";
 
 /**
- * Update CrowdIn collections and make updates in CrowdIn
+ * Update Crowdin collections and make updates in Crowdin
  *
  * This functionality used to be split into field hooks.
  * However, it is more reliable to loop through localized
@@ -128,7 +128,7 @@ const performAfterChange = async ({
    * Prepare JSON objects
    *
    * `text` fields are compiled into a single JSON file
-   * on CrowdIn. Prepare previous and current objects.
+   * on Crowdin. Prepare previous and current objects.
    */
   const currentCrowdinJsonData = buildCrowdinJsonObject({
     doc,
@@ -140,14 +140,14 @@ const performAfterChange = async ({
   });
 
   /**
-   * Initialize CrowdIn client sourceFilesApi
+   * Initialize Crowdin client sourceFilesApi
    */
-  const filesApi = new payloadCrowdInSyncFilesApi(pluginOptions, req.payload);
+  const filesApi = new payloadCrowdinSyncFilesApi(pluginOptions, req.payload);
 
   /**
-   * Retrieve the CrowdIn Article Directory article
+   * Retrieve the Crowdin Article Directory article
    *
-   * Records of CrowdIn directories are stored in Payload.
+   * Records of Crowdin directories are stored in Payload.
    */
   const articleDirectory = await filesApi.findOrCreateArticleDirectory({
     document: doc,
@@ -191,7 +191,7 @@ const performAfterChange = async ({
   };
 
   /**
-   * Recursively send rich text fields to CrowdIn as HTML
+   * Recursively send rich text fields to Crowdin as HTML
    *
    * Name these HTML files with dot notation. Examples:
    *

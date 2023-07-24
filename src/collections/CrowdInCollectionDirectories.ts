@@ -1,17 +1,17 @@
 import { CollectionConfig } from "payload/types";
 
-const CrowdInCollectionDirectories: CollectionConfig = {
+const CrowdinCollectionDirectories: CollectionConfig = {
   slug: "crowdin-collection-directories",
   admin: {
     defaultColumns: ["name", "title", "collectionSlug", "updatedAt"],
     useAsTitle: "name",
-    group: "CrowdIn Admin",
+    group: "Crowdin Admin",
   },
   access: {
     read: () => true,
   },
   fields: [
-    /* CrowdIn field */
+    /* Crowdin field */
     {
       name: "name",
       type: "text",
@@ -26,7 +26,7 @@ const CrowdInCollectionDirectories: CollectionConfig = {
       type: "text",
     },
 
-    /* CrowdIn fields */
+    /* Crowdin fields */
     {
       name: "createdAt",
       type: "date",
@@ -50,4 +50,4 @@ const CrowdInCollectionDirectories: CollectionConfig = {
   ],
 };
 
-export default CrowdInCollectionDirectories;
+export default CrowdinCollectionDirectories;

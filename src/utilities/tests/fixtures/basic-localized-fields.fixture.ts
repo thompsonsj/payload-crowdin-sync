@@ -9,13 +9,13 @@ export const basicNonLocalizedFields: Field[] = [
     name: "textareaField",
     type: "textarea",
   },
-  // select not supported: included to ensure it does not send to CrowdIn
+  // select not supported: included to ensure it does not send to Crowdin
   {
     name: "select",
     type: "select",
     options: ["one", "two"],
   },
-  // image not supported: included to ensure it does send to CrowdIn
+  // image not supported: included to ensure it does send to Crowdin
   {
     name: "image",
     type: "upload",
@@ -34,14 +34,14 @@ export const basicLocalizedFields: Field[] = [
     type: "textarea",
     localized: true,
   },
-  // select not supported: included to ensure it does not send to CrowdIn
+  // select not supported: included to ensure it does not send to Crowdin
   {
     name: "select",
     type: "select",
     localized: true,
     options: ["one", "two"],
   },
-  // image not supported: included to ensure it does send to CrowdIn
+  // image not supported: included to ensure it does send to Crowdin
   {
     name: "image",
     type: "upload",

@@ -64,7 +64,7 @@ export const getLocalizedFieldsRecursive = ({
       (field) =>
         isLocalizedField(field, localizedParent) || containsNestedFields(field),
     )
-    // further filter on CrowdIn field type
+    // further filter on Crowdin field type
     .filter((field) => {
       if (containsNestedFields(field)) {
         return true;
@@ -167,7 +167,7 @@ export const getLocalizedRequiredFields = (
 
 /**
  * Not yet compatible with nested fields - this means nested HTML
- * field translations cannot be synced from CrowdIn.
+ * field translations cannot be synced from Crowdin.
  */
 export const getFieldSlugs = (fields: FieldWithName[]): string[] =>
   fields
@@ -195,7 +195,7 @@ export const isLocalizedField = (
 
 const excludeBasedOnDescription = (field: Field) => {
   const description = get(field, "admin.description", "");
-  if (description.includes("Not sent to CrowdIn. Localize in the CMS.")) {
+  if (description.includes("Not sent to Crowdin. Localize in the CMS.")) {
     return true;
   }
   return false;
@@ -285,10 +285,10 @@ export const restoreOrder = ({
 };
 
 /**
- * Convert CrowdIn objects to Payload CMS data objects.
+ * Convert Crowdin objects to Payload CMS data objects.
  *
- * * `crowdinJsonObject` is the JSON object returned from CrowdIn.
- * * `crowdinHtmlObject` is the HTML object returned from CrowdIn. Optional. Merged into resulting object if provided.
+ * * `crowdinJsonObject` is the JSON object returned from Crowdin.
+ * * `crowdinHtmlObject` is the HTML object returned from Crowdin. Optional. Merged into resulting object if provided.
  * * `fields` is the collection or global fields array.
  * * `topLevel` is a flag used internally to filter json fields before recursion.
  * * `document` is the document object. Optional. Used to restore the order of `array` and `blocks` field values.

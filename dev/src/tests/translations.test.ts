@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import payload from "payload";
 import { initPayloadTest } from "./helpers/config";
-import { payloadCrowdInSyncTranslationsApi } from "../../../dist/api/payload-crowdin-sync/translations";
+import { payloadCrowdinSyncTranslationsApi } from "../../../dist/api/payload-crowdin-sync/translations";
 import nock from "nock";
 import { payloadCreateData } from "./fixtures/nested-field-collection/simple-blocks.fixture";
 import { payloadCreateBlocksRichTextData } from "./fixtures/nested-field-collection/rich-text-blocks.fixture";
@@ -50,12 +50,12 @@ describe("Translations", () => {
   });
 
   describe("fn: getTranslation", () => {
-    it("retrieves a translation from CrowdIn", async () => {
+    it("retrieves a translation from Crowdin", async () => {
       const post = await payload.create({
         collection: collections.localized,
         data: { title: "Test post" },
       });
-      const translationsApi = new payloadCrowdInSyncTranslationsApi(
+      const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
         payload,
       );
@@ -84,12 +84,12 @@ describe("Translations", () => {
   });
 
   describe("fn: updateTranslation", () => {
-    it("updates a Payload article with a `text` field translation retrieved from CrowdIn", async () => {
+    it("updates a Payload article with a `text` field translation retrieved from Crowdin", async () => {
       const post = await payload.create({
         collection: collections.localized,
         data: { title: "Test post" },
       });
-      const translationsApi = new payloadCrowdInSyncTranslationsApi(
+      const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
         payload,
       );
@@ -120,7 +120,7 @@ describe("Translations", () => {
       expect(result.title).toEqual("Testbeitrag");
     });
 
-    it("updates a Payload article with a `richText` field translation retrieved from CrowdIn", async () => {
+    it("updates a Payload article with a `richText` field translation retrieved from Crowdin", async () => {
       const post = await payload.create({
         collection: collections.localized,
         data: {
@@ -135,7 +135,7 @@ describe("Translations", () => {
           ],
         },
       });
-      const translationsApi = new payloadCrowdInSyncTranslationsApi(
+      const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
         payload,
       );
@@ -169,7 +169,7 @@ describe("Translations", () => {
       ]);
     });
 
-    it("updates a Payload article with a *blocks* field translation retrieved from CrowdIn", async () => {
+    it("updates a Payload article with a *blocks* field translation retrieved from Crowdin", async () => {
       const post = await payload.create({
         collection: collections.nestedFields,
         data: payloadCreateData,
@@ -215,7 +215,7 @@ describe("Translations", () => {
           },
         },
       };
-      const translationsApi = new payloadCrowdInSyncTranslationsApi(
+      const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
         payload,
       );
@@ -279,7 +279,7 @@ describe("Translations", () => {
       ]);
     });
 
-    it("updates a Payload article with a *blocks* field translation retrieved from CrowdIn and detects no change on the next update attempt", async () => {
+    it("updates a Payload article with a *blocks* field translation retrieved from Crowdin and detects no change on the next update attempt", async () => {
       const post = await payload.create({
         collection: collections.nestedFields,
         data: payloadCreateData,
@@ -325,7 +325,7 @@ describe("Translations", () => {
           },
         },
       };
-      const translationsApi = new payloadCrowdInSyncTranslationsApi(
+      const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
         payload,
       );
@@ -405,7 +405,7 @@ describe("Translations", () => {
       expect(nextTranslation.translations["fr_FR"].changed).toBe(false);
     });
 
-    it("updates a Payload article with *blocks* rich text translations retrieved from CrowdIn", async () => {
+    it("updates a Payload article with *blocks* rich text translations retrieved from Crowdin", async () => {
       const post = await payload.create({
         collection: collections.nestedFields,
         data: payloadCreateBlocksRichTextData,
@@ -421,7 +421,7 @@ describe("Translations", () => {
         "<p>Contenu de texte enrichi dans la disposition des blocs à l'index 0.</p>";
       const responseFrTwo =
         "<p>Contenu de texte enrichi dans la disposition des blocs à l'index 1.</p>";
-      const translationsApi = new payloadCrowdInSyncTranslationsApi(
+      const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
         payload,
       );

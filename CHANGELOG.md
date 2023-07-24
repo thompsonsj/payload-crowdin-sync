@@ -14,12 +14,12 @@ All notable changes to this project will be documented in this file. See [standa
 ### Features
 
 - **plugin:** add sourceLocale option ([#78](https://github.com/thompsonsj/payload-crowdin-sync/issues/78)) ([95943a7](https://github.com/thompsonsj/payload-crowdin-sync/commit/95943a786c50984c96008391d2af7ef4d11e2611))
-- **translations:** move endpoints, send id and blockType to CrowdIn for arrays and blocks ([#80](https://github.com/thompsonsj/payload-crowdin-sync/issues/80)) ([2c0fcbd](https://github.com/thompsonsj/payload-crowdin-sync/commit/2c0fcbdfb19a7890ddf06a11f2564d7abb4bf762))
+- **translations:** move endpoints, send id and blockType to Crowdin for arrays and blocks ([#80](https://github.com/thompsonsj/payload-crowdin-sync/issues/80)) ([2c0fcbd](https://github.com/thompsonsj/payload-crowdin-sync/commit/2c0fcbdfb19a7890ddf06a11f2564d7abb4bf762))
 - **translations:** update fn works with json and html ([#82](https://github.com/thompsonsj/payload-crowdin-sync/issues/82)) ([78c2adc](https://github.com/thompsonsj/payload-crowdin-sync/commit/78c2adcb56d180fd1cafd71eb586bb39eb6e65a9))
 
 ### Bug Fixes
 
-- **translations:** update translations with new CrowdIn JSON structure ([#81](https://github.com/thompsonsj/payload-crowdin-sync/issues/81)) ([6ef4331](https://github.com/thompsonsj/payload-crowdin-sync/commit/6ef43316881f52e466eee4dd40ffbd3b6ae343e0))
+- **translations:** update translations with new Crowdin JSON structure ([#81](https://github.com/thompsonsj/payload-crowdin-sync/issues/81)) ([6ef4331](https://github.com/thompsonsj/payload-crowdin-sync/commit/6ef43316881f52e466eee4dd40ffbd3b6ae343e0))
 
 ## [0.12.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.12.0...v0.12.1) (2023-07-08)
 
@@ -55,7 +55,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-- **files:** store fileData sent to CrowdIn ([#61](https://github.com/thompsonsj/payload-crowdin-sync/issues/61)) ([7f28a47](https://github.com/thompsonsj/payload-crowdin-sync/commit/7f28a47f530eba7119b5015b5de9f1426e547133))
+- **files:** store fileData sent to Crowdin ([#61](https://github.com/thompsonsj/payload-crowdin-sync/issues/61)) ([7f28a47](https://github.com/thompsonsj/payload-crowdin-sync/commit/7f28a47f530eba7119b5015b5de9f1426e547133))
 
 ## [0.8.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.8.1...v0.8.2) (2023-07-03)
 
@@ -80,7 +80,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-- delete CrowdIn files if empty, ensure `fields.json` is non-empty ([#46](https://github.com/thompsonsj/payload-crowdin-sync/issues/46)) ([b681bef](https://github.com/thompsonsj/payload-crowdin-sync/commit/b681bef3334ee7f58d1c05c6f2f486c652e49495))
+- delete Crowdin files if empty, ensure `fields.json` is non-empty ([#46](https://github.com/thompsonsj/payload-crowdin-sync/issues/46)) ([b681bef](https://github.com/thompsonsj/payload-crowdin-sync/commit/b681bef3334ee7f58d1c05c6f2f486c652e49495))
 - support blocks field type ([#47](https://github.com/thompsonsj/payload-crowdin-sync/issues/47)) ([6a8d4a9](https://github.com/thompsonsj/payload-crowdin-sync/commit/6a8d4a9aea9799c537f0e1452132b827a714e87b))
 
 ### Bug Fixes
@@ -131,7 +131,7 @@ All notable changes to this project will be documented in this file. See [standa
 - **payload:** support nested json fields on translation update ([#13](https://github.com/thompsonsj/payload-crowdin-sync/issues/13)) ([4225b83](https://github.com/thompsonsj/payload-crowdin-sync/commit/4225b83d4cd6ed9f999b6412a493e0f693d40b08))
 - **plugin:** support globals ([#6](https://github.com/thompsonsj/payload-crowdin-sync/issues/6)) ([80559ee](https://github.com/thompsonsj/payload-crowdin-sync/commit/80559ee4437f15a5b3fe1eda848a484a541979af))
 - support collapsible fields, complete richText update support ([#18](https://github.com/thompsonsj/payload-crowdin-sync/issues/18)) ([3e37aba](https://github.com/thompsonsj/payload-crowdin-sync/commit/3e37abae34011e504af182ca2264a7929730c8ae))
-- support updating group and array fields on CrowdIn ([#8](https://github.com/thompsonsj/payload-crowdin-sync/issues/8)) ([2401499](https://github.com/thompsonsj/payload-crowdin-sync/commit/2401499e8d5527aee2e4cc8357dd225a2eab4805))
+- support updating group and array fields on Crowdin ([#8](https://github.com/thompsonsj/payload-crowdin-sync/issues/8)) ([2401499](https://github.com/thompsonsj/payload-crowdin-sync/commit/2401499e8d5527aee2e4cc8357dd225a2eab4805))
 
 ### Bug Fixes
 
