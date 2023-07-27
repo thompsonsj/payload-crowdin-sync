@@ -222,19 +222,8 @@ enum LocalizedPost_status {
 type CrowdinArticleDirectory {
   id: String
   name: String
-<<<<<<< HEAD
-  crowdinCollectionDirectory(
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): CrowdinCollectionDirectory
-  crowdinFiles(
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): [CrowdinFile!]
-=======
   crowdinCollectionDirectory(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinCollectionDirectory
-  crowdInFiles(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [CrowdinFile!]
->>>>>>> main
+  crowdinFiles(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [CrowdinFile!]
   createdAt: DateTime
   updatedAt: DateTime
   originalId: Float
