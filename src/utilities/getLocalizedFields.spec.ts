@@ -928,7 +928,6 @@ describe("fn: getLocalizedFields", () => {
           type: "text",
         },
       ];
-
       const fields: Field[] = [...nonLocalizedFieldCollection, ...seoFields];
       expect(getLocalizedFields({ fields })).toEqual([]);
     });

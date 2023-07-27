@@ -1,18 +1,20 @@
 import { CollectionConfig, Field } from "payload/types";
 import { buildCrowdinJsonObject, getLocalizedFields } from "../..";
 import { FieldWithName } from "../../../types";
+import {
+  basicNonLocalizedFields,
+  basicLocalizedFields,
+  emptyFieldDocValue,
+  fieldJsonCrowdinObject,
+  fieldDocValue,
+} from "../../tests/fixtures/basic-localized-fields.fixture";
 
 describe("fn: buildCrowdinJsonObject: group field type", () => {
   it("creates an empty JSON object if fields are empty", () => {
     const doc = {
       id: "638641358b1a140462752076",
-      title: "Test Policy created with title",
-      groupField: {
-        title: "Group title field content",
-        text: "Group text field content",
-        description: "A textarea value.\nWith a new line.",
-        select: "one",
-      },
+      title: "",
+      groupField: emptyFieldDocValue,
       status: "draft",
       createdAt: "2022-11-29T17:28:21.644Z",
       updatedAt: "2022-11-29T17:28:21.644Z",
@@ -75,14 +77,7 @@ describe("fn: buildCrowdinJsonObject: group field type", () => {
       },
     ];
     const localizedFields = getLocalizedFields({ fields });
-    const expected = {
-      title: "Test Policy created with title",
-      groupField: {
-        title: "Group title field content",
-        text: "Group text field content",
-        description: "A textarea value.\nWith a new line.",
-      },
-    };
+    const expected = {};
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
       expected,
     );
