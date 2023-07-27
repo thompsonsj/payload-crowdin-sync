@@ -39,9 +39,7 @@ describe(`CrowdIn file create, update and delete`, () => {
         collection: collections.localized,
         data: { title: "Test post" },
       });
-      console.log("post", post)
       const file = await getFileByDocumentID("fields", post.id, payload);
-      console.log("file", file)
       expect(file.fileData.json).toEqual({ title: "Test post" });
     });
 
