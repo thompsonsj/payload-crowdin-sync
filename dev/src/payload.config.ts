@@ -9,7 +9,7 @@ import Tags from "./collections/Tags";
 import Users from "./collections/Users";
 import { resolve } from "path";
 
-import { crowdInSync } from "../../dist";
+import { crowdinSync } from "../../dist";
 
 import dotenv from "dotenv";
 
@@ -32,7 +32,7 @@ export default buildConfig({
     user: Users.slug,
   },
   plugins: [
-    crowdInSync({
+    crowdinSync({
       projectId: 323731,
       directoryId: 1169,
       token: process.env.CROWDIN_TOKEN,

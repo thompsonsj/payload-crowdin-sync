@@ -1,6 +1,6 @@
 import { Endpoint } from "payload/config";
 import { PluginOptions } from "../../types";
-import { payloadCrowdInSyncTranslationsApi } from "../../api/payload-crowdin-sync/translations";
+import { payloadCrowdinSyncTranslationsApi } from "../../api/payload-crowdin-sync/translations";
 
 export const getReviewTranslationEndpoint = ({
   pluginOptions,
@@ -18,7 +18,7 @@ export const getReviewTranslationEndpoint = ({
     });
     const global =
       articleDirectory.crowdinCollectionDirectory.collectionSlug === "globals";
-    const translationsApi = new payloadCrowdInSyncTranslationsApi(
+    const translationsApi = new payloadCrowdinSyncTranslationsApi(
       pluginOptions,
       req.payload,
     );

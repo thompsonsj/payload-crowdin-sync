@@ -2,7 +2,7 @@ import crowdin, {
   Credentials,
   Translations,
 } from "@crowdin/crowdin-api-client";
-import { payloadCrowdInSyncFilesApi } from "./files";
+import { payloadCrowdinSyncFilesApi } from "./files";
 import { mockCrowdinClient } from "../mock/crowdin-client";
 import { Payload } from "payload";
 import { PluginOptions } from "../../types";
@@ -54,9 +54,9 @@ interface IupdateTranslation {
   excludeLocales?: string[];
 }
 
-export class payloadCrowdInSyncTranslationsApi {
+export class payloadCrowdinSyncTranslationsApi {
   translationsApi: Translations;
-  filesApi: payloadCrowdInSyncFilesApi; // our wrapper for file operations
+  filesApi: payloadCrowdinSyncFilesApi; // our wrapper for file operations
   projectId: number;
   directoryId?: number;
   payload: Payload;
@@ -75,7 +75,7 @@ export class payloadCrowdInSyncTranslationsApi {
       process.env.NODE_ENV === "test"
         ? (mockCrowdinClient(pluginOptions) as any)
         : translationsApi;
-    this.filesApi = new payloadCrowdInSyncFilesApi(pluginOptions, payload);
+    this.filesApi = new payloadCrowdinSyncFilesApi(pluginOptions, payload);
     this.payload = payload;
     this.localeMap = pluginOptions.localeMap;
     this.sourceLocale = pluginOptions.sourceLocale;
@@ -229,7 +229,7 @@ export class payloadCrowdInSyncTranslationsApi {
   }
 
   /**
-   * Retrieve translations from CrowdIn for a document in a given locale
+   * Retrieve translations from Crowdin for a document in a given locale
    */
   async getLatestDocumentTranslation({
     collection,
@@ -341,7 +341,7 @@ export class payloadCrowdInSyncTranslationsApi {
    *
    * In order to update a document, we need to know the id and blockType of each block.
    *
-   * Ideally, id and blockType are not sent to CrowdIn - hence
+   * Ideally, id and blockType are not sent to Crowdin - hence
    * we need to restore them from the original document.
    *
    * This currently only works for a top-level `layout` blocks field.

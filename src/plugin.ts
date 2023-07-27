@@ -5,9 +5,9 @@ import {
   getGlobalAfterChangeHook,
 } from "./hooks/collections/afterChange";
 import { getFields } from "./fields/getFields";
-import CrowdInFiles from "./collections/CrowdInFiles";
-import CrowdInCollectionDirectories from "./collections/CrowdInCollectionDirectories";
-import CrowdInArticleDirectories from "./collections/CrowdInArticleDirectories";
+import CrowdinFiles from "./collections/CrowdinFiles";
+import CrowdinCollectionDirectories from "./collections/CrowdinCollectionDirectories";
+import CrowdinArticleDirectories from "./collections/CrowdinArticleDirectories";
 import { containsLocalizedFields } from "./utilities";
 import { getReviewTranslationEndpoint } from "./endpoints/globals/reviewTranslation";
 import Joi from "joi";
@@ -15,12 +15,12 @@ import Joi from "joi";
 /**
  * This plugin extends all collections that contain localized fields
  * by uploading all translation-enabled field content in the default
- * language to CrowdIn for translation. CrowdIn translations are
+ * language to Crowdin for translation. Crowdin translations are
  * are synced to fields in all other locales (except the default language).
  *
  **/
 
-export const crowdInSync =
+export const crowdinSync =
   (pluginOptions: PluginOptions) =>
   (config: Config): Config => {
     const initFunctions: (() => void)[] = [];
@@ -48,7 +48,7 @@ export const crowdInSync =
 
     if (validate.error) {
       console.log(
-        "Payload CrowdIn Sync option validation errors:",
+        "Payload Crowdin Sync option validation errors:",
         validate.error,
       );
     }
@@ -83,12 +83,12 @@ export const crowdInSync =
 
           return existingCollection;
         }),
-        CrowdInFiles,
-        CrowdInCollectionDirectories,
+        CrowdinFiles,
+        CrowdinCollectionDirectories,
         {
-          ...CrowdInArticleDirectories,
+          ...CrowdinArticleDirectories,
           fields: [
-            ...(CrowdInArticleDirectories.fields || []),
+            ...(CrowdinArticleDirectories.fields || []),
             {
               name: "excludeLocales",
               type: "select",
@@ -101,7 +101,7 @@ export const crowdInSync =
             },
           ],
           endpoints: [
-            ...(CrowdInArticleDirectories.endpoints || []),
+            ...(CrowdinArticleDirectories.endpoints || []),
             getReviewTranslationEndpoint({
               pluginOptions,
             }),

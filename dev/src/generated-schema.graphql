@@ -223,7 +223,7 @@ type CrowdinArticleDirectory {
   id: String
   name: String
   crowdinCollectionDirectory(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinCollectionDirectory
-  crowdInFiles(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [CrowdinFile!]
+  crowdinFiles(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [CrowdinFile!]
   createdAt: DateTime
   updatedAt: DateTime
   originalId: Float
@@ -3354,7 +3354,7 @@ type CrowdinArticleDirectories {
 input CrowdinArticleDirectory_where {
   name: CrowdinArticleDirectory_name_operator
   crowdinCollectionDirectory: CrowdinArticleDirectory_crowdinCollectionDirectory_operator
-  crowdInFiles: CrowdinArticleDirectory_crowdInFiles_operator
+  crowdinFiles: CrowdinArticleDirectory_crowdinFiles_operator
   createdAt: CrowdinArticleDirectory_createdAt_operator
   updatedAt: CrowdinArticleDirectory_updatedAt_operator
   originalId: CrowdinArticleDirectory_originalId_operator
@@ -3386,7 +3386,7 @@ input CrowdinArticleDirectory_crowdinCollectionDirectory_operator {
   exists: Boolean
 }
 
-input CrowdinArticleDirectory_crowdInFiles_operator {
+input CrowdinArticleDirectory_crowdinFiles_operator {
   equals: String
   not_equals: String
   in: [String]
@@ -3475,7 +3475,7 @@ input CrowdinArticleDirectory_id_operator {
 input CrowdinArticleDirectory_where_or {
   name: CrowdinArticleDirectory_name_operator
   crowdinCollectionDirectory: CrowdinArticleDirectory_crowdinCollectionDirectory_operator
-  crowdInFiles: CrowdinArticleDirectory_crowdInFiles_operator
+  crowdinFiles: CrowdinArticleDirectory_crowdinFiles_operator
   createdAt: CrowdinArticleDirectory_createdAt_operator
   updatedAt: CrowdinArticleDirectory_updatedAt_operator
   originalId: CrowdinArticleDirectory_originalId_operator
@@ -3488,7 +3488,7 @@ input CrowdinArticleDirectory_where_or {
 input CrowdinArticleDirectory_where_and {
   name: CrowdinArticleDirectory_name_operator
   crowdinCollectionDirectory: CrowdinArticleDirectory_crowdinCollectionDirectory_operator
-  crowdInFiles: CrowdinArticleDirectory_crowdInFiles_operator
+  crowdinFiles: CrowdinArticleDirectory_crowdinFiles_operator
   createdAt: CrowdinArticleDirectory_createdAt_operator
   updatedAt: CrowdinArticleDirectory_updatedAt_operator
   originalId: CrowdinArticleDirectory_originalId_operator
@@ -3509,7 +3509,7 @@ type crowdin_article_directoriesDocAccess {
 type CrowdinArticleDirectoriesDocAccessFields {
   name: CrowdinArticleDirectoriesDocAccessFields_name
   crowdinCollectionDirectory: CrowdinArticleDirectoriesDocAccessFields_crowdinCollectionDirectory
-  crowdInFiles: CrowdinArticleDirectoriesDocAccessFields_crowdInFiles
+  crowdinFiles: CrowdinArticleDirectoriesDocAccessFields_crowdinFiles
   createdAt: CrowdinArticleDirectoriesDocAccessFields_createdAt
   updatedAt: CrowdinArticleDirectoriesDocAccessFields_updatedAt
   originalId: CrowdinArticleDirectoriesDocAccessFields_originalId
@@ -3564,26 +3564,26 @@ type CrowdinArticleDirectoriesDocAccessFields_crowdinCollectionDirectory_Delete 
   permission: Boolean!
 }
 
-type CrowdinArticleDirectoriesDocAccessFields_crowdInFiles {
-  create: CrowdinArticleDirectoriesDocAccessFields_crowdInFiles_Create
-  read: CrowdinArticleDirectoriesDocAccessFields_crowdInFiles_Read
-  update: CrowdinArticleDirectoriesDocAccessFields_crowdInFiles_Update
-  delete: CrowdinArticleDirectoriesDocAccessFields_crowdInFiles_Delete
+type CrowdinArticleDirectoriesDocAccessFields_crowdinFiles {
+  create: CrowdinArticleDirectoriesDocAccessFields_crowdinFiles_Create
+  read: CrowdinArticleDirectoriesDocAccessFields_crowdinFiles_Read
+  update: CrowdinArticleDirectoriesDocAccessFields_crowdinFiles_Update
+  delete: CrowdinArticleDirectoriesDocAccessFields_crowdinFiles_Delete
 }
 
-type CrowdinArticleDirectoriesDocAccessFields_crowdInFiles_Create {
+type CrowdinArticleDirectoriesDocAccessFields_crowdinFiles_Create {
   permission: Boolean!
 }
 
-type CrowdinArticleDirectoriesDocAccessFields_crowdInFiles_Read {
+type CrowdinArticleDirectoriesDocAccessFields_crowdinFiles_Read {
   permission: Boolean!
 }
 
-type CrowdinArticleDirectoriesDocAccessFields_crowdInFiles_Update {
+type CrowdinArticleDirectoriesDocAccessFields_crowdinFiles_Update {
   permission: Boolean!
 }
 
-type CrowdinArticleDirectoriesDocAccessFields_crowdInFiles_Delete {
+type CrowdinArticleDirectoriesDocAccessFields_crowdinFiles_Delete {
   permission: Boolean!
 }
 
@@ -5878,7 +5878,7 @@ type crowdin_article_directoriesAccess {
 type CrowdinArticleDirectoriesFields {
   name: CrowdinArticleDirectoriesFields_name
   crowdinCollectionDirectory: CrowdinArticleDirectoriesFields_crowdinCollectionDirectory
-  crowdInFiles: CrowdinArticleDirectoriesFields_crowdInFiles
+  crowdinFiles: CrowdinArticleDirectoriesFields_crowdinFiles
   createdAt: CrowdinArticleDirectoriesFields_createdAt
   updatedAt: CrowdinArticleDirectoriesFields_updatedAt
   originalId: CrowdinArticleDirectoriesFields_originalId
@@ -5933,26 +5933,26 @@ type CrowdinArticleDirectoriesFields_crowdinCollectionDirectory_Delete {
   permission: Boolean!
 }
 
-type CrowdinArticleDirectoriesFields_crowdInFiles {
-  create: CrowdinArticleDirectoriesFields_crowdInFiles_Create
-  read: CrowdinArticleDirectoriesFields_crowdInFiles_Read
-  update: CrowdinArticleDirectoriesFields_crowdInFiles_Update
-  delete: CrowdinArticleDirectoriesFields_crowdInFiles_Delete
+type CrowdinArticleDirectoriesFields_crowdinFiles {
+  create: CrowdinArticleDirectoriesFields_crowdinFiles_Create
+  read: CrowdinArticleDirectoriesFields_crowdinFiles_Read
+  update: CrowdinArticleDirectoriesFields_crowdinFiles_Update
+  delete: CrowdinArticleDirectoriesFields_crowdinFiles_Delete
 }
 
-type CrowdinArticleDirectoriesFields_crowdInFiles_Create {
+type CrowdinArticleDirectoriesFields_crowdinFiles_Create {
   permission: Boolean!
 }
 
-type CrowdinArticleDirectoriesFields_crowdInFiles_Read {
+type CrowdinArticleDirectoriesFields_crowdinFiles_Read {
   permission: Boolean!
 }
 
-type CrowdinArticleDirectoriesFields_crowdInFiles_Update {
+type CrowdinArticleDirectoriesFields_crowdinFiles_Update {
   permission: Boolean!
 }
 
-type CrowdinArticleDirectoriesFields_crowdInFiles_Delete {
+type CrowdinArticleDirectoriesFields_crowdinFiles_Delete {
   permission: Boolean!
 }
 
@@ -6586,7 +6586,7 @@ input mutationCrowdinCollectionDirectoryUpdateInput {
 input mutationCrowdinArticleDirectoryInput {
   name: String
   crowdinCollectionDirectory: String
-  crowdInFiles: [String]
+  crowdinFiles: [String]
   createdAt: String
   updatedAt: String
   originalId: Float
@@ -6603,7 +6603,7 @@ enum CrowdinArticleDirectory_excludeLocales_MutationInput {
 input mutationCrowdinArticleDirectoryUpdateInput {
   name: String
   crowdinCollectionDirectory: String
-  crowdInFiles: [String]
+  crowdinFiles: [String]
   createdAt: String
   updatedAt: String
   originalId: Float

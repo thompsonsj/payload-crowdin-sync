@@ -9,7 +9,7 @@ import {
 /**
  * Test files
  *
- * Ensure that files are created for CrowdIn as expected.
+ * Ensure that files are created for Crowdin as expected.
  *
  * Note: This test suite is not intended to test file contents.
  * This is the responsibility of buildCrowdinHtmlObject and
@@ -22,7 +22,7 @@ const collections = {
   nestedFields: "nested-field-collection",
 };
 
-describe(`CrowdIn file create, update and delete`, () => {
+describe(`Crowdin file create, update and delete`, () => {
   beforeAll(async () => {
     await initPayloadTest({ __dirname });
   });
@@ -67,8 +67,8 @@ describe(`CrowdIn file create, update and delete`, () => {
         data: {},
       });
 
-      const crowdInFiles = await getFilesByDocumentID(article.id, payload);
-      expect(crowdInFiles.length).toEqual(0);
+      const crowdinFiles = await getFilesByDocumentID(article.id, payload);
+      expect(crowdinFiles.length).toEqual(0);
     });
 
     it("creates files containing fieldType content", async () => {
@@ -89,13 +89,13 @@ describe(`CrowdIn file create, update and delete`, () => {
           textareaField: "Test meta description",
         },
       });
-      const crowdInFiles = await getFilesByDocumentID(article.id, payload);
-      expect(crowdInFiles.length).toEqual(2);
+      const crowdinFiles = await getFilesByDocumentID(article.id, payload);
+      expect(crowdinFiles.length).toEqual(2);
       expect(
-        crowdInFiles.find((file) => file.name === "richTextField.html"),
+        crowdinFiles.find((file) => file.name === "richTextField.html"),
       ).toBeDefined();
       expect(
-        crowdInFiles.find((file) => file.name === "fields.json"),
+        crowdinFiles.find((file) => file.name === "fields.json"),
       ).toBeDefined();
     });
 
@@ -134,20 +134,20 @@ describe(`CrowdIn file create, update and delete`, () => {
         },
       });
       const ids = article.arrayField.map((item) => item.id);
-      const crowdInFiles = await getFilesByDocumentID(article.id, payload);
-      expect(crowdInFiles.length).toEqual(3);
+      const crowdinFiles = await getFilesByDocumentID(article.id, payload);
+      expect(crowdinFiles.length).toEqual(3);
       expect(
-        crowdInFiles.find(
+        crowdinFiles.find(
           (file) => file.name === `arrayField.${ids[0]}.richTextField.html`,
         ),
       ).toBeDefined();
       expect(
-        crowdInFiles.find(
+        crowdinFiles.find(
           (file) => file.name === `arrayField.${ids[1]}.richTextField.html`,
         ),
       ).toBeDefined();
       expect(
-        crowdInFiles.find((file) => file.name === "fields.json"),
+        crowdinFiles.find((file) => file.name === "fields.json"),
       ).toBeDefined();
     });
 
@@ -205,25 +205,25 @@ describe(`CrowdIn file create, update and delete`, () => {
       const blockIds = article.layout.map((item) => item.id);
       const blockTypes = article.layout.map((item) => item.blockType);
       const arrayIds = article.layout[1].messages.map((item) => item.id);
-      const crowdInFiles = await getFilesByDocumentID(article.id, payload);
-      expect(crowdInFiles.length).toEqual(4);
-      const jsonFile = crowdInFiles.find((file) => file.name === "fields.json");
+      const crowdinFiles = await getFilesByDocumentID(article.id, payload);
+      expect(crowdinFiles.length).toEqual(4);
+      const jsonFile = crowdinFiles.find((file) => file.name === "fields.json");
       expect(
-        crowdInFiles.find(
+        crowdinFiles.find(
           (file) =>
             file.name ===
             `layout.${blockIds[0]}.${blockTypes[0]}.richTextField.html`,
         ),
       ).toBeDefined();
       expect(
-        crowdInFiles.find(
+        crowdinFiles.find(
           (file) =>
             file.name ===
             `layout.${blockIds[1]}.${blockTypes[1]}.messages.${arrayIds[0]}.message.html`,
         ),
       ).toBeDefined();
       expect(
-        crowdInFiles.find(
+        crowdinFiles.find(
           (file) =>
             file.name ===
             `layout.${blockIds[1]}.${blockTypes[1]}.messages.${arrayIds[1]}.message.html`,

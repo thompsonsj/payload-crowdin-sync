@@ -6,7 +6,7 @@ import {
 } from "../utilities";
 
 /*
-  Sample data returned from CrowdIn API
+  Sample data returned from Crowdin API
 */
 /*
 {
@@ -31,18 +31,18 @@ import {
 }
 */
 
-const CrowdInFiles: CollectionConfig = {
+const CrowdinFiles: CollectionConfig = {
   slug: "crowdin-files",
   admin: {
     defaultColumns: ["path", "title", "field", "revisionId", "updatedAt"],
     useAsTitle: "path",
-    group: "CrowdIn Admin",
+    group: "Crowdin Admin",
   },
   access: {
     read: () => true,
   },
   fields: [
-    /* CrowdIn field */
+    /* Crowdin field */
     {
       name: "title",
       type: "text",
@@ -58,7 +58,7 @@ const CrowdInFiles: CollectionConfig = {
       relationTo: "crowdin-article-directories",
       hasMany: false,
     },
-    /* CrowdIn fields */
+    /* Crowdin fields */
     {
       name: "createdAt",
       type: "date",
@@ -99,7 +99,7 @@ const CrowdInFiles: CollectionConfig = {
       name: "fileData",
       type: "group",
       admin: {
-        description: "The file data submitted to the CrowdIn API",
+        description: "The file data submitted to the Crowdin API",
       },
       fields: [
         {
@@ -115,4 +115,4 @@ const CrowdInFiles: CollectionConfig = {
   ],
 };
 
-export default CrowdInFiles;
+export default CrowdinFiles;

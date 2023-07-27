@@ -1,9 +1,9 @@
 import { Payload } from "payload";
 
 /**
- * get CrowdIn Article Directory for a given documentId
+ * get Crowdin Article Directory for a given documentId
  *
- * The CrowdIn Article Directory is associated with a document,
+ * The Crowdin Article Directory is associated with a document,
  * so is easy to retrieve. Use this function when you only have
  * a document id.
  */
@@ -12,7 +12,7 @@ export async function getArticleDirectory(
   payload: Payload,
 ) {
   // Get directory
-  const crowdInPayloadArticleDirectory = await payload.find({
+  const crowdinPayloadArticleDirectory = await payload.find({
     collection: "crowdin-article-directories",
     where: {
       name: {
@@ -20,14 +20,14 @@ export async function getArticleDirectory(
       },
     },
   });
-  if (crowdInPayloadArticleDirectory.totalDocs === 0) {
+  if (crowdinPayloadArticleDirectory.totalDocs === 0) {
     // a thrown error won't be reported in an api call, so console.log it as well.
     console.log(`No article directory found for document ${documentId}`);
     throw new Error(
       "This article does not have a corresponding entry in the  crowdin-article-directories collection.",
     );
   }
-  return crowdInPayloadArticleDirectory.docs[0];
+  return crowdinPayloadArticleDirectory.docs[0];
 }
 
 export async function getFile(

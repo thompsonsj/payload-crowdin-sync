@@ -7,7 +7,7 @@ interface Args {
 export const getFields = ({ collection }: Args): Field[] => {
   const fields = [...collection.fields];
 
-  const crowdInArticleDirectoryField: Field = {
+  const crowdinArticleDirectoryField: Field = {
     name: "crowdinArticleDirectory",
     type: "relationship",
     relationTo: "crowdin-article-directories",
@@ -18,7 +18,7 @@ export const getFields = ({ collection }: Args): Field[] => {
     },*/
   };
 
-  fields.push(crowdInArticleDirectoryField);
+  fields.push(crowdinArticleDirectoryField);
 
   return fields;
 };

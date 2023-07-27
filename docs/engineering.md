@@ -1,12 +1,12 @@
 # Engineering decisions
 
-## CrowdIn file types
+## Crowdin file types
 
 For each article/global:
 
 - The collection/global `fields` configuration is parsed to retrieve supported localized fields: `text`, `textarea` and `richText`.
-- `richText` fields have their own CrowdIn file. e.g. `content.html`. For ease-of-editing in CrowdIn, Slate JSON is converted to HTML. When translated HTML is synced back into Payload, it is converted back to Slate JSON.
-- All other fields are compiled into a single `fields.json` file for ease-of-editing in CrowdIn.
+- `richText` fields have their own Crowdin file. e.g. `content.html`. For ease-of-editing in Crowdin, Slate JSON is converted to HTML. When translated HTML is synced back into Payload, it is converted back to Slate JSON.
+- All other fields are compiled into a single `fields.json` file for ease-of-editing in Crowdin.
 
 ## `blocks` and `array` field types
 
@@ -17,9 +17,9 @@ The `fields.json` file contents and HTML file names include the following non-lo
 
 This is because the `blockType` and `id` fields are required for the update to be successful.
 
-These fields are not intended for translators. MEasures are taken to ensure they do not appear as translatable values in CrowdIn.
+These fields are not intended for translators. MEasures are taken to ensure they do not appear as translatable values in Crowdin.
 
-- In `fields.json`, these values are incorporated as object keys. This changes the data structure, and translations retrieved from CrowdIn need to be converted back to an appropriate structure before updating documents in CrowdIn.
+- In `fields.json`, these values are incorporated as object keys. This changes the data structure, and translations retrieved from Crowdin need to be converted back to an appropriate structure before updating documents in Crowdin.
 - In HTML file names, these values are incorporated into the file name as dot notation representing the position of the data in the Payload document.
 
 Let's take the following example of a Payload document:
@@ -100,7 +100,7 @@ Let's take the following example of a Payload document:
 }
 ```
 
-For this example, the following JSON structure is sent to CrowdIn:
+For this example, the following JSON structure is sent to Crowdin:
 
 ```ts
 {

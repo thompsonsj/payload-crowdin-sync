@@ -20,9 +20,9 @@ import {
  *
  * Terminology:
  *
- * - article directory: CrowdIn Article Directory
- * - collection directory: CrowdIn Collection Directory
- * - file: CrowdIn File
+ * - article directory: Crowdin Article Directory
+ * - collection directory: Crowdin Collection Directory
+ * - file: Crowdin File
  */
 
 const collections = {
@@ -124,25 +124,25 @@ describe("Collections", () => {
   });
 
   describe("crowdin-files", () => {
-    it('creates a "fields" CrowdIn file to include the title field', async () => {
+    it('creates a "fields" Crowdin file to include the title field', async () => {
       const post = await payload.create({
         collection: collections.localized,
         data: { title: "Test post" },
       });
-      const crowdInFiles = await getFilesByDocumentID(post.id, payload);
-      expect(crowdInFiles.length).toEqual(1);
-      const file = crowdInFiles.find((doc) => doc.field === "fields");
+      const crowdinFiles = await getFilesByDocumentID(post.id, payload);
+      expect(crowdinFiles.length).toEqual(1);
+      const file = crowdinFiles.find((doc) => doc.field === "fields");
       expect(file).not.toEqual(undefined);
       expect(file.type).toEqual("json");
     });
 
-    it('does not create a "fields" CrowdIn file if all fields are empty strings', async () => {
+    it('does not create a "fields" Crowdin file if all fields are empty strings', async () => {
       const post = await payload.create({
         collection: collections.localized,
         data: { title: "" },
       });
-      const crowdInFiles = await getFilesByDocumentID(post.id, payload);
-      expect(crowdInFiles.length).toEqual(0);
+      const crowdinFiles = await getFilesByDocumentID(post.id, payload);
+      expect(crowdinFiles.length).toEqual(0);
     });
 
     const fieldsAndContentTestName =
@@ -163,10 +163,10 @@ describe("Collections", () => {
           ],
         },
       });
-      const crowdInFiles = await getFilesByDocumentID(post.id, payload);
-      expect(crowdInFiles.length).toEqual(2);
-      const fields = crowdInFiles.find((doc) => doc.field === "fields");
-      const content = crowdInFiles.find((doc) => doc.field === "content");
+      const crowdinFiles = await getFilesByDocumentID(post.id, payload);
+      expect(crowdinFiles.length).toEqual(2);
+      const fields = crowdinFiles.find((doc) => doc.field === "fields");
+      const content = crowdinFiles.find((doc) => doc.field === "content");
       expect(fields).not.toEqual(undefined);
       expect(fields.type).toEqual("json");
       expect(content).not.toEqual(undefined);
