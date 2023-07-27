@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.13.1...v0.13.2) (2023-07-27)
+
+
+### Bug Fixes
+
+* **tests:** following [#85](https://github.com/thompsonsj/payload-crowdin-sync/issues/85) ([#87](https://github.com/thompsonsj/payload-crowdin-sync/issues/87)) ([dcdb42c](https://github.com/thompsonsj/payload-crowdin-sync/commit/dcdb42cd6ef8bab5525976b5720a978674db45df))
+* typo renaming ([#84](https://github.com/thompsonsj/payload-crowdin-sync/issues/84)) ([3cf30ce](https://github.com/thompsonsj/payload-crowdin-sync/commit/3cf30ce6a2e11b23ada99170c88196ef10f737f1))
+
 ## [0.13.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.13.0...v0.13.1) (2023-07-21)
 
 
