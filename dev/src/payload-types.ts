@@ -9,16 +9,18 @@
 export interface Config {
   collections: {
     categories: Category;
-    "localized-posts": LocalizedPost;
-    "nested-field-collection": NestedFieldCollection;
+    'localized-posts': LocalizedPost;
+    'nested-field-collection': NestedFieldCollection;
     posts: Post;
     tags: Tag;
     users: User;
-    "crowdin-files": CrowdinFile;
-    "crowdin-collection-directories": CrowdinCollectionDirectory;
-    "crowdin-article-directories": CrowdinArticleDirectory;
+    'crowdin-files': CrowdinFile;
+    'crowdin-collection-directories': CrowdinCollectionDirectory;
+    'crowdin-article-directories': CrowdinArticleDirectory;
   };
-  globals: {};
+  globals: {
+    nav: Nav;
+  };
 }
 export interface Category {
   id: string;
@@ -34,7 +36,7 @@ export interface LocalizedPost {
   content?: {
     [k: string]: unknown;
   }[];
-  status?: "draft" | "published";
+  status?: 'draft' | 'published';
   crowdinArticleDirectory?: string | CrowdinArticleDirectory;
   updatedAt: string;
   createdAt: string;
@@ -67,6 +69,7 @@ export interface CrowdinArticleDirectory {
   originalId?: number;
   projectId?: number;
   directoryId?: number;
+  excludeLocales?: ('de_DE' | 'fr_FR')[];
 }
 export interface CrowdinCollectionDirectory {
   id: string;
@@ -93,49 +96,93 @@ export interface CrowdinFile {
   name?: string;
   type?: string;
   path?: string;
+  fileData?: {
+    json?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    html?: string;
+  };
 }
 export interface NestedFieldCollection {
   id: string;
-  title?: string;
-  content?: {
+  textField?: string;
+  richTextField?: {
     [k: string]: unknown;
   }[];
-  metaDescription?: string;
+  textareaField?: string;
   arrayField?: {
-    title?: string;
-    content?: {
+    textField?: string;
+    richTextField?: {
       [k: string]: unknown;
     }[];
-    metaDescription?: string;
+    textareaField?: string;
     id?: string;
   }[];
-  layout?: {
-    title?: string;
-    content?: {
-      [k: string]: unknown;
-    }[];
-    metaDescription?: string;
-    id?: string;
-    blockName?: string;
-    blockType: "Block";
-  }[];
+  layout?: (
+    | {
+        textField?: string;
+        richTextField?: {
+          [k: string]: unknown;
+        }[];
+        textareaField?: string;
+        id?: string;
+        blockName?: string;
+        blockType: 'basicBlock';
+      }
+    | {
+        richTextField?: {
+          [k: string]: unknown;
+        }[];
+        id?: string;
+        blockName?: string;
+        blockType: 'basicBlockRichText';
+      }
+    | {
+        textField?: string;
+        richTextField?: {
+          [k: string]: unknown;
+        }[];
+        textareaField?: string;
+        id?: string;
+        blockName?: string;
+        blockType: 'basicBlockMixed';
+      }
+    | {
+        title?: string;
+        messages?: {
+          title?: string;
+          message?: {
+            [k: string]: unknown;
+          }[];
+          id?: string;
+        }[];
+        id?: string;
+        blockName?: string;
+        blockType: 'testBlockArrayOfRichText';
+      }
+  )[];
   group?: {
-    title?: string;
-    content?: {
+    textField?: string;
+    richTextField?: {
       [k: string]: unknown;
     }[];
-    metaDescription?: string;
+    textareaField?: string;
   };
   tabOneTitle?: string;
   tabOneContent?: {
     [k: string]: unknown;
   }[];
   tabTwo: {
-    title?: string;
-    content?: {
+    tabTwoTitle?: string;
+    tabTwoContent?: {
       [k: string]: unknown;
     }[];
-    metaDescription?: string;
   };
   crowdinArticleDirectory?: string | CrowdinArticleDirectory;
   updatedAt: string;
@@ -151,7 +198,17 @@ export interface Post {
   content?: {
     [k: string]: unknown;
   }[];
-  status?: "draft" | "published";
+  status?: 'draft' | 'published';
   updatedAt: string;
   createdAt: string;
+}
+export interface Nav {
+  id: string;
+  items: {
+    label?: string;
+    id?: string;
+  }[];
+  crowdinArticleDirectory?: string | CrowdinArticleDirectory;
+  updatedAt?: string;
+  createdAt?: string;
 }

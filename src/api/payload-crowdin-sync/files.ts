@@ -339,7 +339,7 @@ export class payloadCrowdinSyncFilesApi {
           name: crowdinFile.data.name,
           type: crowdinFile.data.type,
           path: crowdinFile.data.path,
-          //...(fileType === "json" && { fileData: { json: value } }),
+          ...(fileType === "json" && { fileData: { json: value } }),
           ...(fileType === "html" && { fileData: { html: value } }),
         },
       });

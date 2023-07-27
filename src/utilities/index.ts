@@ -39,7 +39,7 @@ export const getLocalizedFields = ({
     type,
     localizedParent,
   });
-  const allLocalizedFields = type ? getLocalizedFields({ fields: fields }) : fields;
+  const allLocalizedFields = type ? getLocalizedFields({ fields: fields }) : localizedFields;
   if (
     allLocalizedFields.length === 1 &&
     get(localizedFields[0], "name") === "meta"

@@ -1,154 +1,35 @@
 type Query {
-  Category(
-    id: String!
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): Category
-  Categories(
-    where: Category_where
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-    page: Int
-    limit: Int
-    sort: String
-  ): Categories
+  Category(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Category
+  Categories(where: Category_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): Categories
   docAccessCategory(id: String!): categoriesDocAccess
-  LocalizedPost(
-    id: String!
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): LocalizedPost
-  LocalizedPosts(
-    where: LocalizedPost_where
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-    page: Int
-    limit: Int
-    sort: String
-  ): LocalizedPosts
+  LocalizedPost(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): LocalizedPost
+  LocalizedPosts(where: LocalizedPost_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): LocalizedPosts
   docAccessLocalizedPost(id: String!): localized_postsDocAccess
-  NestedFieldCollection(
-    id: String!
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): NestedFieldCollection
-  NestedFieldCollections(
-    where: NestedFieldCollection_where
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-    page: Int
-    limit: Int
-    sort: String
-  ): NestedFieldCollections
+  NestedFieldCollection(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): NestedFieldCollection
+  NestedFieldCollections(where: NestedFieldCollection_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): NestedFieldCollections
   docAccessNestedFieldCollection(id: String!): nested_field_collectionDocAccess
-  Post(
-    id: String!
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): Post
-  Posts(
-    where: Post_where
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-    page: Int
-    limit: Int
-    sort: String
-  ): Posts
+  Post(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Post
+  Posts(where: Post_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): Posts
   docAccessPost(id: String!): postsDocAccess
-  Tag(
-    id: String!
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): Tag
-  Tags(
-    where: Tag_where
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-    page: Int
-    limit: Int
-    sort: String
-  ): Tags
+  Tag(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Tag
+  Tags(where: Tag_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): Tags
   docAccessTag(id: String!): tagsDocAccess
-  User(
-    id: String!
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): User
-  Users(
-    where: User_where
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-    page: Int
-    limit: Int
-    sort: String
-  ): Users
+  User(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): User
+  Users(where: User_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): Users
   docAccessUser(id: String!): usersDocAccess
   meUser: usersMe
   initializedUser: Boolean
-  CrowdinFile(
-    id: String!
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): CrowdinFile
-  CrowdinFiles(
-    where: CrowdinFile_where
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-    page: Int
-    limit: Int
-    sort: String
-  ): CrowdinFiles
+  CrowdinFile(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinFile
+  CrowdinFiles(where: CrowdinFile_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): CrowdinFiles
   docAccessCrowdinFile(id: String!): crowdin_filesDocAccess
-  CrowdinCollectionDirectory(
-    id: String!
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): CrowdinCollectionDirectory
-  CrowdinCollectionDirectories(
-    where: CrowdinCollectionDirectory_where
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-    page: Int
-    limit: Int
-    sort: String
-  ): CrowdinCollectionDirectories
-  docAccessCrowdinCollectionDirectory(
-    id: String!
-  ): crowdin_collection_directoriesDocAccess
-  CrowdinArticleDirectory(
-    id: String!
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): CrowdinArticleDirectory
-  CrowdinArticleDirectories(
-    where: CrowdinArticleDirectory_where
-    draft: Boolean
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-    page: Int
-    limit: Int
-    sort: String
-  ): CrowdinArticleDirectories
-  docAccessCrowdinArticleDirectory(
-    id: String!
-  ): crowdin_article_directoriesDocAccess
+  CrowdinCollectionDirectory(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinCollectionDirectory
+  CrowdinCollectionDirectories(where: CrowdinCollectionDirectory_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): CrowdinCollectionDirectories
+  docAccessCrowdinCollectionDirectory(id: String!): crowdin_collection_directoriesDocAccess
+  CrowdinArticleDirectory(id: String!, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinArticleDirectory
+  CrowdinArticleDirectories(where: CrowdinArticleDirectory_where, draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType, page: Int, limit: Int, sort: String): CrowdinArticleDirectories
+  docAccessCrowdinArticleDirectory(id: String!): crowdin_article_directoriesDocAccess
+  Nav(draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Nav
+  docAccessNav: navDocAccess
   Preference(key: String): Preference
   Access: Access
 }
@@ -289,17 +170,11 @@ type LocalizedPost {
   title: String
   author(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): User
   publishedDate: DateTime
-  category(
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): Category
+  category(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Category
   tags(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [Tag!]
   content(depth: Int): JSON
   status: LocalizedPost_status
-  crowdinArticleDirectory(
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): CrowdinArticleDirectory
+  crowdinArticleDirectory(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinArticleDirectory
   updatedAt: DateTime
   createdAt: DateTime
 }
@@ -327,10 +202,7 @@ scalar DateTime
 """
 A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
 """
-scalar EmailAddress
-  @specifiedBy(
-    url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address"
-  )
+scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
 
 type Tag {
   id: String
@@ -350,6 +222,7 @@ enum LocalizedPost_status {
 type CrowdinArticleDirectory {
   id: String
   name: String
+<<<<<<< HEAD
   crowdinCollectionDirectory(
     locale: LocaleInputType
     fallbackLocale: FallbackLocaleInputType
@@ -358,11 +231,16 @@ type CrowdinArticleDirectory {
     locale: LocaleInputType
     fallbackLocale: FallbackLocaleInputType
   ): [CrowdinFile!]
+=======
+  crowdinCollectionDirectory(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinCollectionDirectory
+  crowdInFiles(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [CrowdinFile!]
+>>>>>>> main
   createdAt: DateTime
   updatedAt: DateTime
   originalId: Float
   projectId: Float
   directoryId: Float
+  excludeLocales: [CrowdinArticleDirectory_excludeLocales!]
 }
 
 type CrowdinCollectionDirectory {
@@ -381,10 +259,7 @@ type CrowdinFile {
   id: String
   title: String
   field: String
-  crowdinArticleDirectory(
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): CrowdinArticleDirectory
+  crowdinArticleDirectory(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinArticleDirectory
   createdAt: DateTime
   updatedAt: DateTime
   originalId: Float
@@ -394,6 +269,17 @@ type CrowdinFile {
   name: String
   type: String
   path: String
+  fileData: CrowdinFile_FileData
+}
+
+type CrowdinFile_FileData {
+  json: JSON
+  html: String
+}
+
+enum CrowdinArticleDirectory_excludeLocales {
+  de_DE
+  fr_FR
 }
 
 type LocalizedPosts {
@@ -840,51 +726,77 @@ type LocalizedPostsDeleteDocAccess {
 
 type NestedFieldCollection {
   id: String
-  title: String
-  content(depth: Int): JSON
-  metaDescription: String
+  textField: String
+  richTextField(depth: Int): JSON
+  textareaField: String
   arrayField: [NestedFieldCollection_ArrayField!]
   layout: [NestedFieldCollection_Layout!]
   group: NestedFieldCollection_Group
   tabOneTitle: String
   tabOneContent(depth: Int): JSON
   tabTwo: NestedFieldCollection_TabTwo
-  crowdinArticleDirectory(
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): CrowdinArticleDirectory
+  crowdinArticleDirectory(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinArticleDirectory
   updatedAt: DateTime
   createdAt: DateTime
 }
 
 type NestedFieldCollection_ArrayField {
-  title: String
-  content(depth: Int): JSON
-  metaDescription: String
+  textField: String
+  richTextField(depth: Int): JSON
+  textareaField: String
   id: String
 }
 
-union NestedFieldCollection_Layout = Block
+union NestedFieldCollection_Layout = BasicBlock | BasicBlockRichText | BasicBlockMixed | TestBlockArrayOfRichText
 
-type Block {
-  title: String
-  content(depth: Int): JSON
-  metaDescription: String
+type BasicBlock {
+  textField: String
+  richTextField(depth: Int): JSON
+  textareaField: String
   id: String
   blockName: String
   blockType: String
 }
 
-type NestedFieldCollection_Group {
+type BasicBlockRichText {
+  richTextField(depth: Int): JSON
+  id: String
+  blockName: String
+  blockType: String
+}
+
+type BasicBlockMixed {
+  textField: String
+  richTextField(depth: Int): JSON
+  textareaField: String
+  id: String
+  blockName: String
+  blockType: String
+}
+
+type TestBlockArrayOfRichText {
   title: String
-  content(depth: Int): JSON
-  metaDescription: String
+  messages: [TestBlockArrayOfRichText_Messages!]
+  id: String
+  blockName: String
+  blockType: String
+}
+
+type TestBlockArrayOfRichText_Messages {
+  title: String
+  message(depth: Int): JSON
+  id: String
+}
+
+type NestedFieldCollection_Group {
+  textField: String
+  richTextField(depth: Int): JSON
+  textareaField: String
 }
 
 type NestedFieldCollection_TabTwo {
-  title: String
-  content(depth: Int): JSON
-  metaDescription: String
+  tabTwoTitle: String
+  tabTwoContent(depth: Int): JSON
 }
 
 type NestedFieldCollections {
@@ -902,21 +814,20 @@ type NestedFieldCollections {
 }
 
 input NestedFieldCollection_where {
-  title: NestedFieldCollection_title_operator
-  content: NestedFieldCollection_content_operator
-  metaDescription: NestedFieldCollection_metaDescription_operator
-  arrayField__title: NestedFieldCollection_arrayField__title_operator
-  arrayField__content: NestedFieldCollection_arrayField__content_operator
-  arrayField__metaDescription: NestedFieldCollection_arrayField__metaDescription_operator
+  textField: NestedFieldCollection_textField_operator
+  richTextField: NestedFieldCollection_richTextField_operator
+  textareaField: NestedFieldCollection_textareaField_operator
+  arrayField__textField: NestedFieldCollection_arrayField__textField_operator
+  arrayField__richTextField: NestedFieldCollection_arrayField__richTextField_operator
+  arrayField__textareaField: NestedFieldCollection_arrayField__textareaField_operator
   arrayField__id: NestedFieldCollection_arrayField__id_operator
-  group__title: NestedFieldCollection_group__title_operator
-  group__content: NestedFieldCollection_group__content_operator
-  group__metaDescription: NestedFieldCollection_group__metaDescription_operator
+  group__textField: NestedFieldCollection_group__textField_operator
+  group__richTextField: NestedFieldCollection_group__richTextField_operator
+  group__textareaField: NestedFieldCollection_group__textareaField_operator
   tabOneTitle: NestedFieldCollection_tabOneTitle_operator
   tabOneContent: NestedFieldCollection_tabOneContent_operator
-  tabTwo__title: NestedFieldCollection_tabTwo__title_operator
-  tabTwo__content: NestedFieldCollection_tabTwo__content_operator
-  tabTwo__metaDescription: NestedFieldCollection_tabTwo__metaDescription_operator
+  tabTwo__tabTwoTitle: NestedFieldCollection_tabTwo__tabTwoTitle_operator
+  tabTwo__tabTwoContent: NestedFieldCollection_tabTwo__tabTwoContent_operator
   crowdinArticleDirectory: NestedFieldCollection_crowdinArticleDirectory_operator
   updatedAt: NestedFieldCollection_updatedAt_operator
   createdAt: NestedFieldCollection_createdAt_operator
@@ -925,7 +836,7 @@ input NestedFieldCollection_where {
   AND: [NestedFieldCollection_where_and]
 }
 
-input NestedFieldCollection_title_operator {
+input NestedFieldCollection_textField_operator {
   equals: String
   not_equals: String
   like: String
@@ -936,7 +847,7 @@ input NestedFieldCollection_title_operator {
   exists: Boolean
 }
 
-input NestedFieldCollection_content_operator {
+input NestedFieldCollection_richTextField_operator {
   equals: JSON
   not_equals: JSON
   like: JSON
@@ -944,7 +855,7 @@ input NestedFieldCollection_content_operator {
   exists: Boolean
 }
 
-input NestedFieldCollection_metaDescription_operator {
+input NestedFieldCollection_textareaField_operator {
   equals: String
   not_equals: String
   like: String
@@ -952,7 +863,7 @@ input NestedFieldCollection_metaDescription_operator {
   exists: Boolean
 }
 
-input NestedFieldCollection_arrayField__title_operator {
+input NestedFieldCollection_arrayField__textField_operator {
   equals: String
   not_equals: String
   like: String
@@ -963,7 +874,7 @@ input NestedFieldCollection_arrayField__title_operator {
   exists: Boolean
 }
 
-input NestedFieldCollection_arrayField__content_operator {
+input NestedFieldCollection_arrayField__richTextField_operator {
   equals: JSON
   not_equals: JSON
   like: JSON
@@ -971,7 +882,7 @@ input NestedFieldCollection_arrayField__content_operator {
   exists: Boolean
 }
 
-input NestedFieldCollection_arrayField__metaDescription_operator {
+input NestedFieldCollection_arrayField__textareaField_operator {
   equals: String
   not_equals: String
   like: String
@@ -990,7 +901,7 @@ input NestedFieldCollection_arrayField__id_operator {
   exists: Boolean
 }
 
-input NestedFieldCollection_group__title_operator {
+input NestedFieldCollection_group__textField_operator {
   equals: String
   not_equals: String
   like: String
@@ -1001,7 +912,7 @@ input NestedFieldCollection_group__title_operator {
   exists: Boolean
 }
 
-input NestedFieldCollection_group__content_operator {
+input NestedFieldCollection_group__richTextField_operator {
   equals: JSON
   not_equals: JSON
   like: JSON
@@ -1009,7 +920,7 @@ input NestedFieldCollection_group__content_operator {
   exists: Boolean
 }
 
-input NestedFieldCollection_group__metaDescription_operator {
+input NestedFieldCollection_group__textareaField_operator {
   equals: String
   not_equals: String
   like: String
@@ -1036,7 +947,7 @@ input NestedFieldCollection_tabOneContent_operator {
   exists: Boolean
 }
 
-input NestedFieldCollection_tabTwo__title_operator {
+input NestedFieldCollection_tabTwo__tabTwoTitle_operator {
   equals: String
   not_equals: String
   like: String
@@ -1047,19 +958,11 @@ input NestedFieldCollection_tabTwo__title_operator {
   exists: Boolean
 }
 
-input NestedFieldCollection_tabTwo__content_operator {
+input NestedFieldCollection_tabTwo__tabTwoContent_operator {
   equals: JSON
   not_equals: JSON
   like: JSON
   contains: JSON
-  exists: Boolean
-}
-
-input NestedFieldCollection_tabTwo__metaDescription_operator {
-  equals: String
-  not_equals: String
-  like: String
-  contains: String
   exists: Boolean
 }
 
@@ -1106,21 +1009,20 @@ input NestedFieldCollection_id_operator {
 }
 
 input NestedFieldCollection_where_or {
-  title: NestedFieldCollection_title_operator
-  content: NestedFieldCollection_content_operator
-  metaDescription: NestedFieldCollection_metaDescription_operator
-  arrayField__title: NestedFieldCollection_arrayField__title_operator
-  arrayField__content: NestedFieldCollection_arrayField__content_operator
-  arrayField__metaDescription: NestedFieldCollection_arrayField__metaDescription_operator
+  textField: NestedFieldCollection_textField_operator
+  richTextField: NestedFieldCollection_richTextField_operator
+  textareaField: NestedFieldCollection_textareaField_operator
+  arrayField__textField: NestedFieldCollection_arrayField__textField_operator
+  arrayField__richTextField: NestedFieldCollection_arrayField__richTextField_operator
+  arrayField__textareaField: NestedFieldCollection_arrayField__textareaField_operator
   arrayField__id: NestedFieldCollection_arrayField__id_operator
-  group__title: NestedFieldCollection_group__title_operator
-  group__content: NestedFieldCollection_group__content_operator
-  group__metaDescription: NestedFieldCollection_group__metaDescription_operator
+  group__textField: NestedFieldCollection_group__textField_operator
+  group__richTextField: NestedFieldCollection_group__richTextField_operator
+  group__textareaField: NestedFieldCollection_group__textareaField_operator
   tabOneTitle: NestedFieldCollection_tabOneTitle_operator
   tabOneContent: NestedFieldCollection_tabOneContent_operator
-  tabTwo__title: NestedFieldCollection_tabTwo__title_operator
-  tabTwo__content: NestedFieldCollection_tabTwo__content_operator
-  tabTwo__metaDescription: NestedFieldCollection_tabTwo__metaDescription_operator
+  tabTwo__tabTwoTitle: NestedFieldCollection_tabTwo__tabTwoTitle_operator
+  tabTwo__tabTwoContent: NestedFieldCollection_tabTwo__tabTwoContent_operator
   crowdinArticleDirectory: NestedFieldCollection_crowdinArticleDirectory_operator
   updatedAt: NestedFieldCollection_updatedAt_operator
   createdAt: NestedFieldCollection_createdAt_operator
@@ -1128,21 +1030,20 @@ input NestedFieldCollection_where_or {
 }
 
 input NestedFieldCollection_where_and {
-  title: NestedFieldCollection_title_operator
-  content: NestedFieldCollection_content_operator
-  metaDescription: NestedFieldCollection_metaDescription_operator
-  arrayField__title: NestedFieldCollection_arrayField__title_operator
-  arrayField__content: NestedFieldCollection_arrayField__content_operator
-  arrayField__metaDescription: NestedFieldCollection_arrayField__metaDescription_operator
+  textField: NestedFieldCollection_textField_operator
+  richTextField: NestedFieldCollection_richTextField_operator
+  textareaField: NestedFieldCollection_textareaField_operator
+  arrayField__textField: NestedFieldCollection_arrayField__textField_operator
+  arrayField__richTextField: NestedFieldCollection_arrayField__richTextField_operator
+  arrayField__textareaField: NestedFieldCollection_arrayField__textareaField_operator
   arrayField__id: NestedFieldCollection_arrayField__id_operator
-  group__title: NestedFieldCollection_group__title_operator
-  group__content: NestedFieldCollection_group__content_operator
-  group__metaDescription: NestedFieldCollection_group__metaDescription_operator
+  group__textField: NestedFieldCollection_group__textField_operator
+  group__richTextField: NestedFieldCollection_group__richTextField_operator
+  group__textareaField: NestedFieldCollection_group__textareaField_operator
   tabOneTitle: NestedFieldCollection_tabOneTitle_operator
   tabOneContent: NestedFieldCollection_tabOneContent_operator
-  tabTwo__title: NestedFieldCollection_tabTwo__title_operator
-  tabTwo__content: NestedFieldCollection_tabTwo__content_operator
-  tabTwo__metaDescription: NestedFieldCollection_tabTwo__metaDescription_operator
+  tabTwo__tabTwoTitle: NestedFieldCollection_tabTwo__tabTwoTitle_operator
+  tabTwo__tabTwoContent: NestedFieldCollection_tabTwo__tabTwoContent_operator
   crowdinArticleDirectory: NestedFieldCollection_crowdinArticleDirectory_operator
   updatedAt: NestedFieldCollection_updatedAt_operator
   createdAt: NestedFieldCollection_createdAt_operator
@@ -1158,85 +1059,87 @@ type nested_field_collectionDocAccess {
 }
 
 type NestedFieldCollectionDocAccessFields {
-  title: NestedFieldCollectionDocAccessFields_title
-  content: NestedFieldCollectionDocAccessFields_content
-  metaDescription: NestedFieldCollectionDocAccessFields_metaDescription
+  textField: NestedFieldCollectionDocAccessFields_textField
+  richTextField: NestedFieldCollectionDocAccessFields_richTextField
+  textareaField: NestedFieldCollectionDocAccessFields_textareaField
   arrayField: NestedFieldCollectionDocAccessFields_arrayField
   layout: NestedFieldCollectionDocAccessFields_layout
   group: NestedFieldCollectionDocAccessFields_group
   tabOneTitle: NestedFieldCollectionDocAccessFields_tabOneTitle
   tabOneContent: NestedFieldCollectionDocAccessFields_tabOneContent
+  tabTwoTitle: NestedFieldCollectionDocAccessFields_tabTwoTitle
+  tabTwoContent: NestedFieldCollectionDocAccessFields_tabTwoContent
   crowdinArticleDirectory: NestedFieldCollectionDocAccessFields_crowdinArticleDirectory
   updatedAt: NestedFieldCollectionDocAccessFields_updatedAt
   createdAt: NestedFieldCollectionDocAccessFields_createdAt
 }
 
-type NestedFieldCollectionDocAccessFields_title {
-  create: NestedFieldCollectionDocAccessFields_title_Create
-  read: NestedFieldCollectionDocAccessFields_title_Read
-  update: NestedFieldCollectionDocAccessFields_title_Update
-  delete: NestedFieldCollectionDocAccessFields_title_Delete
+type NestedFieldCollectionDocAccessFields_textField {
+  create: NestedFieldCollectionDocAccessFields_textField_Create
+  read: NestedFieldCollectionDocAccessFields_textField_Read
+  update: NestedFieldCollectionDocAccessFields_textField_Update
+  delete: NestedFieldCollectionDocAccessFields_textField_Delete
 }
 
-type NestedFieldCollectionDocAccessFields_title_Create {
+type NestedFieldCollectionDocAccessFields_textField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_title_Read {
+type NestedFieldCollectionDocAccessFields_textField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_title_Update {
+type NestedFieldCollectionDocAccessFields_textField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_title_Delete {
+type NestedFieldCollectionDocAccessFields_textField_Delete {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_content {
-  create: NestedFieldCollectionDocAccessFields_content_Create
-  read: NestedFieldCollectionDocAccessFields_content_Read
-  update: NestedFieldCollectionDocAccessFields_content_Update
-  delete: NestedFieldCollectionDocAccessFields_content_Delete
+type NestedFieldCollectionDocAccessFields_richTextField {
+  create: NestedFieldCollectionDocAccessFields_richTextField_Create
+  read: NestedFieldCollectionDocAccessFields_richTextField_Read
+  update: NestedFieldCollectionDocAccessFields_richTextField_Update
+  delete: NestedFieldCollectionDocAccessFields_richTextField_Delete
 }
 
-type NestedFieldCollectionDocAccessFields_content_Create {
+type NestedFieldCollectionDocAccessFields_richTextField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_content_Read {
+type NestedFieldCollectionDocAccessFields_richTextField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_content_Update {
+type NestedFieldCollectionDocAccessFields_richTextField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_content_Delete {
+type NestedFieldCollectionDocAccessFields_richTextField_Delete {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_metaDescription {
-  create: NestedFieldCollectionDocAccessFields_metaDescription_Create
-  read: NestedFieldCollectionDocAccessFields_metaDescription_Read
-  update: NestedFieldCollectionDocAccessFields_metaDescription_Update
-  delete: NestedFieldCollectionDocAccessFields_metaDescription_Delete
+type NestedFieldCollectionDocAccessFields_textareaField {
+  create: NestedFieldCollectionDocAccessFields_textareaField_Create
+  read: NestedFieldCollectionDocAccessFields_textareaField_Read
+  update: NestedFieldCollectionDocAccessFields_textareaField_Update
+  delete: NestedFieldCollectionDocAccessFields_textareaField_Delete
 }
 
-type NestedFieldCollectionDocAccessFields_metaDescription_Create {
+type NestedFieldCollectionDocAccessFields_textareaField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_metaDescription_Read {
+type NestedFieldCollectionDocAccessFields_textareaField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_metaDescription_Update {
+type NestedFieldCollectionDocAccessFields_textareaField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_metaDescription_Delete {
+type NestedFieldCollectionDocAccessFields_textareaField_Delete {
   permission: Boolean!
 }
 
@@ -1265,78 +1168,78 @@ type NestedFieldCollectionDocAccessFields_arrayField_Delete {
 }
 
 type NestedFieldCollectionDocAccessFields_arrayField_Fields {
-  title: NestedFieldCollectionDocAccessFields_arrayField_title
-  content: NestedFieldCollectionDocAccessFields_arrayField_content
-  metaDescription: NestedFieldCollectionDocAccessFields_arrayField_metaDescription
+  textField: NestedFieldCollectionDocAccessFields_arrayField_textField
+  richTextField: NestedFieldCollectionDocAccessFields_arrayField_richTextField
+  textareaField: NestedFieldCollectionDocAccessFields_arrayField_textareaField
   id: NestedFieldCollectionDocAccessFields_arrayField_id
 }
 
-type NestedFieldCollectionDocAccessFields_arrayField_title {
-  create: NestedFieldCollectionDocAccessFields_arrayField_title_Create
-  read: NestedFieldCollectionDocAccessFields_arrayField_title_Read
-  update: NestedFieldCollectionDocAccessFields_arrayField_title_Update
-  delete: NestedFieldCollectionDocAccessFields_arrayField_title_Delete
+type NestedFieldCollectionDocAccessFields_arrayField_textField {
+  create: NestedFieldCollectionDocAccessFields_arrayField_textField_Create
+  read: NestedFieldCollectionDocAccessFields_arrayField_textField_Read
+  update: NestedFieldCollectionDocAccessFields_arrayField_textField_Update
+  delete: NestedFieldCollectionDocAccessFields_arrayField_textField_Delete
 }
 
-type NestedFieldCollectionDocAccessFields_arrayField_title_Create {
+type NestedFieldCollectionDocAccessFields_arrayField_textField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_arrayField_title_Read {
+type NestedFieldCollectionDocAccessFields_arrayField_textField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_arrayField_title_Update {
+type NestedFieldCollectionDocAccessFields_arrayField_textField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_arrayField_title_Delete {
+type NestedFieldCollectionDocAccessFields_arrayField_textField_Delete {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_arrayField_content {
-  create: NestedFieldCollectionDocAccessFields_arrayField_content_Create
-  read: NestedFieldCollectionDocAccessFields_arrayField_content_Read
-  update: NestedFieldCollectionDocAccessFields_arrayField_content_Update
-  delete: NestedFieldCollectionDocAccessFields_arrayField_content_Delete
+type NestedFieldCollectionDocAccessFields_arrayField_richTextField {
+  create: NestedFieldCollectionDocAccessFields_arrayField_richTextField_Create
+  read: NestedFieldCollectionDocAccessFields_arrayField_richTextField_Read
+  update: NestedFieldCollectionDocAccessFields_arrayField_richTextField_Update
+  delete: NestedFieldCollectionDocAccessFields_arrayField_richTextField_Delete
 }
 
-type NestedFieldCollectionDocAccessFields_arrayField_content_Create {
+type NestedFieldCollectionDocAccessFields_arrayField_richTextField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_arrayField_content_Read {
+type NestedFieldCollectionDocAccessFields_arrayField_richTextField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_arrayField_content_Update {
+type NestedFieldCollectionDocAccessFields_arrayField_richTextField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_arrayField_content_Delete {
+type NestedFieldCollectionDocAccessFields_arrayField_richTextField_Delete {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_arrayField_metaDescription {
-  create: NestedFieldCollectionDocAccessFields_arrayField_metaDescription_Create
-  read: NestedFieldCollectionDocAccessFields_arrayField_metaDescription_Read
-  update: NestedFieldCollectionDocAccessFields_arrayField_metaDescription_Update
-  delete: NestedFieldCollectionDocAccessFields_arrayField_metaDescription_Delete
+type NestedFieldCollectionDocAccessFields_arrayField_textareaField {
+  create: NestedFieldCollectionDocAccessFields_arrayField_textareaField_Create
+  read: NestedFieldCollectionDocAccessFields_arrayField_textareaField_Read
+  update: NestedFieldCollectionDocAccessFields_arrayField_textareaField_Update
+  delete: NestedFieldCollectionDocAccessFields_arrayField_textareaField_Delete
 }
 
-type NestedFieldCollectionDocAccessFields_arrayField_metaDescription_Create {
+type NestedFieldCollectionDocAccessFields_arrayField_textareaField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_arrayField_metaDescription_Read {
+type NestedFieldCollectionDocAccessFields_arrayField_textareaField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_arrayField_metaDescription_Update {
+type NestedFieldCollectionDocAccessFields_arrayField_textareaField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_arrayField_metaDescription_Delete {
+type NestedFieldCollectionDocAccessFields_arrayField_textareaField_Delete {
   permission: Boolean!
 }
 
@@ -1411,77 +1314,77 @@ type NestedFieldCollectionDocAccessFields_group_Delete {
 }
 
 type NestedFieldCollectionDocAccessFields_group_Fields {
-  title: NestedFieldCollectionDocAccessFields_group_title
-  content: NestedFieldCollectionDocAccessFields_group_content
-  metaDescription: NestedFieldCollectionDocAccessFields_group_metaDescription
+  textField: NestedFieldCollectionDocAccessFields_group_textField
+  richTextField: NestedFieldCollectionDocAccessFields_group_richTextField
+  textareaField: NestedFieldCollectionDocAccessFields_group_textareaField
 }
 
-type NestedFieldCollectionDocAccessFields_group_title {
-  create: NestedFieldCollectionDocAccessFields_group_title_Create
-  read: NestedFieldCollectionDocAccessFields_group_title_Read
-  update: NestedFieldCollectionDocAccessFields_group_title_Update
-  delete: NestedFieldCollectionDocAccessFields_group_title_Delete
+type NestedFieldCollectionDocAccessFields_group_textField {
+  create: NestedFieldCollectionDocAccessFields_group_textField_Create
+  read: NestedFieldCollectionDocAccessFields_group_textField_Read
+  update: NestedFieldCollectionDocAccessFields_group_textField_Update
+  delete: NestedFieldCollectionDocAccessFields_group_textField_Delete
 }
 
-type NestedFieldCollectionDocAccessFields_group_title_Create {
+type NestedFieldCollectionDocAccessFields_group_textField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_group_title_Read {
+type NestedFieldCollectionDocAccessFields_group_textField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_group_title_Update {
+type NestedFieldCollectionDocAccessFields_group_textField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_group_title_Delete {
+type NestedFieldCollectionDocAccessFields_group_textField_Delete {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_group_content {
-  create: NestedFieldCollectionDocAccessFields_group_content_Create
-  read: NestedFieldCollectionDocAccessFields_group_content_Read
-  update: NestedFieldCollectionDocAccessFields_group_content_Update
-  delete: NestedFieldCollectionDocAccessFields_group_content_Delete
+type NestedFieldCollectionDocAccessFields_group_richTextField {
+  create: NestedFieldCollectionDocAccessFields_group_richTextField_Create
+  read: NestedFieldCollectionDocAccessFields_group_richTextField_Read
+  update: NestedFieldCollectionDocAccessFields_group_richTextField_Update
+  delete: NestedFieldCollectionDocAccessFields_group_richTextField_Delete
 }
 
-type NestedFieldCollectionDocAccessFields_group_content_Create {
+type NestedFieldCollectionDocAccessFields_group_richTextField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_group_content_Read {
+type NestedFieldCollectionDocAccessFields_group_richTextField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_group_content_Update {
+type NestedFieldCollectionDocAccessFields_group_richTextField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_group_content_Delete {
+type NestedFieldCollectionDocAccessFields_group_richTextField_Delete {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_group_metaDescription {
-  create: NestedFieldCollectionDocAccessFields_group_metaDescription_Create
-  read: NestedFieldCollectionDocAccessFields_group_metaDescription_Read
-  update: NestedFieldCollectionDocAccessFields_group_metaDescription_Update
-  delete: NestedFieldCollectionDocAccessFields_group_metaDescription_Delete
+type NestedFieldCollectionDocAccessFields_group_textareaField {
+  create: NestedFieldCollectionDocAccessFields_group_textareaField_Create
+  read: NestedFieldCollectionDocAccessFields_group_textareaField_Read
+  update: NestedFieldCollectionDocAccessFields_group_textareaField_Update
+  delete: NestedFieldCollectionDocAccessFields_group_textareaField_Delete
 }
 
-type NestedFieldCollectionDocAccessFields_group_metaDescription_Create {
+type NestedFieldCollectionDocAccessFields_group_textareaField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_group_metaDescription_Read {
+type NestedFieldCollectionDocAccessFields_group_textareaField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_group_metaDescription_Update {
+type NestedFieldCollectionDocAccessFields_group_textareaField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionDocAccessFields_group_metaDescription_Delete {
+type NestedFieldCollectionDocAccessFields_group_textareaField_Delete {
   permission: Boolean!
 }
 
@@ -1528,6 +1431,52 @@ type NestedFieldCollectionDocAccessFields_tabOneContent_Update {
 }
 
 type NestedFieldCollectionDocAccessFields_tabOneContent_Delete {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionDocAccessFields_tabTwoTitle {
+  create: NestedFieldCollectionDocAccessFields_tabTwoTitle_Create
+  read: NestedFieldCollectionDocAccessFields_tabTwoTitle_Read
+  update: NestedFieldCollectionDocAccessFields_tabTwoTitle_Update
+  delete: NestedFieldCollectionDocAccessFields_tabTwoTitle_Delete
+}
+
+type NestedFieldCollectionDocAccessFields_tabTwoTitle_Create {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionDocAccessFields_tabTwoTitle_Read {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionDocAccessFields_tabTwoTitle_Update {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionDocAccessFields_tabTwoTitle_Delete {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionDocAccessFields_tabTwoContent {
+  create: NestedFieldCollectionDocAccessFields_tabTwoContent_Create
+  read: NestedFieldCollectionDocAccessFields_tabTwoContent_Read
+  update: NestedFieldCollectionDocAccessFields_tabTwoContent_Update
+  delete: NestedFieldCollectionDocAccessFields_tabTwoContent_Delete
+}
+
+type NestedFieldCollectionDocAccessFields_tabTwoContent_Create {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionDocAccessFields_tabTwoContent_Read {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionDocAccessFields_tabTwoContent_Update {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionDocAccessFields_tabTwoContent_Delete {
   permission: Boolean!
 }
 
@@ -1625,10 +1574,7 @@ type Post {
   title: String
   author(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): User
   publishedDate: DateTime
-  category(
-    locale: LocaleInputType
-    fallbackLocale: FallbackLocaleInputType
-  ): Category
+  category(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Category
   tags(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [Tag!]
   content(depth: Int): JSON
   status: Post_status
@@ -2440,6 +2386,8 @@ input CrowdinFile_where {
   name: CrowdinFile_name_operator
   type: CrowdinFile_type_operator
   path: CrowdinFile_path_operator
+  fileData__json: CrowdinFile_fileData__json_operator
+  fileData__html: CrowdinFile_fileData__html_operator
   id: CrowdinFile_id_operator
   OR: [CrowdinFile_where_or]
   AND: [CrowdinFile_where_and]
@@ -2499,42 +2447,42 @@ input CrowdinFile_updatedAt_operator {
 }
 
 input CrowdinFile_originalId_operator {
-  equals: Int
-  not_equals: Int
-  greater_than_equal: Int
-  greater_than: Int
-  less_than_equal: Int
-  less_than: Int
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
   exists: Boolean
 }
 
 input CrowdinFile_projectId_operator {
-  equals: Int
-  not_equals: Int
-  greater_than_equal: Int
-  greater_than: Int
-  less_than_equal: Int
-  less_than: Int
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
   exists: Boolean
 }
 
 input CrowdinFile_directoryId_operator {
-  equals: Int
-  not_equals: Int
-  greater_than_equal: Int
-  greater_than: Int
-  less_than_equal: Int
-  less_than: Int
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
   exists: Boolean
 }
 
 input CrowdinFile_revisionId_operator {
-  equals: Int
-  not_equals: Int
-  greater_than_equal: Int
-  greater_than: Int
-  less_than_equal: Int
-  less_than: Int
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
   exists: Boolean
 }
 
@@ -2571,6 +2519,22 @@ input CrowdinFile_path_operator {
   exists: Boolean
 }
 
+input CrowdinFile_fileData__json_operator {
+  equals: JSON
+  not_equals: JSON
+  like: JSON
+  contains: JSON
+  exists: Boolean
+}
+
+input CrowdinFile_fileData__html_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  exists: Boolean
+}
+
 input CrowdinFile_id_operator {
   equals: String
   not_equals: String
@@ -2595,6 +2559,8 @@ input CrowdinFile_where_or {
   name: CrowdinFile_name_operator
   type: CrowdinFile_type_operator
   path: CrowdinFile_path_operator
+  fileData__json: CrowdinFile_fileData__json_operator
+  fileData__html: CrowdinFile_fileData__html_operator
   id: CrowdinFile_id_operator
 }
 
@@ -2611,6 +2577,8 @@ input CrowdinFile_where_and {
   name: CrowdinFile_name_operator
   type: CrowdinFile_type_operator
   path: CrowdinFile_path_operator
+  fileData__json: CrowdinFile_fileData__json_operator
+  fileData__html: CrowdinFile_fileData__html_operator
   id: CrowdinFile_id_operator
 }
 
@@ -2635,6 +2603,7 @@ type CrowdinFilesDocAccessFields {
   name: CrowdinFilesDocAccessFields_name
   type: CrowdinFilesDocAccessFields_type
   path: CrowdinFilesDocAccessFields_path
+  fileData: CrowdinFilesDocAccessFields_fileData
 }
 
 type CrowdinFilesDocAccessFields_title {
@@ -2913,6 +2882,81 @@ type CrowdinFilesDocAccessFields_path_Delete {
   permission: Boolean!
 }
 
+type CrowdinFilesDocAccessFields_fileData {
+  create: CrowdinFilesDocAccessFields_fileData_Create
+  read: CrowdinFilesDocAccessFields_fileData_Read
+  update: CrowdinFilesDocAccessFields_fileData_Update
+  delete: CrowdinFilesDocAccessFields_fileData_Delete
+  fields: CrowdinFilesDocAccessFields_fileData_Fields
+}
+
+type CrowdinFilesDocAccessFields_fileData_Create {
+  permission: Boolean!
+}
+
+type CrowdinFilesDocAccessFields_fileData_Read {
+  permission: Boolean!
+}
+
+type CrowdinFilesDocAccessFields_fileData_Update {
+  permission: Boolean!
+}
+
+type CrowdinFilesDocAccessFields_fileData_Delete {
+  permission: Boolean!
+}
+
+type CrowdinFilesDocAccessFields_fileData_Fields {
+  json: CrowdinFilesDocAccessFields_fileData_json
+  html: CrowdinFilesDocAccessFields_fileData_html
+}
+
+type CrowdinFilesDocAccessFields_fileData_json {
+  create: CrowdinFilesDocAccessFields_fileData_json_Create
+  read: CrowdinFilesDocAccessFields_fileData_json_Read
+  update: CrowdinFilesDocAccessFields_fileData_json_Update
+  delete: CrowdinFilesDocAccessFields_fileData_json_Delete
+}
+
+type CrowdinFilesDocAccessFields_fileData_json_Create {
+  permission: Boolean!
+}
+
+type CrowdinFilesDocAccessFields_fileData_json_Read {
+  permission: Boolean!
+}
+
+type CrowdinFilesDocAccessFields_fileData_json_Update {
+  permission: Boolean!
+}
+
+type CrowdinFilesDocAccessFields_fileData_json_Delete {
+  permission: Boolean!
+}
+
+type CrowdinFilesDocAccessFields_fileData_html {
+  create: CrowdinFilesDocAccessFields_fileData_html_Create
+  read: CrowdinFilesDocAccessFields_fileData_html_Read
+  update: CrowdinFilesDocAccessFields_fileData_html_Update
+  delete: CrowdinFilesDocAccessFields_fileData_html_Delete
+}
+
+type CrowdinFilesDocAccessFields_fileData_html_Create {
+  permission: Boolean!
+}
+
+type CrowdinFilesDocAccessFields_fileData_html_Read {
+  permission: Boolean!
+}
+
+type CrowdinFilesDocAccessFields_fileData_html_Update {
+  permission: Boolean!
+}
+
+type CrowdinFilesDocAccessFields_fileData_html_Delete {
+  permission: Boolean!
+}
+
 type CrowdinFilesCreateDocAccess {
   permission: Boolean!
   where: JSONObject
@@ -3017,32 +3061,32 @@ input CrowdinCollectionDirectory_updatedAt_operator {
 }
 
 input CrowdinCollectionDirectory_originalId_operator {
-  equals: Int
-  not_equals: Int
-  greater_than_equal: Int
-  greater_than: Int
-  less_than_equal: Int
-  less_than: Int
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
   exists: Boolean
 }
 
 input CrowdinCollectionDirectory_projectId_operator {
-  equals: Int
-  not_equals: Int
-  greater_than_equal: Int
-  greater_than: Int
-  less_than_equal: Int
-  less_than: Int
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
   exists: Boolean
 }
 
 input CrowdinCollectionDirectory_directoryId_operator {
-  equals: Int
-  not_equals: Int
-  greater_than_equal: Int
-  greater_than: Int
-  less_than_equal: Int
-  less_than: Int
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
   exists: Boolean
 }
 
@@ -3327,6 +3371,7 @@ input CrowdinArticleDirectory_where {
   originalId: CrowdinArticleDirectory_originalId_operator
   projectId: CrowdinArticleDirectory_projectId_operator
   directoryId: CrowdinArticleDirectory_directoryId_operator
+  excludeLocales: CrowdinArticleDirectory_excludeLocales_operator
   id: CrowdinArticleDirectory_id_operator
   OR: [CrowdinArticleDirectory_where_or]
   AND: [CrowdinArticleDirectory_where_and]
@@ -3384,33 +3429,47 @@ input CrowdinArticleDirectory_updatedAt_operator {
 }
 
 input CrowdinArticleDirectory_originalId_operator {
-  equals: Int
-  not_equals: Int
-  greater_than_equal: Int
-  greater_than: Int
-  less_than_equal: Int
-  less_than: Int
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
   exists: Boolean
 }
 
 input CrowdinArticleDirectory_projectId_operator {
-  equals: Int
-  not_equals: Int
-  greater_than_equal: Int
-  greater_than: Int
-  less_than_equal: Int
-  less_than: Int
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
   exists: Boolean
 }
 
 input CrowdinArticleDirectory_directoryId_operator {
-  equals: Int
-  not_equals: Int
-  greater_than_equal: Int
-  greater_than: Int
-  less_than_equal: Int
-  less_than: Int
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
   exists: Boolean
+}
+
+input CrowdinArticleDirectory_excludeLocales_operator {
+  equals: CrowdinArticleDirectory_excludeLocales_Input
+  not_equals: CrowdinArticleDirectory_excludeLocales_Input
+  in: [CrowdinArticleDirectory_excludeLocales_Input]
+  not_in: [CrowdinArticleDirectory_excludeLocales_Input]
+  all: [CrowdinArticleDirectory_excludeLocales_Input]
+  exists: Boolean
+}
+
+enum CrowdinArticleDirectory_excludeLocales_Input {
+  de_DE
+  fr_FR
 }
 
 input CrowdinArticleDirectory_id_operator {
@@ -3433,6 +3492,7 @@ input CrowdinArticleDirectory_where_or {
   originalId: CrowdinArticleDirectory_originalId_operator
   projectId: CrowdinArticleDirectory_projectId_operator
   directoryId: CrowdinArticleDirectory_directoryId_operator
+  excludeLocales: CrowdinArticleDirectory_excludeLocales_operator
   id: CrowdinArticleDirectory_id_operator
 }
 
@@ -3445,6 +3505,7 @@ input CrowdinArticleDirectory_where_and {
   originalId: CrowdinArticleDirectory_originalId_operator
   projectId: CrowdinArticleDirectory_projectId_operator
   directoryId: CrowdinArticleDirectory_directoryId_operator
+  excludeLocales: CrowdinArticleDirectory_excludeLocales_operator
   id: CrowdinArticleDirectory_id_operator
 }
 
@@ -3465,6 +3526,7 @@ type CrowdinArticleDirectoriesDocAccessFields {
   originalId: CrowdinArticleDirectoriesDocAccessFields_originalId
   projectId: CrowdinArticleDirectoriesDocAccessFields_projectId
   directoryId: CrowdinArticleDirectoriesDocAccessFields_directoryId
+  excludeLocales: CrowdinArticleDirectoriesDocAccessFields_excludeLocales
 }
 
 type CrowdinArticleDirectoriesDocAccessFields_name {
@@ -3651,6 +3713,29 @@ type CrowdinArticleDirectoriesDocAccessFields_directoryId_Delete {
   permission: Boolean!
 }
 
+type CrowdinArticleDirectoriesDocAccessFields_excludeLocales {
+  create: CrowdinArticleDirectoriesDocAccessFields_excludeLocales_Create
+  read: CrowdinArticleDirectoriesDocAccessFields_excludeLocales_Read
+  update: CrowdinArticleDirectoriesDocAccessFields_excludeLocales_Update
+  delete: CrowdinArticleDirectoriesDocAccessFields_excludeLocales_Delete
+}
+
+type CrowdinArticleDirectoriesDocAccessFields_excludeLocales_Create {
+  permission: Boolean!
+}
+
+type CrowdinArticleDirectoriesDocAccessFields_excludeLocales_Read {
+  permission: Boolean!
+}
+
+type CrowdinArticleDirectoriesDocAccessFields_excludeLocales_Update {
+  permission: Boolean!
+}
+
+type CrowdinArticleDirectoriesDocAccessFields_excludeLocales_Delete {
+  permission: Boolean!
+}
+
 type CrowdinArticleDirectoriesCreateDocAccess {
   permission: Boolean!
   where: JSONObject
@@ -3667,6 +3752,185 @@ type CrowdinArticleDirectoriesUpdateDocAccess {
 }
 
 type CrowdinArticleDirectoriesDeleteDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type Nav {
+  items: [Nav_Items!]!
+  crowdinArticleDirectory(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): CrowdinArticleDirectory
+  updatedAt: DateTime
+  createdAt: DateTime
+}
+
+type Nav_Items {
+  label: String
+  id: String
+}
+
+type navDocAccess {
+  fields: NavDocAccessFields
+  read: NavReadDocAccess
+  update: NavUpdateDocAccess
+}
+
+type NavDocAccessFields {
+  items: NavDocAccessFields_items
+  crowdinArticleDirectory: NavDocAccessFields_crowdinArticleDirectory
+  updatedAt: NavDocAccessFields_updatedAt
+  createdAt: NavDocAccessFields_createdAt
+}
+
+type NavDocAccessFields_items {
+  create: NavDocAccessFields_items_Create
+  read: NavDocAccessFields_items_Read
+  update: NavDocAccessFields_items_Update
+  delete: NavDocAccessFields_items_Delete
+  fields: NavDocAccessFields_items_Fields
+}
+
+type NavDocAccessFields_items_Create {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_items_Read {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_items_Update {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_items_Delete {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_items_Fields {
+  label: NavDocAccessFields_items_label
+  id: NavDocAccessFields_items_id
+}
+
+type NavDocAccessFields_items_label {
+  create: NavDocAccessFields_items_label_Create
+  read: NavDocAccessFields_items_label_Read
+  update: NavDocAccessFields_items_label_Update
+  delete: NavDocAccessFields_items_label_Delete
+}
+
+type NavDocAccessFields_items_label_Create {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_items_label_Read {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_items_label_Update {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_items_label_Delete {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_items_id {
+  create: NavDocAccessFields_items_id_Create
+  read: NavDocAccessFields_items_id_Read
+  update: NavDocAccessFields_items_id_Update
+  delete: NavDocAccessFields_items_id_Delete
+}
+
+type NavDocAccessFields_items_id_Create {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_items_id_Read {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_items_id_Update {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_items_id_Delete {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_crowdinArticleDirectory {
+  create: NavDocAccessFields_crowdinArticleDirectory_Create
+  read: NavDocAccessFields_crowdinArticleDirectory_Read
+  update: NavDocAccessFields_crowdinArticleDirectory_Update
+  delete: NavDocAccessFields_crowdinArticleDirectory_Delete
+}
+
+type NavDocAccessFields_crowdinArticleDirectory_Create {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_crowdinArticleDirectory_Read {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_crowdinArticleDirectory_Update {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_crowdinArticleDirectory_Delete {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_updatedAt {
+  create: NavDocAccessFields_updatedAt_Create
+  read: NavDocAccessFields_updatedAt_Read
+  update: NavDocAccessFields_updatedAt_Update
+  delete: NavDocAccessFields_updatedAt_Delete
+}
+
+type NavDocAccessFields_updatedAt_Create {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_updatedAt_Read {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_updatedAt_Update {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_updatedAt_Delete {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_createdAt {
+  create: NavDocAccessFields_createdAt_Create
+  read: NavDocAccessFields_createdAt_Read
+  update: NavDocAccessFields_createdAt_Update
+  delete: NavDocAccessFields_createdAt_Delete
+}
+
+type NavDocAccessFields_createdAt_Create {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_createdAt_Read {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_createdAt_Update {
+  permission: Boolean!
+}
+
+type NavDocAccessFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type NavReadDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type NavUpdateDocAccess {
   permission: Boolean!
   where: JSONObject
 }
@@ -3689,6 +3953,7 @@ type Access {
   crowdin_files: crowdin_filesAccess
   crowdin_collection_directories: crowdin_collection_directoriesAccess
   crowdin_article_directories: crowdin_article_directoriesAccess
+  nav: navAccess
 }
 
 type categoriesAccess {
@@ -4026,85 +4291,87 @@ type nested_field_collectionAccess {
 }
 
 type NestedFieldCollectionFields {
-  title: NestedFieldCollectionFields_title
-  content: NestedFieldCollectionFields_content
-  metaDescription: NestedFieldCollectionFields_metaDescription
+  textField: NestedFieldCollectionFields_textField
+  richTextField: NestedFieldCollectionFields_richTextField
+  textareaField: NestedFieldCollectionFields_textareaField
   arrayField: NestedFieldCollectionFields_arrayField
   layout: NestedFieldCollectionFields_layout
   group: NestedFieldCollectionFields_group
   tabOneTitle: NestedFieldCollectionFields_tabOneTitle
   tabOneContent: NestedFieldCollectionFields_tabOneContent
+  tabTwoTitle: NestedFieldCollectionFields_tabTwoTitle
+  tabTwoContent: NestedFieldCollectionFields_tabTwoContent
   crowdinArticleDirectory: NestedFieldCollectionFields_crowdinArticleDirectory
   updatedAt: NestedFieldCollectionFields_updatedAt
   createdAt: NestedFieldCollectionFields_createdAt
 }
 
-type NestedFieldCollectionFields_title {
-  create: NestedFieldCollectionFields_title_Create
-  read: NestedFieldCollectionFields_title_Read
-  update: NestedFieldCollectionFields_title_Update
-  delete: NestedFieldCollectionFields_title_Delete
+type NestedFieldCollectionFields_textField {
+  create: NestedFieldCollectionFields_textField_Create
+  read: NestedFieldCollectionFields_textField_Read
+  update: NestedFieldCollectionFields_textField_Update
+  delete: NestedFieldCollectionFields_textField_Delete
 }
 
-type NestedFieldCollectionFields_title_Create {
+type NestedFieldCollectionFields_textField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_title_Read {
+type NestedFieldCollectionFields_textField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_title_Update {
+type NestedFieldCollectionFields_textField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_title_Delete {
+type NestedFieldCollectionFields_textField_Delete {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_content {
-  create: NestedFieldCollectionFields_content_Create
-  read: NestedFieldCollectionFields_content_Read
-  update: NestedFieldCollectionFields_content_Update
-  delete: NestedFieldCollectionFields_content_Delete
+type NestedFieldCollectionFields_richTextField {
+  create: NestedFieldCollectionFields_richTextField_Create
+  read: NestedFieldCollectionFields_richTextField_Read
+  update: NestedFieldCollectionFields_richTextField_Update
+  delete: NestedFieldCollectionFields_richTextField_Delete
 }
 
-type NestedFieldCollectionFields_content_Create {
+type NestedFieldCollectionFields_richTextField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_content_Read {
+type NestedFieldCollectionFields_richTextField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_content_Update {
+type NestedFieldCollectionFields_richTextField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_content_Delete {
+type NestedFieldCollectionFields_richTextField_Delete {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_metaDescription {
-  create: NestedFieldCollectionFields_metaDescription_Create
-  read: NestedFieldCollectionFields_metaDescription_Read
-  update: NestedFieldCollectionFields_metaDescription_Update
-  delete: NestedFieldCollectionFields_metaDescription_Delete
+type NestedFieldCollectionFields_textareaField {
+  create: NestedFieldCollectionFields_textareaField_Create
+  read: NestedFieldCollectionFields_textareaField_Read
+  update: NestedFieldCollectionFields_textareaField_Update
+  delete: NestedFieldCollectionFields_textareaField_Delete
 }
 
-type NestedFieldCollectionFields_metaDescription_Create {
+type NestedFieldCollectionFields_textareaField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_metaDescription_Read {
+type NestedFieldCollectionFields_textareaField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_metaDescription_Update {
+type NestedFieldCollectionFields_textareaField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_metaDescription_Delete {
+type NestedFieldCollectionFields_textareaField_Delete {
   permission: Boolean!
 }
 
@@ -4133,78 +4400,78 @@ type NestedFieldCollectionFields_arrayField_Delete {
 }
 
 type NestedFieldCollectionFields_arrayField_Fields {
-  title: NestedFieldCollectionFields_arrayField_title
-  content: NestedFieldCollectionFields_arrayField_content
-  metaDescription: NestedFieldCollectionFields_arrayField_metaDescription
+  textField: NestedFieldCollectionFields_arrayField_textField
+  richTextField: NestedFieldCollectionFields_arrayField_richTextField
+  textareaField: NestedFieldCollectionFields_arrayField_textareaField
   id: NestedFieldCollectionFields_arrayField_id
 }
 
-type NestedFieldCollectionFields_arrayField_title {
-  create: NestedFieldCollectionFields_arrayField_title_Create
-  read: NestedFieldCollectionFields_arrayField_title_Read
-  update: NestedFieldCollectionFields_arrayField_title_Update
-  delete: NestedFieldCollectionFields_arrayField_title_Delete
+type NestedFieldCollectionFields_arrayField_textField {
+  create: NestedFieldCollectionFields_arrayField_textField_Create
+  read: NestedFieldCollectionFields_arrayField_textField_Read
+  update: NestedFieldCollectionFields_arrayField_textField_Update
+  delete: NestedFieldCollectionFields_arrayField_textField_Delete
 }
 
-type NestedFieldCollectionFields_arrayField_title_Create {
+type NestedFieldCollectionFields_arrayField_textField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_arrayField_title_Read {
+type NestedFieldCollectionFields_arrayField_textField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_arrayField_title_Update {
+type NestedFieldCollectionFields_arrayField_textField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_arrayField_title_Delete {
+type NestedFieldCollectionFields_arrayField_textField_Delete {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_arrayField_content {
-  create: NestedFieldCollectionFields_arrayField_content_Create
-  read: NestedFieldCollectionFields_arrayField_content_Read
-  update: NestedFieldCollectionFields_arrayField_content_Update
-  delete: NestedFieldCollectionFields_arrayField_content_Delete
+type NestedFieldCollectionFields_arrayField_richTextField {
+  create: NestedFieldCollectionFields_arrayField_richTextField_Create
+  read: NestedFieldCollectionFields_arrayField_richTextField_Read
+  update: NestedFieldCollectionFields_arrayField_richTextField_Update
+  delete: NestedFieldCollectionFields_arrayField_richTextField_Delete
 }
 
-type NestedFieldCollectionFields_arrayField_content_Create {
+type NestedFieldCollectionFields_arrayField_richTextField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_arrayField_content_Read {
+type NestedFieldCollectionFields_arrayField_richTextField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_arrayField_content_Update {
+type NestedFieldCollectionFields_arrayField_richTextField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_arrayField_content_Delete {
+type NestedFieldCollectionFields_arrayField_richTextField_Delete {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_arrayField_metaDescription {
-  create: NestedFieldCollectionFields_arrayField_metaDescription_Create
-  read: NestedFieldCollectionFields_arrayField_metaDescription_Read
-  update: NestedFieldCollectionFields_arrayField_metaDescription_Update
-  delete: NestedFieldCollectionFields_arrayField_metaDescription_Delete
+type NestedFieldCollectionFields_arrayField_textareaField {
+  create: NestedFieldCollectionFields_arrayField_textareaField_Create
+  read: NestedFieldCollectionFields_arrayField_textareaField_Read
+  update: NestedFieldCollectionFields_arrayField_textareaField_Update
+  delete: NestedFieldCollectionFields_arrayField_textareaField_Delete
 }
 
-type NestedFieldCollectionFields_arrayField_metaDescription_Create {
+type NestedFieldCollectionFields_arrayField_textareaField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_arrayField_metaDescription_Read {
+type NestedFieldCollectionFields_arrayField_textareaField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_arrayField_metaDescription_Update {
+type NestedFieldCollectionFields_arrayField_textareaField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_arrayField_metaDescription_Delete {
+type NestedFieldCollectionFields_arrayField_textareaField_Delete {
   permission: Boolean!
 }
 
@@ -4279,77 +4546,77 @@ type NestedFieldCollectionFields_group_Delete {
 }
 
 type NestedFieldCollectionFields_group_Fields {
-  title: NestedFieldCollectionFields_group_title
-  content: NestedFieldCollectionFields_group_content
-  metaDescription: NestedFieldCollectionFields_group_metaDescription
+  textField: NestedFieldCollectionFields_group_textField
+  richTextField: NestedFieldCollectionFields_group_richTextField
+  textareaField: NestedFieldCollectionFields_group_textareaField
 }
 
-type NestedFieldCollectionFields_group_title {
-  create: NestedFieldCollectionFields_group_title_Create
-  read: NestedFieldCollectionFields_group_title_Read
-  update: NestedFieldCollectionFields_group_title_Update
-  delete: NestedFieldCollectionFields_group_title_Delete
+type NestedFieldCollectionFields_group_textField {
+  create: NestedFieldCollectionFields_group_textField_Create
+  read: NestedFieldCollectionFields_group_textField_Read
+  update: NestedFieldCollectionFields_group_textField_Update
+  delete: NestedFieldCollectionFields_group_textField_Delete
 }
 
-type NestedFieldCollectionFields_group_title_Create {
+type NestedFieldCollectionFields_group_textField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_group_title_Read {
+type NestedFieldCollectionFields_group_textField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_group_title_Update {
+type NestedFieldCollectionFields_group_textField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_group_title_Delete {
+type NestedFieldCollectionFields_group_textField_Delete {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_group_content {
-  create: NestedFieldCollectionFields_group_content_Create
-  read: NestedFieldCollectionFields_group_content_Read
-  update: NestedFieldCollectionFields_group_content_Update
-  delete: NestedFieldCollectionFields_group_content_Delete
+type NestedFieldCollectionFields_group_richTextField {
+  create: NestedFieldCollectionFields_group_richTextField_Create
+  read: NestedFieldCollectionFields_group_richTextField_Read
+  update: NestedFieldCollectionFields_group_richTextField_Update
+  delete: NestedFieldCollectionFields_group_richTextField_Delete
 }
 
-type NestedFieldCollectionFields_group_content_Create {
+type NestedFieldCollectionFields_group_richTextField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_group_content_Read {
+type NestedFieldCollectionFields_group_richTextField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_group_content_Update {
+type NestedFieldCollectionFields_group_richTextField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_group_content_Delete {
+type NestedFieldCollectionFields_group_richTextField_Delete {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_group_metaDescription {
-  create: NestedFieldCollectionFields_group_metaDescription_Create
-  read: NestedFieldCollectionFields_group_metaDescription_Read
-  update: NestedFieldCollectionFields_group_metaDescription_Update
-  delete: NestedFieldCollectionFields_group_metaDescription_Delete
+type NestedFieldCollectionFields_group_textareaField {
+  create: NestedFieldCollectionFields_group_textareaField_Create
+  read: NestedFieldCollectionFields_group_textareaField_Read
+  update: NestedFieldCollectionFields_group_textareaField_Update
+  delete: NestedFieldCollectionFields_group_textareaField_Delete
 }
 
-type NestedFieldCollectionFields_group_metaDescription_Create {
+type NestedFieldCollectionFields_group_textareaField_Create {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_group_metaDescription_Read {
+type NestedFieldCollectionFields_group_textareaField_Read {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_group_metaDescription_Update {
+type NestedFieldCollectionFields_group_textareaField_Update {
   permission: Boolean!
 }
 
-type NestedFieldCollectionFields_group_metaDescription_Delete {
+type NestedFieldCollectionFields_group_textareaField_Delete {
   permission: Boolean!
 }
 
@@ -4396,6 +4663,52 @@ type NestedFieldCollectionFields_tabOneContent_Update {
 }
 
 type NestedFieldCollectionFields_tabOneContent_Delete {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionFields_tabTwoTitle {
+  create: NestedFieldCollectionFields_tabTwoTitle_Create
+  read: NestedFieldCollectionFields_tabTwoTitle_Read
+  update: NestedFieldCollectionFields_tabTwoTitle_Update
+  delete: NestedFieldCollectionFields_tabTwoTitle_Delete
+}
+
+type NestedFieldCollectionFields_tabTwoTitle_Create {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionFields_tabTwoTitle_Read {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionFields_tabTwoTitle_Update {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionFields_tabTwoTitle_Delete {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionFields_tabTwoContent {
+  create: NestedFieldCollectionFields_tabTwoContent_Create
+  read: NestedFieldCollectionFields_tabTwoContent_Read
+  update: NestedFieldCollectionFields_tabTwoContent_Update
+  delete: NestedFieldCollectionFields_tabTwoContent_Delete
+}
+
+type NestedFieldCollectionFields_tabTwoContent_Create {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionFields_tabTwoContent_Read {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionFields_tabTwoContent_Update {
+  permission: Boolean!
+}
+
+type NestedFieldCollectionFields_tabTwoContent_Delete {
   permission: Boolean!
 }
 
@@ -4968,6 +5281,7 @@ type CrowdinFilesFields {
   name: CrowdinFilesFields_name
   type: CrowdinFilesFields_type
   path: CrowdinFilesFields_path
+  fileData: CrowdinFilesFields_fileData
 }
 
 type CrowdinFilesFields_title {
@@ -5246,6 +5560,81 @@ type CrowdinFilesFields_path_Delete {
   permission: Boolean!
 }
 
+type CrowdinFilesFields_fileData {
+  create: CrowdinFilesFields_fileData_Create
+  read: CrowdinFilesFields_fileData_Read
+  update: CrowdinFilesFields_fileData_Update
+  delete: CrowdinFilesFields_fileData_Delete
+  fields: CrowdinFilesFields_fileData_Fields
+}
+
+type CrowdinFilesFields_fileData_Create {
+  permission: Boolean!
+}
+
+type CrowdinFilesFields_fileData_Read {
+  permission: Boolean!
+}
+
+type CrowdinFilesFields_fileData_Update {
+  permission: Boolean!
+}
+
+type CrowdinFilesFields_fileData_Delete {
+  permission: Boolean!
+}
+
+type CrowdinFilesFields_fileData_Fields {
+  json: CrowdinFilesFields_fileData_json
+  html: CrowdinFilesFields_fileData_html
+}
+
+type CrowdinFilesFields_fileData_json {
+  create: CrowdinFilesFields_fileData_json_Create
+  read: CrowdinFilesFields_fileData_json_Read
+  update: CrowdinFilesFields_fileData_json_Update
+  delete: CrowdinFilesFields_fileData_json_Delete
+}
+
+type CrowdinFilesFields_fileData_json_Create {
+  permission: Boolean!
+}
+
+type CrowdinFilesFields_fileData_json_Read {
+  permission: Boolean!
+}
+
+type CrowdinFilesFields_fileData_json_Update {
+  permission: Boolean!
+}
+
+type CrowdinFilesFields_fileData_json_Delete {
+  permission: Boolean!
+}
+
+type CrowdinFilesFields_fileData_html {
+  create: CrowdinFilesFields_fileData_html_Create
+  read: CrowdinFilesFields_fileData_html_Read
+  update: CrowdinFilesFields_fileData_html_Update
+  delete: CrowdinFilesFields_fileData_html_Delete
+}
+
+type CrowdinFilesFields_fileData_html_Create {
+  permission: Boolean!
+}
+
+type CrowdinFilesFields_fileData_html_Read {
+  permission: Boolean!
+}
+
+type CrowdinFilesFields_fileData_html_Update {
+  permission: Boolean!
+}
+
+type CrowdinFilesFields_fileData_html_Delete {
+  permission: Boolean!
+}
+
 type CrowdinFilesCreateAccess {
   permission: Boolean!
   where: JSONObject
@@ -5506,6 +5895,7 @@ type CrowdinArticleDirectoriesFields {
   originalId: CrowdinArticleDirectoriesFields_originalId
   projectId: CrowdinArticleDirectoriesFields_projectId
   directoryId: CrowdinArticleDirectoriesFields_directoryId
+  excludeLocales: CrowdinArticleDirectoriesFields_excludeLocales
 }
 
 type CrowdinArticleDirectoriesFields_name {
@@ -5692,6 +6082,29 @@ type CrowdinArticleDirectoriesFields_directoryId_Delete {
   permission: Boolean!
 }
 
+type CrowdinArticleDirectoriesFields_excludeLocales {
+  create: CrowdinArticleDirectoriesFields_excludeLocales_Create
+  read: CrowdinArticleDirectoriesFields_excludeLocales_Read
+  update: CrowdinArticleDirectoriesFields_excludeLocales_Update
+  delete: CrowdinArticleDirectoriesFields_excludeLocales_Delete
+}
+
+type CrowdinArticleDirectoriesFields_excludeLocales_Create {
+  permission: Boolean!
+}
+
+type CrowdinArticleDirectoriesFields_excludeLocales_Read {
+  permission: Boolean!
+}
+
+type CrowdinArticleDirectoriesFields_excludeLocales_Update {
+  permission: Boolean!
+}
+
+type CrowdinArticleDirectoriesFields_excludeLocales_Delete {
+  permission: Boolean!
+}
+
 type CrowdinArticleDirectoriesCreateAccess {
   permission: Boolean!
   where: JSONObject
@@ -5712,135 +6125,209 @@ type CrowdinArticleDirectoriesDeleteAccess {
   where: JSONObject
 }
 
+type navAccess {
+  fields: NavFields
+  read: NavReadAccess
+  update: NavUpdateAccess
+}
+
+type NavFields {
+  items: NavFields_items
+  crowdinArticleDirectory: NavFields_crowdinArticleDirectory
+  updatedAt: NavFields_updatedAt
+  createdAt: NavFields_createdAt
+}
+
+type NavFields_items {
+  create: NavFields_items_Create
+  read: NavFields_items_Read
+  update: NavFields_items_Update
+  delete: NavFields_items_Delete
+  fields: NavFields_items_Fields
+}
+
+type NavFields_items_Create {
+  permission: Boolean!
+}
+
+type NavFields_items_Read {
+  permission: Boolean!
+}
+
+type NavFields_items_Update {
+  permission: Boolean!
+}
+
+type NavFields_items_Delete {
+  permission: Boolean!
+}
+
+type NavFields_items_Fields {
+  label: NavFields_items_label
+  id: NavFields_items_id
+}
+
+type NavFields_items_label {
+  create: NavFields_items_label_Create
+  read: NavFields_items_label_Read
+  update: NavFields_items_label_Update
+  delete: NavFields_items_label_Delete
+}
+
+type NavFields_items_label_Create {
+  permission: Boolean!
+}
+
+type NavFields_items_label_Read {
+  permission: Boolean!
+}
+
+type NavFields_items_label_Update {
+  permission: Boolean!
+}
+
+type NavFields_items_label_Delete {
+  permission: Boolean!
+}
+
+type NavFields_items_id {
+  create: NavFields_items_id_Create
+  read: NavFields_items_id_Read
+  update: NavFields_items_id_Update
+  delete: NavFields_items_id_Delete
+}
+
+type NavFields_items_id_Create {
+  permission: Boolean!
+}
+
+type NavFields_items_id_Read {
+  permission: Boolean!
+}
+
+type NavFields_items_id_Update {
+  permission: Boolean!
+}
+
+type NavFields_items_id_Delete {
+  permission: Boolean!
+}
+
+type NavFields_crowdinArticleDirectory {
+  create: NavFields_crowdinArticleDirectory_Create
+  read: NavFields_crowdinArticleDirectory_Read
+  update: NavFields_crowdinArticleDirectory_Update
+  delete: NavFields_crowdinArticleDirectory_Delete
+}
+
+type NavFields_crowdinArticleDirectory_Create {
+  permission: Boolean!
+}
+
+type NavFields_crowdinArticleDirectory_Read {
+  permission: Boolean!
+}
+
+type NavFields_crowdinArticleDirectory_Update {
+  permission: Boolean!
+}
+
+type NavFields_crowdinArticleDirectory_Delete {
+  permission: Boolean!
+}
+
+type NavFields_updatedAt {
+  create: NavFields_updatedAt_Create
+  read: NavFields_updatedAt_Read
+  update: NavFields_updatedAt_Update
+  delete: NavFields_updatedAt_Delete
+}
+
+type NavFields_updatedAt_Create {
+  permission: Boolean!
+}
+
+type NavFields_updatedAt_Read {
+  permission: Boolean!
+}
+
+type NavFields_updatedAt_Update {
+  permission: Boolean!
+}
+
+type NavFields_updatedAt_Delete {
+  permission: Boolean!
+}
+
+type NavFields_createdAt {
+  create: NavFields_createdAt_Create
+  read: NavFields_createdAt_Read
+  update: NavFields_createdAt_Update
+  delete: NavFields_createdAt_Delete
+}
+
+type NavFields_createdAt_Create {
+  permission: Boolean!
+}
+
+type NavFields_createdAt_Read {
+  permission: Boolean!
+}
+
+type NavFields_createdAt_Update {
+  permission: Boolean!
+}
+
+type NavFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type NavReadAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type NavUpdateAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
 type Mutation {
-  createCategory(
-    data: mutationCategoryInput!
-    draft: Boolean
-    locale: LocaleInputType
-  ): Category
-  updateCategory(
-    id: String!
-    data: mutationCategoryUpdateInput!
-    draft: Boolean
-    autosave: Boolean
-    locale: LocaleInputType
-  ): Category
+  createCategory(data: mutationCategoryInput!, draft: Boolean, locale: LocaleInputType): Category
+  updateCategory(id: String!, data: mutationCategoryUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): Category
   deleteCategory(id: String!): Category
-  createLocalizedPost(
-    data: mutationLocalizedPostInput!
-    draft: Boolean
-    locale: LocaleInputType
-  ): LocalizedPost
-  updateLocalizedPost(
-    id: String!
-    data: mutationLocalizedPostUpdateInput!
-    draft: Boolean
-    autosave: Boolean
-    locale: LocaleInputType
-  ): LocalizedPost
+  createLocalizedPost(data: mutationLocalizedPostInput!, draft: Boolean, locale: LocaleInputType): LocalizedPost
+  updateLocalizedPost(id: String!, data: mutationLocalizedPostUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): LocalizedPost
   deleteLocalizedPost(id: String!): LocalizedPost
-  createNestedFieldCollection(
-    data: mutationNestedFieldCollectionInput!
-    draft: Boolean
-    locale: LocaleInputType
-  ): NestedFieldCollection
-  updateNestedFieldCollection(
-    id: String!
-    data: mutationNestedFieldCollectionUpdateInput!
-    draft: Boolean
-    autosave: Boolean
-    locale: LocaleInputType
-  ): NestedFieldCollection
+  createNestedFieldCollection(data: mutationNestedFieldCollectionInput!, draft: Boolean, locale: LocaleInputType): NestedFieldCollection
+  updateNestedFieldCollection(id: String!, data: mutationNestedFieldCollectionUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): NestedFieldCollection
   deleteNestedFieldCollection(id: String!): NestedFieldCollection
-  createPost(
-    data: mutationPostInput!
-    draft: Boolean
-    locale: LocaleInputType
-  ): Post
-  updatePost(
-    id: String!
-    data: mutationPostUpdateInput!
-    draft: Boolean
-    autosave: Boolean
-    locale: LocaleInputType
-  ): Post
+  createPost(data: mutationPostInput!, draft: Boolean, locale: LocaleInputType): Post
+  updatePost(id: String!, data: mutationPostUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): Post
   deletePost(id: String!): Post
-  createTag(
-    data: mutationTagInput!
-    draft: Boolean
-    locale: LocaleInputType
-  ): Tag
-  updateTag(
-    id: String!
-    data: mutationTagUpdateInput!
-    draft: Boolean
-    autosave: Boolean
-    locale: LocaleInputType
-  ): Tag
+  createTag(data: mutationTagInput!, draft: Boolean, locale: LocaleInputType): Tag
+  updateTag(id: String!, data: mutationTagUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): Tag
   deleteTag(id: String!): Tag
-  createUser(
-    data: mutationUserInput!
-    draft: Boolean
-    locale: LocaleInputType
-  ): User
-  updateUser(
-    id: String!
-    data: mutationUserUpdateInput!
-    draft: Boolean
-    autosave: Boolean
-    locale: LocaleInputType
-  ): User
+  createUser(data: mutationUserInput!, draft: Boolean, locale: LocaleInputType): User
+  updateUser(id: String!, data: mutationUserUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): User
   deleteUser(id: String!): User
   refreshTokenUser(token: String): usersRefreshedUser
   logoutUser: String
   unlockUser(email: String!): Boolean!
   loginUser(email: String, password: String): usersLoginResult
-  forgotPasswordUser(
-    email: String!
-    disableEmail: Boolean
-    expiration: Int
-  ): Boolean!
+  forgotPasswordUser(email: String!, disableEmail: Boolean, expiration: Int): Boolean!
   resetPasswordUser(token: String, password: String): usersResetPassword
   verifyEmailUser(token: String): Boolean
-  createCrowdinFile(
-    data: mutationCrowdinFileInput!
-    draft: Boolean
-    locale: LocaleInputType
-  ): CrowdinFile
-  updateCrowdinFile(
-    id: String!
-    data: mutationCrowdinFileUpdateInput!
-    draft: Boolean
-    autosave: Boolean
-    locale: LocaleInputType
-  ): CrowdinFile
+  createCrowdinFile(data: mutationCrowdinFileInput!, draft: Boolean, locale: LocaleInputType): CrowdinFile
+  updateCrowdinFile(id: String!, data: mutationCrowdinFileUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): CrowdinFile
   deleteCrowdinFile(id: String!): CrowdinFile
-  createCrowdinCollectionDirectory(
-    data: mutationCrowdinCollectionDirectoryInput!
-    draft: Boolean
-    locale: LocaleInputType
-  ): CrowdinCollectionDirectory
-  updateCrowdinCollectionDirectory(
-    id: String!
-    data: mutationCrowdinCollectionDirectoryUpdateInput!
-    draft: Boolean
-    autosave: Boolean
-    locale: LocaleInputType
-  ): CrowdinCollectionDirectory
+  createCrowdinCollectionDirectory(data: mutationCrowdinCollectionDirectoryInput!, draft: Boolean, locale: LocaleInputType): CrowdinCollectionDirectory
+  updateCrowdinCollectionDirectory(id: String!, data: mutationCrowdinCollectionDirectoryUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): CrowdinCollectionDirectory
   deleteCrowdinCollectionDirectory(id: String!): CrowdinCollectionDirectory
-  createCrowdinArticleDirectory(
-    data: mutationCrowdinArticleDirectoryInput!
-    draft: Boolean
-    locale: LocaleInputType
-  ): CrowdinArticleDirectory
-  updateCrowdinArticleDirectory(
-    id: String!
-    data: mutationCrowdinArticleDirectoryUpdateInput!
-    draft: Boolean
-    autosave: Boolean
-    locale: LocaleInputType
-  ): CrowdinArticleDirectory
+  createCrowdinArticleDirectory(data: mutationCrowdinArticleDirectoryInput!, draft: Boolean, locale: LocaleInputType): CrowdinArticleDirectory
+  updateCrowdinArticleDirectory(id: String!, data: mutationCrowdinArticleDirectoryUpdateInput!, draft: Boolean, autosave: Boolean, locale: LocaleInputType): CrowdinArticleDirectory
   deleteCrowdinArticleDirectory(id: String!): CrowdinArticleDirectory
+  updateNav(data: mutationNavInput!, draft: Boolean, locale: LocaleInputType): Nav
   updatePreference(key: String!, value: JSON): Preference
   deletePreference(key: String!): Preference
 }
@@ -5890,9 +6377,9 @@ enum LocalizedPostUpdate_status_MutationInput {
 }
 
 input mutationNestedFieldCollectionInput {
-  title: String
-  content: JSON
-  metaDescription: String
+  textField: String
+  richTextField: JSON
+  textareaField: String
   arrayField: [mutationNestedFieldCollection_ArrayFieldInput]
   layout: JSON
   group: mutationNestedFieldCollection_GroupInput
@@ -5903,28 +6390,27 @@ input mutationNestedFieldCollectionInput {
 }
 
 input mutationNestedFieldCollection_ArrayFieldInput {
-  title: String
-  content: JSON
-  metaDescription: String
+  textField: String
+  richTextField: JSON
+  textareaField: String
   id: String
 }
 
 input mutationNestedFieldCollection_GroupInput {
-  title: String
-  content: JSON
-  metaDescription: String
+  textField: String
+  richTextField: JSON
+  textareaField: String
 }
 
 input mutationNestedFieldCollection_TabTwoInput {
-  title: String
-  content: JSON
-  metaDescription: String
+  tabTwoTitle: String
+  tabTwoContent: JSON
 }
 
 input mutationNestedFieldCollectionUpdateInput {
-  title: String
-  content: JSON
-  metaDescription: String
+  textField: String
+  richTextField: JSON
+  textareaField: String
   arrayField: [mutationNestedFieldCollectionUpdate_ArrayFieldInput]
   layout: JSON
   group: mutationNestedFieldCollectionUpdate_GroupInput
@@ -5935,22 +6421,21 @@ input mutationNestedFieldCollectionUpdateInput {
 }
 
 input mutationNestedFieldCollectionUpdate_ArrayFieldInput {
-  title: String
-  content: JSON
-  metaDescription: String
+  textField: String
+  richTextField: JSON
+  textareaField: String
   id: String
 }
 
 input mutationNestedFieldCollectionUpdate_GroupInput {
-  title: String
-  content: JSON
-  metaDescription: String
+  textField: String
+  richTextField: JSON
+  textareaField: String
 }
 
 input mutationNestedFieldCollectionUpdate_TabTwoInput {
-  title: String
-  content: JSON
-  metaDescription: String
+  tabTwoTitle: String
+  tabTwoContent: JSON
 }
 
 input mutationPostInput {
@@ -6058,6 +6543,12 @@ input mutationCrowdinFileInput {
   name: String
   type: String
   path: String
+  fileData: mutationCrowdinFile_FileDataInput
+}
+
+input mutationCrowdinFile_FileDataInput {
+  json: JSON
+  html: String
 }
 
 input mutationCrowdinFileUpdateInput {
@@ -6073,6 +6564,12 @@ input mutationCrowdinFileUpdateInput {
   name: String
   type: String
   path: String
+  fileData: mutationCrowdinFileUpdate_FileDataInput
+}
+
+input mutationCrowdinFileUpdate_FileDataInput {
+  json: JSON
+  html: String
 }
 
 input mutationCrowdinCollectionDirectoryInput {
@@ -6106,6 +6603,12 @@ input mutationCrowdinArticleDirectoryInput {
   originalId: Float
   projectId: Float
   directoryId: Float
+  excludeLocales: [CrowdinArticleDirectory_excludeLocales_MutationInput]
+}
+
+enum CrowdinArticleDirectory_excludeLocales_MutationInput {
+  de_DE
+  fr_FR
 }
 
 input mutationCrowdinArticleDirectoryUpdateInput {
@@ -6117,4 +6620,22 @@ input mutationCrowdinArticleDirectoryUpdateInput {
   originalId: Float
   projectId: Float
   directoryId: Float
+  excludeLocales: [CrowdinArticleDirectoryUpdate_excludeLocales_MutationInput]
+}
+
+enum CrowdinArticleDirectoryUpdate_excludeLocales_MutationInput {
+  de_DE
+  fr_FR
+}
+
+input mutationNavInput {
+  items: [mutationNav_ItemsInput!]
+  crowdinArticleDirectory: String
+  updatedAt: String
+  createdAt: String
+}
+
+input mutationNav_ItemsInput {
+  label: String
+  id: String
 }
