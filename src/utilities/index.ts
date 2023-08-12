@@ -248,7 +248,7 @@ export const restoreOrder = ({
     return updateDocument;
   }
   fields.forEach((field: any) => {
-    if (!updateDocument[field.name]) {
+    if (!updateDocument || !updateDocument[field.name]) {
       return;
     }
     if (field.type === "group") {
@@ -262,6 +262,9 @@ export const restoreOrder = ({
         const arrayItem = updateDocument[field.name].find((updateItem: any) => {
           return updateItem.id === item.id;
         });
+        if (!arrayItem) {
+          return;
+        }
         const subFields =
           field.type === "blocks"
             ? field.blocks.find((block: Block) => block.slug === item.blockType)
@@ -276,7 +279,7 @@ export const restoreOrder = ({
           id: arrayItem.id,
           ...(field.type === "blocks" && { blockType: arrayItem.blockType }),
         };
-      });
+      }).filter((item: any) => !isEmpty(item));
     } else {
       response[field.name] = updateDocument[field.name];
     }

@@ -243,6 +243,59 @@ describe("book demo collection snapshots", () => {
       fields: localizedFields,
       document: doc,
     });
-    expect(docTranslations).toMatchInlineSnapshot();
+    expect(docTranslations).toMatchInlineSnapshot(`
+      {
+        "form": {
+          "content": {
+            "items": [
+              {
+                "id": "64a8af5656f68b0022bfd268",
+                "text": "Offres d'emploi et utilisateurs illimités",
+              },
+              {
+                "id": "64a8af5656f68b0022bfd26c",
+                "text": "Des présentations produits et des webinaires gratuits",
+              },
+              {
+                "id": "64a8af5656f68b0022bfd26d",
+                "text": "Un accès complet à l'Académie Acme Corp",
+              },
+            ],
+          },
+          "subTitle": "Nous vous contacterons dès que possible pour fixer une heure qui vous convienne.",
+          "title": "Réservez une démo",
+        },
+        "hero": {
+          "text": [
+            {
+              "children": [
+                {
+                  "text": "Apprenez comment Acme Corp peut vous aider à ",
+                },
+                {
+                  "bold": true,
+                  "text": "atteindre vos objectifs",
+                },
+                {
+                  "text": ". Nous sommes prêts à parier que vous apprendrez quelque chose de nouveau lors de notre rencontre. Et si ce n’est pas le cas, on vous offre un cupcake ! 😉",
+                },
+              ],
+              "type": "p",
+            },
+          ],
+          "title": [
+            {
+              "children": [
+                {
+                  "text": "Réservez une démo",
+                },
+              ],
+              "type": "p",
+            },
+          ],
+        },
+        "logoTitle": "Adoré par les meilleurs recruteurs internationaux",
+      }
+    `);
   });
 });
