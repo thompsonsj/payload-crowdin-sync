@@ -22,8 +22,6 @@ import {
   buildPayloadUpdateObject,
   getLocalizedRequiredFields,
 } from "../../utilities";
-import dot from "dot-object";
-import { clone, map } from "lodash";
 
 interface IgetLatestDocumentTranslation {
   collection: string;
@@ -134,23 +132,31 @@ export class payloadCrowdinSyncTranslationsApi {
       );
       if (report[locale].changed && !dryRun) {
         if (global) {
-          await this.payload.updateGlobal({
-            slug: collection,
-            locale: locale,
-            data: {
-              ...report[locale].latestTranslations,
-              // error on update without the following line.
-              // see https://github.com/thompsonsj/payload-crowdin-sync/pull/13/files#r1209271660
-              crowdinArticleDirectory: doc.crowdinArticleDirectory.id,
-            },
-          });
+          try {
+            await this.payload.updateGlobal({
+              slug: collection,
+              locale: locale,
+              data: {
+                ...report[locale].latestTranslations,
+                // error on update without the following line.
+                // see https://github.com/thompsonsj/payload-crowdin-sync/pull/13/files#r1209271660
+                crowdinArticleDirectory: doc.crowdinArticleDirectory.id,
+              },
+            });
+          } catch (error) {
+            console.log(error)
+          }
         } else {
-          await this.payload.update({
-            collection: collection,
-            locale: locale,
-            id: documentId,
-            data: report[locale].latestTranslations,
-          });
+          try {
+            await this.payload.update({
+              collection: collection,
+              locale: locale,
+              id: documentId,
+              data: report[locale].latestTranslations,
+            });
+          } catch (error) {
+            console.log(error)
+          }
         }
       }
     }
@@ -218,14 +224,18 @@ export class payloadCrowdinSyncTranslationsApi {
       doc: document,
       fields: localizedFields,
     });
-    const docTranslations = buildPayloadUpdateObject({
-      crowdinJsonObject,
-      crowdinHtmlObject,
-      fields: localizedFields,
-      document,
-    });
-
-    return docTranslations;
+    try {
+      const docTranslations = buildPayloadUpdateObject({
+        crowdinJsonObject,
+        crowdinHtmlObject,
+        fields: localizedFields,
+        document,
+      });
+      return docTranslations;
+    } catch (error) {
+      console.log(error)
+      throw new Error(`${error}`);
+    }
   }
 
   /**
@@ -317,17 +327,21 @@ export class payloadCrowdinSyncTranslationsApi {
     if (!file) {
       return;
     }
-    const response = await this.translationsApi.buildProjectFileTranslation(
-      this.projectId,
-      file.originalId,
-      {
-        targetLanguageId: this.localeMap[locale].crowdinId,
-      },
-    );
-    const data = await this.getFileDataFromUrl(response.data.url);
-    return file.type === "html"
-      ? htmlToSlate(data, payloadHtmlToSlateConfig)
-      : JSON.parse(data);
+    try {
+      const response = await this.translationsApi.buildProjectFileTranslation(
+        this.projectId,
+        file.originalId,
+        {
+          targetLanguageId: this.localeMap[locale].crowdinId,
+        },
+      );
+      const data = await this.getFileDataFromUrl(response.data.url);
+      return file.type === "html"
+        ? htmlToSlate(data, payloadHtmlToSlateConfig)
+        : JSON.parse(data);
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   private async getFileDataFromUrl(url: string) {
