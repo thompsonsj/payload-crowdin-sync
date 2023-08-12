@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.13.2...v0.13.3) (2023-08-12)
+
+
+### Bug Fixes
+
+* **restoreorder:** handle array items with empty values in source doc ([#89](https://github.com/thompsonsj/payload-crowdin-sync/issues/89)) ([b905803](https://github.com/thompsonsj/payload-crowdin-sync/commit/b905803e90efe81795f2c29c4a6107e7bf046ca9))
+
 ## [0.13.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.13.1...v0.13.2) (2023-07-27)
 
 
