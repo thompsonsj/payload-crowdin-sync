@@ -22,8 +22,6 @@ import {
   buildPayloadUpdateObject,
   getLocalizedRequiredFields,
 } from "../../utilities";
-import fs from 'fs';
-import path from 'path';
 
 interface IgetLatestDocumentTranslation {
   collection: string;
@@ -226,14 +224,6 @@ export class payloadCrowdinSyncTranslationsApi {
       doc: document,
       fields: localizedFields,
     });
-    try {
-    fs.writeFile(path.join(__dirname,'buildpayloadupdate.txt'), JSON.stringify(crowdinJsonObject), (err: any) => { if (err) {console.log(err); throw err}; });
-    } catch (error) {
-      console.log(error)
-    }
-    //fs.writeFile('buildpayloadupdate.txt', JSON.stringify(crowdinHtmlObject), (err: any) => { if (err) throw err; });
-    //fs.writeFile('buildpayloadupdate.txt', JSON.stringify(localizedFields), (err: any) => { if (err) throw err; });
-    //fs.writeFile('buildpayloadupdate.txt', JSON.stringify(document), (err: any) => { if (err) throw err; });
     try {
       const docTranslations = buildPayloadUpdateObject({
         crowdinJsonObject,
