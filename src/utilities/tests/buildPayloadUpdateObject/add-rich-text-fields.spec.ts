@@ -55,7 +55,7 @@ describe("fn: buildPayloadUpdateObject: blocks field type", () => {
         crowdinHtmlObject,
         fields,
         document: doc,
-      }),
+      })
     ).toEqual(expected);
   });
 });

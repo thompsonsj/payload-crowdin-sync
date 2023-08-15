@@ -4,25 +4,22 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.13.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.13.2...v0.13.3) (2023-08-12)
 
-
 ### Bug Fixes
 
-* **restoreorder:** handle array items with empty values in source doc ([#89](https://github.com/thompsonsj/payload-crowdin-sync/issues/89)) ([b905803](https://github.com/thompsonsj/payload-crowdin-sync/commit/b905803e90efe81795f2c29c4a6107e7bf046ca9))
+- **restoreorder:** handle array items with empty values in source doc ([#89](https://github.com/thompsonsj/payload-crowdin-sync/issues/89)) ([b905803](https://github.com/thompsonsj/payload-crowdin-sync/commit/b905803e90efe81795f2c29c4a6107e7bf046ca9))
 
 ## [0.13.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.13.1...v0.13.2) (2023-07-27)
 
-
 ### Bug Fixes
 
-* **tests:** following [#85](https://github.com/thompsonsj/payload-crowdin-sync/issues/85) ([#87](https://github.com/thompsonsj/payload-crowdin-sync/issues/87)) ([dcdb42c](https://github.com/thompsonsj/payload-crowdin-sync/commit/dcdb42cd6ef8bab5525976b5720a978674db45df))
-* typo renaming ([#84](https://github.com/thompsonsj/payload-crowdin-sync/issues/84)) ([3cf30ce](https://github.com/thompsonsj/payload-crowdin-sync/commit/3cf30ce6a2e11b23ada99170c88196ef10f737f1))
+- **tests:** following [#85](https://github.com/thompsonsj/payload-crowdin-sync/issues/85) ([#87](https://github.com/thompsonsj/payload-crowdin-sync/issues/87)) ([dcdb42c](https://github.com/thompsonsj/payload-crowdin-sync/commit/dcdb42cd6ef8bab5525976b5720a978674db45df))
+- typo renaming ([#84](https://github.com/thompsonsj/payload-crowdin-sync/issues/84)) ([3cf30ce](https://github.com/thompsonsj/payload-crowdin-sync/commit/3cf30ce6a2e11b23ada99170c88196ef10f737f1))
 
 ## [0.13.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.13.0...v0.13.1) (2023-07-21)
 
-
 ### Bug Fixes
 
-* **getlocalizedfields:** relax tab field detection ([#85](https://github.com/thompsonsj/payload-crowdin-sync/issues/85)) ([29ecd1a](https://github.com/thompsonsj/payload-crowdin-sync/commit/29ecd1a24864deee17dfae891b43d451191764f1))
+- **getlocalizedfields:** relax tab field detection ([#85](https://github.com/thompsonsj/payload-crowdin-sync/issues/85)) ([29ecd1a](https://github.com/thompsonsj/payload-crowdin-sync/commit/29ecd1a24864deee17dfae891b43d451191764f1))
 
 ## [0.13.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.12.1...v0.13.0) (2023-07-12)
 

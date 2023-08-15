@@ -102,7 +102,7 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
       },
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 
@@ -156,7 +156,7 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
       },
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 
@@ -223,7 +223,7 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
       },
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 
@@ -307,7 +307,7 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
       title: "Test Policy created with title",
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 
@@ -420,7 +420,7 @@ describe("fn: buildCrowdinJsonObject: blocks field type", () => {
       },
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 });

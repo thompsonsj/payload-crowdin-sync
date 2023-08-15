@@ -9,7 +9,7 @@ import { Payload } from "payload";
  */
 export async function getArticleDirectory(
   documentId: string,
-  payload: Payload,
+  payload: Payload
 ) {
   // Get directory
   const crowdinPayloadArticleDirectory = await payload.find({
@@ -24,7 +24,7 @@ export async function getArticleDirectory(
     // a thrown error won't be reported in an api call, so console.log it as well.
     console.log(`No article directory found for document ${documentId}`);
     throw new Error(
-      "This article does not have a corresponding entry in the  crowdin-article-directories collection.",
+      "This article does not have a corresponding entry in the  crowdin-article-directories collection."
     );
   }
   return crowdinPayloadArticleDirectory.docs[0];
@@ -33,7 +33,7 @@ export async function getArticleDirectory(
 export async function getFile(
   name: string,
   crowdinArticleDirectoryId: string,
-  payload: Payload,
+  payload: Payload
 ): Promise<any> {
   const result = await payload.find({
     collection: "crowdin-files",
@@ -49,7 +49,7 @@ export async function getFile(
 
 export async function getFiles(
   crowdinArticleDirectoryId: string,
-  payload: Payload,
+  payload: Payload
 ): Promise<any> {
   const result = await payload.find({
     collection: "crowdin-files",
@@ -65,7 +65,7 @@ export async function getFiles(
 export async function getFileByDocumentID(
   name: string,
   documentId: string,
-  payload: Payload,
+  payload: Payload
 ): Promise<any> {
   const articleDirectory = await getArticleDirectory(documentId, payload);
   return getFile(name, articleDirectory.id, payload);
@@ -73,7 +73,7 @@ export async function getFileByDocumentID(
 
 export async function getFilesByDocumentID(
   documentId: string,
-  payload: Payload,
+  payload: Payload
 ): Promise<any> {
   const articleDirectory = await getArticleDirectory(documentId, payload);
   const files = await getFiles(articleDirectory.id, payload);

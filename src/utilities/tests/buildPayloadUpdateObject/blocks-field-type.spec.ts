@@ -104,7 +104,7 @@ describe("fn: buildPayloadUpdateObject: blocks field type", () => {
       ],
     };
     expect(
-      buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields }),
+      buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields })
     ).toEqual(expected);
   });
 
@@ -152,7 +152,7 @@ describe("fn: buildPayloadUpdateObject: blocks field type", () => {
       ],
     };
     expect(
-      buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields }),
+      buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields })
     ).toEqual(expected);
   });
 
@@ -212,7 +212,7 @@ describe("fn: buildPayloadUpdateObject: blocks field type", () => {
       ],
     };
     expect(
-      buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields }),
+      buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields })
     ).toEqual(expected);
   });
 
@@ -261,7 +261,7 @@ describe("fn: buildPayloadUpdateObject: blocks field type", () => {
       title: "Test Policy created with title",
     };
     expect(
-      buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields }),
+      buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields })
     ).toEqual(expected);
   });
 
@@ -351,7 +351,7 @@ describe("fn: buildPayloadUpdateObject: blocks field type", () => {
       ],
     };
     expect(
-      buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields }),
+      buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields })
     ).toEqual(expected);
   });
 });

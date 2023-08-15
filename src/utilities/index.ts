@@ -33,7 +33,9 @@ export const getLocalizedFields = ({
     type,
     localizedParent,
   });
-  const allLocalizedFields = type ? getLocalizedFields({ fields }) : localizedFields;
+  const allLocalizedFields = type
+    ? getLocalizedFields({ fields })
+    : localizedFields;
   if (
     allLocalizedFields.length === 1 &&
     get(localizedFields[0], "name") === "meta"
@@ -56,7 +58,7 @@ export const getLocalizedFieldsRecursive = ({
     // localized or group fields only.
     .filter(
       (field) =>
-        isLocalizedField(field, localizedParent) || containsNestedFields(field),
+        isLocalizedField(field, localizedParent) || containsNestedFields(field)
     )
     // further filter on Crowdin field type
     .filter((field) => {
@@ -84,7 +86,7 @@ export const getLocalizedFieldsRecursive = ({
             fields: block.fields,
             type,
             localizedParent,
-          }),
+          })
         );
       }
       return true;
@@ -130,7 +132,10 @@ export const getLocalizedFieldsRecursive = ({
       }
       return field;
     })
-    .filter((field) => (field as any).type !== "collapsible" && (field as any).type !== "tabs"),
+    .filter(
+      (field) =>
+        (field as any).type !== "collapsible" && (field as any).type !== "tabs"
+    ),
   ...convertTabs({ fields }),
   // recursion for collapsible field - flatten results into the returned array
   ...getCollapsibleLocalizedFields({ fields, type }),
@@ -149,45 +154,47 @@ export const getCollapsibleLocalizedFields = ({
       getLocalizedFields({
         fields: (field as CollapsibleField).fields,
         type,
-      }),
+      })
     );
 
 export const convertTabs = ({
   fields,
   type,
 }: {
-  fields: Field[],
+  fields: Field[];
   type?: "json" | "html";
-}): any[] => 
+}): any[] =>
   fields
     .filter((field) => field.type === "tabs")
-    .flatMap( field => {
+    .flatMap((field) => {
       if (field.type === "tabs") {
         const flattenedFields = field.tabs.reduce((tabFields, tab) => {
           return [
             ...tabFields,
-            'name' in tab ? {
-              type: 'group',
-              name: tab.name,
-              fields: tab.fields,
-            } as Field : {
-              label: 'fromTab',
-              type: 'collapsible',
-              fields: tab.fields,
-            } as Field
-          ]
-        }, [] as Field[])
+            "name" in tab
+              ? ({
+                  type: "group",
+                  name: tab.name,
+                  fields: tab.fields,
+                } as Field)
+              : ({
+                  label: "fromTab",
+                  type: "collapsible",
+                  fields: tab.fields,
+                } as Field),
+          ];
+        }, [] as Field[]);
         return getLocalizedFields({
           fields: flattenedFields,
           type,
-        })
+        });
       }
-      return field
-    })
+      return field;
+    });
 
 export const getLocalizedRequiredFields = (
   collection: CollectionConfig | GlobalConfig,
-  type?: "json" | "html",
+  type?: "json" | "html"
 ): any[] => {
   const fields = getLocalizedFields({ fields: collection.fields, type });
   return fields.filter((field) => field.required);
@@ -200,7 +207,7 @@ export const getLocalizedRequiredFields = (
 export const getFieldSlugs = (fields: FieldWithName[]): string[] =>
   fields
     .filter(
-      (field: Field) => field.type === "text" || field.type === "richText",
+      (field: Field) => field.type === "text" || field.type === "richText"
     )
     .map((field: FieldWithName) => field.name);
 
@@ -214,7 +221,7 @@ const hasLocalizedProp = (field: Field) =>
  */
 export const isLocalizedField = (
   field: Field,
-  addLocalizedProp: boolean = false,
+  addLocalizedProp: boolean = false
 ) =>
   (hasLocalizedProp(field) || addLocalizedProp) &&
   localizedFieldTypes.includes(field.type) &&
@@ -244,7 +251,7 @@ export const containsLocalizedFields = ({
 export const fieldChanged = (
   previousValue: string | object | undefined,
   value: string | object | undefined,
-  type: string,
+  type: string
 ) => {
   if (type === "richText") {
     return !deepEqual(previousValue || {}, value || {});
@@ -286,28 +293,33 @@ export const restoreOrder = ({
         fields: field.fields,
       });
     } else if (field.type === "array" || field.type === "blocks") {
-      response[field.name] = document[field.name].map((item: any) => {
-        const arrayItem = updateDocument[field.name].find((updateItem: any) => {
-          return updateItem.id === item.id;
-        });
-        if (!arrayItem) {
-          return;
-        }
-        const subFields =
-          field.type === "blocks"
-            ? field.blocks.find((block: Block) => block.slug === item.blockType)
-                ?.fields || []
-            : field.fields;
-        return {
-          ...restoreOrder({
-            updateDocument: arrayItem,
-            document: item,
-            fields: subFields,
-          }),
-          id: arrayItem.id,
-          ...(field.type === "blocks" && { blockType: arrayItem.blockType }),
-        };
-      }).filter((item: any) => !isEmpty(item));
+      response[field.name] = document[field.name]
+        .map((item: any) => {
+          const arrayItem = updateDocument[field.name].find(
+            (updateItem: any) => {
+              return updateItem.id === item.id;
+            }
+          );
+          if (!arrayItem) {
+            return;
+          }
+          const subFields =
+            field.type === "blocks"
+              ? field.blocks.find(
+                  (block: Block) => block.slug === item.blockType
+                )?.fields || []
+              : field.fields;
+          return {
+            ...restoreOrder({
+              updateDocument: arrayItem,
+              document: item,
+              fields: subFields,
+            }),
+            id: arrayItem.id,
+            ...(field.type === "blocks" && { blockType: arrayItem.blockType }),
+          };
+        })
+        .filter((item: any) => !isEmpty(item));
     } else {
       response[field.name] = updateDocument[field.name];
     }

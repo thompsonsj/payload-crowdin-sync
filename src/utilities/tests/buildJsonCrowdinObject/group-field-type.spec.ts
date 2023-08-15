@@ -33,7 +33,7 @@ describe("fn: buildCrowdinJsonObject: group field type", () => {
     const localizedFields = getLocalizedFields({ fields });
     const expected = {};
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 
@@ -64,7 +64,7 @@ describe("fn: buildCrowdinJsonObject: group field type", () => {
       groupField: fieldJsonCrowdinObject(),
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 
@@ -96,7 +96,7 @@ describe("fn: buildCrowdinJsonObject: group field type", () => {
       groupField: fieldJsonCrowdinObject(),
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 
@@ -150,7 +150,7 @@ describe("fn: buildCrowdinJsonObject: group field type", () => {
       },
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 
@@ -198,7 +198,7 @@ describe("fn: buildCrowdinJsonObject: group field type", () => {
       },
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 
@@ -225,23 +225,23 @@ describe("fn: buildCrowdinJsonObject: group field type", () => {
         type: "collapsible",
         fields: [
           {
-          name: "groupField",
-          type: "group",
-          fields: [
-            {
-              name: "nestedGroupField",
-              type: "group",
-              fields: basicLocalizedFields,
-            },
-            {
-              name: "secondNestedGroupField",
-              type: "group",
-              fields: basicLocalizedFields,
-            },
-          ],
-        },
-      ],
-    },
+            name: "groupField",
+            type: "group",
+            fields: [
+              {
+                name: "nestedGroupField",
+                type: "group",
+                fields: basicLocalizedFields,
+              },
+              {
+                name: "secondNestedGroupField",
+                type: "group",
+                fields: basicLocalizedFields,
+              },
+            ],
+          },
+        ],
+      },
     ];
     const localizedFields = getLocalizedFields({ fields });
     const expected = {
@@ -252,7 +252,7 @@ describe("fn: buildCrowdinJsonObject: group field type", () => {
       },
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 
@@ -279,25 +279,25 @@ describe("fn: buildCrowdinJsonObject: group field type", () => {
         type: "collapsible",
         fields: [
           {
-          name: "groupField",
-          type: "group",
-          fields: [
-            {
-              name: "nestedGroupField",
-              type: "group",
-              localized: true,
-              fields: basicNonLocalizedFields,
-            },
-            {
-              name: "secondNestedGroupField",
-              type: "group",
-              localized: true,
-              fields: basicNonLocalizedFields,
-            },
-          ],
-        },
-      ],
-    },
+            name: "groupField",
+            type: "group",
+            fields: [
+              {
+                name: "nestedGroupField",
+                type: "group",
+                localized: true,
+                fields: basicNonLocalizedFields,
+              },
+              {
+                name: "secondNestedGroupField",
+                type: "group",
+                localized: true,
+                fields: basicNonLocalizedFields,
+              },
+            ],
+          },
+        ],
+      },
     ];
     const localizedFields = getLocalizedFields({ fields });
     const expected = {
@@ -308,7 +308,7 @@ describe("fn: buildCrowdinJsonObject: group field type", () => {
       },
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 });

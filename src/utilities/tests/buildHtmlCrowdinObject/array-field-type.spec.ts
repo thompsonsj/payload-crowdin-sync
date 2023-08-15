@@ -301,7 +301,7 @@ describe("fn: buildCrowdinHtmlObject - group nested in array", () => {
 
   it("includes group json fields nested inside of array field items", () => {
     expect(buildCrowdinHtmlObject({ doc, fields: Promos.fields })).toEqual(
-      expected,
+      expected
     );
   });
 
@@ -313,7 +313,7 @@ describe("fn: buildCrowdinHtmlObject - group nested in array", () => {
           ctas: [{}, {}],
         },
         fields: Promos.fields,
-      }),
+      })
     ).toEqual({
       title: [
         {

@@ -20,7 +20,7 @@ export const getReviewTranslationEndpoint = ({
       articleDirectory.crowdinCollectionDirectory.collectionSlug === "globals";
     const translationsApi = new payloadCrowdinSyncTranslationsApi(
       pluginOptions,
-      req.payload,
+      req.payload
     );
     try {
       const translations = await translationsApi.updateTranslation({

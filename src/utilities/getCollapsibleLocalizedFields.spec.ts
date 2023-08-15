@@ -47,7 +47,7 @@ describe("fn: getCollapsibleLocalizedFields", () => {
       },
     ];
     expect(getCollapsibleLocalizedFields({ fields: global.fields })).toEqual(
-      expected,
+      expected
     );
   });
 });
