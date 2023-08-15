@@ -14,7 +14,7 @@ import dot from "dot-object";
 
 const localizedFieldTypes = ["richText", "text", "textarea"];
 
-const nestedFieldTypes = ["array", "group", "blocks", "tabs"];
+const nestedFieldTypes = ["array", "group", "blocks"];
 
 export const containsNestedFields = (field: Field) =>
   nestedFieldTypes.includes(field.type);
@@ -28,18 +28,12 @@ export const getLocalizedFields = ({
   type?: "json" | "html";
   localizedParent?: boolean;
 }): any[] => {
-  // flatten the presetational only tabs field
-  // TODO: check this is correct. Docs at https://payloadcms.com/docs/fields/tabs suggest that subsequent tabs can be accessed using a prefix, but documents saved with tabs seem to retain their structure as if they didn't have tabs.
-  let flattenedFields = fields;
-  if (fields.length > 1 && fields[0].type === "tabs") {
-    flattenedFields = fields[0].tabs.map((tab) => tab.fields).flat();
-  }
   const localizedFields = getLocalizedFieldsRecursive({
-    fields: flattenedFields,
+    fields,
     type,
     localizedParent,
   });
-  const allLocalizedFields = type ? getLocalizedFields({ fields: fields }) : localizedFields;
+  const allLocalizedFields = type ? getLocalizedFields({ fields }) : localizedFields;
   if (
     allLocalizedFields.length === 1 &&
     get(localizedFields[0], "name") === "meta"
@@ -136,7 +130,8 @@ export const getLocalizedFieldsRecursive = ({
       }
       return field;
     })
-    .filter((field) => field.type !== "collapsible"),
+    .filter((field) => (field as any).type !== "collapsible" && (field as any).type !== "tabs"),
+  ...convertTabs({ fields }),
   // recursion for collapsible field - flatten results into the returned array
   ...getCollapsibleLocalizedFields({ fields, type }),
 ];
@@ -156,6 +151,39 @@ export const getCollapsibleLocalizedFields = ({
         type,
       }),
     );
+
+export const convertTabs = ({
+  fields,
+  type,
+}: {
+  fields: Field[],
+  type?: "json" | "html";
+}): any[] => 
+  fields
+    .filter((field) => field.type === "tabs")
+    .flatMap( field => {
+      if (field.type === "tabs") {
+        const flattenedFields = field.tabs.reduce((tabFields, tab) => {
+          return [
+            ...tabFields,
+            'name' in tab ? {
+              type: 'group',
+              name: tab.name,
+              fields: tab.fields,
+            } as Field : {
+              label: 'fromTab',
+              type: 'collapsible',
+              fields: tab.fields,
+            } as Field
+          ]
+        }, [] as Field[])
+        return getLocalizedFields({
+          fields: flattenedFields,
+          type,
+        })
+      }
+      return field
+    })
 
 export const getLocalizedRequiredFields = (
   collection: CollectionConfig | GlobalConfig,
