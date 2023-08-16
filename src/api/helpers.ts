@@ -1,5 +1,5 @@
 import { Payload } from "payload";
-import { IcrowdinFile } from './payload-crowdin-sync/files'
+import { IcrowdinFile } from "./payload-crowdin-sync/files";
 
 /**
  * get Crowdin Article Directory for a given documentId
