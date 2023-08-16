@@ -4,6 +4,9 @@ import {
   getAfterChangeHook,
   getGlobalAfterChangeHook,
 } from "./hooks/collections/afterChange";
+import {
+  getAfterDeleteHook,
+} from "./hooks/collections/afterDelete";
 import { getFields } from "./fields/getFields";
 import CrowdinFiles from "./collections/CrowdinFiles";
 import CrowdinCollectionDirectories from "./collections/CrowdinCollectionDirectories";
@@ -73,6 +76,12 @@ export const crowdinSync =
                   ...(existingCollection.hooks?.afterChange || []),
                   getAfterChangeHook({
                     collection: existingCollection,
+                    pluginOptions,
+                  }),
+                ],
+                afterDelete: [
+                  ...(existingCollection.hooks?.afterDelete || []),
+                  getAfterDeleteHook({
                     pluginOptions,
                   }),
                 ],

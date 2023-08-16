@@ -241,5 +241,20 @@ describe(`Crowdin file create, update and delete`, () => {
         },
       });
     });
+
+    it("deletes the `fields` file when an existing article is deleted", async () => {
+      const post = await payload.create({
+        collection: collections.localized,
+        data: { title: "Test post" },
+      });
+      const file = await getFileByDocumentID("fields", post.id, payload);
+      expect(file.fileData.json).toEqual({ title: "Test post" });
+      const deletedPost = await payload.delete({
+        collection: collections.localized,
+        id: post.id,
+      });
+      const crowdinFiles = await getFilesByDocumentID(post.id, payload);
+      expect(crowdinFiles.length).toEqual(0);
+    });
   });
 });
