@@ -269,8 +269,11 @@ describe(`Crowdin file create, update and delete`, () => {
         collection: collections.localized,
         id: post.id,
       });
-      const crowdinPayloadArticleDirectory = await getArticleDirectory(post.id, payload)
-      expect(crowdinPayloadArticleDirectory).toBeUndefined()
+      const crowdinPayloadArticleDirectory = await getArticleDirectory(
+        post.id,
+        payload
+      );
+      expect(crowdinPayloadArticleDirectory).toBeUndefined();
     });
   });
 });

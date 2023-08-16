@@ -20,9 +20,9 @@ export interface IcrowdinFile {
   id: string;
   originalId: number;
   fileData: {
-    json?: Object
-    html?: string
-  }
+    json?: Object;
+    html?: string;
+  };
 }
 
 interface IfindOrCreateCollectionDirectory {
@@ -427,19 +427,21 @@ export class payloadCrowdinSyncFilesApi {
       await this.deleteFile(file);
     }
 
-    await this.deleteArticleDirectory(documentId)
+    await this.deleteArticleDirectory(documentId);
   }
 
   async deleteArticleDirectory(documentId: string) {
-    const crowdinPayloadArticleDirectory = await this.getArticleDirectory(documentId)
+    const crowdinPayloadArticleDirectory = await this.getArticleDirectory(
+      documentId
+    );
     await this.sourceFilesApi.deleteDirectory(
       this.projectId,
       crowdinPayloadArticleDirectory.originalId
-    )
+    );
     await this.payload.delete({
-      collection: 'crowdin-article-directories',
-      id: crowdinPayloadArticleDirectory.id
-    })
+      collection: "crowdin-article-directories",
+      id: crowdinPayloadArticleDirectory.id,
+    });
   }
 
   async getFileByDocumentID(name: string, documentId: string) {

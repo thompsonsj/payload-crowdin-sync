@@ -4,10 +4,9 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.14.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.13.4...v0.14.0) (2023-08-16)
 
-
 ### Features
 
-* **afterdelete:** add hook to delete collection article files ([#95](https://github.com/thompsonsj/payload-crowdin-sync/issues/95)) ([0a58adb](https://github.com/thompsonsj/payload-crowdin-sync/commit/0a58adb399f2dda602068bb202fae3cc4a4fc598))
+- **afterdelete:** add hook to delete collection article files ([#95](https://github.com/thompsonsj/payload-crowdin-sync/issues/95)) ([0a58adb](https://github.com/thompsonsj/payload-crowdin-sync/commit/0a58adb399f2dda602068bb202fae3cc4a4fc598))
 
 ## [0.13.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.13.3...v0.13.4) (2023-08-16)
 

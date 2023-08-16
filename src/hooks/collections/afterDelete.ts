@@ -27,5 +27,5 @@ export const getAfterDeleteHook =
      */
     const filesApi = new payloadCrowdinSyncFilesApi(pluginOptions, req.payload);
 
-    await filesApi.deleteFilesAndDirectory(`${id}`)
+    await filesApi.deleteFilesAndDirectory(`${id}`);
   };

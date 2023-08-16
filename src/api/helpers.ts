@@ -29,7 +29,9 @@ export async function getArticleDirectory(
       "This article does not have a corresponding entry in the  crowdin-article-directories collection."
     );
   }
-  return crowdinPayloadArticleDirectory ? crowdinPayloadArticleDirectory.docs[0] : undefined;
+  return crowdinPayloadArticleDirectory
+    ? crowdinPayloadArticleDirectory.docs[0]
+    : undefined;
 }
 
 export async function getFile(
@@ -80,7 +82,7 @@ export async function getFilesByDocumentID(
   const articleDirectory = await getArticleDirectory(documentId, payload);
   if (!articleDirectory) {
     // tests call this function to make sure files are deleted
-    return []
+    return [];
   }
   const files = await getFiles(articleDirectory.id, payload);
   return files;
