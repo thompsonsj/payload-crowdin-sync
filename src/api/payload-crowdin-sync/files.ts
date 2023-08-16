@@ -16,7 +16,7 @@ import {
 } from "../helpers";
 import { isEmpty } from "lodash";
 
-interface IcrowdinFile {
+export interface IcrowdinFile {
   id: string;
   originalId: number;
 }
@@ -348,7 +348,7 @@ export class payloadCrowdinSyncFilesApi {
     }
   }
 
-  private async deleteFile(crowdinFile: IcrowdinFile) {
+  async deleteFile(crowdinFile: IcrowdinFile) {
     const file = await this.sourceFilesApi.deleteFile(
       this.projectId,
       crowdinFile.originalId

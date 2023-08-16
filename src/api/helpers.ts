@@ -1,4 +1,5 @@
 import { Payload } from "payload";
+import { IcrowdinFile } from "./payload-crowdin-sync/files";
 
 /**
  * get Crowdin Article Directory for a given documentId
@@ -66,7 +67,7 @@ export async function getFileByDocumentID(
   name: string,
   documentId: string,
   payload: Payload
-): Promise<any> {
+): Promise<IcrowdinFile> {
   const articleDirectory = await getArticleDirectory(documentId, payload);
   return getFile(name, articleDirectory.id, payload);
 }
@@ -74,7 +75,7 @@ export async function getFileByDocumentID(
 export async function getFilesByDocumentID(
   documentId: string,
   payload: Payload
-): Promise<any> {
+): Promise<IcrowdinFile[]> {
   const articleDirectory = await getArticleDirectory(documentId, payload);
   const files = await getFiles(articleDirectory.id, payload);
   return files;
