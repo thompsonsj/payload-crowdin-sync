@@ -38,7 +38,7 @@ export const crowdinSync =
         /./,
         Joi.object({
           crowdinId: Joi.string().required(),
-        }).pattern(/./, Joi.any()),
+        }).pattern(/./, Joi.any())
       ),
 
       sourceLocale: Joi.string().required(),
@@ -49,7 +49,7 @@ export const crowdinSync =
     if (validate.error) {
       console.log(
         "Payload Crowdin Sync option validation errors:",
-        validate.error,
+        validate.error
       );
     }
 

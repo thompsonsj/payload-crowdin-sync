@@ -9,14 +9,14 @@
 export interface Config {
   collections: {
     categories: Category;
-    'localized-posts': LocalizedPost;
-    'nested-field-collection': NestedFieldCollection;
+    "localized-posts": LocalizedPost;
+    "nested-field-collection": NestedFieldCollection;
     posts: Post;
     tags: Tag;
     users: User;
-    'crowdin-files': CrowdinFile;
-    'crowdin-collection-directories': CrowdinCollectionDirectory;
-    'crowdin-article-directories': CrowdinArticleDirectory;
+    "crowdin-files": CrowdinFile;
+    "crowdin-collection-directories": CrowdinCollectionDirectory;
+    "crowdin-article-directories": CrowdinArticleDirectory;
   };
   globals: {
     nav: Nav;
@@ -36,7 +36,7 @@ export interface LocalizedPost {
   content?: {
     [k: string]: unknown;
   }[];
-  status?: 'draft' | 'published';
+  status?: "draft" | "published";
   crowdinArticleDirectory?: string | CrowdinArticleDirectory;
   updatedAt: string;
   createdAt: string;
@@ -69,7 +69,7 @@ export interface CrowdinArticleDirectory {
   originalId?: number;
   projectId?: number;
   directoryId?: number;
-  excludeLocales?: ('de_DE' | 'fr_FR')[];
+  excludeLocales?: ("de_DE" | "fr_FR")[];
 }
 export interface CrowdinCollectionDirectory {
   id: string;
@@ -133,7 +133,7 @@ export interface NestedFieldCollection {
         textareaField?: string;
         id?: string;
         blockName?: string;
-        blockType: 'basicBlock';
+        blockType: "basicBlock";
       }
     | {
         richTextField?: {
@@ -141,7 +141,7 @@ export interface NestedFieldCollection {
         }[];
         id?: string;
         blockName?: string;
-        blockType: 'basicBlockRichText';
+        blockType: "basicBlockRichText";
       }
     | {
         textField?: string;
@@ -151,7 +151,7 @@ export interface NestedFieldCollection {
         textareaField?: string;
         id?: string;
         blockName?: string;
-        blockType: 'basicBlockMixed';
+        blockType: "basicBlockMixed";
       }
     | {
         title?: string;
@@ -164,7 +164,7 @@ export interface NestedFieldCollection {
         }[];
         id?: string;
         blockName?: string;
-        blockType: 'testBlockArrayOfRichText';
+        blockType: "testBlockArrayOfRichText";
       }
   )[];
   group?: {
@@ -198,7 +198,7 @@ export interface Post {
   content?: {
     [k: string]: unknown;
   }[];
-  status?: 'draft' | 'published';
+  status?: "draft" | "published";
   updatedAt: string;
   createdAt: string;
 }

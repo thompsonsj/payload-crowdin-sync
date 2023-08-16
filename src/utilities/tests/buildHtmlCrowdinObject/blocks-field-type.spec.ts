@@ -101,7 +101,7 @@ describe("fn: buildCrowdinHtmlObject: blocks field type", () => {
       },
     ];
     const expected = fieldHtmlCrowdinObject(
-      "arrayField.63ea4adb6ff825cddad3c1f2.",
+      "arrayField.63ea4adb6ff825cddad3c1f2."
     );
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });

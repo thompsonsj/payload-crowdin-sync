@@ -122,7 +122,7 @@ export class payloadCrowdinSyncFilesApi {
           title: global
             ? toWords(collectionSlug)
             : document.title || document.name, // no tests for this Crowdin metadata, but makes it easier for translators
-        },
+        }
       );
 
       // Store result in Payload CMS
@@ -183,7 +183,7 @@ export class payloadCrowdinSyncFilesApi {
           directoryId: this.directoryId,
           name: collectionSlug,
           title: toWords(collectionSlug), // is this transformed value available on the collection object?
-        },
+        }
       );
 
       // Store result in Payload CMS
@@ -351,7 +351,7 @@ export class payloadCrowdinSyncFilesApi {
   private async deleteFile(crowdinFile: IcrowdinFile) {
     const file = await this.sourceFilesApi.deleteFile(
       this.projectId,
-      crowdinFile.originalId,
+      crowdinFile.originalId
     );
     const payloadFile = await this.payload.delete({
       collection: "crowdin-files", // required
@@ -369,7 +369,7 @@ export class payloadCrowdinSyncFilesApi {
     const storage = await this.uploadStorageApi.addStorage(
       name,
       fileData,
-      fileType,
+      fileType
     );
     //const file = await sourceFilesApi.deleteFile(projectId, 1161)
     const file = await this.sourceFilesApi.updateOrRestoreFile(
@@ -377,7 +377,7 @@ export class payloadCrowdinSyncFilesApi {
       fileId,
       {
         storageId: storage.data.id,
-      },
+      }
     );
     return file;
   }
@@ -391,7 +391,7 @@ export class payloadCrowdinSyncFilesApi {
     const storage = await this.uploadStorageApi.addStorage(
       name,
       fileData,
-      fileType,
+      fileType
     );
     const options = {
       name: `${name}.${fileType}`,
@@ -403,7 +403,7 @@ export class payloadCrowdinSyncFilesApi {
     try {
       const file = await this.sourceFilesApi.createFile(
         this.projectId,
-        options,
+        options
       );
       return file;
     } catch (error) {

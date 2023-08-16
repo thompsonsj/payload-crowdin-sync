@@ -1,9 +1,9 @@
-import { GlobalConfig } from 'payload/types';
-import { heroField } from './shared/heroField';
-import { collapsibleFields as cf } from './shared/collapsibleFields';
+import { GlobalConfig } from "payload/types";
+import { heroField } from "./shared/heroField";
+import { collapsibleFields as cf } from "./shared/collapsibleFields";
 
 const BookDemo: GlobalConfig = {
-  slug: 'book-demo',
+  slug: "book-demo",
   access: {
     read: () => true,
   },
@@ -11,38 +11,38 @@ const BookDemo: GlobalConfig = {
     drafts: true,
   },
   admin: {
-    group: 'Static Pages',
+    group: "Static Pages",
   },
   fields: [
-    cf('Hero', [heroField({ image: true })]),
-    cf('Form', [
+    cf("Hero", [heroField({ image: true })]),
+    cf("Form", [
       {
-        type: 'group',
-        name: 'form',
+        type: "group",
+        name: "form",
         localized: true,
         fields: [
           {
-            type: 'text',
-            name: 'title',
+            type: "text",
+            name: "title",
           },
           {
-            type: 'text',
-            name: 'subTitle',
+            type: "text",
+            name: "subTitle",
           },
           {
-            type: 'group',
-            name: 'content',
+            type: "group",
+            name: "content",
             localized: true,
             fields: [
               {
-                name: 'title',
-                type: 'text',
+                name: "title",
+                type: "text",
               },
               {
-                name: 'items',
-                type: 'array',
+                name: "items",
+                type: "array",
                 localized: true,
-                fields: [{ type: 'text', name: 'text' }],
+                fields: [{ type: "text", name: "text" }],
               },
             ],
           },
@@ -50,16 +50,16 @@ const BookDemo: GlobalConfig = {
       },
     ]),
     {
-      name: 'logoTitle',
-      type: 'text',
+      name: "logoTitle",
+      type: "text",
       required: true,
       localized: true,
     },
-    cf('Promo', [
+    cf("Promo", [
       {
-        name: 'promo',
-        type: 'relationship',
-        relationTo: 'promos',
+        name: "promo",
+        type: "relationship",
+        relationTo: "promos",
         hasMany: false,
       },
     ]),

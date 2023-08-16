@@ -23,7 +23,7 @@ describe("fn: buildCrowdinJsonObject", () => {
     ];
     const expected = {};
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 
@@ -51,7 +51,7 @@ describe("fn: buildCrowdinJsonObject", () => {
       title: "Test Policy created with title",
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 
@@ -88,7 +88,7 @@ describe("fn: buildCrowdinJsonObject", () => {
       description: "A textarea value.\nWith a new line.",
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 
@@ -172,7 +172,7 @@ describe("fn: buildCrowdinJsonObject", () => {
       },
     };
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 });

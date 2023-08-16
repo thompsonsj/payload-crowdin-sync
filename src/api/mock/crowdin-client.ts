@@ -42,7 +42,7 @@ class crowdinAPIWrapper {
       directoryId = 1179,
       name,
       title = "undefined",
-    }: SourceFilesModel.CreateDirectoryRequest,
+    }: SourceFilesModel.CreateDirectoryRequest
   ): Promise<ResponseObject<SourceFilesModel.Directory>> {
     return await Promise.resolve(1).then(() => {
       const date = new Date().toISOString();
@@ -66,7 +66,7 @@ class crowdinAPIWrapper {
   async addStorage(
     fileName: string,
     request: any,
-    contentType?: string,
+    contentType?: string
   ): Promise<ResponseObject<UploadStorageModel.Storage>> {
     const storage = await Promise.resolve(1).then(() => {
       return {
@@ -90,7 +90,7 @@ class crowdinAPIWrapper {
       name,
       storageId,
       type = "html",
-    }: SourceFilesModel.CreateFileRequest,
+    }: SourceFilesModel.CreateFileRequest
   ): Promise<ResponseObject<SourceFilesModel.File>> {
     /*const storageId = await this.addStorage({
       name,
@@ -127,7 +127,7 @@ class crowdinAPIWrapper {
   async updateOrRestoreFile(
     projectId: number,
     fileId: number,
-    { storageId }: SourceFilesModel.ReplaceFileFromStorageRequest,
+    { storageId }: SourceFilesModel.ReplaceFileFromStorageRequest
   ): Promise<ResponseObject<SourceFilesModel.File>> {
     /*const storageId = await this.addStorage({
       name,
@@ -164,7 +164,7 @@ class crowdinAPIWrapper {
   async buildProjectFileTranslation(
     projectId: number,
     fileId: number,
-    { targetLanguageId }: TranslationsModel.BuildProjectFileTranslationRequest,
+    { targetLanguageId }: TranslationsModel.BuildProjectFileTranslationRequest
   ): Promise<
     ResponseObject<TranslationsModel.BuildProjectFileTranslationResponse>
   > {

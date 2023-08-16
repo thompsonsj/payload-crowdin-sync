@@ -94,7 +94,7 @@ describe("Collections", () => {
         id: updatedPost.id,
       });
       expect(updatedPostRefreshed.crowdinArticleDirectory?.id).toEqual(
-        crowdinArticleDirectoryId,
+        crowdinArticleDirectoryId
       );
     });
 
@@ -118,7 +118,7 @@ describe("Collections", () => {
         id: postTwo.id,
       });
       expect(postOneRefreshed.crowdinArticleDirectory.id).not.toEqual(
-        postTwoRefreshed.crowdinArticleDirectory.id,
+        postTwoRefreshed.crowdinArticleDirectory.id
       );
     });
   });
@@ -188,7 +188,7 @@ describe("Collections", () => {
       const crowdinArticleDirectoryId = result.crowdinArticleDirectory?.id;
       expect(crowdinArticleDirectoryId).toBeDefined();
       expect(
-        result.crowdinArticleDirectory.crowdinCollectionDirectory.name,
+        result.crowdinArticleDirectory.crowdinCollectionDirectory.name
       ).toEqual(collections.localized);
     });
 
@@ -212,9 +212,9 @@ describe("Collections", () => {
         id: postTwo.id,
       });
       expect(
-        postOneRefreshed.crowdinArticleDirectory.crowdinCollectionDirectory,
+        postOneRefreshed.crowdinArticleDirectory.crowdinCollectionDirectory
       ).toEqual(
-        postTwoRefreshed.crowdinArticleDirectory.crowdinCollectionDirectory,
+        postTwoRefreshed.crowdinArticleDirectory.crowdinCollectionDirectory
       );
     });
   });

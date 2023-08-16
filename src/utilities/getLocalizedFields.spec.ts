@@ -524,7 +524,7 @@ describe("fn: getLocalizedFields", () => {
       },
     ];
     expect(getLocalizedFields({ fields: global.fields, type: "html" })).toEqual(
-      expected,
+      expected
     );
   });
 

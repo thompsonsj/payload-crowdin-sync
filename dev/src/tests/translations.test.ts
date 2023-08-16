@@ -57,17 +57,17 @@ describe("Translations", () => {
       });
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload,
+        payload
       );
       const scope = nock("https://api.crowdin.com")
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de",
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
         .reply(200, {
           title: "Testbeitrag",
         })
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr",
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
         )
         .reply(200, {
           title: "Poste d'essai",
@@ -91,17 +91,17 @@ describe("Translations", () => {
       });
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload,
+        payload
       );
       const scope = nock("https://api.crowdin.com")
         .get(
-          `/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de`,
+          `/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de`
         )
         .reply(200, {
           title: "Testbeitrag",
         })
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr",
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
         )
         .reply(200, {
           title: "Poste d'essai",
@@ -137,15 +137,15 @@ describe("Translations", () => {
       });
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload,
+        payload
       );
       const scope = nock("https://api.crowdin.com")
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de",
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
         .reply(200, "<p>Testbeitrag</p>")
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr",
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
         )
         .reply(200, {
           title: "Poste d'essai",
@@ -217,15 +217,15 @@ describe("Translations", () => {
       };
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload,
+        payload
       );
       const scope = nock("https://api.crowdin.com")
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de",
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
         .reply(200, responseDe)
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr",
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
         )
         .reply(200, responseFr);
       const translation = await translationsApi.updateTranslation({
@@ -327,15 +327,15 @@ describe("Translations", () => {
       };
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload,
+        payload
       );
       const scope = nock("https://api.crowdin.com")
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de",
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
         .reply(200, responseDe)
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr",
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
         )
         .reply(200, responseFr);
       const translation = await translationsApi.updateTranslation({
@@ -389,11 +389,11 @@ describe("Translations", () => {
       ]);
       const nextScope = nock("https://api.crowdin.com")
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de",
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
         .reply(200, responseDe)
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr",
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
         )
         .reply(200, responseFr);
       const nextTranslation = await translationsApi.updateTranslation({
@@ -423,23 +423,23 @@ describe("Translations", () => {
         "<p>Contenu de texte enrichi dans la disposition des blocs à l'index 1.</p>";
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload,
+        payload
       );
       const scope = nock("https://api.crowdin.com")
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de",
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
         .reply(200, responseDeTwo)
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de",
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
         .reply(200, responseDeOne)
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr",
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
         )
         .reply(200, responseFrTwo)
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr",
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
         )
         .reply(200, responseFrOne);
       const translation = await translationsApi.updateTranslation({

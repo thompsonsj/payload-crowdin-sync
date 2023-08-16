@@ -128,7 +128,7 @@ export class payloadCrowdinSyncTranslationsApi {
         });
       report[locale].changed = !deepEqual(
         report[locale].currentTranslations,
-        report[locale].latestTranslations,
+        report[locale].latestTranslations
       );
       if (report[locale].changed && !dryRun) {
         if (global) {
@@ -144,7 +144,7 @@ export class payloadCrowdinSyncTranslationsApi {
               },
             });
           } catch (error) {
-            console.log(error)
+            console.log(error);
           }
         } else {
           try {
@@ -155,7 +155,7 @@ export class payloadCrowdinSyncTranslationsApi {
               data: report[locale].latestTranslations,
             });
           } catch (error) {
-            console.log(error)
+            console.log(error);
           }
         }
       }
@@ -168,7 +168,7 @@ export class payloadCrowdinSyncTranslationsApi {
 
   getCollectionConfig(
     collection: string,
-    global: boolean,
+    global: boolean
   ): CollectionConfig | GlobalConfig {
     let collectionConfig:
       | SanitizedGlobalConfig
@@ -176,11 +176,11 @@ export class payloadCrowdinSyncTranslationsApi {
       | undefined;
     if (global) {
       collectionConfig = this.payload.config.globals.find(
-        (col: GlobalConfig) => col.slug === collection,
+        (col: GlobalConfig) => col.slug === collection
       );
     } else {
       collectionConfig = this.payload.config.collections.find(
-        (col: CollectionConfig) => col.slug === collection,
+        (col: CollectionConfig) => col.slug === collection
       );
     }
     if (!collectionConfig)
@@ -233,7 +233,7 @@ export class payloadCrowdinSyncTranslationsApi {
       });
       return docTranslations;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw new Error(`${error}`);
     }
   }
@@ -267,7 +267,7 @@ export class payloadCrowdinSyncTranslationsApi {
       })) || {};
     // add html fields
     const localizedHtmlFields = await this.getHtmlFieldSlugs(
-      global ? collectionConfig.slug : doc.id,
+      global ? collectionConfig.slug : doc.id
     );
     let crowdinHtmlObject: { [key: string]: any } = {};
     for (const field of localizedHtmlFields) {
@@ -287,7 +287,7 @@ export class payloadCrowdinSyncTranslationsApi {
 
     // Add required fields if not present
     const requiredFieldSlugs = getFieldSlugs(
-      getLocalizedRequiredFields(collectionConfig),
+      getLocalizedRequiredFields(collectionConfig)
     );
     if (requiredFieldSlugs.length > 0) {
       const currentTranslations = await this.getCurrentDocumentTranslation({
@@ -320,7 +320,7 @@ export class payloadCrowdinSyncTranslationsApi {
    */
   async getTranslation({ documentId, fieldName, locale }: IgetTranslation) {
     const articleDirectory = await this.filesApi.getArticleDirectory(
-      documentId,
+      documentId
     );
     const file = await this.filesApi.getFile(fieldName, articleDirectory.id);
     // it is possible a file doesn't exist yet - e.g. an article with localized text fields that contains an empty html field.
@@ -333,14 +333,14 @@ export class payloadCrowdinSyncTranslationsApi {
         file.originalId,
         {
           targetLanguageId: this.localeMap[locale].crowdinId,
-        },
+        }
       );
       const data = await this.getFileDataFromUrl(response.data.url);
       return file.type === "html"
         ? htmlToSlate(data, payloadHtmlToSlateConfig)
         : JSON.parse(data);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -365,7 +365,7 @@ export class payloadCrowdinSyncTranslationsApi {
   restoreIdAndBlockType = (
     document: any,
     translations: any,
-    key: string = "layout",
+    key: string = "layout"
   ) => {
     if (translations.hasOwnProperty(key)) {
       translations[key] = translations[key].map(
@@ -373,7 +373,7 @@ export class payloadCrowdinSyncTranslationsApi {
           ...block,
           id: document[key][index].id,
           blockType: document[key][index].blockType,
-        }),
+        })
       );
     }
     return translations;

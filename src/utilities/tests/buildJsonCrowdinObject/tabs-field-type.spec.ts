@@ -79,7 +79,7 @@ describe("fn: buildCrowdinJsonObject: group field type", () => {
     const localizedFields = getLocalizedFields({ fields });
     const expected = {};
     expect(buildCrowdinJsonObject({ doc, fields: localizedFields })).toEqual(
-      expected,
+      expected
     );
   });
 });

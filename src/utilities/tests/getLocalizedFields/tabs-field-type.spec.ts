@@ -2,8 +2,8 @@ import { Field } from "payload/types";
 import { getLocalizedFields } from "./../../";
 import { basicLocalizedFields } from "../fixtures/basic-localized-fields.fixture";
 
-describe('presentation only tab fields', () => {
-  it('returns an empty array if no localized fields in tabs', () => {
+describe("presentation only tab fields", () => {
+  it("returns an empty array if no localized fields in tabs", () => {
     // fixture from https://payloadcms.com/docs/fields/tabs
     const fields: Field[] = [
       {
@@ -37,12 +37,12 @@ describe('presentation only tab fields', () => {
           },
         ],
       },
-    ]
+    ];
 
-    expect(getLocalizedFields({ fields })).toEqual([])
-  })
+    expect(getLocalizedFields({ fields })).toEqual([]);
+  });
 
-  it('returns localized fields in tabs', () => {
+  it("returns localized fields in tabs", () => {
     // fixture from https://payloadcms.com/docs/fields/tabs
     const fields: Field[] = [
       {
@@ -78,19 +78,19 @@ describe('presentation only tab fields', () => {
           },
         ],
       },
-    ]
+    ];
 
     expect(getLocalizedFields({ fields })).toEqual([
       {
-        "localized": true,
-        "name": "someTextField",
-        "required": true,
-        "type": "text",
-       }
-    ])
-  })
+        localized: true,
+        name: "someTextField",
+        required: true,
+        type: "text",
+      },
+    ]);
+  });
 
-  it('returns localized fields in tab respecting tab names', () => {
+  it("returns localized fields in tab respecting tab names", () => {
     // fixture from https://payloadcms.com/docs/fields/tabs
     const fields: Field[] = [
       {
@@ -110,7 +110,7 @@ describe('presentation only tab fields', () => {
           },
         ],
       },
-    ]
+    ];
 
     expect(getLocalizedFields({ fields })).toEqual([
       {
@@ -139,10 +139,10 @@ describe('presentation only tab fields', () => {
         type: "textarea",
         localized: true,
       },
-    ])
-  })
+    ]);
+  });
 
-  it('returns localized fields in tab respecting tab names with other fields', () => {
+  it("returns localized fields in tab respecting tab names with other fields", () => {
     // fixture from https://payloadcms.com/docs/fields/tabs
     const fields: Field[] = [
       {
@@ -172,7 +172,7 @@ describe('presentation only tab fields', () => {
           },
         ],
       },
-    ]
+    ];
 
     expect(getLocalizedFields({ fields })).toEqual([
       {
@@ -211,6 +211,6 @@ describe('presentation only tab fields', () => {
         type: "textarea",
         localized: true,
       },
-    ])
-  })
-})
+    ]);
+  });
+});

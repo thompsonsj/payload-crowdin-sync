@@ -122,7 +122,7 @@ describe("fn: buildCrowdinJsonObject: group nested in array", () => {
       buildCrowdinJsonObject({
         doc,
         fields: getLocalizedFields({ fields: Promos.fields, type: "json" }),
-      }),
+      })
     ).toEqual(expected);
   });
 
@@ -134,7 +134,7 @@ describe("fn: buildCrowdinJsonObject: group nested in array", () => {
           fields: getLocalizedFields({ fields: Promos.fields }),
           type: "json",
         }),
-      }),
+      })
     ).toEqual(expected);
   });
 
@@ -149,7 +149,7 @@ describe("fn: buildCrowdinJsonObject: group nested in array", () => {
       buildCrowdinJsonObject({
         doc: {},
         fields: getLocalizedFields({ fields: Promos.fields }),
-      }),
+      })
     ).toEqual({});
   });
 
@@ -161,7 +161,7 @@ describe("fn: buildCrowdinJsonObject: group nested in array", () => {
           ctas: undefined,
         },
         fields: getLocalizedFields({ fields: Promos.fields }),
-      }),
+      })
     ).toEqual({
       text: "Get in touch with us or try it out yourself",
       title: "Experience the magic of our product!",
@@ -176,7 +176,7 @@ describe("fn: buildCrowdinJsonObject: group nested in array", () => {
           ctas: [{}, {}],
         },
         fields: getLocalizedFields({ fields: Promos.fields }),
-      }),
+      })
     ).toEqual({
       text: "Get in touch with us or try it out yourself",
       title: "Experience the magic of our product!",

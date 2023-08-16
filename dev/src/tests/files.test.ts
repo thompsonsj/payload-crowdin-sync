@@ -92,10 +92,10 @@ describe(`Crowdin file create, update and delete`, () => {
       const crowdinFiles = await getFilesByDocumentID(article.id, payload);
       expect(crowdinFiles.length).toEqual(2);
       expect(
-        crowdinFiles.find((file) => file.name === "richTextField.html"),
+        crowdinFiles.find((file) => file.name === "richTextField.html")
       ).toBeDefined();
       expect(
-        crowdinFiles.find((file) => file.name === "fields.json"),
+        crowdinFiles.find((file) => file.name === "fields.json")
       ).toBeDefined();
     });
 
@@ -138,16 +138,16 @@ describe(`Crowdin file create, update and delete`, () => {
       expect(crowdinFiles.length).toEqual(3);
       expect(
         crowdinFiles.find(
-          (file) => file.name === `arrayField.${ids[0]}.richTextField.html`,
-        ),
+          (file) => file.name === `arrayField.${ids[0]}.richTextField.html`
+        )
       ).toBeDefined();
       expect(
         crowdinFiles.find(
-          (file) => file.name === `arrayField.${ids[1]}.richTextField.html`,
-        ),
+          (file) => file.name === `arrayField.${ids[1]}.richTextField.html`
+        )
       ).toBeDefined();
       expect(
-        crowdinFiles.find((file) => file.name === "fields.json"),
+        crowdinFiles.find((file) => file.name === "fields.json")
       ).toBeDefined();
     });
 
@@ -212,22 +212,22 @@ describe(`Crowdin file create, update and delete`, () => {
         crowdinFiles.find(
           (file) =>
             file.name ===
-            `layout.${blockIds[0]}.${blockTypes[0]}.richTextField.html`,
-        ),
+            `layout.${blockIds[0]}.${blockTypes[0]}.richTextField.html`
+        )
       ).toBeDefined();
       expect(
         crowdinFiles.find(
           (file) =>
             file.name ===
-            `layout.${blockIds[1]}.${blockTypes[1]}.messages.${arrayIds[0]}.message.html`,
-        ),
+            `layout.${blockIds[1]}.${blockTypes[1]}.messages.${arrayIds[0]}.message.html`
+        )
       ).toBeDefined();
       expect(
         crowdinFiles.find(
           (file) =>
             file.name ===
-            `layout.${blockIds[1]}.${blockTypes[1]}.messages.${arrayIds[1]}.message.html`,
-        ),
+            `layout.${blockIds[1]}.${blockTypes[1]}.messages.${arrayIds[1]}.message.html`
+        )
       ).toBeDefined();
       expect(jsonFile).toBeDefined();
       expect(jsonFile.fileData.json).toEqual({
