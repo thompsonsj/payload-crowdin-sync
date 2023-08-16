@@ -10,7 +10,8 @@ import { IcrowdinFile } from "./payload-crowdin-sync/files";
  */
 export async function getArticleDirectory(
   documentId: string,
-  payload: Payload
+  payload: Payload,
+  allowEmpty?: boolean
 ) {
   // Get directory
   const crowdinPayloadArticleDirectory = await payload.find({
@@ -21,14 +22,16 @@ export async function getArticleDirectory(
       },
     },
   });
-  if (crowdinPayloadArticleDirectory.totalDocs === 0) {
+  if (crowdinPayloadArticleDirectory.totalDocs === 0 && allowEmpty) {
     // a thrown error won't be reported in an api call, so console.log it as well.
     console.log(`No article directory found for document ${documentId}`);
     throw new Error(
       "This article does not have a corresponding entry in the  crowdin-article-directories collection."
     );
   }
-  return crowdinPayloadArticleDirectory.docs[0];
+  return crowdinPayloadArticleDirectory
+    ? crowdinPayloadArticleDirectory.docs[0]
+    : undefined;
 }
 
 export async function getFile(
@@ -77,6 +80,10 @@ export async function getFilesByDocumentID(
   payload: Payload
 ): Promise<IcrowdinFile[]> {
   const articleDirectory = await getArticleDirectory(documentId, payload);
+  if (!articleDirectory) {
+    // tests call this function to make sure files are deleted
+    return [];
+  }
   const files = await getFiles(articleDirectory.id, payload);
   return files;
 }

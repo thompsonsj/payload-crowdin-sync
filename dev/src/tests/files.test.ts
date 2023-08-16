@@ -4,6 +4,7 @@ import { initPayloadTest } from "./helpers/config";
 import {
   getFileByDocumentID,
   getFilesByDocumentID,
+  getArticleDirectory,
 } from "../../../dist/api/helpers";
 
 /**
@@ -255,6 +256,24 @@ describe(`Crowdin file create, update and delete`, () => {
       });
       const crowdinFiles = await getFilesByDocumentID(post.id, payload);
       expect(crowdinFiles.length).toEqual(0);
+    });
+
+    it("deletes the collection Crowdin article directory when an existing article is deleted", async () => {
+      const post = await payload.create({
+        collection: collections.localized,
+        data: { title: "Test post" },
+      });
+      const file = await getFileByDocumentID("fields", post.id, payload);
+      expect(file.fileData.json).toEqual({ title: "Test post" });
+      const deletedPost = await payload.delete({
+        collection: collections.localized,
+        id: post.id,
+      });
+      const crowdinPayloadArticleDirectory = await getArticleDirectory(
+        post.id,
+        payload
+      );
+      expect(crowdinPayloadArticleDirectory).toBeUndefined();
     });
   });
 });

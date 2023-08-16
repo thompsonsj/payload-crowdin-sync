@@ -19,6 +19,10 @@ import { isEmpty } from "lodash";
 export interface IcrowdinFile {
   id: string;
   originalId: number;
+  fileData: {
+    json?: Object;
+    html?: string;
+  };
 }
 
 interface IfindOrCreateCollectionDirectory {
@@ -414,6 +418,30 @@ export class payloadCrowdinSyncFilesApi {
   async getArticleDirectory(documentId: string) {
     const result = await getArticleDirectory(documentId, this.payload);
     return result;
+  }
+
+  async deleteFilesAndDirectory(documentId: string) {
+    const files = await this.getFilesByDocumentID(documentId);
+
+    for (const file of files) {
+      await this.deleteFile(file);
+    }
+
+    await this.deleteArticleDirectory(documentId);
+  }
+
+  async deleteArticleDirectory(documentId: string) {
+    const crowdinPayloadArticleDirectory = await this.getArticleDirectory(
+      documentId
+    );
+    await this.sourceFilesApi.deleteDirectory(
+      this.projectId,
+      crowdinPayloadArticleDirectory.originalId
+    );
+    await this.payload.delete({
+      collection: "crowdin-article-directories",
+      id: crowdinPayloadArticleDirectory.id,
+    });
   }
 
   async getFileByDocumentID(name: string, documentId: string) {
