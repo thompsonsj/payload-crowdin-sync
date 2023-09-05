@@ -913,7 +913,7 @@ describe("fn: getLocalizedFields", () => {
       },
     ];
 
-    it("excludes payloadcms/plugin-seo localized fields if there are no localized fields on the collection/global", () => {
+    it("includes payloadcms/plugin-seo localized fields if there are no localized fields on the collection/global", () => {
       const nonLocalizedFieldCollection: Field[] = [
         {
           name: "textLocalizedField",
@@ -929,7 +929,452 @@ describe("fn: getLocalizedFields", () => {
         },
       ];
       const fields: Field[] = [...nonLocalizedFieldCollection, ...seoFields];
-      expect(getLocalizedFields({ fields })).toEqual([]);
+      expect(getLocalizedFields({ fields })).toEqual([{
+        "fields": [
+          {
+            "admin": {
+              "components": {},
+            },
+            "localized": true,
+            "name": "title",
+            "type": "text",
+          },
+          {
+            "admin": {
+              "components": {},
+            },
+            "localized": true,
+            "name": "description",
+            "type": "textarea",
+          },
+        ],
+        "label": "SEO",
+        "name": "meta",
+        "type": "group",
+      },]);
+    });
+
+    it("includes payloadcms/plugin-seo localized fields if there are localized fields on the collection/global", () => {
+      const localizedFieldCollection: Field[] = [
+        {
+          name: "textLocalizedField",
+          type: "text",
+          localized: true,
+        },
+        {
+          name: "richTextLocalizedField",
+          type: "richText",
+          localized: true,
+        },
+        {
+          name: "textareaLocalizedField",
+          type: "text",
+          localized: true,
+        },
+      ];
+      const fields: Field[] = [...localizedFieldCollection, ...seoFields];
+      expect(getLocalizedFields({ fields })).toMatchInlineSnapshot(`
+        [
+          {
+            "localized": true,
+            "name": "textLocalizedField",
+            "type": "text",
+          },
+          {
+            "localized": true,
+            "name": "richTextLocalizedField",
+            "type": "richText",
+          },
+          {
+            "localized": true,
+            "name": "textareaLocalizedField",
+            "type": "text",
+          },
+          {
+            "fields": [
+              {
+                "admin": {
+                  "components": {},
+                },
+                "localized": true,
+                "name": "title",
+                "type": "text",
+              },
+              {
+                "admin": {
+                  "components": {},
+                },
+                "localized": true,
+                "name": "description",
+                "type": "textarea",
+              },
+            ],
+            "label": "SEO",
+            "name": "meta",
+            "type": "group",
+          },
+        ]
+      `);
+    });
+
+    it("includes payloadcms/plugin-seo localized fields if there are localized fields within tabs on the collection/global", () => {
+      const localizedFieldCollection: Field[] = [
+        {
+          type: "tabs",
+          tabs: [
+            {
+              label: "Content",
+              fields: [
+                {
+                  name: "unusedField",
+                  type: "text",
+                  localized: true,
+                  admin: {
+                    description:
+                      "This field is not used, it has been added to activate CrowdIn localization for SEO fields. It will be removed in a future release.",
+                  },
+                  label: "Unused Field",
+                  hooks: {},
+                  access: {},
+                },
+                {
+                  type: "collapsible",
+                  label: "Hero",
+                  admin: {
+                    initCollapsed: true,
+                  },
+                  fields: [
+                    {
+                      name: "hero",
+                      type: "group",
+                      localized: true,
+                      fields: [
+                        {
+                          name: "title",
+                          type: "richText",
+                          admin: {
+                            elements: [],
+                            leaves: ["bold"],
+                          },
+                          label: "Title",
+                          hooks: {},
+                          access: {},
+                        },
+                        {
+                          name: "text",
+                          type: "richText",
+                          admin: {
+                            elements: [],
+                            leaves: ["bold"],
+                          },
+                          label: "Text",
+                          hooks: {},
+                          access: {},
+                        },
+                      ],
+                      label: "Hero",
+                      hooks: {},
+                      access: {},
+                      admin: {},
+                    },
+                  ],
+                },
+                {
+                  type: "collapsible",
+                  label: "Promo",
+                  admin: {
+                    initCollapsed: true,
+                  },
+                  fields: [
+                    {
+                      name: "promo",
+                      type: "relationship",
+                      relationTo: "promos",
+                      hasMany: false,
+                      label: "Promo",
+                      hooks: {},
+                      access: {},
+                      admin: {},
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              label: "SEO",
+              fields: [
+                {
+                  name: "meta",
+                  label: "SEO",
+                  type: "group",
+                  fields: [
+                    {
+                      name: "title",
+                      type: "text",
+                      localized: true,
+                      admin: {
+                        components: {},
+                      },
+                      label: "Title",
+                      hooks: {},
+                      access: {},
+                    },
+                    {
+                      name: "description",
+                      type: "textarea",
+                      localized: true,
+                      admin: {
+                        components: {},
+                      },
+                      label: "Description",
+                      hooks: {},
+                      access: {},
+                    },
+                    {
+                      name: "image",
+                      label: "Meta Image",
+                      type: "upload",
+                      localized: true,
+                      relationTo: "share-images",
+                      admin: {
+                        description:
+                          "Maximum upload file size: 12MB. Recommended file size for images is <500KB.",
+                        components: {},
+                      },
+                      hooks: {},
+                      access: {},
+                    },
+                  ],
+                  hooks: {},
+                  access: {},
+                  admin: {},
+                },
+              ],
+            },
+          ],
+          admin: {},
+        },
+        {
+          name: "crowdinArticleDirectory",
+          type: "relationship",
+          relationTo: "crowdin-article-directories",
+          hasMany: false,
+          label: "Crowdin Article Directory",
+          hooks: {},
+          access: {},
+          admin: {},
+        },
+        {
+          name: "_status",
+          label: {
+            ar: "الحالة",
+            az: "Status",
+            bg: "Статус",
+            cs: "Stav",
+            de: "Status",
+            en: "Status",
+            es: "Estado",
+            fa: "وضعیت",
+            fr: "Statut",
+            hr: "Status",
+            hu: "Állapot",
+            it: "Stato",
+            ja: "ステータス",
+            my: "အခြေအနေ",
+            nb: "Status",
+            nl: "Status",
+            pl: "Status",
+            pt: "Status",
+            ro: "Status",
+            ru: "Статус",
+            sv: "Status",
+            th: "สถานะ",
+            tr: "Durum",
+            ua: "Статус",
+            vi: "Trạng thái",
+            zh: "状态",
+          },
+          type: "select",
+          options: [
+            {
+              label: {
+                ar: "مسودة",
+                az: "Qaralama",
+                bg: "Чернова",
+                cs: "Koncept",
+                de: "Entwurf",
+                en: "Draft",
+                es: "Borrador",
+                fa: "پیش‌نویس",
+                fr: "Brouillon",
+                hr: "Nacrt",
+                hu: "Piszkozat",
+                it: "Bozza",
+                ja: "ドラフト",
+                my: "မူကြမ်း",
+                nb: "Utkast",
+                nl: "Concept",
+                pl: "Szkic",
+                pt: "Rascunho",
+                ro: "Proiect",
+                ru: "Черновик",
+                sv: "Utkast",
+                th: "ฉบับร่าง",
+                tr: "Taslak",
+                ua: "Чернетка",
+                vi: "Bản nháp",
+                zh: "草稿",
+              },
+              value: "draft",
+            },
+            {
+              label: {
+                ar: "تم النشر",
+                az: "Dərc edilmiş",
+                bg: "Публикувано",
+                cs: "Publikováno",
+                de: "Veröffentlicht",
+                en: "Published",
+                es: "Publicado",
+                fa: "انتشار یافته",
+                fr: "Publié",
+                hr: "Objavljeno",
+                hu: "Közzétett",
+                it: "Pubblicato",
+                ja: "公開済み",
+                my: "တင်ပြီးပြီ။",
+                nb: "Publisert",
+                nl: "Gepubliceerd",
+                pl: "Opublikowano",
+                pt: "Publicado",
+                ro: "Publicat",
+                ru: "Опубликовано",
+                sv: "Publicerad",
+                th: "เผยแพร่แล้ว",
+                tr: "Yayınlandı",
+                ua: "Опубліковано",
+                vi: "Đã xuất bản",
+                zh: "已发布",
+              },
+              value: "published",
+            },
+          ],
+          defaultValue: "draft",
+          admin: {
+            disableBulkEdit: true,
+            components: {},
+          },
+          hooks: {},
+          access: {},
+        },
+        {
+          name: "updatedAt",
+          label: "Updated At",
+          type: "date",
+          admin: {
+            hidden: true,
+            disableBulkEdit: true,
+          },
+          hooks: {},
+          access: {},
+        },
+        {
+          name: "createdAt",
+          label: "Created At",
+          type: "date",
+          admin: {
+            hidden: true,
+            disableBulkEdit: true,
+          },
+          hooks: {},
+          access: {},
+        },
+      ];
+      const fields: Field[] = localizedFieldCollection;
+      expect(getLocalizedFields({ fields })).toMatchInlineSnapshot(`
+        [
+          {
+            "access": {},
+            "admin": {
+              "description": "This field is not used, it has been added to activate CrowdIn localization for SEO fields. It will be removed in a future release.",
+            },
+            "hooks": {},
+            "label": "Unused Field",
+            "localized": true,
+            "name": "unusedField",
+            "type": "text",
+          },
+          {
+            "access": {},
+            "admin": {},
+            "fields": [
+              {
+                "access": {},
+                "admin": {
+                  "elements": [],
+                  "leaves": [
+                    "bold",
+                  ],
+                },
+                "hooks": {},
+                "label": "Title",
+                "name": "title",
+                "type": "richText",
+              },
+              {
+                "access": {},
+                "admin": {
+                  "elements": [],
+                  "leaves": [
+                    "bold",
+                  ],
+                },
+                "hooks": {},
+                "label": "Text",
+                "name": "text",
+                "type": "richText",
+              },
+            ],
+            "hooks": {},
+            "label": "Hero",
+            "localized": true,
+            "name": "hero",
+            "type": "group",
+          },
+          {
+            "access": {},
+            "admin": {},
+            "fields": [
+              {
+                "access": {},
+                "admin": {
+                  "components": {},
+                },
+                "hooks": {},
+                "label": "Title",
+                "localized": true,
+                "name": "title",
+                "type": "text",
+              },
+              {
+                "access": {},
+                "admin": {
+                  "components": {},
+                },
+                "hooks": {},
+                "label": "Description",
+                "localized": true,
+                "name": "description",
+                "type": "textarea",
+              },
+            ],
+            "hooks": {},
+            "label": "SEO",
+            "name": "meta",
+            "type": "group",
+          },
+        ]
+      `);
     });
   });
 });

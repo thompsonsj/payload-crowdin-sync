@@ -11,6 +11,7 @@ import CrowdinCollectionDirectories from "./collections/CrowdinCollectionDirecto
 import CrowdinArticleDirectories from "./collections/CrowdinArticleDirectories";
 import { containsLocalizedFields } from "./utilities";
 import { getReviewTranslationEndpoint } from "./endpoints/globals/reviewTranslation";
+import { getReviewFieldsEndpoint } from "./endpoints/globals/reviewFields";
 import Joi from "joi";
 
 /**
@@ -52,7 +53,6 @@ export const crowdinSync =
         "Payload Crowdin Sync option validation errors:",
         validate.error
       );
-      return config
     }
 
     return {
@@ -117,6 +117,9 @@ export const crowdinSync =
               pluginOptions,
               type: "update",
             }),
+            getReviewFieldsEndpoint({
+              pluginOptions
+            })
           ],
         },
       ],
