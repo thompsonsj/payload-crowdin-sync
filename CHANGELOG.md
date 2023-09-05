@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.16.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.15.0...v0.16.0) (2023-09-05)
+
+
+### Features
+
+* **plugin:** return original config if no token ([#100](https://github.com/thompsonsj/payload-crowdin-sync/issues/100)) ([2d5f516](https://github.com/thompsonsj/payload-crowdin-sync/commit/2d5f5164e64b331e0f5ce6c10e3ee0760938fb3a))
+
 ## [0.15.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.14.0...v0.15.0) (2023-08-16)
 
 
