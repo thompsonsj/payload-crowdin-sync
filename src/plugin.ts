@@ -33,7 +33,7 @@ export const crowdinSync =
       directoryId: Joi.number(),
 
       // optional - if not provided, the plugin will not do anything in the afterChange hook.
-      token: Joi.string(),
+      token: Joi.string().required(),
 
       localeMap: Joi.object().pattern(
         /./,
@@ -52,6 +52,7 @@ export const crowdinSync =
         "Payload Crowdin Sync option validation errors:",
         validate.error
       );
+      return config
     }
 
     return {

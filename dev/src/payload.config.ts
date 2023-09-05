@@ -35,7 +35,7 @@ export default buildConfig({
     crowdinSync({
       projectId: 323731,
       directoryId: 1169,
-      token: process.env.CROWDIN_TOKEN,
+      token: `fake-token`, // CrowdIn API is mocked but we need a token to pass schema validation
       localeMap,
       sourceLocale: "en",
     }),
