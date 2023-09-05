@@ -26,6 +26,11 @@ export const crowdinSync =
   (config: Config): Config => {
     const initFunctions: (() => void)[] = [];
 
+    // do not load anything if token not provided
+    if (!pluginOptions.token) {
+      return config
+    }
+
     // schema validation
     const schema = Joi.object({
       projectId: Joi.number().required(),
