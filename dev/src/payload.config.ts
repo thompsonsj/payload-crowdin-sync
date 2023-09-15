@@ -2,6 +2,7 @@ import { buildConfig } from "payload/config";
 import path from "path";
 import Nav from "./globals/Nav";
 import Categories from "./collections/Categories";
+import MultiRichText from "./collections/MultiRichText";
 import LocalizedPosts from "./collections/LocalizedPosts";
 import Posts from "./collections/Posts";
 import NestedFieldCollection from "./collections/NestedFieldCollection";
@@ -42,6 +43,7 @@ export default buildConfig({
   ],
   collections: [
     Categories,
+    MultiRichText,
     LocalizedPosts,
     NestedFieldCollection,
     Posts,
