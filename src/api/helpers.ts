@@ -57,6 +57,7 @@ export async function getFiles(
 ): Promise<any> {
   const result = await payload.find({
     collection: "crowdin-files",
+    limit: 0,
     where: {
       crowdinArticleDirectory: {
         equals: crowdinArticleDirectoryId,
