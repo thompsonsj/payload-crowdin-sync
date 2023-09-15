@@ -547,11 +547,17 @@ describe("Translations", () => {
         collection: slug,
         data,
       });
+      // ensure all afterChange hooks have run? Getting test failures without this additional operation.
+      const result = await payload.findByID({
+        collection: slug,
+        id: post.id,
+      });
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
         payload
       );
-      const htmlFieldSlugs = await translationsApi.getHtmlFieldSlugs(post.id);
+      const htmlFieldSlugs = await translationsApi.getHtmlFieldSlugs(result.id);
+      expect(htmlFieldSlugs.length).toEqual(11)
       expect(htmlFieldSlugs.sort()).toEqual([
           "field_0",
           "field_1",
