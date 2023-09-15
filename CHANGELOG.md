@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.16.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.16.1...v0.16.2) (2023-09-15)
+
+
+### Bug Fixes
+
+* **gethtmlfieldslugs:** incomplete html field translations ([#105](https://github.com/thompsonsj/payload-crowdin-sync/issues/105)) ([cfbfcd8](https://github.com/thompsonsj/payload-crowdin-sync/commit/cfbfcd889429c4a4c8ee54599fb83a8e41e2d980))
+
 ## [0.16.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.16.0...v0.16.1) (2023-09-05)
 
 
