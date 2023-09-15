@@ -5,6 +5,7 @@ import { payloadCrowdinSyncTranslationsApi } from "../../../dist/api/payload-cro
 import nock from "nock";
 import { payloadCreateData } from "./fixtures/nested-field-collection/simple-blocks.fixture";
 import { payloadCreateBlocksRichTextData } from "./fixtures/nested-field-collection/rich-text-blocks.fixture";
+import { multiRichTextFields } from "../collections/fields/multiRichTextFields";
 
 /**
  * Test translations
@@ -521,4 +522,49 @@ describe("Translations", () => {
       ]);
     });
   });
+
+  describe('fn: getHtmlFieldSlugs', () => {
+    /**
+     * If Payload queries are not written correctly,
+     * we may end up with the default limit of 10.
+     */
+    it("retrieves all HTML field slugs", async () => {
+      const slug = "multi-rich-text"
+
+      const data = multiRichTextFields.filter(field => field.type === 'richText').reduce((accum, field) => {
+        accum[field.name] = [
+          {
+            children: [
+              {
+                text: `Rich text content for ${field.name}.`,
+              },
+            ],
+          },
+        ];
+        return accum;
+      }, {});
+      const post = await payload.create({
+        collection: slug,
+        data,
+      });
+      const translationsApi = new payloadCrowdinSyncTranslationsApi(
+        pluginOptions,
+        payload
+      );
+      const htmlFieldSlugs = await translationsApi.getHtmlFieldSlugs(post.id);
+      expect(htmlFieldSlugs.sort()).toEqual([
+          "field_0",
+          "field_1",
+          "field_10",
+          "field_2",
+          "field_3",
+          "field_4",
+          "field_5",
+          "field_6",
+          "field_7",
+          "field_8",
+          "field_9",
+        ]);
+    });
+  })
 });
