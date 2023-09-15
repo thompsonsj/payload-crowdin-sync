@@ -57,7 +57,7 @@ export async function getFiles(
 ): Promise<any> {
   const result = await payload.find({
     collection: "crowdin-files",
-    limit: 0,
+    limit: 10000, // Arbitrarily high limit. Is it worth pagination? Unlikely that a collection has a number of fields that justify this.
     where: {
       crowdinArticleDirectory: {
         equals: crowdinArticleDirectoryId,
