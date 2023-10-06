@@ -23,7 +23,7 @@ export async function initPayloadTest(
   process.env.NODE_ENV = "test";
   process.env.PAYLOAD_CONFIG_PATH = path.resolve(
     options.__dirname,
-    "./../payload.config.ts"
+    "./../payload.config.default.ts"
   );
 
   const port = process.env.PORT || 3000;
