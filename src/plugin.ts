@@ -162,7 +162,7 @@ export const crowdinSync =
         ...(config.globals || [])
         .map((existingGlobal) => {
           if (collectionOrGlobalConfigActive({
-            slugsConfig: pluginOptions.collections,
+            slugsConfig: pluginOptions.globals,
             collection: existingGlobal
           })) {
             const fields = getFields({

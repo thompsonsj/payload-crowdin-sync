@@ -2,6 +2,7 @@ import { buildConfig } from "payload/config";
 import path from "path";
 import LocalizedNav from "./globals/LocalizedNav";
 import Nav from "./globals/Nav";
+import Statistics from "./globals/Statistics";
 import Categories from "./collections/Categories";
 import MultiRichText from "./collections/MultiRichText";
 import LocalizedPosts from "./collections/LocalizedPosts";
@@ -65,7 +66,8 @@ export const buildConfigWithPluginOptions = async ({
     ],
     globals: [
       LocalizedNav,
-      Nav
+      Nav,
+      Statistics,
     ],
     localization: {
       locales: ["en", ...Object.keys(localeMap)],
