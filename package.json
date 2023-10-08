@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "develop": "tsc --watch",
-    "test": "jest",
+    "test": "jest --forceExit --detectOpenHandles",
     "prepare": "yarn build",
     "prettier": "npx prettier . --write"
   },
@@ -37,6 +37,7 @@
     "@types/express": "^4.17.18",
     "@types/jest": "^29.5.5",
     "@types/node": "^20.8.3",
+    "@types/uuid": "^9.0.5",
     "babel-jest": "^29.7.0",
     "commitizen": "^4.3.0",
     "get-port": "^7.0.0",

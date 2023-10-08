@@ -19,6 +19,10 @@ import { isEmpty } from "lodash";
 export interface IcrowdinFile {
   id: string;
   originalId: number;
+  name: string;
+  field: string;
+  type: string;
+  updatedAt: string;
   fileData: {
     json?: Object;
     html?: string;

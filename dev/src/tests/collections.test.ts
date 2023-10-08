@@ -3,7 +3,6 @@ import payload from "payload";
 import { initPayloadTest } from "./helpers/config";
 import {
   getFilesByDocumentID,
-  getFileByDocumentID,
 } from "../../../dist/api/helpers";
 
 /**
@@ -129,11 +128,11 @@ describe("Collections", () => {
         collection: collections.localized,
         data: { title: "Test post" },
       });
-      const crowdinFiles = await getFilesByDocumentID(post.id, payload);
+      const crowdinFiles = await getFilesByDocumentID(post.id, payload as any);
       expect(crowdinFiles.length).toEqual(1);
       const file = crowdinFiles.find((doc) => doc.field === "fields");
       expect(file).not.toEqual(undefined);
-      expect(file.type).toEqual("json");
+      expect(file?.type).toEqual("json");
     });
 
     it('does not create a "fields" Crowdin file if all fields are empty strings', async () => {
@@ -141,7 +140,7 @@ describe("Collections", () => {
         collection: collections.localized,
         data: { title: "" },
       });
-      const crowdinFiles = await getFilesByDocumentID(post.id, payload);
+      const crowdinFiles = await getFilesByDocumentID(post.id, payload as any);
       expect(crowdinFiles.length).toEqual(0);
     });
 
@@ -163,14 +162,14 @@ describe("Collections", () => {
           ],
         },
       });
-      const crowdinFiles = await getFilesByDocumentID(post.id, payload);
+      const crowdinFiles = await getFilesByDocumentID(post.id, payload as any);
       expect(crowdinFiles.length).toEqual(2);
       const fields = crowdinFiles.find((doc) => doc.field === "fields");
       const content = crowdinFiles.find((doc) => doc.field === "content");
       expect(fields).not.toEqual(undefined);
-      expect(fields.type).toEqual("json");
+      expect(fields?.type).toEqual("json");
       expect(content).not.toEqual(undefined);
-      expect(content.type).toEqual("html");
+      expect(content?.type).toEqual("html");
     });
   });
 

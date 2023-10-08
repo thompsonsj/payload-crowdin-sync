@@ -23,7 +23,7 @@ const collections = {
 const pluginOptions = {
   projectId: 323731,
   directoryId: 1169,
-  token: process.env.CROWDIN_TOKEN,
+  token: process.env.CROWDIN_TOKEN as string,
   localeMap: {
     de_DE: {
       crowdinId: "de",
@@ -58,7 +58,7 @@ describe("Translations", () => {
       });
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload
+        payload as any
       );
       const scope = nock("https://api.crowdin.com")
         .get(
@@ -92,7 +92,7 @@ describe("Translations", () => {
       });
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload
+        payload as any
       );
       const scope = nock("https://api.crowdin.com")
         .get(
@@ -138,7 +138,7 @@ describe("Translations", () => {
       });
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload
+        payload as any
       );
       const scope = nock("https://api.crowdin.com")
         .get(
@@ -176,8 +176,8 @@ describe("Translations", () => {
         data: payloadCreateData,
       });
       // we need the ids created by Payload to update the blocks
-      const blockIds = post.layout.map((block) => block.id);
-      const blockTypes = post.layout.map((block) => block.blockType);
+      const blockIds = post.layout.map((block: any) => block.id);
+      const blockTypes = post.layout.map((block: any) => block.blockType);
       const responseDe = {
         layout: {
           [blockIds[0]]: {
@@ -218,7 +218,7 @@ describe("Translations", () => {
       };
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload
+        payload as any
       );
       const scope = nock("https://api.crowdin.com")
         .get(
@@ -286,8 +286,8 @@ describe("Translations", () => {
         data: payloadCreateData,
       });
       // we need the ids created by Payload to update the blocks
-      const blockIds = post.layout.map((block) => block.id);
-      const blockTypes = post.layout.map((block) => block.blockType);
+      const blockIds = post.layout.map((block: any) => block.id);
+      const blockTypes = post.layout.map((block: any) => block.blockType);
       const responseDe = {
         layout: {
           [blockIds[0]]: {
@@ -328,7 +328,7 @@ describe("Translations", () => {
       };
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload
+        payload as any
       );
       const scope = nock("https://api.crowdin.com")
         .get(
@@ -412,8 +412,8 @@ describe("Translations", () => {
         data: payloadCreateBlocksRichTextData,
       });
       // we need the ids created by Payload to update the blocks
-      const blockIds = post.layout.map((block) => block.id);
-      const blockTypes = post.layout.map((block) => block.blockType);
+      const blockIds = post.layout.map((block: any) => block.id);
+      const blockTypes = post.layout.map((block: any) => block.blockType);
       const responseDeOne =
         "<p>Rich-Text-Inhalt im Blocklayout bei Index 0.</p>";
       const responseDeTwo =
@@ -424,7 +424,7 @@ describe("Translations", () => {
         "<p>Contenu de texte enrichi dans la disposition des blocs à l'index 1.</p>";
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload
+        payload as any
       );
       const scope = nock("https://api.crowdin.com")
         .get(
@@ -531,8 +531,8 @@ describe("Translations", () => {
     it("retrieves all HTML field slugs", async () => {
       const slug = "multi-rich-text"
 
-      const data = multiRichTextFields.filter(field => field.type === 'richText').reduce((accum, field) => {
-        accum[field.name] = [
+      const data = multiRichTextFields.filter(field => field.type === 'richText').reduce((accum: {[key: string]: any}, field) => {
+        accum[field?.name] = [
           {
             children: [
               {
@@ -554,7 +554,7 @@ describe("Translations", () => {
       });
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload
+        payload as any
       );
       const htmlFieldSlugs = await translationsApi.getHtmlFieldSlugs(result.id);
       expect(htmlFieldSlugs.length).toEqual(11)
