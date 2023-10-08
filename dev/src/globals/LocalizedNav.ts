@@ -1,7 +1,7 @@
 import { GlobalConfig } from "payload/types";
 
 const Nav: GlobalConfig = {
-  slug: "nav",
+  slug: "localized-nav",
   fields: [
     {
       name: "items",
@@ -12,6 +12,7 @@ const Nav: GlobalConfig = {
         {
           name: "label",
           type: "text",
+          localized: true,
         },
       ],
     },
