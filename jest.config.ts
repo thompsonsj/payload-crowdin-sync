@@ -3,6 +3,9 @@ import type { Config } from "jest";
 const config: Config = {
   verbose: true,
   modulePathIgnorePatterns: ["dist"],
+  moduleDirectories: [
+    "node_modules"
+  ],
   transformIgnorePatterns: [
     "node_modules/(?!get-port)"
   ],
