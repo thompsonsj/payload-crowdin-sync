@@ -1,4 +1,5 @@
 import type { Config } from "payload/config";
+import type { CollectionConfig, GlobalConfig } from "payload/types";
 import type { PluginOptions } from "./types";
 import {
   getAfterChangeHook,
@@ -13,6 +14,8 @@ import { containsLocalizedFields } from "./utilities";
 import { getReviewTranslationEndpoint } from "./endpoints/globals/reviewTranslation";
 import { getReviewFieldsEndpoint } from "./endpoints/globals/reviewFields";
 import Joi from "joi";
+import { isArray } from "lodash";
+import { Collection } from "payload/dist/collections/config/types";
 
 /**
  * This plugin extends all collections that contain localized fields
@@ -21,6 +24,31 @@ import Joi from "joi";
  * are synced to fields in all other locales (except the default language).
  *
  **/
+
+interface CollectionOrGlobalConfigActive {
+  slugsConfig: PluginOptions['collections'] | PluginOptions['globals'],
+  collection: CollectionConfig | GlobalConfig,
+}
+
+/**
+ * Collection/Global active config
+ * 
+ * * If no `collections` or `globals` array is defined; or
+ * * Array is defined and slug present in the array:
+ * * * return true if contains compatible localized fields.
+ * 
+ * * If an array is defined, return false for any slugs that
+ * are not present in the array.
+ */
+const collectionOrGlobalConfigActive = ({
+  slugsConfig,
+  collection,
+}: CollectionOrGlobalConfigActive) => {
+  if ((isArray(slugsConfig) && slugsConfig.includes(collection.slug)) || !slugsConfig) {
+   return containsLocalizedFields({ fields: collection.fields })
+  }
+  return false
+}
 
 export const crowdinSync =
   (pluginOptions: PluginOptions) =>
@@ -44,6 +72,9 @@ export const crowdinSync =
       ),
 
       sourceLocale: Joi.string().required(),
+
+      collections: Joi.array().items(Joi.string()),
+      globals: Joi.array().items(Joi.string()),
     });
 
     const validate = schema.validate(pluginOptions);
@@ -61,8 +92,12 @@ export const crowdinSync =
         ...(config.admin || {}),
       },
       collections: [
-        ...(config.collections || []).map((existingCollection) => {
-          if (containsLocalizedFields({ fields: existingCollection.fields })) {
+        ...(config.collections || [])
+        .map((existingCollection) => {
+          if (collectionOrGlobalConfigActive({
+            slugsConfig: pluginOptions.collections,
+            collection: existingCollection
+          })) {
             const fields = getFields({
               collection: existingCollection,
             });
@@ -124,8 +159,12 @@ export const crowdinSync =
         },
       ],
       globals: [
-        ...(config.globals || []).map((existingGlobal) => {
-          if (containsLocalizedFields({ fields: existingGlobal.fields })) {
+        ...(config.globals || [])
+        .map((existingGlobal) => {
+          if (collectionOrGlobalConfigActive({
+            slugsConfig: pluginOptions.collections,
+            collection: existingGlobal
+          })) {
             const fields = getFields({
               collection: existingGlobal,
             });

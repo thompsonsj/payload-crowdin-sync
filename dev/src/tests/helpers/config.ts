@@ -7,6 +7,7 @@ import express from "express";
 
 type Options = {
   __dirname: string;
+  payloadConfigFile?: string,
   init?: Partial<InitOptions>;
 };
 
@@ -19,11 +20,12 @@ export async function initPayloadTest(
     mongoURL: `mongodb://localhost/${uuid()}`,
     ...(options.init || {}),
   };
+  const payloadConfigPath = options.payloadConfigFile ? `./../${options.payloadConfigFile}` :  "./../payload.config.default.ts"
 
   process.env.NODE_ENV = "test";
   process.env.PAYLOAD_CONFIG_PATH = path.resolve(
     options.__dirname,
-    "./../payload.config.default.ts"
+    payloadConfigPath
   );
 
   const port = process.env.PORT || 3000;

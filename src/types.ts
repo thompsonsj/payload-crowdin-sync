@@ -1,9 +1,5 @@
 import { Field } from "payload/types";
 
-export interface CollectionOptions {
-  directory?: string;
-}
-
 export interface PluginOptions {
   projectId: number;
   /** This should be optional? */
@@ -16,7 +12,8 @@ export interface PluginOptions {
     };
   };
   sourceLocale: string;
-  collections?: Record<string, CollectionOptions>;
+  collections?: string[];
+  globals?: string[];
 }
 
 export type FieldWithName = Field & { name: string };

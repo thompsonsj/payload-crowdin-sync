@@ -34,6 +34,8 @@ export const buildConfigWithPluginOptions = async ({
   token, // CrowdIn API is mocked but we need a token to pass schema validation
   localeMap,
   sourceLocale,
+  collections,
+  globals,
 }: PluginOptions) => {
   return await buildConfig({
     serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || "http://localhost:3000",
@@ -47,6 +49,8 @@ export const buildConfigWithPluginOptions = async ({
         token,
         localeMap,
         sourceLocale,
+        collections,
+        globals,
       }),
     ],
     collections: [
