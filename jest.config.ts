@@ -6,9 +6,6 @@ const config: Config = {
   moduleDirectories: [
     "node_modules"
   ],
-  transformIgnorePatterns: [
-    "node_modules/(?!get-port)"
-  ],
   testEnvironment: "node",
   // globalSetup: '<rootDir>/dev/src/tests/globalSetup.ts',
   roots: ["<rootDir>/src/", "<rootDir>/dev/"],
