@@ -43,6 +43,10 @@ export default buildConfig({
       },
       /* Required: The Payload locale that syncs to source translations (files) on Crowdin. */
       sourceLocale: "en",
+      /* Optional: Define an array of collection slugs for which the plugin is active. If undefined, the plugin will detect localized fields on all collections. */
+      collections: undefined,
+      /* Optional: Define an array of global slugs for which the plugin is active. If undefined, the plugin will detect localized fields on all globals. */
+      globals: undefined,
     }),
   ],
   // The rest of your config goes here
