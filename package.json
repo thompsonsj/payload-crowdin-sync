@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "develop": "tsc --watch",
-    "test": "jest --forceExit --detectOpenHandles",
+    "test": "jest",
     "prepare": "yarn build",
     "prettier": "npx prettier . --write"
   },

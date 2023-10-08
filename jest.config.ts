@@ -5,7 +5,8 @@ const config: Config = {
   modulePathIgnorePatterns: ["dist"],
   testTimeout: 90000,
   transform: {
-    "node_modules/get-port/.+\\.(j|t)sx?$": "ts-jest"
+    '^.+\\.(t|j)sx?$': '@swc/jest',
+    "node_modules/get-port/.+\\.(j|t)sx?$": "@swc/jest"
   },
   "transformIgnorePatterns": [
     "node_modules/(?!get-port/.*)"
