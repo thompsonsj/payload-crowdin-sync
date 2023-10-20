@@ -53,7 +53,7 @@
   },
   "peerDependencies": {
     "express": "^4.18.2",
-    "payload": "^1.0.27",
+    "payload": "^2.0.0",
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "commitlint": {
@@ -64,13 +64,13 @@
   "dependencies": {
     "@crowdin/crowdin-api-client": "^1.25.0",
     "@payloadcms/richtext-slate": "^1.0.6",
+    "@slate-serializers/html": "^2.1.0",
     "@types/dot-object": "^2.1.4",
     "deep-equal": "^2.2.2",
     "dot-object": "^2.1.4",
     "joi": "^17.11.0",
     "lodash": "^4.17.21",
-    "payload": "^2.0.11",
-    "slate-serializers": "^2.0.1"
+    "payload": "^2.0.0"
   },
   "volta": {
     "node": "16.20.0",

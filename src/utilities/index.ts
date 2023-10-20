@@ -7,7 +7,7 @@ import {
 } from "payload/types";
 import deepEqual from "deep-equal";
 import { FieldWithName } from "../types";
-import { slateToHtml, payloadSlateToDomConfig, SlateToDomConfig } from "slate-serializers";
+import { slateToHtml, payloadSlateToHtmlConfig, SlateToHtmlConfig } from "@slate-serializers/html"
 import type { Descendant } from "slate";
 import { get, isEmpty, map, merge, omitBy } from "lodash";
 import dot from "dot-object";
@@ -563,11 +563,9 @@ export const buildCrowdinHtmlObject = ({
   return response;
 };
 
-export const convertSlateToHtml = (slate: Descendant[], customConfig?: SlateToDomConfig): string => {
+export const convertSlateToHtml = (slate: Descendant[], customConfig?: SlateToHtmlConfig): string => {
   return slateToHtml(slate, {
-    ...payloadSlateToDomConfig,
-    encodeEntities: false,
-    alwaysEncodeBreakingEntities: true,
+    ...payloadSlateToHtmlConfig,
     ...(customConfig && customConfig),
   });
 };

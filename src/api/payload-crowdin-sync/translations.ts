@@ -13,7 +13,7 @@ import {
   SanitizedCollectionConfig,
   SanitizedGlobalConfig,
 } from "payload/types";
-import { htmlToSlate, payloadHtmlToSlateConfig } from "slate-serializers";
+import { htmlToSlate, payloadHtmlToSlateConfig } from "@slate-serializers/html";
 import {
   getLocalizedFields,
   getFieldSlugs,

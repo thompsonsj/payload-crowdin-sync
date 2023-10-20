@@ -1,5 +1,5 @@
 import { convertSlateToHtml } from "..";
-import { payloadSlateToDomConfig } from "slate-serializers";
+import { payloadSlateToHtmlConfig } from "@slate-serializers/html";
 
 describe("convertSlateToHtml", () => {
   it("converts content from the default Slate editor configuration in Payload CMS as expected", () => {
@@ -379,11 +379,9 @@ describe("convertSlateToHtml", () => {
       },
     ];
     const config = {
-      ...payloadSlateToDomConfig,
-      encodeEntities: false,
-      alwaysEncodeBreakingEntities: true,
+      ...payloadSlateToHtmlConfig,
       elementMap: {
-        ...payloadSlateToDomConfig.elementMap,
+        ...payloadSlateToHtmlConfig.elementMap,
         table: "table",
         ["table-row"]: "tr",
         ["table-cell"]: "td",
