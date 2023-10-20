@@ -26,7 +26,7 @@ const collections = {
 describe(`Crowdin file create, update and delete`, () => {
   beforeAll(async () => {
     await initPayloadTest({ __dirname });
-    setTimeout(() => true, 1500);
+    setTimeout(() => true, 3000);
   });
 
   afterAll(async () => {

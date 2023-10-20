@@ -33,7 +33,7 @@ const globals = {
 describe("Globals", () => {
   beforeAll(async () => {
     await initPayloadTest({ __dirname });
-    setTimeout(() => true, 1500);
+    setTimeout(() => true, 3000);
   });
 
   afterAll(async () => {
