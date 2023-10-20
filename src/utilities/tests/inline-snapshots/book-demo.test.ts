@@ -112,21 +112,21 @@ describe("book demo collection snapshots", () => {
         {
           "fields": [
             {
-              "admin": {
-                "elements": [],
-                "leaves": [
-                  "bold",
-                ],
+              "editor": {
+                "CellComponent": [Function],
+                "FieldComponent": [Function],
+                "afterReadPromise": [Function],
+                "validate": [Function],
               },
               "name": "title",
               "type": "richText",
             },
             {
-              "admin": {
-                "elements": [],
-                "leaves": [
-                  "bold",
-                ],
+              "editor": {
+                "CellComponent": [Function],
+                "FieldComponent": [Function],
+                "afterReadPromise": [Function],
+                "validate": [Function],
               },
               "name": "text",
               "type": "richText",

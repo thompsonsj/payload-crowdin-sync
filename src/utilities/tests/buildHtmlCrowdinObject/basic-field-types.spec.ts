@@ -1,3 +1,4 @@
+import { slateEditor } from "@payloadcms/richtext-slate";
 import { CollectionConfig, Field, GlobalConfig } from "payload/types";
 import { buildCrowdinHtmlObject, getLocalizedFields } from "../..";
 
@@ -194,10 +195,12 @@ describe("fn: buildCrowdinHtmlObject", () => {
         type: "group",
         fields: [
           {
-            admin: {
-              elements: ["link"],
-              leaves: ["bold", "italic", "underline"],
-            },
+            editor: slateEditor({
+              admin: {
+                elements: ["link"],
+                leaves: ["bold", "italic", "underline"],
+              },
+            }),
             name: "title",
             type: "richText",
             localized: true,
@@ -306,10 +309,12 @@ describe("fn: buildCrowdinHtmlObject", () => {
         localized: true,
         fields: [
           {
-            admin: {
-              elements: ["link"],
-              leaves: ["bold", "italic", "underline"],
-            },
+            editor: slateEditor({
+              admin: {
+                elements: ["link"],
+                leaves: ["bold", "italic", "underline"],
+              },
+            }),
             name: "title",
             type: "richText",
           },

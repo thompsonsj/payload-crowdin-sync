@@ -57,7 +57,7 @@ export async function getFiles(
 ): Promise<any> {
   const result = await payload.find({
     collection: "crowdin-files",
-    limit: 0,
+    limit: 10000,
     where: {
       crowdinArticleDirectory: {
         equals: crowdinArticleDirectoryId,
@@ -73,7 +73,7 @@ export async function getFileByDocumentID(
   payload: Payload
 ): Promise<IcrowdinFile> {
   const articleDirectory = await getArticleDirectory(documentId, payload);
-  return getFile(name, articleDirectory.id, payload);
+  return getFile(name, `${articleDirectory?.id}`, payload);
 }
 
 export async function getFilesByDocumentID(
@@ -85,6 +85,6 @@ export async function getFilesByDocumentID(
     // tests call this function to make sure files are deleted
     return [];
   }
-  const files = await getFiles(articleDirectory.id, payload);
+  const files = await getFiles(`${articleDirectory.id}`, payload);
   return files;
 }

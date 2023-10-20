@@ -16,9 +16,15 @@ import {
 } from "../helpers";
 import { isEmpty } from "lodash";
 
+import { CrowdinArticleDirectory } from '../../payload-types'
+
 export interface IcrowdinFile {
   id: string;
   originalId: number;
+  name: string;
+  field: string;
+  type: string;
+  updatedAt: string;
   fileData: {
     json?: Object;
     html?: string;
@@ -121,7 +127,7 @@ export class payloadCrowdinSyncFilesApi {
       const crowdinDirectory = await this.sourceFilesApi.createDirectory(
         this.projectId,
         {
-          directoryId: crowdinPayloadCollectionDirectory.originalId,
+          directoryId: crowdinPayloadCollectionDirectory.originalId as number,
           name: global ? collectionSlug : document.id,
           title: global
             ? toWords(collectionSlug)
@@ -415,9 +421,9 @@ export class payloadCrowdinSyncFilesApi {
     }
   }
 
-  async getArticleDirectory(documentId: string) {
+  async getArticleDirectory(documentId: string): Promise<CrowdinArticleDirectory | undefined> {
     const result = await getArticleDirectory(documentId, this.payload);
-    return result;
+    return result as CrowdinArticleDirectory | undefined;
   }
 
   async deleteFilesAndDirectory(documentId: string) {
@@ -434,6 +440,9 @@ export class payloadCrowdinSyncFilesApi {
     const crowdinPayloadArticleDirectory = await this.getArticleDirectory(
       documentId
     );
+    if (!crowdinPayloadArticleDirectory || !crowdinPayloadArticleDirectory.originalId) {
+      return
+    }
     await this.sourceFilesApi.deleteDirectory(
       this.projectId,
       crowdinPayloadArticleDirectory.originalId

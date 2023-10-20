@@ -1,3 +1,7 @@
+import { mongooseAdapter } from "@payloadcms/db-mongodb";
+import { slateEditor } from "@payloadcms/richtext-slate";
+import { webpackBundler } from "@payloadcms/bundler-webpack";
+
 import { buildConfig } from "payload/config";
 import path from "path";
 import LocalizedNav from "./globals/LocalizedNav";
@@ -40,8 +44,13 @@ export const buildConfigWithPluginOptions = async ({
   globals,
 }: PluginOptions) => {
   return await buildConfig({
+    editor: slateEditor({}),
+    db: mongooseAdapter({
+      url: process.env.MONGODB_URI,
+    }),
     serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || "http://localhost:3000",
     admin: {
+      bundler: webpackBundler(),
       user: Users.slug,
     },
     plugins: [

@@ -3,6 +3,8 @@ import { PluginOptions } from "../../types";
 import { payloadCrowdinSyncTranslationsApi } from "../../api/payload-crowdin-sync/translations";
 import { getLocalizedFields } from "../../utilities";
 
+import { CrowdinCollectionDirectory } from "../../payload-types";
+
 export const getReviewFieldsEndpoint = ({
   pluginOptions,
 }: {
@@ -16,13 +18,13 @@ export const getReviewFieldsEndpoint = ({
       collection: req.collection?.config.slug as string,
     });
     const global =
-      articleDirectory.crowdinCollectionDirectory.collectionSlug === "globals";
+      (articleDirectory.crowdinCollectionDirectory as CrowdinCollectionDirectory).collectionSlug === "globals";
     const translationsApi = new payloadCrowdinSyncTranslationsApi(
       pluginOptions,
       req.payload
     );
     try {
-      const collectionConfig = await translationsApi.getCollectionConfig(global ? articleDirectory.name : articleDirectory.crowdinCollectionDirectory.collectionSlug, global)
+      const collectionConfig = await translationsApi.getCollectionConfig(global ? articleDirectory.name : (articleDirectory.crowdinCollectionDirectory as any).collectionSlug, global)
       const response = {
         fields: collectionConfig.fields,
         localizedFields: getLocalizedFields({ fields: collectionConfig.fields })

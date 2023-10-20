@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import payload from "payload";
 import { initPayloadTest } from "./helpers/config";
 import { multiRichTextFields } from "../collections/fields/multiRichTextFields";
+import { connectionTimeout } from "./config";
 
 /**
  * Test the collections
@@ -31,12 +32,13 @@ const collections = {
 describe("Collections - collections option", () => {
   beforeAll(async () => {
     await initPayloadTest({ __dirname, payloadConfigFile: 'payload.config.collections-option.ts' });
+    await new Promise(resolve => setTimeout(resolve, connectionTimeout))
   });
 
   afterAll(async () => {
-    await mongoose.connection.dropDatabase();
-    await mongoose.connection.close();
-    await payload.mongoMemoryServer.stop();
+    if (typeof payload.db.destroy === 'function') {
+      setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
+    }
   });
 
   describe("Non-localized collections", () => {
@@ -69,7 +71,7 @@ describe("Collections - collections option", () => {
 
   describe("Localized collections", () => {
     it("creates an article directory", async () => {
-      const data = multiRichTextFields.filter(field => field.type === 'richText').reduce((accum, field) => {
+      const data = multiRichTextFields.filter(field => field.type === 'richText').reduce((accum: {[key: string]: any}, field) => {
         accum[field.name] = [
           {
             children: [

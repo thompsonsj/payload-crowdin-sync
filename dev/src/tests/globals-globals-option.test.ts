@@ -1,10 +1,6 @@
-import mongoose from "mongoose";
 import payload from "payload";
 import { initPayloadTest } from "./helpers/config";
-import {
-  getFilesByDocumentID,
-  getFileByDocumentID,
-} from "../../../dist/api/helpers";
+import { connectionTimeout } from "./config";
 
 /**
  * Test the collections
@@ -33,13 +29,14 @@ const globals = {
 
 describe("Globals", () => {
   beforeAll(async () => {
-    await initPayloadTest({ __dirname, payloadConfigFile: 'payload.config.globals-option.ts' });
+    await initPayloadTest({ __dirname, payloadConfigFile: 'payload.config.globals-option.ts' })
+    await new Promise(resolve => setTimeout(resolve, connectionTimeout));
   });
 
   afterAll(async () => {
-    await mongoose.connection.dropDatabase();
-    await mongoose.connection.close();
-    await payload.mongoMemoryServer.stop();
+    if (typeof payload.db.destroy === 'function') {
+      setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
+    }
   });
 
   describe("Non-localized globals", () => {

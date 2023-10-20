@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import payload from "payload";
 import { initPayloadTest } from "./helpers/config";
 import {
@@ -6,6 +5,7 @@ import {
   getFilesByDocumentID,
   getArticleDirectory,
 } from "../../../dist/api/helpers";
+import { connectionTimeout } from "./config";
 
 /**
  * Test files
@@ -26,12 +26,13 @@ const collections = {
 describe(`Crowdin file create, update and delete`, () => {
   beforeAll(async () => {
     await initPayloadTest({ __dirname });
+    await new Promise(resolve => setTimeout(resolve, connectionTimeout));
   });
 
   afterAll(async () => {
-    await mongoose.connection.dropDatabase();
-    await mongoose.connection.close();
-    await payload.mongoMemoryServer.stop();
+    if (typeof payload.db.destroy === 'function') {
+      setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
+    }
   });
 
   describe(`Collection: ${collections.localized}`, () => {
@@ -40,7 +41,7 @@ describe(`Crowdin file create, update and delete`, () => {
         collection: collections.localized,
         data: { title: "Test post" },
       });
-      const file = await getFileByDocumentID("fields", post.id, payload);
+      const file = await getFileByDocumentID("fields", post.id, payload as any);
       expect(file.fileData.json).toEqual({ title: "Test post" });
     });
 
@@ -49,13 +50,13 @@ describe(`Crowdin file create, update and delete`, () => {
         collection: collections.localized,
         data: { title: "Test post" },
       });
-      const file = await getFileByDocumentID("fields", post.id, payload);
+      const file = await getFileByDocumentID("fields", post.id, payload as any);
       const updatedPost = await payload.update({
         id: post.id,
         collection: collections.localized,
         data: { title: "Test post updated" },
       });
-      const updatedFile = await getFileByDocumentID("fields", post.id, payload);
+      const updatedFile = await getFileByDocumentID("fields", post.id, payload as any);
       expect(file.updatedAt).not.toEqual(updatedFile.updatedAt);
       expect(updatedFile.fileData.json).toEqual({ title: "Test post updated" });
     });
@@ -68,7 +69,7 @@ describe(`Crowdin file create, update and delete`, () => {
         data: {},
       });
 
-      const crowdinFiles = await getFilesByDocumentID(article.id, payload);
+      const crowdinFiles = await getFilesByDocumentID(article.id, payload as any);
       expect(crowdinFiles.length).toEqual(0);
     });
 
@@ -90,7 +91,7 @@ describe(`Crowdin file create, update and delete`, () => {
           textareaField: "Test meta description",
         },
       });
-      const crowdinFiles = await getFilesByDocumentID(article.id, payload);
+      const crowdinFiles = await getFilesByDocumentID(article.id, payload as any);
       expect(crowdinFiles.length).toEqual(2);
       expect(
         crowdinFiles.find((file) => file.name === "richTextField.html")
@@ -134,8 +135,8 @@ describe(`Crowdin file create, update and delete`, () => {
           ],
         },
       });
-      const ids = article.arrayField.map((item) => item.id);
-      const crowdinFiles = await getFilesByDocumentID(article.id, payload);
+      const ids = article.arrayField.map((item: any) => item.id);
+      const crowdinFiles = await getFilesByDocumentID(article.id, payload as any);
       expect(crowdinFiles.length).toEqual(3);
       expect(
         crowdinFiles.find(
@@ -203,10 +204,10 @@ describe(`Crowdin file create, update and delete`, () => {
           ],
         },
       });
-      const blockIds = article.layout.map((item) => item.id);
-      const blockTypes = article.layout.map((item) => item.blockType);
-      const arrayIds = article.layout[1].messages.map((item) => item.id);
-      const crowdinFiles = await getFilesByDocumentID(article.id, payload);
+      const blockIds = article.layout.map((item: any) => item.id);
+      const blockTypes = article.layout.map((item: any) => item.blockType);
+      const arrayIds = article.layout[1].messages.map((item: any) => item.id);
+      const crowdinFiles = await getFilesByDocumentID(article.id, payload as any);
       expect(crowdinFiles.length).toEqual(4);
       const jsonFile = crowdinFiles.find((file) => file.name === "fields.json");
       expect(
@@ -231,7 +232,7 @@ describe(`Crowdin file create, update and delete`, () => {
         )
       ).toBeDefined();
       expect(jsonFile).toBeDefined();
-      expect(jsonFile.fileData.json).toEqual({
+      expect(jsonFile?.fileData.json).toEqual({
         layout: {
           [blockIds[0]]: {
             basicBlock: {
@@ -248,13 +249,13 @@ describe(`Crowdin file create, update and delete`, () => {
         collection: collections.localized,
         data: { title: "Test post" },
       });
-      const file = await getFileByDocumentID("fields", post.id, payload);
+      const file = await getFileByDocumentID("fields", post.id, payload as any);
       expect(file.fileData.json).toEqual({ title: "Test post" });
       const deletedPost = await payload.delete({
         collection: collections.localized,
         id: post.id,
       });
-      const crowdinFiles = await getFilesByDocumentID(post.id, payload);
+      const crowdinFiles = await getFilesByDocumentID(post.id, payload as any);
       expect(crowdinFiles.length).toEqual(0);
     });
 
@@ -263,7 +264,7 @@ describe(`Crowdin file create, update and delete`, () => {
         collection: collections.localized,
         data: { title: "Test post" },
       });
-      const file = await getFileByDocumentID("fields", post.id, payload);
+      const file = await getFileByDocumentID("fields", post.id, payload as any);
       expect(file.fileData.json).toEqual({ title: "Test post" });
       const deletedPost = await payload.delete({
         collection: collections.localized,
@@ -271,7 +272,7 @@ describe(`Crowdin file create, update and delete`, () => {
       });
       const crowdinPayloadArticleDirectory = await getArticleDirectory(
         post.id,
-        payload
+        payload as any
       );
       expect(crowdinPayloadArticleDirectory).toBeUndefined();
     });
