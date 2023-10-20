@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import payload from "payload";
 import { initPayloadTest } from "./helpers/config";
 import { multiRichTextFields } from "../collections/fields/multiRichTextFields";
+import { connectionTimeout } from "./config";
 
 /**
  * Test the collections
@@ -31,12 +32,12 @@ const collections = {
 describe("Collections - collections option", () => {
   beforeAll(async () => {
     await initPayloadTest({ __dirname, payloadConfigFile: 'payload.config.collections-option.ts' });
-    setTimeout(() => true, 1500);
+    await new Promise(resolve => setTimeout(resolve, connectionTimeout))
   });
 
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
-      setTimeout(async () => {await payload.db.destroy(payload)}, 1500)
+      setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
     }
   });
 

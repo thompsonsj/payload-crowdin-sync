@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import payload from "payload";
 import { initPayloadTest } from "./helpers/config";
 import { payloadCrowdinSyncTranslationsApi } from "../../../dist/api/payload-crowdin-sync/translations";
@@ -6,6 +5,7 @@ import nock from "nock";
 import { payloadCreateData } from "./fixtures/nested-field-collection/simple-blocks.fixture";
 import { payloadCreateBlocksRichTextData } from "./fixtures/nested-field-collection/rich-text-blocks.fixture";
 import { multiRichTextFields } from "../collections/fields/multiRichTextFields";
+import { connectionTimeout } from "./config";
 
 /**
  * Test translations
@@ -38,7 +38,7 @@ const pluginOptions = {
 describe("Translations", () => {
   beforeAll(async () => {
     await initPayloadTest({ __dirname });
-    setTimeout(() => true, 1500)
+    await new Promise(resolve => setTimeout(resolve, connectionTimeout));
   });
 
   afterEach(async () => {
@@ -47,7 +47,7 @@ describe("Translations", () => {
 
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
-      setTimeout(async () => {await payload.db.destroy(payload)}, 1500)
+      setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
     }
   });
 
