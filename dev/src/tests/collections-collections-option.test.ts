@@ -31,6 +31,7 @@ const collections = {
 describe("Collections - collections option", () => {
   beforeAll(async () => {
     await initPayloadTest({ __dirname, payloadConfigFile: 'payload.config.collections-option.ts' });
+    setTimeout(() => true, 1500);
   });
 
   afterAll(async () => {

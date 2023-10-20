@@ -34,6 +34,7 @@ const globals = {
 describe("Globals", () => {
   beforeAll(async () => {
     await initPayloadTest({ __dirname, payloadConfigFile: 'payload.config.globals-option.ts' });
+    setTimeout(() => true, 1500);
   });
 
   afterAll(async () => {

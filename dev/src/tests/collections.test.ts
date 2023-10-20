@@ -32,7 +32,7 @@ const collections = {
 describe("Collections", () => {
   beforeAll(async () => {
     await initPayloadTest({ __dirname });
-    setTimeout(() => true, 3000);
+    setTimeout(() => true, 1500);
   });
 
   afterAll(async () => {

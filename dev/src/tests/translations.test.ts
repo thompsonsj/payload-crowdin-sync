@@ -38,7 +38,7 @@ const pluginOptions = {
 describe("Translations", () => {
   beforeAll(async () => {
     await initPayloadTest({ __dirname });
-    setTimeout(() => true, 3000)
+    setTimeout(() => true, 1500)
   });
 
   afterEach(async () => {
