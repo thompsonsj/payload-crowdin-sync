@@ -35,9 +35,9 @@ describe("Collections", () => {
   });
 
   afterAll(async () => {
-    await mongoose.connection.dropDatabase();
-    await mongoose.connection.close();
-    await payload.mongoMemoryServer.stop();
+    if (typeof payload.db.destroy === 'function') {
+      await payload.db.destroy(payload)
+    }
   });
 
   describe("Non-localized collections", () => {

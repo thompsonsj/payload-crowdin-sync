@@ -17,20 +17,20 @@ export const getReviewTranslationEndpoint = ({
       collection: req.collection?.config.slug as string,
     });
     const global =
-      articleDirectory.crowdinCollectionDirectory.collectionSlug === "globals";
+      (articleDirectory.crowdinCollectionDirectory as any)?.collectionSlug as string === "globals";
     const translationsApi = new payloadCrowdinSyncTranslationsApi(
       pluginOptions,
       req.payload
     );
     try {
       const translations = await translationsApi.updateTranslation({
-        documentId: !global && articleDirectory.name,
+        documentId: !global ? articleDirectory.name as string : ``,
         collection: global
-          ? articleDirectory.name
-          : articleDirectory.crowdinCollectionDirectory.collectionSlug,
+          ? articleDirectory.name as string
+          : (articleDirectory.crowdinCollectionDirectory as any)?.collectionSlug as string,
         global,
         dryRun: type === "update" ? false : true,
-        excludeLocales: articleDirectory.excludeLocales || [],
+        excludeLocales: articleDirectory.excludeLocales as string[] || [],
       });
       res.status(200).send(translations);
     } catch (error) {

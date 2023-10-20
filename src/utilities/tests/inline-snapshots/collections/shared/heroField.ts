@@ -1,3 +1,5 @@
+import { slateEditor } from "@payloadcms/richtext-slate";
+
 interface IHeroFieldOptions {
   image?: boolean;
   badge?: boolean;
@@ -16,18 +18,22 @@ export const heroField = (options: IHeroFieldOptions = {}): any => {
       {
         name: "title",
         type: "richText",
-        admin: {
-          elements: [],
-          leaves: ["bold"],
-        },
+        editor: slateEditor({
+          admin: {
+            elements: [],
+            leaves: ["bold"],
+          },
+        }),
       },
       {
         name: "text",
         type: "richText",
-        admin: {
-          elements: [],
-          leaves: ["bold"],
-        },
+        editor: slateEditor({
+          admin: {
+            elements: [],
+            leaves: ["bold"],
+          },
+        }),
       },
       options.badge && {
         name: "badge",

@@ -29,9 +29,9 @@ describe(`Crowdin file create, update and delete`, () => {
   });
 
   afterAll(async () => {
-    await mongoose.connection.dropDatabase();
-    await mongoose.connection.close();
-    await payload.mongoMemoryServer.stop();
+    if (typeof payload.db.destroy === 'function') {
+      await payload.db.destroy(payload)
+    }
   });
 
   describe(`Collection: ${collections.localized}`, () => {

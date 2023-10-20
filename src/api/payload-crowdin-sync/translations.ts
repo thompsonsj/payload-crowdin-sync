@@ -23,6 +23,8 @@ import {
   getLocalizedRequiredFields,
 } from "../../utilities";
 
+import { CrowdinArticleDirectory } from "../../payload-types";
+
 interface IgetLatestDocumentTranslation {
   collection: string;
   doc: any;
@@ -93,7 +95,7 @@ export class payloadCrowdinSyncTranslationsApi {
      * * check for `meta` field (which can be added by @payloadcms/seo)
      *
      */
-    let doc: { crowdinArticleDirectory: { id: any } };
+    let doc;
     if (global) {
       doc = await this.payload.findGlobal({
         slug: collection,
@@ -140,7 +142,7 @@ export class payloadCrowdinSyncTranslationsApi {
                 ...report[locale].latestTranslations,
                 // error on update without the following line.
                 // see https://github.com/thompsonsj/payload-crowdin-sync/pull/13/files#r1209271660
-                crowdinArticleDirectory: doc.crowdinArticleDirectory.id,
+                crowdinArticleDirectory: (doc.crowdinArticleDirectory as CrowdinArticleDirectory).id,
               },
             });
           } catch (error) {
@@ -322,7 +324,7 @@ export class payloadCrowdinSyncTranslationsApi {
     const articleDirectory = await this.filesApi.getArticleDirectory(
       documentId
     );
-    const file = await this.filesApi.getFile(fieldName, articleDirectory.id);
+    const file = await this.filesApi.getFile(fieldName, `${(articleDirectory as CrowdinArticleDirectory).id}`);
     // it is possible a file doesn't exist yet - e.g. an article with localized text fields that contains an empty html field.
     if (!file) {
       return;

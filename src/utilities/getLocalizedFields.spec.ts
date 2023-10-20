@@ -1,3 +1,4 @@
+import { slateEditor } from "@payloadcms/richtext-slate";
 import { Block, CollectionConfig, Field, GlobalConfig } from "payload/types";
 import { getLocalizedFields } from ".";
 
@@ -929,29 +930,31 @@ describe("fn: getLocalizedFields", () => {
         },
       ];
       const fields: Field[] = [...nonLocalizedFieldCollection, ...seoFields];
-      expect(getLocalizedFields({ fields })).toEqual([{
-        "fields": [
-          {
-            "admin": {
-              "components": {},
+      expect(getLocalizedFields({ fields })).toEqual([
+        {
+          fields: [
+            {
+              admin: {
+                components: {},
+              },
+              localized: true,
+              name: "title",
+              type: "text",
             },
-            "localized": true,
-            "name": "title",
-            "type": "text",
-          },
-          {
-            "admin": {
-              "components": {},
+            {
+              admin: {
+                components: {},
+              },
+              localized: true,
+              name: "description",
+              type: "textarea",
             },
-            "localized": true,
-            "name": "description",
-            "type": "textarea",
-          },
-        ],
-        "label": "SEO",
-        "name": "meta",
-        "type": "group",
-      },]);
+          ],
+          label: "SEO",
+          name: "meta",
+          type: "group",
+        },
+      ]);
     });
 
     it("includes payloadcms/plugin-seo localized fields if there are localized fields on the collection/global", () => {
@@ -1052,10 +1055,12 @@ describe("fn: getLocalizedFields", () => {
                         {
                           name: "title",
                           type: "richText",
-                          admin: {
-                            elements: [],
-                            leaves: ["bold"],
-                          },
+                          editor: slateEditor({
+                            admin: {
+                              elements: [],
+                              leaves: ["bold"],
+                            },
+                          }),
                           label: "Title",
                           hooks: {},
                           access: {},
@@ -1063,10 +1068,12 @@ describe("fn: getLocalizedFields", () => {
                         {
                           name: "text",
                           type: "richText",
-                          admin: {
-                            elements: [],
-                            leaves: ["bold"],
-                          },
+                          editor: slateEditor({
+                            admin: {
+                              elements: [],
+                              leaves: ["bold"],
+                            },
+                          }),
                           label: "Text",
                           hooks: {},
                           access: {},
@@ -1310,11 +1317,11 @@ describe("fn: getLocalizedFields", () => {
             "fields": [
               {
                 "access": {},
-                "admin": {
-                  "elements": [],
-                  "leaves": [
-                    "bold",
-                  ],
+                "editor": {
+                  "CellComponent": [Function],
+                  "FieldComponent": [Function],
+                  "afterReadPromise": [Function],
+                  "validate": [Function],
                 },
                 "hooks": {},
                 "label": "Title",
@@ -1323,11 +1330,11 @@ describe("fn: getLocalizedFields", () => {
               },
               {
                 "access": {},
-                "admin": {
-                  "elements": [],
-                  "leaves": [
-                    "bold",
-                  ],
+                "editor": {
+                  "CellComponent": [Function],
+                  "FieldComponent": [Function],
+                  "afterReadPromise": [Function],
+                  "validate": [Function],
                 },
                 "hooks": {},
                 "label": "Text",
