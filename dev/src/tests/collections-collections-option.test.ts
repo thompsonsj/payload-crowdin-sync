@@ -35,7 +35,7 @@ describe("Collections - collections option", () => {
 
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
-      await payload.db.destroy(payload)
+      setTimeout(async () => {await payload.db.destroy(payload)}, 1500)
     }
   });
 
