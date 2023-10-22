@@ -174,7 +174,7 @@ const performAfterChange = async ({
   }) => {
     await filesApi.createOrUpdateFile({
       name: name,
-      value: convertSlateToHtml(value),
+      value: convertSlateToHtml(value, pluginOptions.slateToHtmlConfig),
       fileType: "html",
       articleDirectory,
     });

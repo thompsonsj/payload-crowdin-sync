@@ -7,7 +7,14 @@ import {
 } from "payload/types";
 import deepEqual from "deep-equal";
 import { FieldWithName } from "../types";
-import { slateToHtml, payloadSlateToDomConfig } from "slate-serializers";
+import {
+  slateToHtml,
+  payloadSlateToHtmlConfig,
+  type SlateToHtmlConfig,
+  htmlToSlate,
+  payloadHtmlToSlateConfig,
+  type HtmlToSlateConfig,
+} from "@slate-serializers/html"
 import type { Descendant } from "slate";
 import { get, isEmpty, map, merge, omitBy } from "lodash";
 import dot from "dot-object";
@@ -563,10 +570,16 @@ export const buildCrowdinHtmlObject = ({
   return response;
 };
 
-export const convertSlateToHtml = (slate: Descendant[]): string => {
-  return slateToHtml(slate, {
-    ...payloadSlateToDomConfig,
-    encodeEntities: false,
-    alwaysEncodeBreakingEntities: true,
-  });
+export const convertSlateToHtml = (slate: Descendant[], customConfig?: SlateToHtmlConfig): string => {
+  if (customConfig) {
+    return slateToHtml(slate, customConfig);
+  }
+  return slateToHtml(slate, payloadSlateToHtmlConfig);
+};
+
+export const convertHtmlToSlate = (html: string, customConfig?: HtmlToSlateConfig): Descendant[] => {
+  if (customConfig) {
+    return htmlToSlate(html, customConfig);
+  }
+  return htmlToSlate(html, payloadHtmlToSlateConfig);
 };
