@@ -1,4 +1,5 @@
 import { Field } from "payload/types";
+import { type SlateToHtmlConfig, type HtmlToSlateConfig } from '@slate-serializers/html'
 
 export interface PluginOptions {
   projectId: number;
@@ -14,6 +15,8 @@ export interface PluginOptions {
   sourceLocale: string;
   collections?: string[];
   globals?: string[];
+  slateToHtmlConfig?: SlateToHtmlConfig;
+  htmlToSlateConfig?: HtmlToSlateConfig;
 }
 
 export type FieldWithName = Field & { name: string };

@@ -42,6 +42,8 @@ export const buildConfigWithPluginOptions = async ({
   sourceLocale,
   collections,
   globals,
+  slateToHtmlConfig,
+  htmlToSlateConfig,
 }: PluginOptions) => {
   return await buildConfig({
     editor: slateEditor({}),
@@ -62,6 +64,8 @@ export const buildConfigWithPluginOptions = async ({
         sourceLocale,
         collections,
         globals,
+        slateToHtmlConfig,
+        htmlToSlateConfig,
       }),
     ],
     collections: [

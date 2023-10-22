@@ -15,7 +15,6 @@ import { getReviewTranslationEndpoint } from "./endpoints/globals/reviewTranslat
 import { getReviewFieldsEndpoint } from "./endpoints/globals/reviewFields";
 import Joi from "joi";
 import { isArray } from "lodash";
-import { Collection } from "payload/dist/collections/config/types";
 
 /**
  * This plugin extends all collections that contain localized fields
@@ -75,6 +74,8 @@ export const crowdinSync =
 
       collections: Joi.array().items(Joi.string()),
       globals: Joi.array().items(Joi.string()),
+      slateToHtmlConfig: Joi.object(),
+      htmlToSlateConfig: Joi.object(),
     });
 
     const validate = schema.validate(pluginOptions);

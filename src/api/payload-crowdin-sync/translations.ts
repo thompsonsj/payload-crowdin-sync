@@ -13,7 +13,6 @@ import {
   SanitizedCollectionConfig,
   SanitizedGlobalConfig,
 } from "payload/types";
-import { htmlToSlate, payloadHtmlToSlateConfig } from "@slate-serializers/html";
 import {
   getLocalizedFields,
   getFieldSlugs,
@@ -21,6 +20,7 @@ import {
   buildCrowdinHtmlObject,
   buildPayloadUpdateObject,
   getLocalizedRequiredFields,
+  convertHtmlToSlate,
 } from "../../utilities";
 
 import { CrowdinArticleDirectory } from "../../payload-types";
@@ -62,6 +62,7 @@ export class payloadCrowdinSyncTranslationsApi {
   payload: Payload;
   localeMap: PluginOptions["localeMap"];
   sourceLocale: PluginOptions["sourceLocale"];
+  htmlToSlateConfig: PluginOptions["htmlToSlateConfig"];
 
   constructor(pluginOptions: PluginOptions, payload: Payload) {
     // credentials
@@ -79,6 +80,7 @@ export class payloadCrowdinSyncTranslationsApi {
     this.payload = payload;
     this.localeMap = pluginOptions.localeMap;
     this.sourceLocale = pluginOptions.sourceLocale;
+    this.htmlToSlateConfig = pluginOptions.htmlToSlateConfig
   }
 
   async updateTranslation({
@@ -339,7 +341,7 @@ export class payloadCrowdinSyncTranslationsApi {
       );
       const data = await this.getFileDataFromUrl(response.data.url);
       return file.type === "html"
-        ? htmlToSlate(data, payloadHtmlToSlateConfig)
+        ? convertHtmlToSlate(data, this.htmlToSlateConfig)
         : JSON.parse(data);
     } catch (error) {
       console.log(error);
