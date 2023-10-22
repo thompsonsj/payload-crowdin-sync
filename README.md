@@ -26,13 +26,8 @@ import { crowdinSync, crowdinClient } from "payload-crowdin-sync";
 export default buildConfig({
   plugins: [
     crowdinSync({
-      /* Required: Your Crowdin project ID. */
       projectId: 323731,
-      /* Optional: Crowdin directory ID to store translations. */
-      directoryId: 1169,
-      /* Optional: Your Crowdin API token. If empty, changes to files are disabled. */
       token: process.env.CROWDIN_TOKEN,
-      /* Required: Map your Payload locales to Crowdin locale ids. */
       localeMap: {
         de_DE: {
           crowdinId: "de",
@@ -41,12 +36,7 @@ export default buildConfig({
           crowdinId: "fr",
         },
       },
-      /* Required: The Payload locale that syncs to source translations (files) on Crowdin. */
       sourceLocale: "en",
-      /* Optional: Define an array of collection slugs for which the plugin is active. If undefined, the plugin will detect localized fields on all collections. */
-      collections: undefined,
-      /* Optional: Define an array of global slugs for which the plugin is active. If undefined, the plugin will detect localized fields on all globals. */
-      globals: undefined,
     }),
   ],
   // The rest of your config goes here
@@ -55,10 +45,18 @@ export default buildConfig({
 
 ### Options
 
-| Option | Default | Description |
+* required
+
+| Option | Example | Description |
 | ------ | ------- | ----------- |
-| `collections` | `undefined` | Define an array of collection slugs for which the plugin is active. If undefined, the plugin will detect localized fields on all collections. |
-| `globals` | `undefined` | Define an array of global slugs for which the plugin is active. If undefined, the plugin will detect localized fields on all globals. |
+| `projectId` * | `323731` | Required: Your Crowdin project ID. |
+| `localeMap` * | `{ de_DE: { crowdinId: "de" } }` | Required: Map your Payload locales to Crowdin locale ids. |
+| ` sourceLocale` * | `en` | Required: The Payload locale that syncs to source translations (files) on Crowdin. |
+| `token` | `xxxxxxx` | Optional: Your Crowdin API token. If empty, changes to files are disabled. |
+| `directoryId` | `1169` | Optional: Crowdin directory ID to store translations. |
+| `collections` | `undefined` \| `[]` \| `['posts', 'categories']` | Define an array of collection slugs for which the plugin is active. If undefined, the plugin will detect localized fields on all collections. Use an empty array to disable all collections. |
+| `globals` | `undefined` \| `[]` \| `['nav']` | Define an array of global slugs for which the plugin is active. If undefined, the plugin will detect localized fields on all globals. Use an empty array to disable all globals. |
+
 | `slateToHtmlConfig` | `undefined` | Pass a custom config for the `slateToHtml` serializer used to convert Payload CMS Slate JSON to HTML for Crowdin translation. See [Serializer configuration](#serializer-configuration). |
 | `htmlToSlateConfig` | `undefined` | Pass a custom config for the `htmlToSlate` serializer used to conver HTML to Payload CMS Slate JSON when retrieving Crowdin translation. See [Serializer configuration](#serializer-configuration). |
 

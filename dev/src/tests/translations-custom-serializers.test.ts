@@ -65,7 +65,7 @@ describe("Translations", () => {
     }
   });
 
-  describe("fn: updateTranslation", () => {
+  describe("fn: updateTranslation - custom serializer", () => {
     it("updates a Payload article with a `richText` field translation retrieved from Crowdin", async () => {
       const post = await payload.create({
         collection: collections.localized,

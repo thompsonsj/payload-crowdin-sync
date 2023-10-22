@@ -16,7 +16,7 @@ const collections = {
   nestedFields: "nested-field-collection",
 };
 
-describe("Translations", () => {
+describe("Files - custom serializer", () => {
   beforeAll(async () => {
     await initPayloadTest({
       __dirname,
@@ -34,7 +34,7 @@ describe("Translations", () => {
   });
 
   describe("fn: updateTranslation", () => {
-    it("updates a Payload article with a `richText` field translation retrieved from Crowdin", async () => {
+    it("updates the Crowdin article directory with html for a `richText` field", async () => {
       const post = await payload.create({
         collection: collections.localized,
         data: {
