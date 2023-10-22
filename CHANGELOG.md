@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.17.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.16.2...v0.17.0) (2023-10-22)
+
+
+### Features
+
+* **package.json:** use @slate-serializers/html and add config options ([#112](https://github.com/thompsonsj/payload-crowdin-sync/issues/112)) ([c1506a3](https://github.com/thompsonsj/payload-crowdin-sync/commit/c1506a3b02b261845d6ccf415e2f197b1b0a5503))
+* **plugin:** collections/globals option ([#107](https://github.com/thompsonsj/payload-crowdin-sync/issues/107)) ([a738dc5](https://github.com/thompsonsj/payload-crowdin-sync/commit/a738dc5d835804354104f7025544492e85873a09))
+* upgrade to payload v2 ([#109](https://github.com/thompsonsj/payload-crowdin-sync/issues/109)) ([8796376](https://github.com/thompsonsj/payload-crowdin-sync/commit/87963765994691363a368ea3f7254ac4ce1fc63a))
+
 ## [0.16.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.16.1...v0.16.2) (2023-09-15)
 
 
