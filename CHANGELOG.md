@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.18.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.17.0...v0.18.0) (2023-11-02)
+
+
+### Features
+
+* **utilities:** expose utilities ([#113](https://github.com/thompsonsj/payload-crowdin-sync/issues/113)) ([8e3d9d9](https://github.com/thompsonsj/payload-crowdin-sync/commit/8e3d9d99ed8de3f38e3e09ad1a6ccd3f53a3152d))
+
+
+### Bug Fixes
+
+* **package.json:** payload as devDependency ([#114](https://github.com/thompsonsj/payload-crowdin-sync/issues/114)) ([63541b9](https://github.com/thompsonsj/payload-crowdin-sync/commit/63541b9f42de23dcf2552cb6ba1a41ab00ccee28))
+
 ## [0.17.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.16.2...v0.17.0) (2023-10-22)
 
 
