@@ -249,8 +249,20 @@ describe("book demo collection snapshots", () => {
           "content": {
             "items": [
               {
+                "id": "64a8af5656f68b0022bfd267",
+              },
+              {
                 "id": "64a8af5656f68b0022bfd268",
                 "text": "Offres d'emploi et utilisateurs illimités",
+              },
+              {
+                "id": "64a8af5656f68b0022bfd269",
+              },
+              {
+                "id": "64a8af5656f68b0022bfd26a",
+              },
+              {
+                "id": "64a8af5656f68b0022bfd26b",
               },
               {
                 "id": "64a8af5656f68b0022bfd26c",

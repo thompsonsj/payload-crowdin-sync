@@ -4,6 +4,7 @@ import { payloadCrowdinSyncTranslationsApi } from "../../../dist/api/payload-cro
 import nock from "nock";
 import { payloadCreateData } from "./fixtures/nested-field-collection/simple-blocks.fixture";
 import { payloadCreateBlocksRichTextData } from "./fixtures/nested-field-collection/rich-text-blocks.fixture";
+import { payloadCreateIncludesNonLocalizedBlocksData } from "./fixtures/nested-field-collection/simple-blocks-with-non-localized-blocks.fixture";
 import { multiRichTextFields } from "../collections/fields/multiRichTextFields";
 import { connectionTimeout } from "./config";
 
@@ -276,6 +277,145 @@ describe("Translations", () => {
           textareaField:
             "Contenu du champ Textarea dans le bloc à l'index de mise en page 1",
           id: blockIds[1],
+          blockType: "basicBlock",
+        },
+      ]);
+    });
+
+    it("updates a Payload article with a *blocks* field translation retrieved from Crowdin and respects non-localized fields", async () => {
+      const post = await payload.create({
+        collection: collections.nestedFields,
+        data: payloadCreateIncludesNonLocalizedBlocksData,
+      });
+      // we need the ids created by Payload to update the blocks
+      const blockIds = post.layout.map((block: any) => block.id);
+      const blockTypes = post.layout.map((block: any) => block.blockType);
+      // ensure the original created post is as expected
+      expect(post.layout).toEqual([
+        {
+          textField:
+            "Text field content in block at layout index 0",
+          textareaField:
+            "Textarea field content in block at layout index 0",
+          id: blockIds[0],
+          blockType: "basicBlock",
+        },
+        {
+          textField:
+            "Text field content in block at layout index 1",
+          textareaField:
+            "Textarea field content in block at layout index 1",
+          id: blockIds[1],
+          blockType: "basicBlockNonLocalized",
+        },
+        {
+          textField:
+            "Text field content in block at layout index 2",
+          textareaField:
+            "Textarea field content in block at layout index 2",
+          id: blockIds[2],
+          blockType: "basicBlock",
+        },
+      ]);
+      const responseFr = {
+        layout: {
+          [blockIds[0]]: {
+            [blockTypes[0]]: {
+              textField:
+                "Contenu du champ de texte dans le bloc à l'index de mise en page 0",
+              textareaField:
+                "Contenu du champ Textarea dans le bloc à l'index de mise en page 0",
+            },
+          },
+          [blockIds[2]]: {
+            [blockTypes[2]]: {
+              textField:
+                "Contenu du champ de texte dans le bloc à l'index de mise en page 2",
+              textareaField:
+                "Contenu du champ Textarea dans le bloc à l'index de mise en page 2",
+            },
+          },
+        },
+      };
+      const translationsApi = new payloadCrowdinSyncTranslationsApi(
+        pluginOptions,
+        payload as any
+      );
+      const scope = nock("https://api.crowdin.com")
+        .get(
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
+        )
+        .reply(200, null)
+        .get(
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
+        )
+        .reply(200, responseFr);
+      const translation = await translationsApi.updateTranslation({
+        documentId: `${post.id}`,
+        collection: collections.nestedFields,
+        dryRun: false,
+      });
+      // retrieve original post from Payload
+      const resultEn = await payload.findByID({
+        collection: collections.nestedFields,
+        id: post.id,
+        locale: "en",
+      });
+      expect(resultEn.layout).toEqual([
+        {
+          textField:
+            "Text field content in block at layout index 0",
+          textareaField:
+            "Textarea field content in block at layout index 0",
+          id: blockIds[0],
+          blockType: "basicBlock",
+        },
+        {
+          textField:
+            "Text field content in block at layout index 1",
+          textareaField:
+            "Textarea field content in block at layout index 1",
+          id: blockIds[1],
+          blockType: "basicBlockNonLocalized",
+        },
+        {
+          textField:
+            "Text field content in block at layout index 2",
+          textareaField:
+            "Textarea field content in block at layout index 2",
+          id: blockIds[2],
+          blockType: "basicBlock",
+        },
+      ]);
+      // retrieve translated post from Payload
+      const resultFr = await payload.findByID({
+        collection: collections.nestedFields,
+        id: post.id,
+        locale: "fr_FR",
+      });
+      expect(resultFr.layout).toEqual([
+        {
+          textField:
+            "Contenu du champ de texte dans le bloc à l'index de mise en page 0",
+          textareaField:
+            "Contenu du champ Textarea dans le bloc à l'index de mise en page 0",
+          id: blockIds[0],
+          blockType: "basicBlock",
+        },
+        {
+          textField:
+            "Text field content in block at layout index 1",
+          textareaField:
+            "Textarea field content in block at layout index 1",
+          id: blockIds[1],
+          blockType: "basicBlockNonLocalized",
+        },
+        {
+          textField:
+            "Contenu du champ de texte dans le bloc à l'index de mise en page 2",
+          textareaField:
+            "Contenu du champ Textarea dans le bloc à l'index de mise en page 2",
+          id: blockIds[2],
           blockType: "basicBlock",
         },
       ]);
