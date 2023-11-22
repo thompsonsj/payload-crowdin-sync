@@ -299,7 +299,10 @@ export const restoreOrder = ({
             }
           );
           if (!arrayItem) {
-            return;
+            return {
+              id: item.id,
+              ...(field.type === "blocks" && { blockType: item.blockType }),
+            };
           }
           const subFields =
             field.type === "blocks"
