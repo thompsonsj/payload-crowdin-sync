@@ -29,6 +29,7 @@ export const getReviewTranslationEndpoint = ({
           ? articleDirectory.name as string
           : (articleDirectory.crowdinCollectionDirectory as any)?.collectionSlug as string,
         global,
+        draft: req.query.draft === 'true' ? true : false,
         dryRun: type === "update" ? false : true,
         excludeLocales: articleDirectory.excludeLocales as string[] || [],
       });
