@@ -52,6 +52,7 @@ interface IupdateTranslation {
   dryRun?: boolean;
   global?: boolean;
   excludeLocales?: string[];
+  draft?: boolean;
 }
 
 export class payloadCrowdinSyncTranslationsApi {
@@ -88,6 +89,7 @@ export class payloadCrowdinSyncTranslationsApi {
     collection,
     dryRun = true,
     global = false,
+    draft = false,
     excludeLocales = [],
   }: IupdateTranslation) {
     /**
@@ -116,6 +118,7 @@ export class payloadCrowdinSyncTranslationsApi {
         continue;
       }
       report[locale] = {};
+      report[locale].draft = draft,  
       report[locale].currentTranslations =
         await this.getCurrentDocumentTranslation({
           doc: doc,
@@ -140,6 +143,7 @@ export class payloadCrowdinSyncTranslationsApi {
             await this.payload.updateGlobal({
               slug: collection,
               locale: locale,
+              draft,
               data: {
                 ...report[locale].latestTranslations,
                 // error on update without the following line.
@@ -156,6 +160,7 @@ export class payloadCrowdinSyncTranslationsApi {
               collection: collection,
               locale: locale,
               id: documentId,
+              draft,
               data: report[locale].latestTranslations,
             });
           } catch (error) {

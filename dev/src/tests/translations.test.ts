@@ -123,6 +123,51 @@ describe("Translations", () => {
       expect(result.title).toEqual("Testbeitrag");
     });
 
+    it("updates a Payload article draft with a `text` field translation retrieved from Crowdin", async () => {
+      const post = await payload.create({
+        collection: collections.localized,
+        data: { title: "Test post" },
+      });
+      const translationsApi = new payloadCrowdinSyncTranslationsApi(
+        pluginOptions,
+        payload as any
+      );
+      const scope = nock("https://api.crowdin.com")
+        .get(
+          `/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de`
+        )
+        .reply(200, {
+          title: "Testbeitrag",
+        })
+        .get(
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
+        )
+        .reply(200, {
+          title: "Poste d'essai",
+        });
+      const translation = await translationsApi.updateTranslation({
+        documentId: `${post.id}`,
+        collection: collections.localized,
+        dryRun: false,
+        draft: true,
+      });
+      // retrieve translated post from Payload
+      const result = await payload.findByID({
+        collection: collections.localized,
+        id: post.id,
+        locale: "de_DE",
+      });
+      expect(result.title).toEqual("Test post"); // collection has fallback locale
+      // retrieve translated post draft from Payload
+      const resultDraft = await payload.findByID({
+        collection: collections.localized,
+        id: post.id,
+        locale: "de_DE",
+        draft: true,
+      });
+      expect(resultDraft.title).toEqual("Testbeitrag");
+    });
+
     it("updates a Payload article with a `richText` field translation retrieved from Crowdin", async () => {
       const post = await payload.create({
         collection: collections.localized,
