@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.19.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.18.1...v0.19.0) (2023-11-28)
+
+
+### Features
+
+* **translations:** support the draft parameter ([#119](https://github.com/thompsonsj/payload-crowdin-sync/issues/119)) ([dda5e7c](https://github.com/thompsonsj/payload-crowdin-sync/commit/dda5e7cbd7b394b30dcc75726821e56c95469e8d))
+
 ## [0.18.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.18.0...v0.18.1) (2023-11-22)
 
 
