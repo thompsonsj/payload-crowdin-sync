@@ -112,12 +112,13 @@ To sync global translations, add a new article in **Crowdin Translations** that 
 
 To review translations, visit:
 
-`<payload-base-url>/api/crowdin-translations/<article-id>/review`
+`<payload-base-url>/api/crowdin-article-directories/<article-id>/review`
 
-e.g. `https://my-payload-app.com/api/crowdin-translations/64a880bb87ef685285a4d9dc/update`
+e.g. `https://my-payload-app.com/api/crowdin-article-directories/64a880bb87ef685285a4d9dc/update`
 
 A JSON object is returned that allows you to review what will be updated in the database. The JSON object will contain the following keys:
 
+- `draft` indicates that on update, a draft will be created rather than a published version. See [Drafts | Payload CMS](https://payloadcms.com/docs/versions/drafts).
 - `source` review the source document. e.g. for the `en` locale.
 - `translations`
   - `<locale>` e.g. `es_ES`
@@ -129,9 +130,11 @@ A JSON object is returned that allows you to review what will be updated in the 
 
 To update translations, visit:
 
-`<payload-base-url>/api/crowdin-translations/<article-id>/review`
+`<payload-base-url>/api/crowdin-article-directories/<article-id>/review`
 
-e.g. `https://my-payload-app.com/api/crowdin-translations/64a880bb87ef685285a4d9dc/update`
+e.g. `https://my-payload-app.com/api/crowdin-article-directories/64a880bb87ef685285a4d9dc/update`
+
+Pass the `draft=true` query parameter to update as a draft rather than a published version.
 
 The document will be updated and the same report will be generated as for a review.
 
