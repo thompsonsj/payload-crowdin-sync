@@ -61,7 +61,7 @@ export const crowdinSync =
       directoryId: Joi.number(),
 
       // optional - if not provided, the plugin will not do anything in the afterChange hook.
-      token: Joi.string().required(),
+      token: Joi.string(),
 
       localeMap: Joi.object().pattern(
         /./,
@@ -76,6 +76,8 @@ export const crowdinSync =
       globals: Joi.array().items(Joi.string()),
       slateToHtmlConfig: Joi.object(),
       htmlToSlateConfig: Joi.object(),
+      pluginCollectionAccess: Joi.object(),
+      pluginCollectionAdmin: Joi.object(),
     });
 
     const validate = schema.validate(pluginOptions);
@@ -127,10 +129,38 @@ export const crowdinSync =
 
           return existingCollection;
         }),
-        CrowdinFiles,
-        CrowdinCollectionDirectories,
+        {
+          ...CrowdinFiles,
+          access: {
+            ...CrowdinFiles.access,
+            ...pluginOptions.pluginCollectionAccess,
+          },
+          admin: {
+            ...CrowdinFiles.admin,
+            ...pluginOptions.pluginCollectionAdmin,
+          }
+        },
+        {
+          ...CrowdinCollectionDirectories,
+          access: {
+            ...CrowdinCollectionDirectories.access,
+            ...pluginOptions.pluginCollectionAccess,
+          },
+          admin: {
+            ...CrowdinCollectionDirectories.admin,
+            ...pluginOptions.pluginCollectionAdmin,
+          }
+        },
         {
           ...CrowdinArticleDirectories,
+          access: {
+            ...CrowdinArticleDirectories.access,
+            ...pluginOptions.pluginCollectionAccess,
+          },
+          admin: {
+            ...CrowdinArticleDirectories.admin,
+            ...pluginOptions.pluginCollectionAdmin,
+          },
           fields: [
             ...(CrowdinArticleDirectories.fields || []),
             {
