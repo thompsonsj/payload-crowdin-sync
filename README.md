@@ -45,19 +45,26 @@ export default buildConfig({
 
 ### Options
 
-* required
+#### Required
 
 | Option | Example | Description |
 | ------ | ------- | ----------- |
-| `projectId` * | `323731` | Required: Your Crowdin project ID. |
-| `localeMap` * | `{ de_DE: { crowdinId: "de" } }` | Required: Map your Payload locales to Crowdin locale ids. |
-| ` sourceLocale` * | `en` | Required: The Payload locale that syncs to source translations (files) on Crowdin. |
+| `projectId` | `323731` | Required: Your Crowdin project ID. |
+| `localeMap` | `{ de_DE: { crowdinId: "de" } }` | Required: Map your Payload locales to Crowdin locale ids. |
+| ` sourceLocale` | `en` | Required: The Payload locale that syncs to source translations (files) on Crowdin. |
+
+#### Optional
+
+| Option | Example | Description |
+| ------ | ------- | ----------- |
 | `token` | `xxxxxxx` | Optional: Your Crowdin API token. If empty, changes to files are disabled. |
 | `directoryId` | `1169` | Optional: Crowdin directory ID to store translations. |
 | `collections` | `undefined` or `[]` or `['posts', 'categories']` | Define an array of collection slugs for which the plugin is active. If undefined, the plugin will detect localized fields on all collections. Use an empty array to disable all collections. |
 | `globals` | `undefined` or `[]` or `['nav']` | Define an array of global slugs for which the plugin is active. If undefined, the plugin will detect localized fields on all globals. Use an empty array to disable all globals. |
 | `slateToHtmlConfig` | `undefined` | Pass a custom config for the `slateToHtml` serializer used to convert Payload CMS Slate JSON to HTML for Crowdin translation. See [Serializer configuration](/docs/serializer.md). |
 | `htmlToSlateConfig` | `undefined` | Pass a custom config for the `htmlToSlate` serializer used to conver HTML to Payload CMS Slate JSON when retrieving Crowdin translation. See [Serializer configuration](/docs/serializer.md). |
+| `pluginCollectionAccess` | `undefined` | `access` collection config to pass to all the Crowdin collections created by this plugin. |
+| `pluginCollectionAdmin` | `undefined` | `admin` collection config to pass to all the Crowdin collections created by this plugin. |
 
 ### Environment variables
 
