@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.20.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.19.0...v0.20.0) (2023-12-06)
+
+
+### Features
+
+* **plugin:** pass access and admin collection properties ([#121](https://github.com/thompsonsj/payload-crowdin-sync/issues/121)) ([bb80c25](https://github.com/thompsonsj/payload-crowdin-sync/commit/bb80c25d622813197a4a4ac66a9c01307077852c))
+
 ## [0.19.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.18.1...v0.19.0) (2023-11-28)
 
 
