@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.21.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.20.0...v0.21.0) (2023-12-14)
+
+
+### Features
+
+* **plugin:** tabbedUI option ([#123](https://github.com/thompsonsj/payload-crowdin-sync/issues/123)) ([e5515e2](https://github.com/thompsonsj/payload-crowdin-sync/commit/e5515e298bfc04142645cf6d398c2f171eff84b2))
+
 ## [0.20.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/v0.19.0...v0.20.0) (2023-12-06)
 
 
