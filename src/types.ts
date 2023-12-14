@@ -19,6 +19,7 @@ export interface PluginOptions {
   htmlToSlateConfig?: HtmlToSlateConfig;
   pluginCollectionAccess?: CollectionConfig["access"];
   pluginCollectionAdmin?: CollectionConfig["admin"];
+  tabbedUI?: boolean
 }
 
 export type FieldWithName = Field & { name: string };

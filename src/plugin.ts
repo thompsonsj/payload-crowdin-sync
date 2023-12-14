@@ -6,7 +6,7 @@ import {
   getGlobalAfterChangeHook,
 } from "./hooks/collections/afterChange";
 import { getAfterDeleteHook } from "./hooks/collections/afterDelete";
-import { getFields } from "./fields/getFields";
+import { pluginCollectionOrGlobalFields } from "./fields/pluginFields";
 import CrowdinFiles from "./collections/CrowdinFiles";
 import CrowdinCollectionDirectories from "./collections/CrowdinCollectionDirectories";
 import CrowdinArticleDirectories from "./collections/CrowdinArticleDirectories";
@@ -101,8 +101,9 @@ export const crowdinSync =
             slugsConfig: pluginOptions.collections,
             collection: existingCollection
           })) {
-            const fields = getFields({
-              collection: existingCollection,
+            const fields = pluginCollectionOrGlobalFields({
+              fields: existingCollection.fields,
+              tabbedUI: pluginOptions.tabbedUI,
             });
 
             return {
@@ -196,8 +197,9 @@ export const crowdinSync =
             slugsConfig: pluginOptions.globals,
             collection: existingGlobal
           })) {
-            const fields = getFields({
-              collection: existingGlobal,
+            const fields = pluginCollectionOrGlobalFields({
+              fields: existingGlobal.fields,
+              tabbedUI: pluginOptions.tabbedUI,
             });
             return {
               ...existingGlobal,
