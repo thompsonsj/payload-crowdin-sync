@@ -1,29 +1,26 @@
 {
-  "name": "payload-crowdin-sync",
-  "version": "0.20.0",
-  "description": "Automatically upload/sync localized fields from the default locale to Crowdin. Make these fields read-only in other locales and update them using Crowdin translations.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "./dist/*"
-  ],
-  "scripts": {
-    "build": "tsc",
-    "develop": "tsc --watch",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest --forceExit --detectOpenHandles",
-    "prepare": "yarn build",
-    "prettier": "npx prettier . --write"
+  "name": "@payload-crowdin-sync-nx/source",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {},
+  "private": true,
+  "dependencies": {
+    "@crowdin/crowdin-api-client": "^1.25.0",
+    "@payloadcms/bundler-webpack": "^1.0.4",
+    "@payloadcms/db-mongodb": "^1.0.4",
+    "@payloadcms/richtext-slate": "^1.0.6",
+    "@slate-serializers/html": "^2.1.0",
+    "@types/dot-object": "^2.1.4",
+    "deep-equal": "^2.2.2",
+    "dot-object": "^2.1.4",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "joi": "^17.11.0",
+    "lodash": "^4.17.21",
+    "payload": "^2.0.11",
+    "react": "^18.2.0",
+    "tslib": "^2.3.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/thompsonsj/payload-crowdin-sync.git"
-  },
-  "author": "https://github.com/thompsonsj",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/thompsonsj/payload-crowdin-sync/issues"
-  },
-  "homepage": "https://github.com/thompsonsj/payload-crowdin-sync#readme",
   "devDependencies": {
     "@babel/core": "^7.23.2",
     "@babel/preset-env": "^7.23.2",
@@ -31,49 +28,47 @@
     "@babel/preset-typescript": "^7.23.2",
     "@commitlint/cli": "^17.8.0",
     "@commitlint/config-conventional": "^17.8.0",
+    "@nx/eslint": "17.2.4",
+    "@nx/eslint-plugin": "17.2.4",
+    "@nx/jest": "17.2.4",
+    "@nx/js": "17.2.4",
+    "@nx/workspace": "17.2.4",
     "@shelf/jest-mongodb": "^4.1.7",
-    "@swc/core": "^1.3.93",
+    "@swc-node/register": "~1.6.7",
+    "@swc/core": "~1.3.85",
     "@swc/jest": "^0.2.29",
     "@swc/register": "^0.1.10",
     "@types/deep-equal": "^1.0.3",
     "@types/express": "^4.17.20",
-    "@types/jest": "^29.5.6",
-    "@types/node": "^20.8.7",
+    "@types/jest": "^29.4.0",
+    "@types/node": "18.16.9",
     "@types/uuid": "^9.0.6",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
     "babel-jest": "^29.7.0",
     "commitizen": "^4.3.0",
+    "copyfiles": "^2.4.1",
+    "cross-env": "^7.0.3",
+    "eslint": "~8.48.0",
+    "eslint-config-prettier": "^9.0.0",
     "get-port": "^7.0.0",
     "isomorphic-fetch": "^3.0.0",
     "jest": "^29.7.0",
+    "jest-environment-node": "^29.4.1",
+    "mongodb-memory-server": "^9.0.1",
     "nock": "^13.3.6",
+    "nodemon": "^3.0.1",
+    "nx": "17.2.4",
     "prettier": "^2.8.8",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
-    "payload": "^2"
+    "verdaccio": "^5.0.4"
   },
-  "peerDependencies": {
-    "express": "^4.18.2",
-    "payload": "^2",
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
-  "dependencies": {
-    "@crowdin/crowdin-api-client": "^1.25.0",
-    "@payloadcms/richtext-slate": "^1.0.6",
-    "@slate-serializers/html": "^2.1.0",
-    "@types/dot-object": "^2.1.4",
-    "deep-equal": "^2.2.2",
-    "dot-object": "^2.1.4",
-    "joi": "^17.11.0",
-    "lodash": "^4.17.21"
+  "nx": {
+    "includedScripts": []
   },
   "volta": {
-    "node": "16.20.0",
-    "yarn": "1.22.19"
+    "node": "16.20.0"
   }
 }
