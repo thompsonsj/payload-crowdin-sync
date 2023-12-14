@@ -1,5 +1,5 @@
 import { Payload } from "payload";
-import { IcrowdinFile } from "./payload-crowdin-sync/files";
+import { CrowdinFile } from "../payload-types";
 
 /**
  * get Crowdin Article Directory for a given documentId
@@ -71,7 +71,7 @@ export async function getFileByDocumentID(
   name: string,
   documentId: string,
   payload: Payload
-): Promise<IcrowdinFile> {
+): Promise<CrowdinFile> {
   const articleDirectory = await getArticleDirectory(documentId, payload);
   return getFile(name, `${articleDirectory?.id}`, payload);
 }
@@ -79,7 +79,7 @@ export async function getFileByDocumentID(
 export async function getFilesByDocumentID(
   documentId: string,
   payload: Payload
-): Promise<IcrowdinFile[]> {
+): Promise<CrowdinFile[]> {
   const articleDirectory = await getArticleDirectory(documentId, payload);
   if (!articleDirectory) {
     // tests call this function to make sure files are deleted

@@ -4,7 +4,7 @@ import {
   getFileByDocumentID,
   getFilesByDocumentID,
   getArticleDirectory,
-} from "../../../dist/api/helpers";
+} from "payload-crowdin-sync";
 import { connectionTimeout } from "./config";
 
 /**
@@ -17,12 +17,6 @@ import { connectionTimeout } from "./config";
  * buildCrowdinJsonObject which are unit tested in `src/utilities`.
  */
 
-const collections = {
-  nonLocalized: "posts",
-  localized: "localized-posts",
-  nestedFields: "nested-field-collection",
-};
-
 describe(`Crowdin file create, update and delete`, () => {
   beforeAll(async () => {
     await initPayloadTest({ __dirname });
@@ -30,52 +24,58 @@ describe(`Crowdin file create, update and delete`, () => {
   });
 
   afterAll(async () => {
-    if (typeof payload.db.destroy === 'function') {
+    if (typeof payload?.db?.destroy === 'function') {
+      await payload.db.destroy(payload)
+      /**
       setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
+      */
     }
   });
 
-  describe(`Collection: ${collections.localized}`, () => {
+  describe(`Collection: ${"localized-posts"}`, () => {
     it("updates the `fields` file for a new article", async () => {
       const post = await payload.create({
-        collection: collections.localized,
+        collection: "localized-posts",
         data: { title: "Test post" },
       });
-      const file = await getFileByDocumentID("fields", post.id, payload as any);
-      expect(file.fileData.json).toEqual({ title: "Test post" });
+      const file = await getFileByDocumentID("fields", `${post.id}`, payload as any);
+      expect(file.fileData?.json).toEqual({ title: "Test post" });
     });
 
     it("updates the `fields` file if a text field has changed", async () => {
       const post = await payload.create({
-        collection: collections.localized,
+        collection: "localized-posts",
         data: { title: "Test post" },
       });
-      const file = await getFileByDocumentID("fields", post.id, payload as any);
-      const updatedPost = await payload.update({
-        id: post.id,
-        collection: collections.localized,
+      const file = await getFileByDocumentID("fields", `${post.id}`, payload);
+      await payload.update({
+        id: `${post.id}`,
+        collection: "localized-posts",
         data: { title: "Test post updated" },
       });
-      const updatedFile = await getFileByDocumentID("fields", post.id, payload as any);
+      const updatedFile = await getFileByDocumentID("fields", `${post.id}`, payload);
       expect(file.updatedAt).not.toEqual(updatedFile.updatedAt);
-      expect(updatedFile.fileData.json).toEqual({ title: "Test post updated" });
+      expect(updatedFile.fileData?.json).toEqual({ title: "Test post updated" });
     });
   });
 
-  describe(`Collection: ${collections.nestedFields}`, () => {
+  describe(`Collection: ${"nested-field-collection"}`, () => {
     it("does not create files for empty localized fields", async () => {
       const article = await payload.create({
-        collection: collections.nestedFields,
-        data: {},
+        collection: "nested-field-collection",
+        data: {
+          title: "Non localized title",
+          tabTwo: {}
+        },
       });
 
-      const crowdinFiles = await getFilesByDocumentID(article.id, payload as any);
+      const crowdinFiles = await getFilesByDocumentID(`${article.id}`, payload);
       expect(crowdinFiles.length).toEqual(0);
     });
 
     it("creates files containing fieldType content", async () => {
       const article = await payload.create({
-        collection: collections.nestedFields,
+        collection: "nested-field-collection",
         locale: "en",
         data: {
           textField: "Test title",
@@ -89,9 +89,10 @@ describe(`Crowdin file create, update and delete`, () => {
             },
           ],
           textareaField: "Test meta description",
+          tabTwo: {},
         },
       });
-      const crowdinFiles = await getFilesByDocumentID(article.id, payload as any);
+      const crowdinFiles = await getFilesByDocumentID(`${article.id}`, payload);
       expect(crowdinFiles.length).toEqual(2);
       expect(
         crowdinFiles.find((file) => file.name === "richTextField.html")
@@ -103,7 +104,7 @@ describe(`Crowdin file create, update and delete`, () => {
 
     it("creates files containing `array` fieldType content", async () => {
       const article = await payload.create({
-        collection: collections.nestedFields,
+        collection: "nested-field-collection",
         data: {
           arrayField: [
             {
@@ -133,10 +134,11 @@ describe(`Crowdin file create, update and delete`, () => {
               textareaField: "Test meta description 2",
             },
           ],
+          tabTwo: {},
         },
       });
-      const ids = article.arrayField.map((item: any) => item.id);
-      const crowdinFiles = await getFilesByDocumentID(article.id, payload as any);
+      const ids = article["arrayField"] instanceof Array && article["arrayField"].map((item) => item.id) || [] as string[];
+      const crowdinFiles = await getFilesByDocumentID(`${article.id}`, payload);
       expect(crowdinFiles.length).toEqual(3);
       expect(
         crowdinFiles.find(
@@ -155,7 +157,7 @@ describe(`Crowdin file create, update and delete`, () => {
 
     it("creates files containing `blocks` fieldType content", async () => {
       const article = await payload.create({
-        collection: collections.nestedFields,
+        collection: "nested-field-collection",
         data: {
           layout: [
             {
@@ -202,12 +204,13 @@ describe(`Crowdin file create, update and delete`, () => {
               blockType: "testBlockArrayOfRichText",
             },
           ],
+          tabTwo: {},
         },
       });
-      const blockIds = article.layout.map((item: any) => item.id);
-      const blockTypes = article.layout.map((item: any) => item.blockType);
-      const arrayIds = article.layout[1].messages.map((item: any) => item.id);
-      const crowdinFiles = await getFilesByDocumentID(article.id, payload as any);
+      const blockIds = article["layout"] instanceof Array && article["layout"].map((item) => item.id) || [] as string[];
+      const blockTypes = article["layout"] instanceof Array && article["layout"].map((item) => item.blockType) || [] as string[];
+      const arrayIds = article["layout"] instanceof Array && article["layout"].length > 0 && (article["layout"][1] as any).messages.map((item: any) => item.id);
+      const crowdinFiles = await getFilesByDocumentID(`${article.id}`, payload);
       expect(crowdinFiles.length).toEqual(4);
       const jsonFile = crowdinFiles.find((file) => file.name === "fields.json");
       expect(
@@ -232,7 +235,7 @@ describe(`Crowdin file create, update and delete`, () => {
         )
       ).toBeDefined();
       expect(jsonFile).toBeDefined();
-      expect(jsonFile?.fileData.json).toEqual({
+      expect(jsonFile?.fileData?.json).toEqual({
         layout: {
           [blockIds[0]]: {
             basicBlock: {
@@ -246,33 +249,33 @@ describe(`Crowdin file create, update and delete`, () => {
 
     it("deletes the `fields` file when an existing article is deleted", async () => {
       const post = await payload.create({
-        collection: collections.localized,
+        collection: "localized-posts",
         data: { title: "Test post" },
       });
-      const file = await getFileByDocumentID("fields", post.id, payload as any);
-      expect(file.fileData.json).toEqual({ title: "Test post" });
-      const deletedPost = await payload.delete({
-        collection: collections.localized,
-        id: post.id,
+      const file = await getFileByDocumentID("fields", `${post.id}`, payload);
+      expect(file.fileData?.json).toEqual({ title: "Test post" });
+      await payload.delete({
+        collection: "localized-posts",
+        id: `${post.id}`,
       });
-      const crowdinFiles = await getFilesByDocumentID(post.id, payload as any);
+      const crowdinFiles = await getFilesByDocumentID(`${post.id}`, payload);
       expect(crowdinFiles.length).toEqual(0);
     });
 
     it("deletes the collection Crowdin article directory when an existing article is deleted", async () => {
       const post = await payload.create({
-        collection: collections.localized,
+        collection: "localized-posts",
         data: { title: "Test post" },
       });
-      const file = await getFileByDocumentID("fields", post.id, payload as any);
-      expect(file.fileData.json).toEqual({ title: "Test post" });
-      const deletedPost = await payload.delete({
-        collection: collections.localized,
-        id: post.id,
+      const file = await getFileByDocumentID("fields", `${post.id}`, payload);
+      expect(file.fileData?.json).toEqual({ title: "Test post" });
+      await payload.delete({
+        collection: "localized-posts",
+        id: `${post.id}`,
       });
       const crowdinPayloadArticleDirectory = await getArticleDirectory(
-        post.id,
-        payload as any
+        `${post.id}`,
+        payload
       );
       expect(crowdinPayloadArticleDirectory).toBeUndefined();
     });

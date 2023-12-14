@@ -2,7 +2,9 @@
   "name": "@payload-crowdin-sync-nx/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "test": "nx run-many --all --target=test"
+  },
   "private": true,
   "dependencies": {
     "@crowdin/crowdin-api-client": "^1.25.0",
@@ -10,6 +12,7 @@
     "@payloadcms/db-mongodb": "^1.0.4",
     "@payloadcms/richtext-slate": "^1.0.6",
     "@slate-serializers/html": "^2.1.0",
+    "@swc/helpers": "^0.5.3",
     "@types/dot-object": "^2.1.4",
     "deep-equal": "^2.2.2",
     "dot-object": "^2.1.4",
@@ -62,6 +65,7 @@
     "prettier": "^2.8.8",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2",
     "verdaccio": "^5.0.4"
   },

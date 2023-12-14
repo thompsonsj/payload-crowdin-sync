@@ -1,6 +1,6 @@
 import payload from "payload";
 import { initPayloadTest } from "./helpers/config";
-import { payloadCrowdinSyncTranslationsApi } from "../../../dist/api/payload-crowdin-sync/translations";
+import { payloadCrowdinSyncTranslationsApi } from "payload-crowdin-sync";
 import nock from "nock";
 import { payloadCreateData } from "./fixtures/nested-field-collection/simple-blocks.fixture";
 import { payloadCreateBlocksRichTextData } from "./fixtures/nested-field-collection/rich-text-blocks.fixture";
@@ -15,16 +15,10 @@ import { connectionTimeout } from "./config";
  * stored as expected.
  */
 
-const collections = {
-  nonLocalized: "posts",
-  localized: "localized-posts",
-  nestedFields: "nested-field-collection",
-};
-
 const pluginOptions = {
   projectId: 323731,
   directoryId: 1169,
-  token: process.env.CROWDIN_TOKEN as string,
+  token: process.env['CROWDIN_TOKEN'] as string,
   localeMap: {
     de_DE: {
       crowdinId: "de",
@@ -47,22 +41,23 @@ describe("Translations", () => {
   });
 
   afterAll(async () => {
-    if (typeof payload.db.destroy === 'function') {
-      setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
+    if (typeof payload?.db?.destroy === 'function') {
+      await payload.db.destroy(payload)
+      //setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
     }
   });
 
   describe("fn: getTranslation", () => {
     it("retrieves a translation from Crowdin", async () => {
       const post = await payload.create({
-        collection: collections.localized,
+        collection: "localized-posts",
         data: { title: "Test post" },
       });
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload as any
+        payload
       );
-      const scope = nock("https://api.crowdin.com")
+      nock("https://api.crowdin.com")
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
@@ -76,7 +71,7 @@ describe("Translations", () => {
           title: "Poste d'essai",
         });
       const translation = await translationsApi.getTranslation({
-        documentId: post.id,
+        documentId: `${post.id}`,
         fieldName: "fields",
         locale: "de_DE",
       });
@@ -89,14 +84,14 @@ describe("Translations", () => {
   describe("fn: updateTranslation", () => {
     it("updates a Payload article with a `text` field translation retrieved from Crowdin", async () => {
       const post = await payload.create({
-        collection: collections.localized,
+        collection: "localized-posts",
         data: { title: "Test post" },
       });
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload as any
+        payload
       );
-      const scope = nock("https://api.crowdin.com")
+      nock("https://api.crowdin.com")
         .get(
           `/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de`
         )
@@ -109,30 +104,30 @@ describe("Translations", () => {
         .reply(200, {
           title: "Poste d'essai",
         });
-      const translation = await translationsApi.updateTranslation({
-        documentId: post.id,
-        collection: collections.localized,
+      await translationsApi.updateTranslation({
+        documentId: `${post.id}`,
+        collection: "localized-posts",
         dryRun: false,
       });
       // retrieve translated post from Payload
       const result = await payload.findByID({
-        collection: collections.localized,
-        id: post.id,
+        collection: "localized-posts",
+        id: `${post.id}`,
         locale: "de_DE",
       });
-      expect(result.title).toEqual("Testbeitrag");
+      expect(result["title"]).toEqual("Testbeitrag");
     });
 
     it("updates a Payload article draft with a `text` field translation retrieved from Crowdin", async () => {
       const post = await payload.create({
-        collection: collections.localized,
+        collection: "localized-posts",
         data: { title: "Test post" },
       });
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload as any
+        payload
       );
-      const scope = nock("https://api.crowdin.com")
+      nock("https://api.crowdin.com")
         .get(
           `/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de`
         )
@@ -145,32 +140,32 @@ describe("Translations", () => {
         .reply(200, {
           title: "Poste d'essai",
         });
-      const translation = await translationsApi.updateTranslation({
+      await translationsApi.updateTranslation({
         documentId: `${post.id}`,
-        collection: collections.localized,
+        collection: "localized-posts",
         dryRun: false,
         draft: true,
       });
       // retrieve translated post from Payload
       const result = await payload.findByID({
-        collection: collections.localized,
-        id: post.id,
+        collection: "localized-posts",
+        id: `${post.id}`,
         locale: "de_DE",
       });
-      expect(result.title).toEqual("Test post"); // collection has fallback locale
+      expect(result["title"]).toEqual("Test post"); // collection has fallback locale
       // retrieve translated post draft from Payload
       const resultDraft = await payload.findByID({
-        collection: collections.localized,
-        id: post.id,
+        collection: "localized-posts",
+        id: `${post.id}`,
         locale: "de_DE",
         draft: true,
       });
-      expect(resultDraft.title).toEqual("Testbeitrag");
+      expect(resultDraft["title"]).toEqual("Testbeitrag");
     });
 
     it("updates a Payload article with a `richText` field translation retrieved from Crowdin", async () => {
       const post = await payload.create({
-        collection: collections.localized,
+        collection: "localized-posts",
         data: {
           content: [
             {
@@ -185,9 +180,9 @@ describe("Translations", () => {
       });
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload as any
+        payload
       );
-      const scope = nock("https://api.crowdin.com")
+      nock("https://api.crowdin.com")
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
@@ -198,18 +193,18 @@ describe("Translations", () => {
         .reply(200, {
           title: "Poste d'essai",
         });
-      const translation = await translationsApi.updateTranslation({
-        documentId: post.id,
-        collection: collections.localized,
+      await translationsApi.updateTranslation({
+        documentId: `${post.id}`,
+        collection: "localized-posts",
         dryRun: false,
       });
       // retrieve translated post from Payload
       const result = await payload.findByID({
-        collection: collections.localized,
-        id: post.id,
+        collection: "localized-posts",
+        id: `${post.id}`,
         locale: "de_DE",
       });
-      expect(result.content).toEqual([
+      expect(result["content"]).toEqual([
         {
           children: [{ text: "Testbeitrag" }],
           type: "p",
@@ -219,12 +214,12 @@ describe("Translations", () => {
 
     it("updates a Payload article with a *blocks* field translation retrieved from Crowdin", async () => {
       const post = await payload.create({
-        collection: collections.nestedFields,
-        data: payloadCreateData,
+        collection: "nested-field-collection",
+        data: payloadCreateData as any,
       });
       // we need the ids created by Payload to update the blocks
-      const blockIds = post.layout.map((block: any) => block.id);
-      const blockTypes = post.layout.map((block: any) => block.blockType);
+      const blockIds = (post["layout"] instanceof Array ? post["layout"].map((block) => block.id) : []) as string[];
+      const blockTypes = post["layout"] instanceof Array ? post["layout"].map((block) => block.blockType) : [];
       const responseDe = {
         layout: {
           [blockIds[0]]: {
@@ -265,9 +260,9 @@ describe("Translations", () => {
       };
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload as any
+        payload
       );
-      const scope = nock("https://api.crowdin.com")
+      nock("https://api.crowdin.com")
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
@@ -276,18 +271,18 @@ describe("Translations", () => {
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
         )
         .reply(200, responseFr);
-      const translation = await translationsApi.updateTranslation({
-        documentId: post.id,
-        collection: collections.nestedFields,
+      await translationsApi.updateTranslation({
+        documentId: `${post.id}`,
+        collection: "nested-field-collection",
         dryRun: false,
       });
       // retrieve translated post from Payload
       const resultDe = await payload.findByID({
-        collection: collections.nestedFields,
-        id: post.id,
+        collection: "nested-field-collection",
+        id: `${post.id}`,
         locale: "de_DE",
       });
-      expect(resultDe.layout).toEqual([
+      expect(resultDe["layout"]).toEqual([
         {
           textField: "Textfeldinhalt im Block bei Layoutindex 0",
           textareaField: "Textbereichsfeldinhalt im Block bei Layoutindex 0",
@@ -303,11 +298,11 @@ describe("Translations", () => {
       ]);
       // retrieve translated post from Payload
       const resultFr = await payload.findByID({
-        collection: collections.nestedFields,
-        id: post.id,
+        collection: "nested-field-collection",
+        id: `${post.id}`,
         locale: "fr_FR",
       });
-      expect(resultFr.layout).toEqual([
+      expect(resultFr["layout"]).toEqual([
         {
           textField:
             "Contenu du champ de texte dans le bloc à l'index de mise en page 0",
@@ -329,14 +324,14 @@ describe("Translations", () => {
 
     it("updates a Payload article with a *blocks* field translation retrieved from Crowdin and respects non-localized fields", async () => {
       const post = await payload.create({
-        collection: collections.nestedFields,
-        data: payloadCreateIncludesNonLocalizedBlocksData,
+        collection: "nested-field-collection",
+        data: payloadCreateIncludesNonLocalizedBlocksData as any,
       });
       // we need the ids created by Payload to update the blocks
-      const blockIds = post.layout.map((block: any) => block.id);
-      const blockTypes = post.layout.map((block: any) => block.blockType);
+      const blockIds = (post["layout"] instanceof Array ? post["layout"].map((block) => block.id) : []) as string[];
+      const blockTypes = (post["layout"] instanceof Array ? post["layout"].map((block) => block.blockType) : []) as string[];
       // ensure the original created post is as expected
-      expect(post.layout).toEqual([
+      expect(post["layout"]).toEqual([
         {
           textField:
             "Text field content in block at layout index 0",
@@ -384,29 +379,29 @@ describe("Translations", () => {
       };
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload as any
+        payload
       );
-      const scope = nock("https://api.crowdin.com")
+      nock("https://api.crowdin.com")
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
-        .reply(200, null)
+        .reply(200, {})
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
         )
         .reply(200, responseFr);
-      const translation = await translationsApi.updateTranslation({
+      await translationsApi.updateTranslation({
         documentId: `${post.id}`,
-        collection: collections.nestedFields,
+        collection: "nested-field-collection",
         dryRun: false,
       });
       // retrieve original post from Payload
       const resultEn = await payload.findByID({
-        collection: collections.nestedFields,
-        id: post.id,
+        collection: "nested-field-collection",
+        id: `${post.id}`,
         locale: "en",
       });
-      expect(resultEn.layout).toEqual([
+      expect(resultEn["layout"]).toEqual([
         {
           textField:
             "Text field content in block at layout index 0",
@@ -434,11 +429,11 @@ describe("Translations", () => {
       ]);
       // retrieve translated post from Payload
       const resultFr = await payload.findByID({
-        collection: collections.nestedFields,
-        id: post.id,
+        collection: "nested-field-collection",
+        id: `${post.id}`,
         locale: "fr_FR",
       });
-      expect(resultFr.layout).toEqual([
+      expect(resultFr["layout"]).toEqual([
         {
           textField:
             "Contenu du champ de texte dans le bloc à l'index de mise en page 0",
@@ -468,12 +463,12 @@ describe("Translations", () => {
 
     it("updates a Payload article with a *blocks* field translation retrieved from Crowdin and detects no change on the next update attempt", async () => {
       const post = await payload.create({
-        collection: collections.nestedFields,
-        data: payloadCreateData,
+        collection: "nested-field-collection",
+        data: payloadCreateData as any,
       });
       // we need the ids created by Payload to update the blocks
-      const blockIds = post.layout.map((block: any) => block.id);
-      const blockTypes = post.layout.map((block: any) => block.blockType);
+      const blockIds = (post["layout"] instanceof Array ? post["layout"].map((block: any) => block.id) : []) as string[];
+      const blockTypes = post["layout"] instanceof Array ? post["layout"].map((block: any) => block.blockType) : [];
       const responseDe = {
         layout: {
           [blockIds[0]]: {
@@ -514,9 +509,9 @@ describe("Translations", () => {
       };
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload as any
+        payload
       );
-      const scope = nock("https://api.crowdin.com")
+      nock("https://api.crowdin.com")
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
@@ -525,18 +520,18 @@ describe("Translations", () => {
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
         )
         .reply(200, responseFr);
-      const translation = await translationsApi.updateTranslation({
-        documentId: post.id,
-        collection: collections.nestedFields,
+      await translationsApi.updateTranslation({
+        documentId: `${post.id}`,
+        collection: "nested-field-collection",
         dryRun: false,
       });
       // retrieve translated post from Payload
       const resultDe = await payload.findByID({
-        collection: collections.nestedFields,
-        id: post.id,
+        collection: "nested-field-collection",
+        id: `${post.id}`,
         locale: "de_DE",
       });
-      expect(resultDe.layout).toEqual([
+      expect(resultDe["layout"]).toEqual([
         {
           textField: "Textfeldinhalt im Block bei Layoutindex 0",
           textareaField: "Textbereichsfeldinhalt im Block bei Layoutindex 0",
@@ -552,11 +547,11 @@ describe("Translations", () => {
       ]);
       // retrieve translated post from Payload
       const resultFr = await payload.findByID({
-        collection: collections.nestedFields,
-        id: post.id,
+        collection: "nested-field-collection",
+        id: `${post.id}`,
         locale: "fr_FR",
       });
-      expect(resultFr.layout).toEqual([
+      expect(resultFr["layout"]).toEqual([
         {
           textField:
             "Contenu du champ de texte dans le bloc à l'index de mise en page 0",
@@ -574,7 +569,7 @@ describe("Translations", () => {
           blockType: "basicBlock",
         },
       ]);
-      const nextScope = nock("https://api.crowdin.com")
+      nock("https://api.crowdin.com")
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
@@ -584,8 +579,8 @@ describe("Translations", () => {
         )
         .reply(200, responseFr);
       const nextTranslation = await translationsApi.updateTranslation({
-        documentId: post.id,
-        collection: collections.nestedFields,
+        documentId: `${post.id}`,
+        collection: "nested-field-collection",
         dryRun: false,
       });
       expect(nextTranslation.translations["de_DE"].changed).toBe(false);
@@ -594,12 +589,11 @@ describe("Translations", () => {
 
     it("updates a Payload article with *blocks* rich text translations retrieved from Crowdin", async () => {
       const post = await payload.create({
-        collection: collections.nestedFields,
-        data: payloadCreateBlocksRichTextData,
+        collection: "nested-field-collection",
+        data: payloadCreateBlocksRichTextData as any,
       });
       // we need the ids created by Payload to update the blocks
-      const blockIds = post.layout.map((block: any) => block.id);
-      const blockTypes = post.layout.map((block: any) => block.blockType);
+      const blockIds = (post["layout"] instanceof Array ? post["layout"].map((block) => block.id) : []) as string[];
       const responseDeOne =
         "<p>Rich-Text-Inhalt im Blocklayout bei Index 0.</p>";
       const responseDeTwo =
@@ -610,37 +604,37 @@ describe("Translations", () => {
         "<p>Contenu de texte enrichi dans la disposition des blocs à l'index 1.</p>";
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload as any
+        payload
       );
-      const scope = nock("https://api.crowdin.com")
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
-        )
-        .reply(200, responseDeTwo)
+      nock("https://api.crowdin.com")
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
         .reply(200, responseDeOne)
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
-        .reply(200, responseFrTwo)
+        .reply(200, responseDeTwo)
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
         )
-        .reply(200, responseFrOne);
-      const translation = await translationsApi.updateTranslation({
-        documentId: post.id,
-        collection: collections.nestedFields,
+        .reply(200, responseFrOne)
+        .get(
+          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
+        )
+        .reply(200, responseFrTwo);
+      await translationsApi.updateTranslation({
+        documentId: `${post.id}`,
+        collection: "nested-field-collection",
         dryRun: false,
       });
       // retrieve translated post from Payload
       const resultDe = await payload.findByID({
-        collection: collections.nestedFields,
-        id: post.id,
+        collection: "nested-field-collection",
+        id: `${post.id}`,
         locale: "de_DE",
       });
-      expect(resultDe.layout).toEqual([
+      expect(resultDe["layout"]).toEqual([
         {
           richTextField: [
             {
@@ -672,11 +666,11 @@ describe("Translations", () => {
       ]);
       // retrieve translated post from Payload
       const resultFr = await payload.findByID({
-        collection: collections.nestedFields,
-        id: post.id,
+        collection: "nested-field-collection",
+        id: `${post.id}`,
         locale: "fr_FR",
       });
-      expect(resultFr.layout).toEqual([
+      expect(resultFr["layout"]).toEqual([
         {
           richTextField: [
             {
@@ -736,13 +730,13 @@ describe("Translations", () => {
       // ensure all afterChange hooks have run? Getting test failures without this additional operation.
       const result = await payload.findByID({
         collection: slug,
-        id: post.id,
+        id: `${post.id}`,
       });
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload as any
+        payload
       );
-      const htmlFieldSlugs = await translationsApi.getHtmlFieldSlugs(result.id);
+      const htmlFieldSlugs = await translationsApi.getHtmlFieldSlugs(`${result.id}`);
       expect(htmlFieldSlugs.length).toEqual(11)
       expect(htmlFieldSlugs.sort()).toEqual([
           "field_0",

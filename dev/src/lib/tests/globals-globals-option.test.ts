@@ -1,6 +1,7 @@
 import payload from "payload";
 import { initPayloadTest } from "./helpers/config";
 import { connectionTimeout } from "./config";
+import { CrowdinArticleDirectory } from "../payload-types";
 
 /**
  * Test the collections
@@ -21,12 +22,6 @@ import { connectionTimeout } from "./config";
  * - file: Crowdin File
  */
 
-const globals = {
-  nonLocalized: "nav",
-  localized: "statistics",
-  localizedButDisabled: "localized-nav",
-};
-
 describe("Globals", () => {
   beforeAll(async () => {
     await initPayloadTest({ __dirname, payloadConfigFile: 'payload.config.globals-option.ts' })
@@ -34,54 +29,53 @@ describe("Globals", () => {
   });
 
   afterAll(async () => {
-    if (typeof payload.db.destroy === 'function') {
+    if (typeof payload?.db?.destroy === 'function') {
+      await payload.db.destroy(payload)
+      /**
       setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
+      */
     }
   });
 
   describe("Non-localized globals", () => {
     it("does not create an article directory for a global with no localized fields", async () => {
-      const global = await payload.updateGlobal({
-        slug: globals.nonLocalized,
+      await payload.updateGlobal({
+        slug: "nav",
         data: { items: [{
           label: "Nav item 1"
         }] },
       });
       const result = await payload.findGlobal({
-        slug: globals.nonLocalized,
+        slug: "nav",
       });
-      const crowdinArticleDirectoryId = result.crowdinArticleDirectory?.id;
-      expect(crowdinArticleDirectoryId).toBeUndefined();
+      expect(Object.prototype.hasOwnProperty.call(result, 'crowdinArticleDirectory')).toBeFalsy();
     });
 
     it("does not create an article directory for a global with localized fields that is not present in a defined array in the globals option", async () => {
-      const global = await payload.updateGlobal({
-        slug: globals.localizedButDisabled,
+      await payload.updateGlobal({
+        slug: "localized-nav",
         data: { items: [{
           label: "Nav item 1"
         }] },
       });
       const result = await payload.findGlobal({
-        slug: globals.localizedButDisabled,
+        slug: "localized-nav",
       });
-      const crowdinArticleDirectoryId = result.crowdinArticleDirectory?.id;
-      expect(crowdinArticleDirectoryId).toBeUndefined();
+      expect(Object.prototype.hasOwnProperty.call(result, 'crowdinArticleDirectory')).toBeFalsy();
     });
   });
 
   describe("crowdin-article-directories", () => {
     it("creates an article directory", async () => {
-      const global = await payload.updateGlobal({
-        slug: globals.localized,
-        data: { items: [{
-          label: "Nav item 1"
-        }] },
+      await payload.updateGlobal({
+        slug: "statistics",
+        data: { countries: { text: "Country stats"} },
       });
       // retrieve post to get populated fields
       const result = await payload.findGlobal({
-        slug: globals.localized,
+        slug: "statistics",
       });
-      const crowdinArticleDirectoryId = result.crowdinArticleDirectory?.id;
+      const crowdinArticleDirectoryId = (result.crowdinArticleDirectory as CrowdinArticleDirectory)?.id;
       expect(crowdinArticleDirectoryId).toBeDefined();
     });
   });

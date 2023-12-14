@@ -1,5 +1,5 @@
 import crowdin from "@crowdin/crowdin-api-client";
 
 export const { uploadStorageApi, sourceFilesApi } = new crowdin({
-  token: process.env.CROWDIN_API_TOKEN as string,
+  token: process.env['CROWDIN_API_TOKEN'] as string,
 });

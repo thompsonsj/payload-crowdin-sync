@@ -56,6 +56,7 @@ class crowdinAPIWrapper {
           title: title,
           exportPattern: "**",
           priority: "normal",
+          path: "",
           createdAt: date,
           updatedAt: date,
         },
@@ -122,6 +123,7 @@ class crowdinAPIWrapper {
           type,
           path: `/policies/security-and-privacy/${name}`,
           parserVersion: 3,
+          context: "",
         },
       };
     });
@@ -159,6 +161,7 @@ class crowdinAPIWrapper {
           type: "html",
           path: `/policies/security-and-privacy/file.filetype`,
           parserVersion: 3,
+          context: "",
         },
       };
     });

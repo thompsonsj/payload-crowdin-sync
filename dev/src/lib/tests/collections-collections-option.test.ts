@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
 import payload from "payload";
 import { initPayloadTest } from "./helpers/config";
 import { multiRichTextFields } from "../collections/fields/multiRichTextFields";
 import { connectionTimeout } from "./config";
+import { CrowdinArticleDirectory } from "../payload-types";
 
 /**
  * Test the collections
@@ -23,12 +23,6 @@ import { connectionTimeout } from "./config";
  * - file: Crowdin File
  */
 
-const collections = {
-  nonLocalized: "posts",
-  localized: "multi-rich-text",
-  localizedButDisabled: "localized-posts",
-};
-
 describe("Collections - collections option", () => {
   beforeAll(async () => {
     await initPayloadTest({ __dirname, payloadConfigFile: 'payload.config.collections-option.ts' });
@@ -36,36 +30,35 @@ describe("Collections - collections option", () => {
   });
 
   afterAll(async () => {
-    if (typeof payload.db.destroy === 'function') {
-      setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
+    if (typeof payload?.db?.destroy === 'function') {
+      await payload.db.destroy(payload)
+      // setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
     }
   });
 
   describe("Non-localized collections", () => {
     it("does not create an article directory for a collection with no localized fields", async () => {
       const post = await payload.create({
-        collection: collections.nonLocalized,
+        collection: "posts",
         data: { title: "Test post" },
       });
       const result = await payload.findByID({
-        collection: collections.nonLocalized,
+        collection: "posts",
         id: post.id,
       });
-      const crowdinArticleDirectoryId = result.crowdinArticleDirectory?.id;
-      expect(crowdinArticleDirectoryId).toBeUndefined();
+      expect(Object.prototype.hasOwnProperty.call(result, 'crowdinArticleDirectory')).toBeFalsy();
     });
 
     it("does not create an article directory for a collection with localized fields that is not present in a defined array in the collections option", async () => {
       const post = await payload.create({
-        collection: collections.localizedButDisabled,
+        collection: "localized-posts",
         data: { title: "Test post" },
       });
       const result = await payload.findByID({
-        collection: collections.localizedButDisabled,
+        collection: "localized-posts",
         id: post.id,
       });
-      const crowdinArticleDirectoryId = result.crowdinArticleDirectory?.id;
-      expect(crowdinArticleDirectoryId).toBeUndefined();
+      expect(Object.prototype.hasOwnProperty.call(result, 'crowdinArticleDirectory')).toBeFalsy();
     });
   });
 
@@ -84,15 +77,15 @@ describe("Collections - collections option", () => {
         return accum;
       }, {});
       const post = await payload.create({
-        collection: collections.localized,
+        collection: "multi-rich-text",
         data,
       });
       // retrieve post to get populated fields
       const result = await payload.findByID({
-        collection: collections.localized,
+        collection: "multi-rich-text",
         id: post.id,
       });
-      const crowdinArticleDirectoryId = result.crowdinArticleDirectory?.id;
+      const crowdinArticleDirectoryId = (result.crowdinArticleDirectory as CrowdinArticleDirectory)?.id;
       expect(crowdinArticleDirectoryId).toBeDefined();
     });
   });

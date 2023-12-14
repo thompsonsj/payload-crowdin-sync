@@ -23,7 +23,7 @@ import {
   convertHtmlToSlate,
 } from "../../utilities";
 
-import { CrowdinArticleDirectory } from "../../payload-types";
+import { Config, CrowdinArticleDirectory } from "../../payload-types";
 
 interface IgetLatestDocumentTranslation {
   collection: string;
@@ -74,7 +74,7 @@ export class payloadCrowdinSyncTranslationsApi {
     this.projectId = pluginOptions.projectId;
     this.directoryId = pluginOptions.directoryId;
     this.translationsApi =
-      process.env.NODE_ENV === "test"
+      process.env["NODE_ENV"] === "test"
         ? (mockCrowdinClient(pluginOptions) as any)
         : translationsApi;
     this.filesApi = new payloadCrowdinSyncFilesApi(pluginOptions, payload);
@@ -102,12 +102,12 @@ export class payloadCrowdinSyncTranslationsApi {
     let doc;
     if (global) {
       doc = await this.payload.findGlobal({
-        slug: collection,
+        slug: collection as keyof Config["globals"],
         locale: this.sourceLocale,
       });
     } else {
       doc = await this.payload.findByID({
-        collection: collection,
+        collection: collection as keyof Config["collections"],
         id: documentId,
         locale: this.sourceLocale,
       });
@@ -141,14 +141,14 @@ export class payloadCrowdinSyncTranslationsApi {
         if (global) {
           try {
             await this.payload.updateGlobal({
-              slug: collection,
+              slug: collection as keyof Config["globals"],
               locale: locale,
               draft,
               data: {
                 ...report[locale].latestTranslations,
                 // error on update without the following line.
                 // see https://github.com/thompsonsj/payload-crowdin-sync/pull/13/files#r1209271660
-                crowdinArticleDirectory: (doc.crowdinArticleDirectory as CrowdinArticleDirectory).id,
+                crowdinArticleDirectory: ((doc as any)["crowdinArticleDirectory"]).id,
               },
             });
           } catch (error) {
@@ -157,7 +157,7 @@ export class payloadCrowdinSyncTranslationsApi {
         } else {
           try {
             await this.payload.update({
-              collection: collection,
+              collection: collection  as keyof Config["collections"],
               locale: locale,
               id: documentId,
               draft,
@@ -207,12 +207,12 @@ export class payloadCrowdinSyncTranslationsApi {
     let document: any;
     if (global) {
       document = await this.payload.findGlobal({
-        slug: collection,
+        slug: collection as keyof Config["globals"],
         locale: locale,
       });
     } else {
       document = await this.payload.findByID({
-        collection: collection,
+        collection: collection as keyof Config["collections"],
         id: doc.id,
         locale: locale,
       });

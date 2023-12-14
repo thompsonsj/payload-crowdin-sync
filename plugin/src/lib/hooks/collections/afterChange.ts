@@ -17,6 +17,7 @@ import {
 import deepEqual from "deep-equal";
 import { getLocalizedFields } from "../../utilities";
 import { payloadCrowdinSyncFilesApi } from "../../api/payload-crowdin-sync/files";
+import { Config } from "payload/config";
 
 /**
  * Update Crowdin collections and make updates in Crowdin
@@ -100,7 +101,7 @@ const performAfterChange = async ({
   /**
    * Abort if token not set and not in test mode
    */
-  if (!pluginOptions.token && process.env.NODE_ENV !== "test") {
+  if (!pluginOptions.token && process.env['NODE_ENV'] !== "test") {
     return doc;
   }
 
@@ -151,7 +152,7 @@ const performAfterChange = async ({
    */
   const articleDirectory = await filesApi.findOrCreateArticleDirectory({
     document: doc,
-    collectionSlug: collection.slug,
+    collectionSlug: collection.slug as keyof Config['collections'] | keyof Config['globals'],
     global,
   });
 
@@ -184,7 +185,7 @@ const performAfterChange = async ({
     if (
       (!deepEqual(currentCrowdinJsonData, prevCrowdinJsonData) &&
         Object.keys(currentCrowdinJsonData).length !== 0) ||
-      process.env.PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE === "true"
+      process.env['PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE'] === "true"
     ) {
       await createOrUpdateJsonFile();
     }
@@ -214,7 +215,7 @@ const performAfterChange = async ({
       const prevValue = prevCrowdinHtmlData[name];
       if (
         !fieldChanged(prevValue, currentValue, "richText") &&
-        process.env.PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE !== "true"
+        process.env['PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE'] !== "true"
       ) {
         return;
       }

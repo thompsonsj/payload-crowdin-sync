@@ -15,9 +15,8 @@ import NestedFieldCollection from "./collections/NestedFieldCollection";
 import Tags from "./collections/Tags";
 import Users from "./collections/Users";
 import { resolve } from "path";
-import { PluginOptions } from '../../dist/types'
 
-import { crowdinSync } from "../../dist";
+import { crowdinSync, type PluginOptions } from "payload-crowdin-sync";
 
 import dotenv from "dotenv";
 
@@ -48,11 +47,23 @@ export const buildConfigWithPluginOptions = async ({
   return await buildConfig({
     editor: slateEditor({}),
     db: mongooseAdapter({
-      url: process.env.MONGODB_URI,
+      url: process.env['MONGODB_URI'] || ``,
     }),
-    serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || "http://localhost:3000",
+    serverURL: process.env['PAYLOAD_PUBLIC_SERVER_URL'] || "http://localhost:3000",
     admin: {
       bundler: webpackBundler(),
+      webpack: (config) => {
+        return {
+          ...config,
+          resolve: {
+            ...config.resolve,
+            alias: {
+              ...config.resolve?.alias,
+              "payload-crowdin-sync": path.resolve(__dirname, "../../../plugin/src/index.ts"),
+            }
+          }
+        }
+      },
       user: Users.slug,
     },
     plugins: [

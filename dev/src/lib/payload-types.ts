@@ -9,93 +9,126 @@
 export interface Config {
   collections: {
     categories: Category;
-    "localized-posts": LocalizedPost;
-    "nested-field-collection": NestedFieldCollection;
+    'multi-rich-text': MultiRichText;
+    'localized-posts': LocalizedPost;
+    'nested-field-collection': NestedFieldCollection;
     posts: Post;
     tags: Tag;
     users: User;
-    "crowdin-files": CrowdinFile;
-    "crowdin-collection-directories": CrowdinCollectionDirectory;
-    "crowdin-article-directories": CrowdinArticleDirectory;
+    'crowdin-files': CrowdinFile;
+    'crowdin-collection-directories': CrowdinCollectionDirectory;
+    'crowdin-article-directories': CrowdinArticleDirectory;
+    'payload-preferences': PayloadPreference;
+    'payload-migrations': PayloadMigration;
   };
   globals: {
+    'localized-nav': LocalizedNav;
     nav: Nav;
+    statistics: Statistic;
   };
 }
 export interface Category {
   id: string;
-  name?: string;
+  name?: string | null;
 }
-export interface LocalizedPost {
+export interface MultiRichText {
   id: string;
-  title?: string;
-  author?: string | User;
-  publishedDate?: string;
-  category?: string | Category;
-  tags?: string[] | Tag[];
-  content?: {
-    [k: string]: unknown;
-  }[];
-  status?: "draft" | "published";
-  crowdinArticleDirectory?: string | CrowdinArticleDirectory;
+  field_0?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_1?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_2?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_3?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_4?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_5?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_6?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_7?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_8?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_9?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_10?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   updatedAt: string;
   createdAt: string;
-}
-export interface User {
-  id: string;
-  name?: string;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string;
-  resetPasswordExpiration?: string;
-  salt?: string;
-  hash?: string;
-  loginAttempts?: number;
-  lockUntil?: string;
-  password?: string;
-}
-export interface Tag {
-  id: string;
-  name?: string;
 }
 export interface CrowdinArticleDirectory {
   id: string;
-  name?: string;
-  crowdinCollectionDirectory?: string | CrowdinCollectionDirectory;
-  crowdinFiles?: string[] | CrowdinFile[];
+  name?: string | null;
+  crowdinCollectionDirectory?: (string | null) | CrowdinCollectionDirectory;
+  crowdinFiles?: (string | CrowdinFile)[] | null;
   createdAt: string;
   updatedAt: string;
-  originalId?: number;
-  projectId?: number;
-  directoryId?: number;
-  excludeLocales?: ("de_DE" | "fr_FR")[];
+  originalId?: number | null;
+  projectId?: number | null;
+  directoryId?: number | null;
+  excludeLocales?: ('de_DE' | 'fr_FR')[] | null;
 }
 export interface CrowdinCollectionDirectory {
   id: string;
-  name?: string;
-  title?: string;
-  collectionSlug?: string;
+  name?: string | null;
+  title?: string | null;
+  collectionSlug?: string | null;
   createdAt: string;
   updatedAt: string;
-  originalId?: number;
-  projectId?: number;
-  directoryId?: number;
+  originalId?: number | null;
+  projectId?: number | null;
+  directoryId?: number | null;
 }
 export interface CrowdinFile {
   id: string;
-  title?: string;
-  field?: string;
-  crowdinArticleDirectory?: string | CrowdinArticleDirectory;
+  title?: string | null;
+  field?: string | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   createdAt: string;
   updatedAt: string;
-  originalId?: number;
-  projectId?: number;
-  directoryId?: number;
-  revisionId?: number;
-  name?: string;
-  type?: string;
-  path?: string;
+  originalId?: number | null;
+  projectId?: number | null;
+  directoryId?: number | null;
+  revisionId?: number | null;
+  name?: string | null;
+  type?: string | null;
+  path?: string | null;
   fileData?: {
     json?:
       | {
@@ -106,109 +139,239 @@ export interface CrowdinFile {
       | number
       | boolean
       | null;
-    html?: string;
+    html?: string | null;
   };
+}
+export interface LocalizedPost {
+  id: string;
+  title?: string | null;
+  author?: (string | null) | User;
+  publishedDate?: string | null;
+  category?: (string | null) | Category;
+  tags?: (string | Tag)[] | null;
+  content?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  status?: ('draft' | 'published') | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+export interface User {
+  id: string;
+  name?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  password: string | null;
+}
+export interface Tag {
+  id: string;
+  name?: string | null;
 }
 export interface NestedFieldCollection {
   id: string;
-  textField?: string;
-  richTextField?: {
-    [k: string]: unknown;
-  }[];
-  textareaField?: string;
-  arrayField?: {
-    textField?: string;
-    richTextField?: {
-      [k: string]: unknown;
-    }[];
-    textareaField?: string;
-    id?: string;
-  }[];
-  layout?: (
+  title?: string | null;
+  textField?: string | null;
+  richTextField?:
     | {
-        textField?: string;
-        richTextField?: {
-          [k: string]: unknown;
-        }[];
-        textareaField?: string;
-        id?: string;
-        blockName?: string;
-        blockType: "basicBlock";
-      }
+        [k: string]: unknown;
+      }[]
+    | null;
+  textareaField?: string | null;
+  arrayField?:
     | {
-        richTextField?: {
-          [k: string]: unknown;
-        }[];
-        id?: string;
-        blockName?: string;
-        blockType: "basicBlockRichText";
-      }
-    | {
-        textField?: string;
-        richTextField?: {
-          [k: string]: unknown;
-        }[];
-        textareaField?: string;
-        id?: string;
-        blockName?: string;
-        blockType: "basicBlockMixed";
-      }
-    | {
-        title?: string;
-        messages?: {
-          title?: string;
-          message?: {
-            [k: string]: unknown;
-          }[];
-          id?: string;
-        }[];
-        id?: string;
-        blockName?: string;
-        blockType: "testBlockArrayOfRichText";
-      }
-  )[];
+        textField?: string | null;
+        richTextField?:
+          | {
+              [k: string]: unknown;
+            }[]
+          | null;
+        textareaField?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  layout?:
+    | (
+        | {
+            textField?: string | null;
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            textareaField?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlock';
+          }
+        | {
+            textField?: string | null;
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            textareaField?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlockNonLocalized';
+          }
+        | {
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlockRichText';
+          }
+        | {
+            textField?: string | null;
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            textareaField?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlockMixed';
+          }
+        | {
+            title?: string | null;
+            messages?:
+              | {
+                  title?: string | null;
+                  message?:
+                    | {
+                        [k: string]: unknown;
+                      }[]
+                    | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'testBlockArrayOfRichText';
+          }
+      )[]
+    | null;
   group?: {
-    textField?: string;
-    richTextField?: {
-      [k: string]: unknown;
-    }[];
-    textareaField?: string;
+    textField?: string | null;
+    richTextField?:
+      | {
+          [k: string]: unknown;
+        }[]
+      | null;
+    textareaField?: string | null;
   };
-  tabOneTitle?: string;
-  tabOneContent?: {
-    [k: string]: unknown;
-  }[];
+  tabOneTitle?: string | null;
+  tabOneContent?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
   tabTwo: {
-    tabTwoTitle?: string;
-    tabTwoContent?: {
-      [k: string]: unknown;
-    }[];
+    tabTwoTitle?: string | null;
+    tabTwoContent?:
+      | {
+          [k: string]: unknown;
+        }[]
+      | null;
   };
-  crowdinArticleDirectory?: string | CrowdinArticleDirectory;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   updatedAt: string;
   createdAt: string;
 }
 export interface Post {
   id: string;
-  title?: string;
-  author?: string | User;
-  publishedDate?: string;
-  category?: string | Category;
-  tags?: string[] | Tag[];
-  content?: {
-    [k: string]: unknown;
-  }[];
-  status?: "draft" | "published";
+  title?: string | null;
+  author?: (string | null) | User;
+  publishedDate?: string | null;
+  category?: (string | null) | Category;
+  tags?: (string | Tag)[] | null;
+  content?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  status?: ('draft' | 'published') | null;
   updatedAt: string;
   createdAt: string;
+}
+export interface PayloadPreference {
+  id: string;
+  user: {
+    relationTo: 'users';
+    value: string | User;
+  };
+  key?: string | null;
+  value?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+export interface PayloadMigration {
+  id: string;
+  name?: string | null;
+  batch?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+export interface LocalizedNav {
+  id: string;
+  items: {
+    label?: string | null;
+    id?: string | null;
+  }[];
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  updatedAt?: string | null;
+  createdAt?: string | null;
 }
 export interface Nav {
   id: string;
   items: {
-    label?: string;
-    id?: string;
+    label?: string | null;
+    id?: string | null;
   }[];
-  crowdinArticleDirectory?: string | CrowdinArticleDirectory;
-  updatedAt?: string;
-  createdAt?: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+export interface Statistic {
+  id: string;
+  users?: {
+    text?: string | null;
+    number?: number | null;
+  };
+  countries?: {
+    text?: string | null;
+    number?: number | null;
+  };
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+
+
+declare module 'payload' {
+  export interface GeneratedTypes extends Config {}
 }

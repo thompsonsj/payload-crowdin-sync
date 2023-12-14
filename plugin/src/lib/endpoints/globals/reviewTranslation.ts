@@ -13,25 +13,25 @@ export const getReviewTranslationEndpoint = ({
   method: "get",
   handler: async (req, res, next) => {
     const articleDirectory = await req.payload.findByID({
-      id: req.params.id,
-      collection: req.collection?.config.slug as string,
+      id: req.params['id'],
+      collection: "crowdin-article-directories",
     });
     const global =
-      (articleDirectory.crowdinCollectionDirectory as any)?.collectionSlug as string === "globals";
+      (articleDirectory['crowdinCollectionDirectory'] as any)?.collectionSlug as string === "globals";
     const translationsApi = new payloadCrowdinSyncTranslationsApi(
       pluginOptions,
       req.payload
     );
     try {
       const translations = await translationsApi.updateTranslation({
-        documentId: !global ? articleDirectory.name as string : ``,
+        documentId: !global ? articleDirectory["name"] as string : ``,
         collection: global
-          ? articleDirectory.name as string
-          : (articleDirectory.crowdinCollectionDirectory as any)?.collectionSlug as string,
+          ? articleDirectory['name'] as string
+          : (articleDirectory["crowdinCollectionDirectory"] as any)?.collectionSlug as string,
         global,
-        draft: req.query.draft === 'true' ? true : false,
+        draft: req.query["draft"] === 'true' ? true : false,
         dryRun: type === "update" ? false : true,
-        excludeLocales: articleDirectory.excludeLocales as string[] || [],
+        excludeLocales: articleDirectory["excludeLocales"] as string[] || [],
       });
       res.status(200).send(translations);
     } catch (error) {

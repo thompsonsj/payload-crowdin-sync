@@ -22,13 +22,13 @@ export async function initPayloadTest(
   };
   const payloadConfigPath = options.payloadConfigFile ? `./../${options.payloadConfigFile}` :  "./../payload.config.default.ts"
 
-  process.env.NODE_ENV = "test";
-  process.env.PAYLOAD_CONFIG_PATH = path.resolve(
+  process.env['NODE_ENV'] = "test";
+  process.env['PAYLOAD_CONFIG_PATH'] = path.resolve(
     options.__dirname,
     payloadConfigPath
   );
 
-  const port = process.env.PORT || 3000;
+  const port = process.env['PORT'] || 3000;
 
   if (!initOptions?.local) {
     initOptions.express = express();

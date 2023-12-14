@@ -16,23 +16,10 @@ import {
 } from "../helpers";
 import { isEmpty } from "lodash";
 
-import { CrowdinArticleDirectory } from '../../payload-types'
-
-export interface IcrowdinFile {
-  id: string;
-  originalId: number;
-  name: string;
-  field: string;
-  type: string;
-  updatedAt: string;
-  fileData: {
-    json?: Object;
-    html?: string;
-  };
-}
+import { Config, CrowdinArticleDirectory, CrowdinFile } from '../../payload-types'
 
 interface IfindOrCreateCollectionDirectory {
-  collectionSlug: string;
+  collectionSlug: keyof Config['collections'] | "globals";
 }
 
 interface IfindOrCreateArticleDirectory
@@ -59,7 +46,7 @@ interface IcreateFile extends IcreateOrUpdateFile {
 }
 
 interface IupdateFile extends IcreateOrUpdateFile {
-  crowdinFile: IcrowdinFile;
+  crowdinFile: CrowdinFile;
 }
 
 interface IupdateCrowdinFile extends IcreateOrUpdateFile {
@@ -89,11 +76,11 @@ export class payloadCrowdinSyncFilesApi {
     this.projectId = pluginOptions.projectId;
     this.directoryId = pluginOptions.directoryId;
     this.sourceFilesApi =
-      process.env.NODE_ENV === "test"
+      process.env['NODE_ENV'] === "test"
         ? (mockCrowdinClient(pluginOptions) as any)
         : sourceFilesApi;
     this.uploadStorageApi =
-      process.env.NODE_ENV === "test"
+      process.env['NODE_ENV'] === "test"
         ? (mockCrowdinClient(pluginOptions) as any)
         : uploadStorageApi;
     this.payload = payload;
@@ -127,7 +114,7 @@ export class payloadCrowdinSyncFilesApi {
       const crowdinDirectory = await this.sourceFilesApi.createDirectory(
         this.projectId,
         {
-          directoryId: crowdinPayloadCollectionDirectory.originalId as number,
+          directoryId: crowdinPayloadCollectionDirectory['originalId'] as number,
           name: global ? collectionSlug : document.id,
           title: global
             ? toWords(collectionSlug)
@@ -151,19 +138,19 @@ export class payloadCrowdinSyncFilesApi {
 
       // Associate result with document
       if (global) {
-        const update = await this.payload.updateGlobal({
-          slug: collectionSlug,
+        await this.payload.updateGlobal({
+          slug: collectionSlug as keyof Config["globals"],
           data: {
             crowdinArticleDirectory: crowdinPayloadArticleDirectory.id,
-          },
+          } as any,
         });
       } else {
-        const update = await this.payload.update({
-          collection: collectionSlug,
+        await this.payload.update({
+          collection: collectionSlug as keyof Config["collections"],
           id: document.id,
           data: {
             crowdinArticleDirectory: crowdinPayloadArticleDirectory.id,
-          },
+          } as any,
         });
       }
     }
@@ -276,21 +263,21 @@ export class payloadCrowdinSyncFilesApi {
   }: IupdateFile) {
     // Update file on Crowdin
     const updatedCrowdinFile = await this.crowdinUpdateFile({
-      fileId: crowdinFile.originalId,
+      fileId: crowdinFile.originalId as number,
       name,
       fileData,
       fileType,
     });
 
-    const payloadCrowdinFile = await this.payload.update({
+    await this.payload.update({
       collection: "crowdin-files", // required
       id: crowdinFile.id,
       data: {
         // required
         updatedAt: updatedCrowdinFile.data.updatedAt,
         revisionId: updatedCrowdinFile.data.revisionId,
-        ...(fileType === "json" && { fileData: { json: fileData } }),
-        ...(fileType === "html" && { fileData: { html: fileData } }),
+        ...(fileType === "json" && { fileData }),
+        ...(fileType === "html" && { fileData: { html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData) } }),
       },
     });
   }
@@ -350,18 +337,19 @@ export class payloadCrowdinSyncFilesApi {
           type: crowdinFile.data.type,
           path: crowdinFile.data.path,
           ...(fileType === "json" && { fileData: { json: value } }),
-          ...(fileType === "html" && { fileData: { html: value } }),
+          ...(fileType === "html" && { fileData: { html: typeof value === 'string' ? value : JSON.stringify(value) } }),
         },
       });
 
       return payloadCrowdinFile;
     }
+    return
   }
 
-  async deleteFile(crowdinFile: IcrowdinFile) {
-    const file = await this.sourceFilesApi.deleteFile(
+  async deleteFile(crowdinFile: CrowdinFile) {
+    await this.sourceFilesApi.deleteFile(
       this.projectId,
-      crowdinFile.originalId
+      crowdinFile.originalId as number
     );
     const payloadFile = await this.payload.delete({
       collection: "crowdin-files", // required
@@ -419,6 +407,7 @@ export class payloadCrowdinSyncFilesApi {
     } catch (error) {
       console.error(error, options);
     }
+    return
   }
 
   async getArticleDirectory(documentId: string): Promise<CrowdinArticleDirectory | undefined> {

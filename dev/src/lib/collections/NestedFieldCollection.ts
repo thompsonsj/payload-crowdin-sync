@@ -69,6 +69,10 @@ const NestedFieldCollection: CollectionConfig = {
     read: () => true,
   },
   fields: [
+    {
+      name: "title",
+      type: "text",
+    },
     ...basicLocalizedFields,
     // array
     {

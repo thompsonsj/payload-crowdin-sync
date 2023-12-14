@@ -6,7 +6,7 @@ export const delocalizeFields = (fields: Field[]): Field[] => {
     const dotFields = dot.dot(field);
     const dotKeysNoLocalized = Object.keys(dotFields)
       .filter(key => !key.endsWith('localized'))
-      .reduce((obj, key) => {
+      .reduce((obj: {[key: string]: any}, key) => {
         obj[key] = dotFields[key];
         return obj;
       }, {});

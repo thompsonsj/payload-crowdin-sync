@@ -121,6 +121,7 @@ export const getLocalizedFieldsRecursive = ({
                 }),
               };
             }
+            return
           })
           .filter((block) => block);
         return {
@@ -454,6 +455,7 @@ export const buildCrowdinJsonObject = ({
               [item.id]: crowdinJsonObject,
             };
           }
+          return
         })
         .filter((item: any) => !isEmpty(item))
         .reduce((acc: object, item: any) => ({ ...acc, ...item }), {});
@@ -474,6 +476,7 @@ export const buildCrowdinJsonObject = ({
               },
             };
           }
+          return
         })
         .filter((item: any) => !isEmpty(item))
         .reduce((acc: object, item: any) => ({ ...acc, ...item }), {});
