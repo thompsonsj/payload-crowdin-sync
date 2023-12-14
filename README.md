@@ -65,6 +65,7 @@ export default buildConfig({
 | `htmlToSlateConfig` | `undefined` | Pass a custom config for the `htmlToSlate` serializer used to conver HTML to Payload CMS Slate JSON when retrieving Crowdin translation. See [Serializer configuration](/docs/serializer.md). |
 | `pluginCollectionAccess` | `undefined` | `access` collection config to pass to all the Crowdin collections created by this plugin. |
 | `pluginCollectionAdmin` | `undefined` | `admin` collection config to pass to all the Crowdin collections created by this plugin. |
+| `tabbedUI` | `undefined` | Appends `Crowdin` tab onto your config using Payload's [Tabs Field](https://payloadcms.com/docs/fields/tabs). If your collection is not already tab-enabled, meaning the first field in your config is not of type `tabs`, then one will be created for you called `Content`. |
 
 ### Environment variables
 
