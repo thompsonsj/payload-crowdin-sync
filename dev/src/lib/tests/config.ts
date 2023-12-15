@@ -1,1 +1,1 @@
-export const connectionTimeout = 3000
+export const connectionTimeout = 0

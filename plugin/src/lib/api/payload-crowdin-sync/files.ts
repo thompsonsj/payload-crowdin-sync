@@ -276,7 +276,9 @@ export class payloadCrowdinSyncFilesApi {
         // required
         updatedAt: updatedCrowdinFile.data.updatedAt,
         revisionId: updatedCrowdinFile.data.revisionId,
-        ...(fileType === "json" && { fileData }),
+        ...(fileType === "json" && { fileData: { json: (fileData as {
+          [k: string]: Partial<unknown>;
+        }) }}),
         ...(fileType === "html" && { fileData: { html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData) } }),
       },
     });
@@ -336,7 +338,9 @@ export class payloadCrowdinSyncFilesApi {
           name: crowdinFile.data.name,
           type: crowdinFile.data.type,
           path: crowdinFile.data.path,
-          ...(fileType === "json" && { fileData: { json: value } }),
+          ...(fileType === "json" && { fileData: { json: (value as {
+            [k: string]: Partial<unknown>;
+          }) } }),
           ...(fileType === "html" && { fileData: { html: typeof value === 'string' ? value : JSON.stringify(value) } }),
         },
       });

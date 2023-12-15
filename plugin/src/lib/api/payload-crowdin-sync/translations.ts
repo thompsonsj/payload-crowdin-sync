@@ -23,7 +23,7 @@ import {
   convertHtmlToSlate,
 } from "../../utilities";
 
-import { Config, CrowdinArticleDirectory } from "../../payload-types";
+import { Config, CrowdinArticleDirectory, CrowdinFile } from "../../payload-types";
 
 interface IgetLatestDocumentTranslation {
   collection: string;
@@ -314,11 +314,12 @@ export class payloadCrowdinSyncTranslationsApi {
     return docTranslations;
   }
 
-  async getHtmlFieldSlugs(documentId: string) {
+  async getHtmlFieldSlugs(documentId: string): Promise<string[]> {
     const files = await this.filesApi.getFilesByDocumentID(documentId);
-    return files
-      .filter((file: any) => file.type === "html")
-      .map((file: any) => file.field);
+    const slugs = files
+    .filter((file) => file.type === "html")
+    .map((file) => `${file.field}`)
+    return slugs;
   }
 
   /**

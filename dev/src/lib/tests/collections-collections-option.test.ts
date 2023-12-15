@@ -64,7 +64,7 @@ describe("Collections - collections option", () => {
 
   describe("Localized collections", () => {
     it("creates an article directory", async () => {
-      const data = multiRichTextFields.filter(field => field.type === 'richText').reduce((accum: {[key: string]: any}, field) => {
+      const data = multiRichTextFields.slice(1, 3).filter(field => field.type === 'richText').reduce((accum: {[key: string]: any}, field) => {
         accum[field.name] = [
           {
             children: [

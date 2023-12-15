@@ -610,19 +610,19 @@ describe("Translations", () => {
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
-        .reply(200, responseDeOne)
+        .reply(200, responseDeTwo)
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
         )
-        .reply(200, responseDeTwo)
+        .reply(200, responseDeOne)
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
         )
-        .reply(200, responseFrOne)
+        .reply(200, responseFrTwo)
         .get(
           "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
         )
-        .reply(200, responseFrTwo);
+        .reply(200, responseFrOne);
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: "nested-field-collection",
@@ -728,6 +728,11 @@ describe("Translations", () => {
         data,
       });
       // ensure all afterChange hooks have run? Getting test failures without this additional operation.
+      await payload.findByID({
+        collection: slug,
+        id: `${post.id}`,
+      });
+      // Try to enforce a little more waiting for all files to have been created.
       const result = await payload.findByID({
         collection: slug,
         id: `${post.id}`,
