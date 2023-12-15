@@ -104,7 +104,7 @@ export const crowdinSync =
           })) {
             const fields = pluginCollectionOrGlobalFields({
               fields: existingCollection.fields,
-              tabbedUI: pluginOptions.tabbedUI,
+              pluginOptions,
             });
 
             return {
@@ -200,7 +200,7 @@ export const crowdinSync =
           })) {
             const fields = pluginCollectionOrGlobalFields({
               fields: existingGlobal.fields,
-              tabbedUI: pluginOptions.tabbedUI,
+              pluginOptions,
             });
             return {
               ...existingGlobal,

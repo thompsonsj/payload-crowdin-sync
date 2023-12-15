@@ -38,6 +38,6 @@ const LocalePublishedFeedback: FC = () =>  {
   }, [crowdinArticleDirectory]);
 
   return (
-    <></>
+    <input type="text" name="customfield" />
   );
 }
