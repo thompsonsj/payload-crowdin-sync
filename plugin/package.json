@@ -1,0 +1,32 @@
+{
+  "name": "payload-crowdin-sync",
+  "version": "0.20.0",
+  "description": "Automatically upload/sync localized fields from the default locale to Crowdin. Make these fields read-only in other locales and update them using Crowdin translations.",
+  "scripts": {
+    "build": "tsc",
+    "develop": "tsc --watch",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --forceExit --detectOpenHandles",
+    "prepare": "npm run build",
+    "prettier": "npx prettier . --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thompsonsj/payload-crowdin-sync.git"
+  },
+  "author": "https://github.com/thompsonsj",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thompsonsj/payload-crowdin-sync/issues"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "peerDependencies": {
+    "express": "^4.18.2",
+    "payload": "^2",
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
+  },
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts"
+}

@@ -1,4 +1,4 @@
 {
   "ext": "ts",
-  "exec": "ts-node src/server.ts"
+  "exec": "ts-node -r tsconfig-paths/register src/lib/server.ts"
 }

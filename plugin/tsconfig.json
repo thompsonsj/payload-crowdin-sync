@@ -1,6 +1,7 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
+    "esModuleInterop": true,
     "module": "commonjs",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -8,7 +9,6 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "esModuleInterop": true,
     "jsx": "react",
   },
   "files": [],
@@ -20,5 +20,5 @@
     {
       "path": "./tsconfig.spec.json"
     }
-  ],
+  ]
 }
