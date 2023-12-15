@@ -81,6 +81,11 @@ describe("Collections - collections option", () => {
         data,
       });
       // retrieve post to get populated fields
+      await payload.findByID({
+        collection: "multi-rich-text",
+        id: post.id,
+      });
+      // run again - hacky way to wait for all files.
       const result = await payload.findByID({
         collection: "multi-rich-text",
         id: post.id,
