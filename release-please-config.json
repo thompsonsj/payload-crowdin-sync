@@ -9,7 +9,7 @@
       "prerelease": false
     },
     "./plugin": {
-      "changelog-path": "CHANGELOG.md",
+      "changelog-path": "./plugin/CHANGELOG.md",
       "release-type": "simple",
       "bump-minor-pre-major": false,
       "bump-patch-for-minor-pre-major": false,
@@ -17,7 +17,7 @@
       "prerelease": false
     },
     "./dev": {
-      "changelog-path": "CHANGELOG.md",
+      "changelog-path": "./dev/CHANGELOG.md",
       "release-type": "simple",
       "bump-minor-pre-major": false,
       "bump-patch-for-minor-pre-major": false,
