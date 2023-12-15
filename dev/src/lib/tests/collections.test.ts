@@ -159,7 +159,12 @@ describe("Collections", () => {
           ],
         },
       });
-      const crowdinFiles = await getFilesByDocumentID(post.id, payload as any);
+      // hacky way to wait for files to be created
+      await payload.findByID({
+        id: `${post.id}`,
+        collection: "localized-posts"
+      })
+      const crowdinFiles = await getFilesByDocumentID(post.id, payload);
       expect(crowdinFiles.length).toEqual(2);
       const fields = crowdinFiles.find((doc: CrowdinFile) => doc.field === "fields");
       const content = crowdinFiles.find((doc: CrowdinFile) => doc.field === "content");

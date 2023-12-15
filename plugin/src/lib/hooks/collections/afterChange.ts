@@ -5,6 +5,7 @@ import {
   GlobalConfig,
   GlobalAfterChangeHook,
   PayloadRequest,
+  CollectionBeforeChangeHook,
 } from "payload/types";
 import { Descendant } from "slate";
 import { PluginOptions } from "../../types";

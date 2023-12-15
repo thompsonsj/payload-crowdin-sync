@@ -1,5 +1,7 @@
 import { Payload } from "payload";
-import { CrowdinFile } from "../payload-types";
+import { CrowdinCollectionDirectory, CrowdinFile } from "../payload-types";
+import { payloadCrowdinSyncTranslationsApi } from "./payload-crowdin-sync/translations";
+import { PluginOptions } from "../types";
 
 /**
  * get Crowdin Article Directory for a given documentId
@@ -87,4 +89,60 @@ export async function getFilesByDocumentID(
   }
   const files = await getFiles(`${articleDirectory.id}`, payload);
   return files;
+}
+
+interface IupdatePayloadTranslation {
+  articleDirectoryId: string
+  pluginOptions: PluginOptions,
+  payload: Payload
+  /** store translations into a draft */
+  draft?: boolean
+  /** prevent database changes */
+  dryRun?: boolean
+  /** override article directory exclude locales */
+  excludeLocales?: string[]
+}
+
+export async function updatePayloadTranslation({
+  articleDirectoryId,
+  pluginOptions,
+  payload,
+  draft,
+  dryRun,
+  excludeLocales,
+}: IupdatePayloadTranslation) {
+  // get article directory
+  const articleDirectory = await payload.findByID({
+    id: articleDirectoryId,
+    collection: "crowdin-article-directories",
+  });
+  // is this a global or a collection?
+  const global =
+    (articleDirectory['crowdinCollectionDirectory'] as CrowdinCollectionDirectory)?.collectionSlug as string === "globals";
+  // get an instance of our translations api
+  const translationsApi = new payloadCrowdinSyncTranslationsApi(
+    pluginOptions,
+    payload
+  );
+  try {
+    const translations = await translationsApi.updateTranslation({
+      documentId: !global ? articleDirectory["name"] as string : ``,
+      collection: global
+        ? articleDirectory['name'] as string
+        : (articleDirectory["crowdinCollectionDirectory"] as CrowdinCollectionDirectory)?.collectionSlug as string,
+      global,
+      draft,
+      dryRun,
+      excludeLocales: excludeLocales || articleDirectory["excludeLocales"] as string[] || [],
+    });
+    return {
+      status: 200,
+      ...translations
+    };
+  } catch (error) {
+    return {
+      status: 400,
+      error,
+    }
+  }
 }
