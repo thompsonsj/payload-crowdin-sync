@@ -1,6 +1,4 @@
-# PayloadCrowdinSyncNx
-
-Review the plugin docs at: https://github.com/thompsonsj/payload-crowdin-sync/blob/main/plugin/README.md.
+# NX generated documentation
 
 <a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
 
@@ -49,7 +47,7 @@ Just run `nx build demoapp` to build the application. The build artifacts will b
 Nx comes with local caching already built-in (check your `nx.json`). On CI you might want to go a step further.
 
 - [Set up remote caching](https://nx.dev/core-features/share-your-cache)
-- [Set up task distribution across multiple machines](https://nx.dev/nx-cloud/features/distribute-task-execution)
+- [Set up task distribution across multiple machines](https://nx.dev/core-features/distribute-task-execution)
 - [Learn more how to setup CI](https://nx.dev/recipes/ci)
 
 ## Connect with us!
