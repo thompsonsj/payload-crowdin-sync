@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.22.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.22.0...dev-v0.22.1) (2023-12-19)
+
+
+### Bug Fixes
+
+* **pluginfields:** ensure syncAllTranslations is virtual ([#138](https://github.com/thompsonsj/payload-crowdin-sync/issues/138)) ([13c3f3e](https://github.com/thompsonsj/payload-crowdin-sync/commit/13c3f3e1f68331aeff53c1045b90ec86886baa85))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.22.0 to 0.22.1
+
 ## [0.22.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.21.0...dev-v0.22.0) (2023-12-15)
 
 
