@@ -1,12 +1,12 @@
 import payload from "payload";
-import { initPayloadTest } from "./helpers/config";
+import { initPayloadTest } from "../../helpers/config";
 import { payloadCrowdinSyncTranslationsApi } from "payload-crowdin-sync";
 import nock from "nock";
-import { payloadCreateData } from "./fixtures/nested-field-collection/simple-blocks.fixture";
-import { payloadCreateBlocksRichTextData } from "./fixtures/nested-field-collection/rich-text-blocks.fixture";
-import { payloadCreateIncludesNonLocalizedBlocksData } from "./fixtures/nested-field-collection/simple-blocks-with-non-localized-blocks.fixture";
-import { multiRichTextFields } from "../collections/fields/multiRichTextFields";
-import { connectionTimeout } from "./config";
+import { payloadCreateData } from "../../fixtures/nested-field-collection/simple-blocks.fixture";
+import { payloadCreateBlocksRichTextData } from "../../fixtures/nested-field-collection/rich-text-blocks.fixture";
+import { payloadCreateIncludesNonLocalizedBlocksData } from "../../fixtures/nested-field-collection/simple-blocks-with-non-localized-blocks.fixture";
+import { multiRichTextFields } from "../../../collections/fields/multiRichTextFields";
+import { connectionTimeout } from "../../config";
 
 /**
  * Test translations
@@ -32,7 +32,10 @@ const pluginOptions = {
 
 describe("Translations", () => {
   beforeAll(async () => {
-    await initPayloadTest({ __dirname });
+    await initPayloadTest({
+      __dirname,
+      payloadConfigFile: "./../../payload.config.default.ts"
+    });
     await new Promise(resolve => setTimeout(resolve, connectionTimeout));
   });
 
@@ -628,6 +631,12 @@ describe("Translations", () => {
         collection: "nested-field-collection",
         dryRun: false,
       });
+      // run again - hacky way to wait for all files.
+      await payload.findByID({
+        collection: "nested-field-collection",
+        id: `${post.id}`,
+        locale: "de_DE",
+      });
       // retrieve translated post from Payload
       const resultDe = await payload.findByID({
         collection: "nested-field-collection",
@@ -664,6 +673,12 @@ describe("Translations", () => {
           blockType: "basicBlockRichText",
         },
       ]);
+      // run again - hacky way to wait for all files.
+      await payload.findByID({
+        collection: "nested-field-collection",
+        id: `${post.id}`,
+        locale: "fr_FR",
+      });
       // retrieve translated post from Payload
       const resultFr = await payload.findByID({
         collection: "nested-field-collection",

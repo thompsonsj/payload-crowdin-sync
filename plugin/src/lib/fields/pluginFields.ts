@@ -80,7 +80,7 @@ export const pluginCollectionOrGlobalFields = ({
       },
       hooks: {
         beforeChange: [async ({ siblingData, req }) => {
-          if (siblingData["syncTranslations"] && siblingData["crowdinArticleDirectory"]) {
+          if (siblingData["syncAllTranslations"] && siblingData["crowdinArticleDirectory"]) {
             // is this a draft?
             const draft = Boolean(siblingData["_status"] && siblingData["_status"] !== 'published')
 
@@ -93,7 +93,7 @@ export const pluginCollectionOrGlobalFields = ({
           }
           // Mutate the sibling data to prevent DB storage
           // eslint-disable-next-line no-param-reassign
-          siblingData["syncTranslations"] = undefined;
+          siblingData["syncAllTranslations"] = undefined;
         }],
       },
     },

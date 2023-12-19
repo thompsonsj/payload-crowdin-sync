@@ -88,6 +88,8 @@ export interface MultiRichText {
         [k: string]: unknown;
       }[]
     | null;
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
   crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   updatedAt: string;
   createdAt: string;
@@ -155,6 +157,8 @@ export interface LocalizedPost {
       }[]
     | null;
   status?: ('draft' | 'published') | null;
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
   crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   updatedAt: string;
   createdAt: string;
@@ -290,6 +294,8 @@ export interface NestedFieldCollection {
         }[]
       | null;
   };
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
   crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   updatedAt: string;
   createdAt: string;
@@ -342,6 +348,8 @@ export interface LocalizedNav {
     label?: string | null;
     id?: string | null;
   }[];
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
   crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -365,6 +373,8 @@ export interface Statistic {
     text?: string | null;
     number?: number | null;
   };
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
   crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;

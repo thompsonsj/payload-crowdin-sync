@@ -1,6 +1,6 @@
 import payload from "payload";
-import { initPayloadTest } from "./helpers/config";
-import { connectionTimeout } from "./config";
+import { initPayloadTest } from "../../helpers/config";
+import { connectionTimeout } from "../../config";
 import { payloadHtmlToSlateConfig, payloadCrowdinSyncTranslationsApi } from "payload-crowdin-sync";
 import nock from "nock";
 
@@ -46,7 +46,9 @@ const pluginOptions = {
 describe("Translations", () => {
   beforeAll(async () => {
     await initPayloadTest({
-      __dirname });
+      __dirname,
+      payloadConfigFile: "./../../payload.config.default.ts"
+    });
     await new Promise((resolve) => setTimeout(resolve, connectionTimeout));
   });
 
