@@ -11,7 +11,8 @@
         "outputPath": "dist/plugin",
         "main": "plugin/src/index.ts",
         "tsConfig": "plugin/tsconfig.lib.json",
-        "assets": ["plugin/*.md"]
+        "assets": ["plugin/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "publish": {
