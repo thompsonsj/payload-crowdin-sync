@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.22.1...payload-crowdin-sync-v0.23.0) (2023-12-20)
+
+
+### Features
+
+* **lexical:** support lexical rich text ([#140](https://github.com/thompsonsj/payload-crowdin-sync/issues/140)) ([4921e4d](https://github.com/thompsonsj/payload-crowdin-sync/commit/4921e4dbc6221f27dae9fa282de09506b3124863))
+
 ## [0.22.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.22.0...payload-crowdin-sync-v0.22.1) (2023-12-19)
 
 
