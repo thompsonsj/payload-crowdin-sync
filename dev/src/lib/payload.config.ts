@@ -10,6 +10,7 @@ import Statistics from "./globals/Statistics";
 import Categories from "./collections/Categories";
 import MultiRichText from "./collections/MultiRichText";
 import LocalizedPosts from "./collections/LocalizedPosts";
+import Policies from "./collections/Policies"
 import Posts from "./collections/Posts";
 import NestedFieldCollection from "./collections/NestedFieldCollection";
 import Tags from "./collections/Tags";
@@ -84,6 +85,7 @@ export const buildConfigWithPluginOptions = async ({
       MultiRichText,
       LocalizedPosts,
       NestedFieldCollection,
+      Policies,
       Posts,
       Tags,
       Users,

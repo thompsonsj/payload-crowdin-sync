@@ -10,5 +10,5 @@
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.d.ts"
-  ]
+, "../dev/src/lib/tests/fields/lexical-editor-with-blocks.test.ts"  ]
 }

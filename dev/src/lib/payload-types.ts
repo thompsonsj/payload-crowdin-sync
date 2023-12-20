@@ -12,6 +12,7 @@ export interface Config {
     'multi-rich-text': MultiRichText;
     'localized-posts': LocalizedPost;
     'nested-field-collection': NestedFieldCollection;
+    policies: Policy;
     posts: Post;
     tags: Tag;
     users: User;
@@ -294,6 +295,30 @@ export interface NestedFieldCollection {
         }[]
       | null;
   };
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  updatedAt: string;
+  createdAt: string;
+}
+export interface Policy {
+  id: string;
+  title?: string | null;
+  content?: {
+    root: {
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      type: string;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   syncTranslations?: boolean | null;
   syncAllTranslations?: boolean | null;
   crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
