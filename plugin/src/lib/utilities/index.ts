@@ -18,6 +18,12 @@ import {
 import type { Descendant } from "slate";
 import { get, isEmpty, map, merge, omitBy } from "lodash";
 import dot from "dot-object";
+import type { SerializedEditorState } from 'lexical'
+import {
+  type SanitizedEditorConfig,
+  convertLexicalToHTML,
+  consolidateHTMLConverters,
+} from '@payloadcms/richtext-lexical'
 
 const localizedFieldTypes = ["richText", "text", "textarea"];
 
@@ -582,6 +588,13 @@ export const convertSlateToHtml = (slate: Descendant[], customConfig?: SlateToHt
   }
   return slateToHtml(slate, payloadSlateToHtmlConfig);
 };
+
+export const convertLexicalToHtml = async (editorData: SerializedEditorState, editorConfig: SanitizedEditorConfig) => {
+  return await convertLexicalToHTML({
+    converters: consolidateHTMLConverters({ editorConfig }),
+    data: editorData,
+  })
+}
 
 export const convertHtmlToSlate = (html: string, customConfig?: HtmlToSlateConfig): Descendant[] => {
   if (customConfig) {

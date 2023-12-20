@@ -15,5 +15,6 @@ export default {
   coverageDirectory: '../coverage/dev',
   "transformIgnorePatterns": [
     "node_modules/(?!(@swc\/types))"
-  ]
+  ],
+  prettierPath: require.resolve('prettier-2'),
 };

@@ -6,12 +6,14 @@ import {
   GlobalAfterChangeHook,
   PayloadRequest,
   CollectionBeforeChangeHook,
+  RichTextField,
 } from "payload/types";
 import { Descendant } from "slate";
 import { PluginOptions } from "../../types";
 import {
   buildCrowdinHtmlObject,
   buildCrowdinJsonObject,
+  convertLexicalToHtml,
   convertSlateToHtml,
   fieldChanged,
 } from "../../utilities";
@@ -19,6 +21,7 @@ import deepEqual from "deep-equal";
 import { getLocalizedFields } from "../../utilities";
 import { payloadCrowdinSyncFilesApi } from "../../api/payload-crowdin-sync/files";
 import { Config } from "payload/config";
+import { sanitizeEditorConfig, type LexicalRichTextAdapter,  } from '@payloadcms/richtext-lexical'
 
 /**
  * Update Crowdin collections and make updates in Crowdin
@@ -172,11 +175,24 @@ const performAfterChange = async ({
     value,
   }: {
     name: string;
-    value: Descendant[];
+    value: Descendant[] | any;
   }) => {
+    // brittle check for Lexical value - improve this detection. Type check? Anything from Payload to indicate the type?
+    let html
+    if (Object.prototype.hasOwnProperty.call(value, "root")) {
+      const field = collection.fields.filter(field => field.type === 'richText').find((field) => name === (field as RichTextField).name) as RichTextField
+      const editorConfig = field && (field.editor as LexicalRichTextAdapter)?.editorConfig
+      if (editorConfig) {
+        html = await convertLexicalToHtml(value, editorConfig)
+      } else {
+        html = "<span>lexical configuration not found</span>"
+      }
+    } else {
+      html = convertSlateToHtml(value, pluginOptions.slateToHtmlConfig)
+    }
     await filesApi.createOrUpdateFile({
       name: name,
-      value: convertSlateToHtml(value, pluginOptions.slateToHtmlConfig),
+      value: html,
       fileType: "html",
       articleDirectory,
     });
