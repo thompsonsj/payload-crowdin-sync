@@ -22,6 +22,7 @@ import { getLocalizedFields } from "../../utilities";
 import { payloadCrowdinSyncFilesApi } from "../../api/payload-crowdin-sync/files";
 import { Config } from "payload/config";
 import { sanitizeEditorConfig, type LexicalRichTextAdapter,  } from '@payloadcms/richtext-lexical'
+import { isCrowdinActive } from "../../api/helpers";
 
 /**
  * Update Crowdin collections and make updates in Crowdin
@@ -106,6 +107,19 @@ const performAfterChange = async ({
    * Abort if token not set and not in test mode
    */
   if (!pluginOptions.token && process.env['NODE_ENV'] !== "test") {
+    return doc;
+  }
+
+  /**
+   * Abort if a document condition has been set and returns false
+   */
+  const active = isCrowdinActive({
+    doc,
+    slug: collection.slug,
+    global,
+    pluginOptions
+  })
+  if (!active) {
     return doc;
   }
 

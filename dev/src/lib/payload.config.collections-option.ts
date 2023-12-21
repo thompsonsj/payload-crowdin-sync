@@ -9,5 +9,9 @@ export default buildConfigWithPluginOptions({
   collections: [
     'posts',
     'multi-rich-text',
+    {
+      slug: 'localized-posts-with-condition',
+      condition: ({ doc }) => doc.translateWithCrowdin,
+    },
   ]
 });

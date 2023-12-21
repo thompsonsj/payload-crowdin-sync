@@ -12,6 +12,7 @@ import MultiRichText from "./collections/MultiRichText";
 import LocalizedPosts from "./collections/LocalizedPosts";
 import Policies from "./collections/Policies"
 import Posts from "./collections/Posts";
+import LocalizedPostsWithCondition from "./collections/LocalizedPostsWithCondition"
 import NestedFieldCollection from "./collections/NestedFieldCollection";
 import Tags from "./collections/Tags";
 import Users from "./collections/Users";
@@ -40,6 +41,7 @@ export const buildConfigWithPluginOptions = async ({
   token, // CrowdIn API is mocked but we need a token to pass schema validation
   localeMap,
   sourceLocale,
+  tabbedUI,
   collections,
   globals,
   slateToHtmlConfig,
@@ -74,6 +76,7 @@ export const buildConfigWithPluginOptions = async ({
         token,
         localeMap,
         sourceLocale,
+        tabbedUI,
         collections,
         globals,
         slateToHtmlConfig,
@@ -87,6 +90,7 @@ export const buildConfigWithPluginOptions = async ({
       NestedFieldCollection,
       Policies,
       Posts,
+      LocalizedPostsWithCondition,
       Tags,
       Users,
     ],

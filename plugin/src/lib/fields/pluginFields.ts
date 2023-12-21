@@ -42,6 +42,9 @@ export const pluginCollectionOrGlobalFields = ({
       },
       admin: {
         description: 'Sync translations for this locale from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).',
+        condition: (data) => {
+          return Boolean(data['crowdinArticleDirectory'])
+        },
       },
       hooks: {
         beforeChange: [async ({ req, siblingData }) => {
@@ -77,6 +80,9 @@ export const pluginCollectionOrGlobalFields = ({
       },
       admin: {
         description: 'Sync all translations from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).',
+        condition: (data) => {
+          return Boolean(data['crowdinArticleDirectory'])
+        },
       },
       hooks: {
         beforeChange: [async ({ siblingData, req }) => {

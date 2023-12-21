@@ -14,6 +14,7 @@ export interface Config {
     'nested-field-collection': NestedFieldCollection;
     policies: Policy;
     posts: Post;
+    'localized-posts-with-condition': LocalizedPostsWithCondition;
     tags: Tag;
     users: User;
     'crowdin-files': CrowdinFile;
@@ -97,6 +98,7 @@ export interface MultiRichText {
 }
 export interface CrowdinArticleDirectory {
   id: string;
+  excludeLocales?: ('de_DE' | 'fr_FR')[] | null;
   name?: string | null;
   crowdinCollectionDirectory?: (string | null) | CrowdinCollectionDirectory;
   crowdinFiles?: (string | CrowdinFile)[] | null;
@@ -105,7 +107,6 @@ export interface CrowdinArticleDirectory {
   originalId?: number | null;
   projectId?: number | null;
   directoryId?: number | null;
-  excludeLocales?: ('de_DE' | 'fr_FR')[] | null;
 }
 export interface CrowdinCollectionDirectory {
   id: string;
@@ -340,6 +341,27 @@ export interface Post {
   status?: ('draft' | 'published') | null;
   updatedAt: string;
   createdAt: string;
+}
+export interface LocalizedPostsWithCondition {
+  id: string;
+  title?: string | null;
+  translateWithCrowdin?: boolean | null;
+  author?: (string | null) | User;
+  publishedDate?: string | null;
+  category?: (string | null) | Category;
+  tags?: (string | Tag)[] | null;
+  content?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  status?: ('draft' | 'published') | null;
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 export interface PayloadPreference {
   id: string;
