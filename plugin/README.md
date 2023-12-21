@@ -2,17 +2,11 @@
 
 Automatically upload/sync localized fields from the default locale to Crowdin. Make these fields read-only in other locales and update them using Crowdin translations.
 
-Note: This plugin is still in development. A todo list is maintained at [/docs/development.md](/docs/development.md).
+- Development guidance: [docs/development.md](docs/development.md)
+- Engineering decisions: [docs/enginering.md](docs/engineering.md)
+- NX generated docs: [docs/nx.md](docs/nx.md)
 
-This library was generated with [Nx](https://nx.dev).
-
-## Building
-
-Run `nx build plugin` to build the library.
-
-## Running unit tests
-
-Run `nx test plugin` to execute the unit tests via [Jest](https://jestjs.io).
+Note: This plugin is still in development. A todo list is maintained at [docs/development.md](docs/development.md).
 
 ## Requirements
 
@@ -31,7 +25,7 @@ yarn add payload-crowdin-sync
 Add the plugin to your Payload configuration.
 
 ```ts
-import { crowdinSync, crowdinClient } from "payload-crowdin-sync";
+import { crowdinSync } from "payload-crowdin-sync";
 
 export default buildConfig({
   plugins: [
@@ -59,20 +53,20 @@ export default buildConfig({
 
 | Option | Example | Description |
 | ------ | ------- | ----------- |
-| `projectId` | `323731` | Required: Your Crowdin project ID. |
-| `localeMap` | `{ de_DE: { crowdinId: "de" } }` | Required: Map your Payload locales to Crowdin locale ids. |
-| ` sourceLocale` | `en` | Required: The Payload locale that syncs to source translations (files) on Crowdin. |
+| `projectId` | `323731` | Your [Crowdin project ID](https://support.crowdin.com/enterprise/project-settings/#details). |
+| `localeMap` | `{ de_DE: { crowdinId: "de" } }` | Map your Payload locales to Crowdin locale ids. |
+| ` sourceLocale` | `en` | The Payload locale that syncs to source translations (files) on Crowdin. |
 
 #### Optional
 
 | Option | Example | Description |
 | ------ | ------- | ----------- |
-| `token` | `xxxxxxx` | Optional: Your Crowdin API token. If empty, changes to files are disabled. |
-| `directoryId` | `1169` | Optional: Crowdin directory ID to store translations. |
+| `token` | `xxxxxxx` | Your [Crowdin API token](https://support.crowdin.com/enterprise/personal-access-tokens/). If empty, changes to files are disabled. |
+| `directoryId` | `1169` | Crowdin directory ID to store translations. To get the directory ID without making an API call, inspect the page source of your folder in [Sources > Files](https://support.crowdin.com/file-management/#branches-and-folders). |
 | `collections` | `undefined` or `[]` or `['posts', 'categories']` | Define an array of collection slugs for which the plugin is active. If undefined, the plugin will detect localized fields on all collections. Use an empty array to disable all collections. |
 | `globals` | `undefined` or `[]` or `['nav']` | Define an array of global slugs for which the plugin is active. If undefined, the plugin will detect localized fields on all globals. Use an empty array to disable all globals. |
-| `slateToHtmlConfig` | `undefined` | Pass a custom config for the `slateToHtml` serializer used to convert Payload CMS Slate JSON to HTML for Crowdin translation. See [Serializer configuration](/docs/serializer.md). |
-| `htmlToSlateConfig` | `undefined` | Pass a custom config for the `htmlToSlate` serializer used to conver HTML to Payload CMS Slate JSON when retrieving Crowdin translation. See [Serializer configuration](/docs/serializer.md). |
+| `slateToHtmlConfig` | `undefined` | Pass a custom config for the `slateToHtml` serializer used to convert Payload CMS Slate JSON to HTML for Crowdin translation. See [Serializer configuration](docs/serializer.md). |
+| `htmlToSlateConfig` | `undefined` | Pass a custom config for the `htmlToSlate` serializer used to conver HTML to Payload CMS Slate JSON when retrieving Crowdin translation. See [Serializer configuration](docs/serializer.md). |
 | `pluginCollectionAccess` | `undefined` | `access` collection config to pass to all the Crowdin collections created by this plugin. |
 | `pluginCollectionAdmin` | `undefined` | `admin` collection config to pass to all the Crowdin collections created by this plugin. |
 | `tabbedUI` | `undefined` | Appends `Crowdin` tab onto your config using Payload's [Tabs Field](https://payloadcms.com/docs/fields/tabs). If your collection is not already tab-enabled, meaning the first field in your config is not of type `tabs`, then one will be created for you called `Content`. |
@@ -155,18 +149,3 @@ e.g. `https://my-payload-app.com/api/crowdin-article-directories/64a880bb87ef685
 Pass the `draft=true` query parameter to update as a draft rather than a published version.
 
 The document will be updated and the same report will be generated as for a review.
-
-## Testing
-
-A Jest test suite is included comprising of:
-
-- unit tests (`*.spec.ts`) within the `src` folder adjacent to files/functions that they are testing; and
-- integrations tests (`*.test.ts`) in the `dev/tests` folder.
-
-Integration tests use Payload's [Local API](https://payloadcms.com/docs/local-api/overview) to run tests against a configured Payload installation in the `dev` folder. Tests use [mongodb-memory-server](https://github.com/nodkz/mongodb-memory-server) to connect to for all tests, so it is not necessary to add test documents to a development database.
-
-### References
-
-- Useful tips on using the local API in tests: https://github.com/payloadcms/payload/discussions/985.
-- Review other Payload CMS plugins to see how test environments are configured there. e.g. https://github.com/payloadcms/plugin-cloud-storage and https://github.com/payloadcms/plugin-seo.
-- Although the tutorial at https://payloadcms.com/blog/typescript-jest-vscode-debugger-tutorial works, I couldn't get it to work in the latest version of Payload CMS. Regardless, it makes more sense not to test the REST API as done in the tutorial, and to only work with the local API.

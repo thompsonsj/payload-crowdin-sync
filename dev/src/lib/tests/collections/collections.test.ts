@@ -1,10 +1,10 @@
 import payload from "payload";
-import { initPayloadTest } from "./helpers/config";
+import { initPayloadTest } from "../helpers/config";
 import {
   getFilesByDocumentID,
 } from "payload-crowdin-sync";
-import { connectionTimeout } from "./config";
-import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from "../payload-types";
+import { connectionTimeout } from "../config";
+import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from "../../payload-types";
 
 /**
  * Test the collections
@@ -27,7 +27,10 @@ import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from
 
 describe("Collections", () => {
   beforeAll(async () => {
-    await initPayloadTest({ __dirname });
+    await initPayloadTest({
+      __dirname,
+      payloadConfigFile: "./../payload.config.default.ts"
+    });
     await new Promise(resolve => setTimeout(resolve, connectionTimeout));
   });
 

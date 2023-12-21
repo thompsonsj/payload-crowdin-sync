@@ -1,8 +1,8 @@
 import payload from "payload";
-import { initPayloadTest } from "./helpers/config";
-import { multiRichTextFields } from "../collections/fields/multiRichTextFields";
-import { connectionTimeout } from "./config";
-import { CrowdinArticleDirectory } from "../payload-types";
+import { initPayloadTest } from "../helpers/config";
+import { multiRichTextFields } from "../../collections/fields/multiRichTextFields";
+import { connectionTimeout } from "../config";
+import { CrowdinArticleDirectory } from "../../payload-types";
 
 /**
  * Test the collections
@@ -25,7 +25,7 @@ import { CrowdinArticleDirectory } from "../payload-types";
 
 describe("Collections - collections option", () => {
   beforeAll(async () => {
-    await initPayloadTest({ __dirname, payloadConfigFile: 'payload.config.collections-option.ts' });
+    await initPayloadTest({ __dirname, payloadConfigFile: './../payload.config.collections-option.ts' });
     await new Promise(resolve => setTimeout(resolve, connectionTimeout))
   });
 
@@ -92,6 +92,18 @@ describe("Collections - collections option", () => {
       });
       const crowdinArticleDirectoryId = (result.crowdinArticleDirectory as CrowdinArticleDirectory)?.id;
       expect(crowdinArticleDirectoryId).toBeDefined();
+    });
+
+    it("creates an article directory for a collection with localized fields that is defined in the collections object using an confif object", async () => {
+      const post = await payload.create({
+        collection: "localized-posts-with-manual-flag",
+        data: { title: "Test post" },
+      });
+      const result = await payload.findByID({
+        collection: "localized-posts-with-manual-flag",
+        id: post.id,
+      });
+      expect(Object.prototype.hasOwnProperty.call(result, 'crowdinArticleDirectory')).toBeTruthy();
     });
   });
 });

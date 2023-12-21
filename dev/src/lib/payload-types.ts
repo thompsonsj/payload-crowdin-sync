@@ -14,6 +14,7 @@ export interface Config {
     'nested-field-collection': NestedFieldCollection;
     policies: Policy;
     posts: Post;
+    'localized-posts-with-manual-flag': LocalizedPostsWithManualFlag;
     tags: Tag;
     users: User;
     'crowdin-files': CrowdinFile;
@@ -106,6 +107,16 @@ export interface CrowdinArticleDirectory {
   projectId?: number | null;
   directoryId?: number | null;
   excludeLocales?: ('de_DE' | 'fr_FR')[] | null;
+  collectionGlobalSlug?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  translateOnCrowdin?: boolean | null;
 }
 export interface CrowdinCollectionDirectory {
   id: string;
@@ -340,6 +351,23 @@ export interface Post {
   status?: ('draft' | 'published') | null;
   updatedAt: string;
   createdAt: string;
+}
+export interface LocalizedPostsWithManualFlag {
+  id: string;
+  title?: string | null;
+  author?: (string | null) | User;
+  publishedDate?: string | null;
+  category?: (string | null) | Category;
+  tags?: (string | Tag)[] | null;
+  content?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  status?: ('draft' | 'published') | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 export interface PayloadPreference {
   id: string;

@@ -1,6 +1,6 @@
 import type { Config } from "payload/config";
 import type { CollectionConfig, GlobalConfig } from "payload/types";
-import type { PluginOptions } from "./types";
+import { isCollectionOrGlobalConfigObject, type PluginOptions } from "./types";
 import {
   getAfterChangeHook,
   getGlobalAfterChangeHook,
@@ -15,6 +15,7 @@ import { getReviewTranslationEndpoint } from "./endpoints/globals/reviewTranslat
 import { getReviewFieldsEndpoint } from "./endpoints/globals/reviewFields";
 import Joi from "joi";
 import { isArray } from "lodash";
+import { crowdinArticleDirectoryFields } from "./fields/crowdinArticleDirectoryFields";
 
 /**
  * This plugin extends all collections that contain localized fields
@@ -43,7 +44,20 @@ const collectionOrGlobalConfigActive = ({
   slugsConfig,
   collection,
 }: CollectionOrGlobalConfigActive) => {
-  if ((isArray(slugsConfig) && slugsConfig.includes(collection.slug)) || !slugsConfig) {
+  // if undefined, all collections/globals are active
+  if (!slugsConfig) {
+    return containsLocalizedFields({ fields: collection.fields })
+  }
+
+  // normalize slugs
+  const slugs = slugsConfig.map(config => {
+    if (isCollectionOrGlobalConfigObject(config)) {
+      return config.slug
+    }
+    return config
+  })
+  
+  if (slugs.includes(collection.slug)) {
    return containsLocalizedFields({ fields: collection.fields })
   }
   return false
@@ -72,8 +86,14 @@ export const crowdinSync =
 
       sourceLocale: Joi.string().required(),
 
-      collections: Joi.array().items(Joi.string()),
-      globals: Joi.array().items(Joi.string()),
+      collections: Joi.array().items(Joi.alternatives().try(Joi.object({
+        slug: Joi.string(),
+        manualDocumentTranslationFlag: Joi.boolean()
+      }), Joi.string())),
+      globals: Joi.array().items(Joi.alternatives().try(Joi.object({
+        slug: Joi.string(),
+        manualDocumentTranslationFlag: Joi.boolean()
+      }), Joi.string())),
       slateToHtmlConfig: Joi.object(),
       htmlToSlateConfig: Joi.object(),
       pluginCollectionAccess: Joi.object(),
@@ -165,16 +185,7 @@ export const crowdinSync =
           },
           fields: [
             ...(CrowdinArticleDirectories.fields || []),
-            {
-              name: "excludeLocales",
-              type: "select",
-              options: Object.keys(pluginOptions.localeMap),
-              hasMany: true,
-              admin: {
-                description:
-                  "Select locales to exclude from translation synchronization.",
-              },
-            },
+            ...crowdinArticleDirectoryFields({ pluginOptions }),
           ],
           endpoints: [
             ...(CrowdinArticleDirectories.endpoints || []),

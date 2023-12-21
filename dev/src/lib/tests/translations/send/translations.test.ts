@@ -637,6 +637,12 @@ describe("Translations", () => {
         id: `${post.id}`,
         locale: "de_DE",
       });
+      // run again - hacky way to wait for all files.
+      await payload.findByID({
+        collection: "nested-field-collection",
+        id: `${post.id}`,
+        locale: "de_DE",
+      });
       // retrieve translated post from Payload
       const resultDe = await payload.findByID({
         collection: "nested-field-collection",
@@ -673,6 +679,12 @@ describe("Translations", () => {
           blockType: "basicBlockRichText",
         },
       ]);
+      // run again - hacky way to wait for all files.
+      await payload.findByID({
+        collection: "nested-field-collection",
+        id: `${post.id}`,
+        locale: "fr_FR",
+      });
       // run again - hacky way to wait for all files.
       await payload.findByID({
         collection: "nested-field-collection",

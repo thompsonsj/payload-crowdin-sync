@@ -1,7 +1,8 @@
-import { Payload } from "payload";
-import { CrowdinCollectionDirectory, CrowdinFile } from "../payload-types";
+import payload, { Payload } from "payload";
+import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from "../payload-types";
 import { payloadCrowdinSyncTranslationsApi } from "./payload-crowdin-sync/translations";
 import { PluginOptions } from "../types";
+import { ReadableStreamDefaultController } from "stream/web";
 
 /**
  * get Crowdin Article Directory for a given documentId
@@ -144,5 +145,31 @@ export async function updatePayloadTranslation({
       status: 400,
       error,
     }
+  }
+}
+
+export const getCollectionDirectorySlug = async ({
+  crowdinCollectionDirectory
+}: {
+  crowdinCollectionDirectory: CrowdinCollectionDirectory
+}) => {
+  if (!crowdinCollectionDirectory) {
+    return
+  }
+
+  const collectionDirectory = typeof crowdinCollectionDirectory === 'string' ? await payload.findByID({
+    id: crowdinCollectionDirectory,
+    collection: "crowdin-collection-directories"
+  }) : crowdinCollectionDirectory
+
+  if (!collectionDirectory) {
+    return
+  }
+
+  const global = collectionDirectory.collectionSlug === "globals"
+
+  return {
+    global,
+    slug: global ? collectionDirectory.name as string : collectionDirectory.collectionSlug as string,
   }
 }
