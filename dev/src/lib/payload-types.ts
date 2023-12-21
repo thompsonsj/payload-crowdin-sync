@@ -99,15 +99,6 @@ export interface MultiRichText {
 export interface CrowdinArticleDirectory {
   id: string;
   excludeLocales?: ('de_DE' | 'fr_FR')[] | null;
-  collectionGlobalSlug?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
   name?: string | null;
   crowdinCollectionDirectory?: (string | null) | CrowdinCollectionDirectory;
   crowdinFiles?: (string | CrowdinFile)[] | null;
@@ -365,6 +356,9 @@ export interface LocalizedPostsWithCondition {
       }[]
     | null;
   status?: ('draft' | 'published') | null;
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
