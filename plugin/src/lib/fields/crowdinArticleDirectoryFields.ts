@@ -1,6 +1,5 @@
 import { Field } from "payload/types"
-import { PluginOptions, isCollectionOrGlobalConfigObject } from "../types"
-import { getCollectionDirectorySlug } from "../api/helpers"
+import { PluginOptions } from "../types"
 
 export const crowdinArticleDirectoryFields = ({
   pluginOptions
@@ -15,29 +14,6 @@ export const crowdinArticleDirectoryFields = ({
     admin: {
       description:
         "Select locales to exclude from translation synchronization.",
-    },
-  },
-  {
-    name: 'collectionGlobalSlug',
-    type: "json",
-    access: {
-      create: () => false,
-      // update: () => false,
-    },
-    admin: {
-      hidden: true,
-      description: 'Determine the collection/global slug from the Crowdin Collection directory.',
-    },
-    hooks: {
-      beforeChange: [({ siblingData }) => {
-        // Mutate the sibling data to prevent DB storage
-        // eslint-disable-next-line no-param-reassign
-        delete siblingData["collectionGlobalSlug"];
-      }],
-      afterRead: [async ({ siblingData }) => {
-        const slug = await getCollectionDirectorySlug({ crowdinCollectionDirectory: siblingData["crowdinCollectionDirectory"] })
-        return slug
-      }],
     },
   },
 ]

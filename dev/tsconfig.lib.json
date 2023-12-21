@@ -5,6 +5,6 @@
     "declaration": true,
     "types": ["node"]
   },
-  "include": ["src/**/*.ts", "src/lib/tests/collections/collections-option.test.ts", "src/lib/tests/files-custom-serializers.test.ts.bak", "src/lib/tests/collections/crowdin-article-directories/virtual-fields.test.ts.bak"],
+  "include": ["src/**/*.ts", "src/lib/tests/collections/collections-option.test.ts", "src/lib/tests/files-custom-serializers.test.ts.bak"],
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"]
 }

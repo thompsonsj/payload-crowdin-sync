@@ -149,32 +149,6 @@ export async function updatePayloadTranslation({
   }
 }
 
-export const getCollectionDirectorySlug = async ({
-  crowdinCollectionDirectory
-}: {
-  crowdinCollectionDirectory: CrowdinCollectionDirectory
-}) => {
-  if (!crowdinCollectionDirectory) {
-    return
-  }
-
-  const collectionDirectory = typeof crowdinCollectionDirectory === 'string' ? await payload.findByID({
-    id: crowdinCollectionDirectory,
-    collection: "crowdin-collection-directories"
-  }) : crowdinCollectionDirectory
-
-  if (!collectionDirectory) {
-    return
-  }
-
-  const global = collectionDirectory.collectionSlug === "globals"
-
-  return {
-    global,
-    slug: global ? collectionDirectory.name as string : collectionDirectory.collectionSlug as string,
-  }
-}
-
 export const isCrowdinActive = ({
   doc,
   slug,
