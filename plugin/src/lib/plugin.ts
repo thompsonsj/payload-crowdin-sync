@@ -56,7 +56,7 @@ const collectionOrGlobalConfigActive = ({
     }
     return config
   })
-  
+
   if (slugs.includes(collection.slug)) {
    return containsLocalizedFields({ fields: collection.fields })
   }
@@ -184,8 +184,22 @@ export const crowdinSync =
             ...pluginOptions.pluginCollectionAdmin,
           },
           fields: [
-            ...(CrowdinArticleDirectories.fields || []),
-            ...crowdinArticleDirectoryFields({ pluginOptions }),
+
+            {
+              type: "tabs",
+              tabs: [
+                {
+                  label: "Options",
+                  fields: crowdinArticleDirectoryFields({ pluginOptions })
+                },
+                {
+                  label: "Internal",
+                  fields: [
+                    ...CrowdinArticleDirectories.fields
+                  ]
+                },
+              ]
+            }
           ],
           endpoints: [
             ...(CrowdinArticleDirectories.endpoints || []),

@@ -365,6 +365,9 @@ export interface LocalizedPostsWithManualFlag {
       }[]
     | null;
   status?: ('draft' | 'published') | null;
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;

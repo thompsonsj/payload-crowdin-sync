@@ -25,18 +25,17 @@ export const crowdinArticleDirectoryFields = ({
       // update: () => false,
     },
     admin: {
-      // hidden: true,
+      hidden: true,
       description: 'Determine the collection/global slug from the Crowdin Collection directory.',
     },
     hooks: {
-      beforeChange: [async ({ siblingData }) => {
-        siblingData["collectionGlobalSlug"] = undefined;
+      beforeChange: [({ siblingData }) => {
+        // Mutate the sibling data to prevent DB storage
+        // eslint-disable-next-line no-param-reassign
+        delete siblingData["collectionGlobalSlug"];
       }],
       afterRead: [async ({ siblingData }) => {
         const slug = await getCollectionDirectorySlug({ crowdinCollectionDirectory: siblingData["crowdinCollectionDirectory"] })
-        // Mutate the sibling data to prevent DB storage
-        // eslint-disable-next-line no-param-reassign
-        siblingData["collectionGlobalSlug"] = undefined;
         return slug
       }],
     },
@@ -45,19 +44,31 @@ export const crowdinArticleDirectoryFields = ({
     name: 'translateOnCrowdin',
     type: 'checkbox',
     admin: {
+      description: "Crowdin translation is enabled per document on this collection.",
       condition: (siblingData) => {
         if (!siblingData['collectionGlobalSlug']?.slug) {
           return false
         }
 
-        const matchingConfig = (pluginOptions.globals || []).find(config => {
+        const matchingGlobalConfig = (pluginOptions.globals || []).find(config => {
           if (isCollectionOrGlobalConfigObject(config) && config.slug === siblingData['collectionGlobalSlug'].slug && config.manualDocumentTranslationFlag) {
             return true
           }
           return false
         })
 
-        if (typeof matchingConfig !== 'undefined') {
+        if (typeof matchingGlobalConfig !== 'undefined') {
+          return true
+        }
+
+        const matchingCollectionConfig = (pluginOptions.collections || []).find(config => {
+          if (isCollectionOrGlobalConfigObject(config) && config.slug === siblingData['collectionGlobalSlug'].slug && config.manualDocumentTranslationFlag) {
+            return true
+          }
+          return false
+        })
+
+        if (typeof matchingCollectionConfig !== 'undefined') {
           return true
         }
 

@@ -137,6 +137,11 @@ describe(`Crowdin file create, update and delete`, () => {
           tabTwo: {},
         },
       });
+      // run again - hacky way to wait for all files.
+      await payload.findByID({
+        collection: "nested-field-collection",
+        id: article.id,
+      });
       const ids = article["arrayField"] instanceof Array && article["arrayField"].map((item) => item.id) || [] as string[];
       const crowdinFiles = await getFilesByDocumentID(`${article.id}`, payload);
       expect(crowdinFiles.length).toEqual(3);

@@ -10,5 +10,5 @@
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.d.ts"
-, "src/lib/tests/collections/collections-option.test.ts", "src/lib/tests/files-custom-serializers.test.ts.bak"  ]
+, "src/lib/tests/collections/collections-option.test.ts", "src/lib/tests/files-custom-serializers.test.ts.bak", "src/lib/tests/collections/crowdin-article-directories/virtual-fields.test.ts.bak"  ]
 }

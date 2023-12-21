@@ -20,6 +20,9 @@ const CrowdinArticleDirectories: CollectionConfig = {
     {
       name: "name",
       type: "text",
+      admin: {
+        readOnly: true,
+      }
     },
     /* Internal fields  */
     {
@@ -27,33 +30,54 @@ const CrowdinArticleDirectories: CollectionConfig = {
       type: "relationship",
       relationTo: "crowdin-collection-directories",
       hasMany: false,
+      admin: {
+        readOnly: true,
+      }
     },
     {
       name: "crowdinFiles",
       type: "relationship",
       relationTo: "crowdin-files",
       hasMany: true,
+      admin: {
+        readOnly: true,
+      }
     },
     /* Crowdin fields */
     {
       name: "createdAt",
       type: "date",
+      admin: {
+        readOnly: true,
+      }
     },
     {
       name: "updatedAt",
       type: "date",
+      admin: {
+        readOnly: true,
+      }
     },
     {
       name: "originalId",
       type: "number",
+      admin: {
+        readOnly: true,
+      }
     },
     {
       name: "projectId",
       type: "number",
+      admin: {
+        readOnly: true,
+      }
     },
     {
       name: "directoryId",
       type: "number",
+      admin: {
+        readOnly: true,
+      }
     },
   ],
 };
