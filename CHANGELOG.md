@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.4.0...source-v0.5.0) (2023-12-21)
+
+
+### Features
+
+* **plugin:** add ability to define a condition to globals/collections ([#143](https://github.com/thompsonsj/payload-crowdin-sync/issues/143)) ([5cc577a](https://github.com/thompsonsj/payload-crowdin-sync/commit/5cc577aa17ffcf52f0c1ae7b1aee5a35745cc335))
+
 ## [0.4.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.3.1...source-v0.4.0) (2023-12-20)
 
 
