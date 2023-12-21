@@ -88,11 +88,11 @@ export const crowdinSync =
 
       collections: Joi.array().items(Joi.alternatives().try(Joi.object({
         slug: Joi.string(),
-        manualDocumentTranslationFlag: Joi.boolean()
+        condition: Joi.function()
       }), Joi.string())),
       globals: Joi.array().items(Joi.alternatives().try(Joi.object({
         slug: Joi.string(),
-        manualDocumentTranslationFlag: Joi.boolean()
+        condition: Joi.function()
       }), Joi.string())),
       slateToHtmlConfig: Joi.object(),
       htmlToSlateConfig: Joi.object(),

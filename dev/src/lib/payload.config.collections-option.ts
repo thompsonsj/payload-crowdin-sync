@@ -10,8 +10,8 @@ export default buildConfigWithPluginOptions({
     'posts',
     'multi-rich-text',
     {
-      slug: 'localized-posts-with-manual-flag',
-      manualDocumentTranslationFlag: true,
+      slug: 'localized-posts-with-condition',
+      condition: ({ doc }) => doc.translateWithCrowdin,
     },
   ]
 });

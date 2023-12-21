@@ -41,21 +41,21 @@ describe("Collections", () => {
   describe("Crowdin Article Directories", () => {
     it("does not store collectionGlobalSlug", async () => {
       const post = await payload.create({
-        collection: "localized-posts-with-manual-flag",
+        collection: "localized-posts-with-condition",
         data: { 
           title: "Test post",
         },
       });
       // retrieve post to get populated fields
       const result = await payload.findByID({
-        collection: "localized-posts-with-manual-flag",
+        collection: "localized-posts-with-condition",
         id: post.id,
       });
       const articleDirectory = await payload.update({
         id: (result.crowdinArticleDirectory as CrowdinArticleDirectory)?.id,
         collection: 'crowdin-article-directories',
         data: {
-          collectionGlobalSlug: "localized-posts-with-manual-flag"
+          collectionGlobalSlug: "localized-posts-with-condition"
         }
       })
       expect(Object.prototype.hasOwnProperty.call(articleDirectory, 'collectionGlobalSlug')).toBeFalsy();

@@ -4,13 +4,14 @@ import { type SlateToHtmlConfig, type HtmlToSlateConfig } from '@slate-serialize
 type CollectionOrGlobalConfigSlug = string
 type CollectionOrGlobalConfigObject = {
   slug: string;
-  manualDocumentTranslationFlag?: boolean;
-} 
+  condition?: ({ doc }: { doc: any}) => boolean;
+}
 
 type CollectionOrGlobalConfig = CollectionOrGlobalConfigSlug | CollectionOrGlobalConfigObject
 
 // type guard: determine type of config 
 export const isCollectionOrGlobalConfigObject = (collectionOrGlobalConfig: CollectionOrGlobalConfig): collectionOrGlobalConfig is CollectionOrGlobalConfigObject => typeof collectionOrGlobalConfig === 'object';
+export const isCollectionOrGlobalConfigSlug = (collectionOrGlobalConfig: CollectionOrGlobalConfig): collectionOrGlobalConfig is CollectionOrGlobalConfigSlug => typeof collectionOrGlobalConfig === 'string';
 
 export interface PluginOptions {
   projectId: number;

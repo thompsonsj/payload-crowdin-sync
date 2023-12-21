@@ -14,7 +14,7 @@ export interface Config {
     'nested-field-collection': NestedFieldCollection;
     policies: Policy;
     posts: Post;
-    'localized-posts-with-manual-flag': LocalizedPostsWithManualFlag;
+    'localized-posts-with-condition': LocalizedPostsWithCondition;
     tags: Tag;
     users: User;
     'crowdin-files': CrowdinFile;
@@ -98,14 +98,6 @@ export interface MultiRichText {
 }
 export interface CrowdinArticleDirectory {
   id: string;
-  name?: string | null;
-  crowdinCollectionDirectory?: (string | null) | CrowdinCollectionDirectory;
-  crowdinFiles?: (string | CrowdinFile)[] | null;
-  createdAt: string;
-  updatedAt: string;
-  originalId?: number | null;
-  projectId?: number | null;
-  directoryId?: number | null;
   excludeLocales?: ('de_DE' | 'fr_FR')[] | null;
   collectionGlobalSlug?:
     | {
@@ -116,7 +108,14 @@ export interface CrowdinArticleDirectory {
     | number
     | boolean
     | null;
-  translateOnCrowdin?: boolean | null;
+  name?: string | null;
+  crowdinCollectionDirectory?: (string | null) | CrowdinCollectionDirectory;
+  crowdinFiles?: (string | CrowdinFile)[] | null;
+  createdAt: string;
+  updatedAt: string;
+  originalId?: number | null;
+  projectId?: number | null;
+  directoryId?: number | null;
 }
 export interface CrowdinCollectionDirectory {
   id: string;
@@ -352,9 +351,10 @@ export interface Post {
   updatedAt: string;
   createdAt: string;
 }
-export interface LocalizedPostsWithManualFlag {
+export interface LocalizedPostsWithCondition {
   id: string;
   title?: string | null;
+  translateWithCrowdin?: boolean | null;
   author?: (string | null) | User;
   publishedDate?: string | null;
   category?: (string | null) | Category;
@@ -365,9 +365,6 @@ export interface LocalizedPostsWithManualFlag {
       }[]
     | null;
   status?: ('draft' | 'published') | null;
-  syncTranslations?: boolean | null;
-  syncAllTranslations?: boolean | null;
-  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;

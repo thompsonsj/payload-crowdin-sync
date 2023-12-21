@@ -15,8 +15,8 @@ export default buildConfigWithPluginOptions({
     'policies',
     'posts',
     {
-      slug: 'localized-posts-with-manual-flag',
-      manualDocumentTranslationFlag: true,
+      slug: 'localized-posts-with-condition',
+      condition: ({ doc }) => doc.translateWithCrowdin,
     },
     'tags',
     'users',

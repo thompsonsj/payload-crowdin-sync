@@ -1,8 +1,9 @@
 import payload, { Payload } from "payload";
 import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from "../payload-types";
 import { payloadCrowdinSyncTranslationsApi } from "./payload-crowdin-sync/translations";
-import { PluginOptions } from "../types";
+import { PluginOptions, isCollectionOrGlobalConfigObject, isCollectionOrGlobalConfigSlug } from "../types";
 import { ReadableStreamDefaultController } from "stream/web";
+import { Plugin } from "payload/config";
 
 /**
  * get Crowdin Article Directory for a given documentId
@@ -172,4 +173,66 @@ export const getCollectionDirectorySlug = async ({
     global,
     slug: global ? collectionDirectory.name as string : collectionDirectory.collectionSlug as string,
   }
+}
+
+export const isCrowdinActive = ({
+  doc,
+  slug,
+  global,
+  pluginOptions
+}: {
+  doc: any,
+  slug: string
+  global: boolean
+  pluginOptions: PluginOptions
+}) => {
+  if (!slug) {
+    return false
+  }
+
+  if (global) {
+    if (!pluginOptions.globals) {
+      return true
+    }
+
+    const matchingGlobalConfig = pluginOptions.globals.find(config => {
+      if (isCollectionOrGlobalConfigObject(config) && config.slug === slug) {
+        if (typeof config.condition !== 'undefined') {
+          return config.condition({ doc })
+        }
+        return true
+      }
+      if (isCollectionOrGlobalConfigSlug(config)) {
+        return config === slug
+      }
+      return false
+    })
+
+    if (typeof matchingGlobalConfig !== 'undefined') {
+      return true
+    }
+  }
+
+  if (!pluginOptions.collections) {
+    return true
+  }
+
+  const matchingCollectionConfig = pluginOptions.collections.find(config => {
+    if (isCollectionOrGlobalConfigObject(config) && config.slug === slug) {
+      if (typeof config.condition !== 'undefined') {
+        return config.condition({ doc })
+      }
+      return true
+    }
+    if (isCollectionOrGlobalConfigSlug(config)) {
+      return config === slug
+    }
+    return false
+  })
+
+  if (typeof matchingCollectionConfig !== 'undefined') {
+    return true
+  }
+
+  return false
 }

@@ -94,13 +94,17 @@ describe("Collections - collections option", () => {
       expect(crowdinArticleDirectoryId).toBeDefined();
     });
 
-    it("creates an article directory for a collection with localized fields that is defined in the collections object using an confif object", async () => {
+    it("creates an article directory for a collection with localized fields that is defined in the collections object using an config object", async () => {
+      // need to ensure condition is met
       const post = await payload.create({
-        collection: "localized-posts-with-manual-flag",
-        data: { title: "Test post" },
+        collection: "localized-posts-with-condition",
+        data: {
+          title: "Test post",
+          translateWithCrowdin: true,
+        },
       });
       const result = await payload.findByID({
-        collection: "localized-posts-with-manual-flag",
+        collection: "localized-posts-with-condition",
         id: post.id,
       });
       expect(Object.prototype.hasOwnProperty.call(result, 'crowdinArticleDirectory')).toBeTruthy();

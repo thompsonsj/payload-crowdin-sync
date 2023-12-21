@@ -40,40 +40,4 @@ export const crowdinArticleDirectoryFields = ({
       }],
     },
   },
-  {
-    name: 'translateOnCrowdin',
-    type: 'checkbox',
-    admin: {
-      description: "Crowdin translation is enabled per document on this collection.",
-      condition: (siblingData) => {
-        if (!siblingData['collectionGlobalSlug']?.slug) {
-          return false
-        }
-
-        const matchingGlobalConfig = (pluginOptions.globals || []).find(config => {
-          if (isCollectionOrGlobalConfigObject(config) && config.slug === siblingData['collectionGlobalSlug'].slug && config.manualDocumentTranslationFlag) {
-            return true
-          }
-          return false
-        })
-
-        if (typeof matchingGlobalConfig !== 'undefined') {
-          return true
-        }
-
-        const matchingCollectionConfig = (pluginOptions.collections || []).find(config => {
-          if (isCollectionOrGlobalConfigObject(config) && config.slug === siblingData['collectionGlobalSlug'].slug && config.manualDocumentTranslationFlag) {
-            return true
-          }
-          return false
-        })
-
-        if (typeof matchingCollectionConfig !== 'undefined') {
-          return true
-        }
-
-        return false
-      },
-    },
-  },
 ]

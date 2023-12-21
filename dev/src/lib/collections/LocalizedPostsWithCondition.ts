@@ -1,7 +1,7 @@
 import { CollectionConfig } from "payload/types";
 
-const Posts: CollectionConfig = {
-  slug: "localized-posts-with-manual-flag",
+const LocalizedPostsWithCondition: CollectionConfig = {
+  slug: "localized-posts-with-condition",
   admin: {
     defaultColumns: ["title", "author", "category", "tags", "status"],
     useAsTitle: "title",
@@ -17,6 +17,10 @@ const Posts: CollectionConfig = {
       name: "title",
       type: "text",
       localized: true,
+    },
+    {
+      name: "translateWithCrowdin",
+      type: "checkbox",
     },
     {
       name: "author",
@@ -64,4 +68,4 @@ const Posts: CollectionConfig = {
   ],
 };
 
-export default Posts;
+export default LocalizedPostsWithCondition;
