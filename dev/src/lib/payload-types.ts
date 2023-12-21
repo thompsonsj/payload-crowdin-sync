@@ -102,32 +102,42 @@ export interface CrowdinArticleDirectory {
   name?: string | null;
   crowdinCollectionDirectory?: (string | null) | CrowdinCollectionDirectory;
   crowdinFiles?: (string | CrowdinFile)[] | null;
-  createdAt: string;
-  updatedAt: string;
+  reference?: {
+    createdAt?: string | null;
+    updatedAt?: string | null;
+    projectId?: number | null;
+  };
   originalId?: number | null;
-  projectId?: number | null;
   directoryId?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
 export interface CrowdinCollectionDirectory {
   id: string;
   name?: string | null;
   title?: string | null;
   collectionSlug?: string | null;
-  createdAt: string;
-  updatedAt: string;
+  reference?: {
+    createdAt?: string | null;
+    updatedAt?: string | null;
+    projectId?: number | null;
+  };
   originalId?: number | null;
-  projectId?: number | null;
   directoryId?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
 export interface CrowdinFile {
   id: string;
   title?: string | null;
   field?: string | null;
   crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
-  createdAt: string;
-  updatedAt: string;
+  reference?: {
+    createdAt?: string | null;
+    updatedAt?: string | null;
+    projectId?: number | null;
+  };
   originalId?: number | null;
-  projectId?: number | null;
   directoryId?: number | null;
   revisionId?: number | null;
   name?: string | null;
@@ -145,6 +155,8 @@ export interface CrowdinFile {
       | null;
     html?: string | null;
   };
+  updatedAt: string;
+  createdAt: string;
 }
 export interface LocalizedPost {
   id: string;

@@ -128,11 +128,13 @@ export class payloadCrowdinSyncFilesApi {
         data: {
           crowdinCollectionDirectory: crowdinPayloadCollectionDirectory.id,
           originalId: crowdinDirectory.data.id,
-          projectId: this.projectId,
           directoryId: crowdinDirectory.data.directoryId,
           name: crowdinDirectory.data.name,
-          createdAt: crowdinDirectory.data.createdAt,
-          updatedAt: crowdinDirectory.data.updatedAt,
+          reference: {
+            createdAt: crowdinDirectory.data.createdAt,
+            updatedAt: crowdinDirectory.data.updatedAt,
+            projectId: this.projectId,
+          }
         },
       });
 
@@ -189,12 +191,15 @@ export class payloadCrowdinSyncFilesApi {
         data: {
           collectionSlug: collectionSlug,
           originalId: crowdinDirectory.data.id,
-          projectId: this.projectId,
+          
           directoryId: crowdinDirectory.data.directoryId,
           name: crowdinDirectory.data.name,
           title: crowdinDirectory.data.title,
-          createdAt: crowdinDirectory.data.createdAt,
-          updatedAt: crowdinDirectory.data.updatedAt,
+          reference: {
+            createdAt: crowdinDirectory.data.createdAt,
+            updatedAt: crowdinDirectory.data.updatedAt,
+            projectId: this.projectId,
+          }
         },
       });
     } else {
@@ -329,10 +334,12 @@ export class payloadCrowdinSyncFilesApi {
           title: crowdinFile.data.name,
           field: name,
           crowdinArticleDirectory: articleDirectory.id,
-          createdAt: crowdinFile.data.createdAt,
-          updatedAt: crowdinFile.data.updatedAt,
+          reference: {
+            createdAt: crowdinFile.data.createdAt,
+            updatedAt: crowdinFile.data.updatedAt,
+            projectId: crowdinFile.data.projectId,
+          },
           originalId: crowdinFile.data.id,
-          projectId: crowdinFile.data.projectId,
           directoryId: crowdinFile.data.directoryId,
           revisionId: crowdinFile.data.revisionId,
           name: crowdinFile.data.name,

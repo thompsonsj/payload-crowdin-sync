@@ -45,28 +45,35 @@ const CrowdinArticleDirectories: CollectionConfig = {
     },
     /* Crowdin fields */
     {
-      name: "createdAt",
-      type: "date",
-      admin: {
-        readOnly: true,
-      }
-    },
-    {
-      name: "updatedAt",
-      type: "date",
-      admin: {
-        readOnly: true,
-      }
+      type: "group",
+       /* For reference only - unused */
+      name: "reference",
+      fields: [
+        {
+          name: "createdAt",
+          type: "date",
+          admin: {
+            readOnly: true,
+          }
+        },
+        {
+          name: "updatedAt",
+          type: "date",
+          admin: {
+            readOnly: true,
+          }
+        },
+        {
+          name: "projectId",
+          type: "number",
+          admin: {
+            readOnly: true,
+          }
+        },
+      ]
     },
     {
       name: "originalId",
-      type: "number",
-      admin: {
-        readOnly: true,
-      }
-    },
-    {
-      name: "projectId",
       type: "number",
       admin: {
         readOnly: true,
