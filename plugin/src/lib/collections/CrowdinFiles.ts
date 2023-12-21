@@ -60,19 +60,26 @@ const CrowdinFiles: CollectionConfig = {
     },
     /* Crowdin fields */
     {
-      name: "createdAt",
-      type: "date",
-    },
-    {
-      name: "updatedAt",
-      type: "date",
+      type: "group",
+       /* For reference only - unused */
+      name: "reference",
+      fields: [
+        {
+          name: "createdAt",
+          type: "date",
+        },
+        {
+          name: "updatedAt",
+          type: "date",
+        },
+        {
+          name: "projectId",
+          type: "number",
+        },
+      ],
     },
     {
       name: "originalId",
-      type: "number",
-    },
-    {
-      name: "projectId",
       type: "number",
     },
     {
