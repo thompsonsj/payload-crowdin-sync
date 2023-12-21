@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.24.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.24.0...payload-crowdin-sync-v0.24.1) (2023-12-21)
+
+
+### Bug Fixes
+
+* **payload-types:** clashing type names ([#145](https://github.com/thompsonsj/payload-crowdin-sync/issues/145)) ([5a7d2db](https://github.com/thompsonsj/payload-crowdin-sync/commit/5a7d2db96efe5ab5adb808de8834b7e65e32b849))
+
 ## [0.24.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.23.0...payload-crowdin-sync-v0.24.0) (2023-12-21)
 
 
