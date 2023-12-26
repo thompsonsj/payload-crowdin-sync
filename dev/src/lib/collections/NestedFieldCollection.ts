@@ -27,11 +27,6 @@ const BasicBlockMixedFields: Block = {
   slug: "basicBlockMixed", // required
   fields: [
     ...basicLocalizedFields,
-    {
-      name: "richTextField",
-      type: "richText",
-      localized: true,
-    },
   ],
 };
 
