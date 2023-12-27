@@ -13,6 +13,10 @@ type CollectionOrGlobalConfig = CollectionOrGlobalConfigSlug | CollectionOrGloba
 export const isCollectionOrGlobalConfigObject = (collectionOrGlobalConfig: CollectionOrGlobalConfig): collectionOrGlobalConfig is CollectionOrGlobalConfigObject => typeof collectionOrGlobalConfig === 'object';
 export const isCollectionOrGlobalConfigSlug = (collectionOrGlobalConfig: CollectionOrGlobalConfig): collectionOrGlobalConfig is CollectionOrGlobalConfigSlug => typeof collectionOrGlobalConfig === 'string';
 
+export const isDefined = <T>(val: T | undefined | null): val is T => {
+  return val !== undefined && val !== null;
+}
+
 export interface PluginOptions {
   projectId: number;
   /** This should be optional? */

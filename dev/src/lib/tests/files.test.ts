@@ -4,8 +4,10 @@ import {
   getFileByDocumentID,
   getFilesByDocumentID,
   getArticleDirectory,
+  isDefined,
 } from "payload-crowdin-sync";
 import { connectionTimeout } from "./config";
+
 
 /**
  * Test files
@@ -212,7 +214,7 @@ describe(`Crowdin file create, update and delete`, () => {
           tabTwo: {},
         },
       });
-      const blockIds = article["layout"] instanceof Array && article["layout"].map((item) => item.id) || [] as string[];
+      const blockIds = article["layout"] instanceof Array ? article["layout"].map((item) => item.id).filter(isDefined) : [];
       const blockTypes = article["layout"] instanceof Array && article["layout"].map((item) => item.blockType) || [] as string[];
       const arrayIds = article["layout"] instanceof Array && article["layout"].length > 0 && (article["layout"][1] as any).messages.map((item: any) => item.id);
       const crowdinFiles = await getFilesByDocumentID(`${article.id}`, payload);
