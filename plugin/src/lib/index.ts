@@ -1,7 +1,7 @@
 import { crowdinSync } from "./plugin";
 import { payloadHtmlToSlateConfig, payloadSlateToHtmlConfig } from '@slate-serializers/html'
 import * as utilities from "./utilities";
-import type { PluginOptions } from "./types";
+import { isDefined, type PluginOptions } from "./types";
 // helpers
 import {
   getFileByDocumentID,
@@ -21,4 +21,5 @@ export {
   getFileByDocumentID,
   getFilesByDocumentID,
   getArticleDirectory,
+  isDefined,
 };

@@ -119,6 +119,7 @@ const performAfterChange = async ({
     global,
     pluginOptions
   })
+
   if (!active) {
     return doc;
   }
