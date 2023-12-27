@@ -1,11 +1,6 @@
 import payload from "payload";
 import { initPayloadTest } from "../helpers/config";
-import {
-  getFilesByDocumentID,
-} from "payload-crowdin-sync";
 import { connectionTimeout } from "../config";
-import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from "../../payload-types";
-import findByID from "payload/dist/collections/operations/findByID";
 
 /**
  * Test the collections
