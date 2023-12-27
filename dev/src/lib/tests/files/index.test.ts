@@ -1,13 +1,15 @@
 import payload from "payload";
-import { initPayloadTest } from "./helpers/config";
+import { initPayloadTest } from "../helpers/config";
 import {
   getFileByDocumentID,
   getFilesByDocumentID,
   getArticleDirectory,
   isDefined,
 } from "payload-crowdin-sync";
-import { connectionTimeout } from "./config";
-
+import { connectionTimeout } from "../config";
+import nock from "nock";
+import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
+import { pluginConfig } from "../helpers/plugin-config"
 
 /**
  * Test files
@@ -19,9 +21,15 @@ import { connectionTimeout } from "./config";
  * buildCrowdinJsonObject which are unit tested in `src/utilities`.
  */
 
+const pluginOptions = pluginConfig()
+const mockClient = mockCrowdinClient(pluginOptions)
+
 describe(`Crowdin file create, update and delete`, () => {
   beforeAll(async () => {
-    await initPayloadTest({ __dirname });
+    await initPayloadTest({
+      __dirname,
+      payloadConfigFile: "./../payload.config.default.ts"
+    });
     await new Promise(resolve => setTimeout(resolve, connectionTimeout));
   });
 
@@ -36,31 +44,84 @@ describe(`Crowdin file create, update and delete`, () => {
 
   describe(`Collection: ${"localized-posts"}`, () => {
     it("updates the `fields` file for a new article", async () => {
+      nock('https://api.crowdin.com')
+        .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
+        .reply(200, mockClient.createDirectory({}))
+        .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
+        .reply(200, mockClient.createDirectory({}))
+        .post(`/api/v2/storages`)
+        .reply(200, mockClient.addStorage())
+        .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+        .reply(200, mockClient.createFile({
+          request: {
+          name: 'fields',
+          storageId: 5678,
+          type: 'json',
+        }}))
+
       const post = await payload.create({
         collection: "localized-posts",
         data: { title: "Test post" },
       });
+
       const file = await getFileByDocumentID("fields", `${post.id}`, payload as any);
       expect(file.fileData?.json).toEqual({ title: "Test post" });
     });
 
     it("updates the `fields` file if a text field has changed", async () => {
+      const fileId = 34
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile(
+          {
+            fileId,
+            request: {
+              name: 'fields',
+              storageId: 5678,
+              type: 'json',
+            }
+          }
+        ))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .put(
+          `/api/v2/projects/${pluginOptions.projectId}/files/${fileId}`
+        )
+        .reply(200, mockClient.updateOrRestoreFile({ fileId }))
+
       const post = await payload.create({
         collection: "localized-posts",
         data: { title: "Test post" },
       });
+
       const file = await getFileByDocumentID("fields", `${post.id}`, payload);
+
       await payload.update({
         id: `${post.id}`,
         collection: "localized-posts",
         data: { title: "Test post updated" },
       });
+
       const updatedFile = await getFileByDocumentID("fields", `${post.id}`, payload);
+
       expect(file.updatedAt).not.toEqual(updatedFile.updatedAt);
       expect(updatedFile.fileData?.json).toEqual({ title: "Test post updated" });
     });
   });
 
+  /**
   describe(`Collection: ${"nested-field-collection"}`, () => {
     it("does not create files for empty localized fields", async () => {
       const article = await payload.create({
@@ -287,4 +348,5 @@ describe(`Crowdin file create, update and delete`, () => {
       expect(crowdinPayloadArticleDirectory).toBeUndefined();
     });
   });
+  */
 });

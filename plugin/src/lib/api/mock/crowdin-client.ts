@@ -37,7 +37,6 @@ class crowdinAPIWrapper {
   }
 
   async createDirectory(
-    projectId: number,
     {
       directoryId = 1179,
       name,
@@ -89,7 +88,6 @@ class crowdinAPIWrapper {
   }
 
   async createFile(
-    projectId: number,
     {
       directoryId = 1172,
       name,
@@ -115,7 +113,7 @@ class crowdinAPIWrapper {
           createdAt: date,
           updatedAt: date,
           id: 1079,
-          projectId,
+          projectId: this.projectId,
           branchId: this.branchId,
           directoryId,
           name: name,

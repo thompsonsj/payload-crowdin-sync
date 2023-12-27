@@ -75,14 +75,8 @@ export class payloadCrowdinSyncFilesApi {
     const { sourceFilesApi, uploadStorageApi } = new crowdin(credentials);
     this.projectId = pluginOptions.projectId;
     this.directoryId = pluginOptions.directoryId;
-    this.sourceFilesApi =
-      process.env['NODE_ENV'] === "test"
-        ? (mockCrowdinClient(pluginOptions) as any)
-        : sourceFilesApi;
-    this.uploadStorageApi =
-      process.env['NODE_ENV'] === "test"
-        ? (mockCrowdinClient(pluginOptions) as any)
-        : uploadStorageApi;
+    this.sourceFilesApi = sourceFilesApi;
+    this.uploadStorageApi = uploadStorageApi;
     this.payload = payload;
   }
 
@@ -111,11 +105,12 @@ export class payloadCrowdinSyncFilesApi {
         });
 
       // Create article directory on Crowdin
+      const name = global ? collectionSlug : document.id
       const crowdinDirectory = await this.sourceFilesApi.createDirectory(
         this.projectId,
         {
           directoryId: crowdinPayloadCollectionDirectory['originalId'] as number,
-          name: global ? collectionSlug : document.id,
+          name,
           title: global
             ? toWords(collectionSlug)
             : document.title || document.name, // no tests for this Crowdin metadata, but makes it easier for translators
@@ -129,7 +124,7 @@ export class payloadCrowdinSyncFilesApi {
           crowdinCollectionDirectory: crowdinPayloadCollectionDirectory.id,
           originalId: crowdinDirectory.data.id,
           directoryId: crowdinDirectory.data.directoryId,
-          name: crowdinDirectory.data.name,
+          name,
           reference: {
             createdAt: crowdinDirectory.data.createdAt,
             updatedAt: crowdinDirectory.data.updatedAt,
@@ -193,7 +188,7 @@ export class payloadCrowdinSyncFilesApi {
           originalId: crowdinDirectory.data.id,
           
           directoryId: crowdinDirectory.data.directoryId,
-          name: crowdinDirectory.data.name,
+          name: collectionSlug,
           title: crowdinDirectory.data.title,
           reference: {
             createdAt: crowdinDirectory.data.createdAt,
@@ -326,6 +321,7 @@ export class payloadCrowdinSyncFilesApi {
     }}*/
 
     // Store result on Payload CMS
+    console.log('crowdinFile', crowdinFile)
     if (crowdinFile) {
       const payloadCrowdinFile = await this.payload.create({
         collection: "crowdin-files", // required
@@ -351,7 +347,7 @@ export class payloadCrowdinSyncFilesApi {
           ...(fileType === "html" && { fileData: { html: typeof value === 'string' ? value : JSON.stringify(value) } }),
         },
       });
-
+      console.log('payloadCrowdinFile', payloadCrowdinFile)
       return payloadCrowdinFile;
     }
     return
