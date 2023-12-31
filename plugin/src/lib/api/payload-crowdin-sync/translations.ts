@@ -277,18 +277,11 @@ export class payloadCrowdinSyncTranslationsApi {
     const crowdinHtmlObject: CrowdinHtmlObject = {};
     for (const field of localizedHtmlFields) {
       // need to get the field definiton here somehow?
-      crowdinHtmlObject[field] = {
-        value: await this.getTranslation({
-          documentId: global ? collectionConfig.slug : doc.id,
-          fieldName: field,
-          locale: locale,
-        }),
-        field: {
-          name: "this is where this approach falls apart",
-          type: "richText",
-          localized: true,
-        }
-      };
+      crowdinHtmlObject[field] = await this.getTranslation({
+        documentId: global ? collectionConfig.slug : doc.id,
+        fieldName: field,
+        locale: locale,
+      });
     }
 
     docTranslations = buildPayloadUpdateObject({

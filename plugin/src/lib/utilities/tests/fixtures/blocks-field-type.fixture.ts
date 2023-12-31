@@ -1,4 +1,4 @@
-import { Block, Field, RichTextField } from "payload/types";
+import { Block, Field } from "payload/types";
 import { basicLocalizedFields } from "./basic-localized-fields.fixture";
 import dot from "dot-object";
 
@@ -150,71 +150,50 @@ export const fieldJsonCrowdinObject = (prefix?: string) => {
 export const fieldHtmlCrowdinObject = (prefix?: string) => ({
   [`${
     prefix || ""
-  }blocksField.63d169d3d9dfd46d37c649e4.basicBlockRichText.richTextField`]: {
-    value: [
-      {
-        type: "h1",
-        children: [
-          {
-            text: "Rich text content in ",
-          },
-          {
-            text: "basicBlockRichText",
-            bold: true,
-          },
-          {
-            text: " layout at index 1.",
-          },
-        ],
-      },
-      {
-        children: [
-          {
-            text: "An extra paragraph for good measure.",
-          },
-        ],
-      },
-    ],
-    field: {
-      name: "richTextField",
-      type: "richText",
-      localized: true,
-    } as RichTextField
-  },
+  }blocksField.63d169d3d9dfd46d37c649e4.basicBlockRichText.richTextField`]: [
+    {
+      type: "h1",
+      children: [
+        {
+          text: "Rich text content in ",
+        },
+        {
+          text: "basicBlockRichText",
+          bold: true,
+        },
+        {
+          text: " layout at index 1.",
+        },
+      ],
+    },
+    {
+      children: [
+        {
+          text: "An extra paragraph for good measure.",
+        },
+      ],
+    },
+  ],
   [`${
     prefix || ""
-  }blocksField.63ea3e7fb725d8a50646956a.basicBlockRichText.richTextField`]: {
-    value: [
-      {
-        children: [
-          {
-            text: "Rich text content in basicBlockRichText layout at index 3.",
-          },
-        ],
-      },
-    ],
-    field: {
-      name: "richTextField",
-      type: "richText",
-      localized: true,
-    } as RichTextField
-  },
+  }blocksField.63ea3e7fb725d8a50646956a.basicBlockRichText.richTextField`]: [
+    {
+      children: [
+        {
+          text: "Rich text content in basicBlockRichText layout at index 3.",
+        },
+      ],
+    },
+  ],
   [`${
     prefix || ""
-  }blocksField.63ea40106ff825cddad3c10b.basicBlockMixed.richTextField`]: {
-    value: [
-      {
-        children: [
-          {
-            text: "Rich text content in basicBlockMixed layout at index 4.",
-          },
-        ],
-      },
-    ],
-    field: {
-      name: "richTextField",
-      type: "richText",
-      localized: true,
-    } as RichTextField
-  },
+  }blocksField.63ea40106ff825cddad3c10b.basicBlockMixed.richTextField`]: [
+    {
+      children: [
+        {
+          text: "Rich text content in basicBlockMixed layout at index 4.",
+        },
+      ],
+    },
+  ],
 });

@@ -1,4 +1,4 @@
-import { Field } from "payload/types";
+import { CollectionConfig, Field } from "payload/types";
 import { buildCrowdinHtmlObject } from "../..";
 import {
   field,

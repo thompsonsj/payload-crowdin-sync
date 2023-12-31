@@ -6,7 +6,7 @@ import {
   GlobalConfig,
 } from "payload/types";
 import deepEqual from "deep-equal";
-import { FieldWithName, type CrowdinHtmlObject, CrowdinHtmlObjectValuesOnly } from "../types";
+import { FieldWithName, type CrowdinHtmlObject } from "../types";
 import {
   slateToHtml,
   payloadSlateToHtmlConfig,
@@ -361,14 +361,7 @@ export const buildPayloadUpdateObject = ({
 }) => {
   let response: { [key: string]: any } = {};
   if (crowdinHtmlObject) {
-    // remove field definitions from html object
-    const crowdinHtmlObjectValuesOnly: CrowdinHtmlObjectValuesOnly = {};
-
-    Object.keys(crowdinHtmlObject).forEach(k => {
-      crowdinHtmlObjectValuesOnly[k] = crowdinHtmlObject[k].value
-    });
-
-    const destructured = dot.object(crowdinHtmlObjectValuesOnly) as {[key: string]: any };
+    const destructured = dot.object(crowdinHtmlObject) as {[key: string]: any };
 
     merge(crowdinJsonObject, destructured);
   }
@@ -580,10 +573,7 @@ export const buildCrowdinHtmlObject = ({
         ...merge({}, ...arrayValues),
       };
     } else {
-      response[name] = {
-        value: doc[field.name],
-        field
-      }
+      response[name] = doc[field.name]
     }
   });
   return response;

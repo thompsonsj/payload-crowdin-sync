@@ -32,7 +32,7 @@ describe("fn: buildCrowdinHtmlObject: array field type", () => {
       },
       field,
     ];
-    const expected = fieldCrowdinObject({});
+    const expected = fieldCrowdinObject;
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
 
@@ -60,9 +60,7 @@ describe("fn: buildCrowdinHtmlObject: array field type", () => {
       },
       fieldLocalizedTopLevel,
     ];
-    const expected = fieldCrowdinObject({
-      fieldLevelLocalization: false,
-    });
+    const expected = fieldCrowdinObject;
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
 
@@ -94,7 +92,7 @@ describe("fn: buildCrowdinHtmlObject: array field type", () => {
         fields: [field],
       },
     ];
-    const expected = fieldCrowdinObject({});
+    const expected = fieldCrowdinObject;
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
 
@@ -126,9 +124,7 @@ describe("fn: buildCrowdinHtmlObject: array field type", () => {
         fields: [fieldLocalizedTopLevel],
       },
     ];
-    const expected = fieldCrowdinObject({
-      fieldLevelLocalization: false,
-    });
+    const expected = fieldCrowdinObject;
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
 });
@@ -264,64 +260,43 @@ describe("fn: buildCrowdinHtmlObject - group nested in array", () => {
   };
 
   const expected: any = {
-    ["ctas.6474a80221baea4f5f169757.link.text"]: {
-      value: [
-        {
-          type: "p",
-          children: [
-            {
-              text: "Link rich text.",
-            },
-          ],
-        },
-      ],
-      field: {
-        name: "text",
-        type: "richText",
-        localized: true,
+    ["ctas.6474a80221baea4f5f169757.link.text"]: [
+      {
+        type: "p",
+        children: [
+          {
+            text: "Link rich text.",
+          },
+        ],
       },
-    },
-    ["ctas.6474a81021baea4f5f169758.link.text"]: {
-      value: [
-        {
-          type: "p",
-          children: [
-            {
-              text: "Second link rich text.",
-            },
-          ],
-        },
-      ],
-      field: {
-        name: "text",
-        type: "richText",
-        localized: true,
+    ],
+    ["ctas.6474a81021baea4f5f169758.link.text"]: [
+      {
+        type: "p",
+        children: [
+          {
+            text: "Second link rich text.",
+          },
+        ],
       },
-    },
-    title: {
-      value: [
-        {
-          type: "h1",
-          children: [
-            {
-              text: "A ",
-            },
-            {
-              text: "test",
-              bold: true,
-            },
-            {
-              text: " rich text value",
-            },
-          ],
-        },
-      ],
-      field: {
-        name: "title",
-        type: "richText",
-        localized: true,
+    ],
+    title: [
+      {
+        type: "h1",
+        children: [
+          {
+            text: "A ",
+          },
+          {
+            text: "test",
+            bold: true,
+          },
+          {
+            text: " rich text value",
+          },
+        ],
       },
-    }
+    ],
   };
 
   it("includes group json fields nested inside of array field items", () => {
@@ -340,30 +315,23 @@ describe("fn: buildCrowdinHtmlObject - group nested in array", () => {
         fields: Promos.fields,
       })
     ).toEqual({
-      title: {
-        value: [
-          {
-            type: "h1",
-            children: [
-              {
-                text: "A ",
-              },
-              {
-                text: "test",
-                bold: true,
-              },
-              {
-                text: " rich text value",
-              },
-            ],
-          },
-        ],
-        field: {
-          name: "title",
-          type: "richText",
-          localized: true,
-        }
-      }
+      title: [
+        {
+          type: "h1",
+          children: [
+            {
+              text: "A ",
+            },
+            {
+              text: "test",
+              bold: true,
+            },
+            {
+              text: " rich text value",
+            },
+          ],
+        },
+      ],
     });
   });
 });
