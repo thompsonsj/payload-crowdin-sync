@@ -651,11 +651,6 @@ describe('Lexical editor with blocks', () => {
         title: 'Test policy',
       },
     });
-    // hacky way to wait for all files.
-    await payload.findByID({
-      collection: 'policies',
-      id: policy.id,
-    });
     const crowdinFiles = await getFilesByDocumentID(policy.id, payload);
     const contentHtmlFile = crowdinFiles.find(
       (file) => file.field === 'content'
