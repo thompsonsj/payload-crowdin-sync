@@ -4,7 +4,7 @@ import crowdin, {
 } from "@crowdin/crowdin-api-client";
 import { payloadCrowdinSyncFilesApi } from "./files";
 import { Payload } from "payload";
-import { PluginOptions } from "../../types";
+import { CrowdinHtmlObject, PluginOptions } from "../../types";
 import deepEqual from "deep-equal";
 import {
   CollectionConfig,
@@ -274,13 +274,21 @@ export class payloadCrowdinSyncTranslationsApi {
     const localizedHtmlFields = await this.getHtmlFieldSlugs(
       global ? collectionConfig.slug : doc.id
     );
-    let crowdinHtmlObject: { [key: string]: any } = {};
+    const crowdinHtmlObject: CrowdinHtmlObject = {};
     for (const field of localizedHtmlFields) {
-      crowdinHtmlObject[field] = await this.getTranslation({
-        documentId: global ? collectionConfig.slug : doc.id,
-        fieldName: field,
-        locale: locale,
-      });
+      // need to get the field definiton here somehow?
+      crowdinHtmlObject[field] = {
+        value: await this.getTranslation({
+          documentId: global ? collectionConfig.slug : doc.id,
+          fieldName: field,
+          locale: locale,
+        }),
+        field: {
+          name: "this is where this approach falls apart",
+          type: "richText",
+          localized: true,
+        }
+      };
     }
 
     docTranslations = buildPayloadUpdateObject({

@@ -207,33 +207,59 @@ describe('book demo collection snapshots', () => {
   it('buildCrowdinHtmlObject', () => {
     expect(crowdinHtmlObject).toMatchInlineSnapshot(`
       {
-        "hero.text": [
-          {
-            "children": [
-              {
-                "text": "Apprenez comment Acme Corp peut vous aider à ",
-              },
-              {
-                "bold": true,
-                "text": "atteindre vos objectifs",
-              },
-              {
-                "text": ". Nous sommes prêts à parier que vous apprendrez quelque chose de nouveau lors de notre rencontre. Et si ce n’est pas le cas, on vous offre un cupcake ! 😉",
-              },
-            ],
-            "type": "p",
+        "hero.text": {
+          "field": {
+            "editor": {
+              "CellComponent": [Function],
+              "FieldComponent": [Function],
+              "outputSchema": [Function],
+              "populationPromise": [Function],
+              "validate": [Function],
+            },
+            "name": "text",
+            "type": "richText",
           },
-        ],
-        "hero.title": [
-          {
-            "children": [
-              {
-                "text": "Réservez une démo",
-              },
-            ],
-            "type": "p",
+          "value": [
+            {
+              "children": [
+                {
+                  "text": "Apprenez comment Acme Corp peut vous aider à ",
+                },
+                {
+                  "bold": true,
+                  "text": "atteindre vos objectifs",
+                },
+                {
+                  "text": ". Nous sommes prêts à parier que vous apprendrez quelque chose de nouveau lors de notre rencontre. Et si ce n’est pas le cas, on vous offre un cupcake ! 😉",
+                },
+              ],
+              "type": "p",
+            },
+          ],
+        },
+        "hero.title": {
+          "field": {
+            "editor": {
+              "CellComponent": [Function],
+              "FieldComponent": [Function],
+              "outputSchema": [Function],
+              "populationPromise": [Function],
+              "validate": [Function],
+            },
+            "name": "title",
+            "type": "richText",
           },
-        ],
+          "value": [
+            {
+              "children": [
+                {
+                  "text": "Réservez une démo",
+                },
+              ],
+              "type": "p",
+            },
+          ],
+        },
       }
     `);
   });

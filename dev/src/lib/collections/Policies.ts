@@ -17,6 +17,24 @@ const Policies: CollectionConfig = {
       localized: true,
     },
     lexicalEditorWithBlocks,
+    {
+      name: "group",
+      type: "group",
+      fields: [
+        {
+          name: "array",
+          type: "array",
+          fields: [
+            {
+              name: "title",
+              type: "text",
+              localized: true,
+            },
+            lexicalEditorWithBlocks,
+          ]
+        }
+      ]
+    }
   ]
 }
 

@@ -332,6 +332,29 @@ export interface Policy {
     };
     [k: string]: unknown;
   } | null;
+  group?: {
+    array?:
+      | {
+          title?: string | null;
+          content?: {
+            root: {
+              children: {
+                type: string;
+                version: number;
+                [k: string]: unknown;
+              }[];
+              direction: ('ltr' | 'rtl') | null;
+              format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+              indent: number;
+              type: string;
+              version: number;
+            };
+            [k: string]: unknown;
+          } | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   syncTranslations?: boolean | null;
   syncAllTranslations?: boolean | null;
   crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;

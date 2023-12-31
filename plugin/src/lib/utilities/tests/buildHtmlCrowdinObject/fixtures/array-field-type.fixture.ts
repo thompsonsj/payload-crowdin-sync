@@ -109,59 +109,91 @@ export const fieldDocValue = [
   },
 ];
 
-export const fieldCrowdinObject = {
-  ["arrayField.64735620230d57bce946d370.title"]: [
-    {
-      type: "h1",
-      children: [
-        {
-          text: "A ",
-        },
-        {
-          text: "test",
-          bold: true,
-        },
-        {
-          text: " rich text value",
-        },
-      ],
+export const fieldCrowdinObject = ({
+  fieldLevelLocalization = true
+}: {
+  fieldLevelLocalization?: boolean
+}) => ({
+  ["arrayField.64735620230d57bce946d370.title"]: {
+    value: [
+      {
+        type: "h1",
+        children: [
+          {
+            text: "A ",
+          },
+          {
+            text: "test",
+            bold: true,
+          },
+          {
+            text: " rich text value",
+          },
+        ],
+      },
+    ],
+    field: {
+      name: "title",
+      type: "richText",
+      ...(fieldLevelLocalization && {localized: true}),
     },
-  ],
-  ["arrayField.64735620230d57bce946d370.content"]: [
-    {
-      type: "p",
-      children: [
-        {
-          text: "A simple paragraph in the first array item.",
-        },
-      ],
+  },
+  ["arrayField.64735620230d57bce946d370.content"]: {
+    value: [
+      {
+        type: "p",
+        children: [
+          {
+            text: "A simple paragraph in the first array item.",
+          },
+        ],
+      },
+    ],
+    field: {
+      name: "content",
+      type: "richText",
+      ...(fieldLevelLocalization && {localized: true}),
     },
-  ],
-  ["arrayField.64735621230d57bce946d371.title"]: [
-    {
-      type: "h1",
-      children: [
-        {
-          text: "A ",
-        },
-        {
-          text: "test",
-          bold: true,
-        },
-        {
-          text: " rich text value",
-        },
-      ],
+  },
+  ["arrayField.64735621230d57bce946d371.title"]: {
+    value: [
+      {
+        type: "h1",
+        children: [
+          {
+            text: "A ",
+          },
+          {
+            text: "test",
+            bold: true,
+          },
+          {
+            text: " rich text value",
+          },
+        ],
+      },
+    ],
+    field: {
+      name: "title",
+      type: "richText",
+      ...(fieldLevelLocalization && {localized: true}),
     },
-  ],
-  ["arrayField.64735621230d57bce946d371.content"]: [
-    {
-      type: "p",
-      children: [
-        {
-          text: "A simple paragraph in the second array item.",
-        },
-      ],
+  },
+  ["arrayField.64735621230d57bce946d371.content"]: {
+    value: [
+      {
+        type: "p",
+        children: [
+          {
+            text: "A simple paragraph in the second array item.",
+          },
+        ],
+      },
+    ],
+    field: {
+      name: "content",
+      type: "richText",
+      ...(fieldLevelLocalization && {localized: true}),
     },
-  ],
-};
+  }
+});

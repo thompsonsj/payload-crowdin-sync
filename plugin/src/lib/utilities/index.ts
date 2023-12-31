@@ -6,7 +6,7 @@ import {
   GlobalConfig,
 } from "payload/types";
 import deepEqual from "deep-equal";
-import { FieldWithName } from "../types";
+import { FieldWithName, type CrowdinHtmlObject, CrowdinHtmlObjectValuesOnly } from "../types";
 import {
   slateToHtml,
   payloadSlateToHtmlConfig,
@@ -352,7 +352,7 @@ export const buildPayloadUpdateObject = ({
   document,
 }: {
   crowdinJsonObject: { [key: string]: any };
-  crowdinHtmlObject?: { [key: string]: any };
+  crowdinHtmlObject?: CrowdinHtmlObject;
   /** Use getLocalizedFields to pass localized fields only */
   fields: Field[];
   /** Flag used internally to filter json fields before recursion. */
@@ -361,7 +361,15 @@ export const buildPayloadUpdateObject = ({
 }) => {
   let response: { [key: string]: any } = {};
   if (crowdinHtmlObject) {
-    const destructured = dot.object(crowdinHtmlObject);
+    // remove field definitions from html object
+    const crowdinHtmlObjectValuesOnly: CrowdinHtmlObjectValuesOnly = {};
+
+    Object.keys(crowdinHtmlObject).forEach(k => {
+      crowdinHtmlObjectValuesOnly[k] = crowdinHtmlObject[k].value
+    });
+
+    const destructured = dot.object(crowdinHtmlObjectValuesOnly) as {[key: string]: any };
+
     merge(crowdinJsonObject, destructured);
   }
   const filteredFields = topLevel
@@ -507,7 +515,7 @@ export const buildCrowdinHtmlObject = ({
   /** Flag used internally to filter html fields before recursion. */
   topLevel?: boolean;
 }) => {
-  let response: { [key: string]: any } = {};
+  let response: CrowdinHtmlObject  = {};
   // it is convenient to be able to pass all fields - filter in this case
   const filteredFields = topLevel
     ? getLocalizedFields({ fields, type: "html" })
@@ -572,10 +580,9 @@ export const buildCrowdinHtmlObject = ({
         ...merge({}, ...arrayValues),
       };
     } else {
-      if (doc[field.name]?.en) {
-        response[name] = doc[field.name].en;
-      } else {
-        response[name] = doc[field.name];
+      response[name] = {
+        value: doc[field.name],
+        field
       }
     }
   });

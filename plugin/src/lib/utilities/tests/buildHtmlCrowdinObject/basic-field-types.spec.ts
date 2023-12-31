@@ -40,23 +40,30 @@ describe("fn: buildCrowdinHtmlObject", () => {
       },
     ];
     const expected = {
-      title: [
-        {
-          type: "h1",
-          children: [
-            {
-              text: "A ",
-            },
-            {
-              text: "test",
-              bold: true,
-            },
-            {
-              text: " rich text value",
-            },
-          ],
+      title: {
+        value: [
+          {
+            type: "h1",
+            children: [
+              {
+                text: "A ",
+              },
+              {
+                text: "test",
+                bold: true,
+              },
+              {
+                text: " rich text value",
+              },
+            ],
+          },
+        ],
+        field: {
+          name: "title",
+          type: "richText",
+          localized: true,
         },
-      ],
+      }
     };
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
@@ -108,33 +115,47 @@ describe("fn: buildCrowdinHtmlObject", () => {
       },
     ];
     const expected = {
-      title: [
+      title: {
+        value: [
         {
-          type: "h1",
-          children: [
-            {
-              text: "A ",
-            },
-            {
-              text: "test",
-              bold: true,
-            },
-            {
-              text: " rich text value",
-            },
-          ],
+            type: "h1",
+            children: [
+              {
+                text: "A ",
+              },
+              {
+                text: "test",
+                bold: true,
+              },
+              {
+                text: " rich text value",
+              },
+            ],
+          },
+        ],
+        field: {
+          name: "title",
+          type: "richText",
+          localized: true,
         },
-      ],
-      content: [
-        {
-          type: "p",
-          children: [
-            {
-              text: "A simple paragraph.",
-            },
-          ],
-        },
-      ],
+      },
+      content: {
+        value: [
+          {
+            type: "p",
+            children: [
+              {
+                text: "A simple paragraph.",
+              },
+            ],
+          },
+        ],
+        field: {
+          name: "content",
+          type: "richText",
+          localized: true,
+        }
+      }
     };
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
@@ -221,35 +242,55 @@ describe("fn: buildCrowdinHtmlObject", () => {
       },
     ];
     const expected = {
-      ["groupField.title"]: [
-        {
-          type: "h1",
-          children: [
-            {
-              text: "A ",
+      ["groupField.title"]: {
+        value: [
+          {
+            type: "h1",
+            children: [
+              {
+                text: "A ",
+              },
+              {
+                text: "test",
+                bold: true,
+              },
+              {
+                text: " rich text value",
+              },
+            ],
+          },
+        ],
+        field: {
+          editor: slateEditor({
+            admin: {
+              elements: ["link"],
+              leaves: ["bold", "italic", "underline"],
             },
-            {
-              text: "test",
-              bold: true,
-            },
-            {
-              text: " rich text value",
-            },
-          ],
+          }),
+          name: "title",
+          type: "richText",
+          localized: true,
+        }
+      },
+      ["groupField.content"]: {
+        value: [
+          {
+            type: "p",
+            children: [
+              {
+                text: "A simple paragraph.",
+              },
+            ],
+          },
+        ],
+        field: {
+          name: "content",
+          type: "richText",
+          localized: true,
         },
-      ],
-      ["groupField.content"]: [
-        {
-          type: "p",
-          children: [
-            {
-              text: "A simple paragraph.",
-            },
-          ],
-        },
-      ],
+      },
     };
-    expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
+    expect(JSON.stringify(buildCrowdinHtmlObject({ doc, fields }))).toEqual(JSON.stringify(expected));
   });
 
   it("includes localized fields nested in a group with a localization setting on the group field", () => {
@@ -332,34 +373,52 @@ describe("fn: buildCrowdinHtmlObject", () => {
       },
     ];
     const expected = {
-      ["groupField.title"]: [
-        {
-          type: "h1",
-          children: [
-            {
-              text: "A ",
+      ["groupField.title"]: {
+        value: [
+          {
+            type: "h1",
+            children: [
+              {
+                text: "A ",
+              },
+              {
+                text: "test",
+                bold: true,
+              },
+              {
+                text: " rich text value",
+              },
+            ],
+          },
+        ],
+        field: {
+          editor: slateEditor({
+            admin: {
+              elements: ["link"],
+              leaves: ["bold", "italic", "underline"],
             },
-            {
-              text: "test",
-              bold: true,
-            },
-            {
-              text: " rich text value",
-            },
-          ],
+          }),
+          name: "title",
+          type: "richText",
+        }
+      },
+      ["groupField.content"]: {
+        value: [
+          {
+            type: "p",
+            children: [
+              {
+                text: "A simple paragraph.",
+              },
+            ],
+          },
+        ],
+        field: {
+          name: "content",
+          type: "richText",
         },
-      ],
-      ["groupField.content"]: [
-        {
-          type: "p",
-          children: [
-            {
-              text: "A simple paragraph.",
-            },
-          ],
-        },
-      ],
+      },
     };
-    expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
+    expect(JSON.stringify(buildCrowdinHtmlObject({ doc, fields }))).toEqual(JSON.stringify(expected));
   });
 });
