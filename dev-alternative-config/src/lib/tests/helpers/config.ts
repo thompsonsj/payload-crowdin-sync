@@ -1,11 +1,12 @@
 import payload from "payload";
 import swcRegister from "@swc/register";
 import { v4 as uuid } from "uuid";
-import type { InitOptions } from "payload/dist/config/types";
+import type { InitOptions, SanitizedConfig } from "payload/dist/config/types";
 import express from "express";
-import path from "path"
+import path from "path";
 
 type Options = {
+  config?: Promise<SanitizedConfig>
   init?: Partial<InitOptions>;
 };
 

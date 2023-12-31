@@ -242,7 +242,7 @@ const performAfterChange = async ({
       doc: previousDoc,
       fields: localizedFields,
     });
-    Object.keys(currentCrowdinHtmlData).forEach(async (name) => {
+    await Promise.all(Object.keys(currentCrowdinHtmlData).map(async (name) => {
       const currentValue = currentCrowdinHtmlData[name];
       const prevValue = prevCrowdinHtmlData[name];
       if (
@@ -251,11 +251,11 @@ const performAfterChange = async ({
       ) {
         return;
       }
-      const file = await createOrUpdateHtmlFile({
+      await createOrUpdateHtmlFile({
         name,
         value: currentValue as Descendant[],
       });
-    });
+    }));
   };
   // END: function definitions
 

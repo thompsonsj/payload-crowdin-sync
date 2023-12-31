@@ -1,8 +1,10 @@
 import payload from "payload";
-import { initPayloadTest } from "./helpers/config";
-import { connectionTimeout } from "./config";
+import { initPayloadTest } from "../helpers/config";
 import { getFilesByDocumentID } from "payload-crowdin-sync";
-import { CrowdinFile } from "../payload-types";
+import { CrowdinFile } from "../../payload-types";
+import nock from "nock";
+import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
+import { pluginConfig } from "../helpers/plugin-config"
 
 /**
  * Test translations
@@ -11,28 +13,53 @@ import { CrowdinFile } from "../payload-types";
  * stored as expected.
  */
 
+const pluginOptions = pluginConfig()
+const mockClient = mockCrowdinClient(pluginOptions)
+
 describe("Files - custom serializer", () => {
   beforeAll(async () => {
-    await initPayloadTest({
-      __dirname,
-      payloadConfigFile: "payload.config.custom-serializers.ts",
-    });
-    await new Promise((resolve) => setTimeout(resolve, connectionTimeout));
+    await initPayloadTest({});
   });
+
+  afterEach((done) => {
+    if (!nock.isDone()) {
+      throw new Error(
+        `Not all nock interceptors were used: ${JSON.stringify(
+          nock.pendingMocks()
+        )}`
+      );
+    }
+    nock.cleanAll()
+    done()
+  })
 
   afterAll(async () => {
     if (typeof payload?.db?.destroy === "function") {
       await payload.db.destroy(payload);
-      /**
-      setTimeout(async () => {
-        await payload?.db?.destroy(payload);
-      }, connectionTimeout);
-      */
     }
   });
 
   describe("fn: updateTranslation", () => {
     it("updates the Crowdin article directory with html for a `richText` field", async () => {
+      const fileId = 92
+      
+      nock("https://api.crowdin.com")
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .twice()
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+
       const post = await payload.create({
         collection: "localized-posts",
         data: {

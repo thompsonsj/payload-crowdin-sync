@@ -1,11 +1,8 @@
 import payload from "payload";
 import { initPayloadTest } from "./../../helpers/config";
-import {
-  getFilesByDocumentID,
-} from "payload-crowdin-sync";
-import { connectionTimeout } from "./../../config";
-import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from "../../../payload-types";
 import nock from "nock";
+import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
+import { pluginConfig } from "../../helpers/plugin-config"
 
 /**
  * Test virtual fields
@@ -19,45 +16,49 @@ import nock from "nock";
  * 
  */
 
-const pluginOptions = {
-  projectId: 323731,
-  directoryId: 1169,
-  token: process.env['CROWDIN_TOKEN'] as string,
-  localeMap: {
-    de_DE: {
-      crowdinId: "de",
-    },
-    fr_FR: {
-      crowdinId: "fr",
-    },
-  },
-  sourceLocale: "en",
-};
+const pluginOptions = pluginConfig()
+const mockClient = mockCrowdinClient(pluginOptions)
 
 describe("Virtual fields", () => {
   beforeAll(async () => {
-    await initPayloadTest({
-      __dirname,
-      payloadConfigFile: "./../../payload.config.default.ts"
-    });
-    await new Promise(resolve => setTimeout(resolve, connectionTimeout));
+    await initPayloadTest({});
   });
+
+  afterEach((done) => {
+    if (!nock.isDone()) {
+      throw new Error(
+        `Not all nock interceptors were used: ${JSON.stringify(
+          nock.pendingMocks()
+        )}`
+      );
+    }
+    nock.cleanAll()
+    done()
+  })
 
   afterAll(async () => {
     if (typeof payload?.db?.destroy === 'function') {
       await payload.db.destroy(payload)
-      // setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
     }
   });
 
   describe("No database storage", () => {
     it("does not store syncTranslations", async () => {
       nock('https://api.crowdin.com')
-        .persist()
-        .get(/.*/)
-        .reply(200)
-        .post(/.*/)
-        .reply(200)
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .twice()
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({}))
+
       const post = await payload.create({
         collection: "localized-posts",
         data: { 
@@ -75,11 +76,19 @@ describe("Virtual fields", () => {
 
     it("does not store syncAllTranslations", async () => {
       nock('https://api.crowdin.com')
-        .persist()
-        .get(/.*/)
-        .reply(200)
-        .post(/.*/)
-        .reply(200)
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({}))
+
       const post = await payload.create({
         collection: "localized-posts",
         data: { 

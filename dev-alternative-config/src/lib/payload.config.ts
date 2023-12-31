@@ -20,6 +20,8 @@ import { resolve } from "path";
 
 import { crowdinSync } from "payload-crowdin-sync";
 
+import { payloadSlateToHtmlConfig } from "@slate-serializers/html";
+
 import dotenv from "dotenv";
 
 dotenv.config({
@@ -60,25 +62,36 @@ export default buildConfig({
   plugins: [
     crowdinSync({
       projectId: parseInt(process.env['CROWDIN_PROJECT_ID'] || ``) || 323731,
-    directoryId: parseInt(process.env['CROWDIN_DIRECTORY_ID'] || ``) || 1169,
-    token: process.env['NODE_ENV'] === 'test' ? `fake-token` : process.env['CROWDIN_TOKEN'] || ``, // CrowdIn API is mocked but we need a token to pass schema validation
-    localeMap,
-    sourceLocale: "en",
-    tabbedUI: true,
-    collections: [
-      "categories",
-      'multi-rich-text',
-      'localized-posts',
-      'nested-field-collection',
-      'policies',
-      'posts',
-      {
-        slug: 'localized-posts-with-condition',
-        condition: ({ doc }) => doc.translateWithCrowdin,
+      directoryId: parseInt(process.env['CROWDIN_DIRECTORY_ID'] || ``) || 1169,
+      token: process.env['NODE_ENV'] === 'test' ? `fake-token` : process.env['CROWDIN_TOKEN'] || ``, // CrowdIn API is mocked but we need a token to pass schema validation
+      localeMap,
+      sourceLocale: "en",
+      tabbedUI: true,
+      collections: [
+        'localized-posts',
+        'posts',
+        'multi-rich-text',
+        {
+          slug: 'localized-posts-with-condition',
+          condition: ({ doc }) => doc.translateWithCrowdin,
+        },
+      ],
+      globals: [
+        'nav',
+        'statistics',
+      ],
+      slateToHtmlConfig: {
+        ...payloadSlateToHtmlConfig,
+        elementMap: {
+          ...payloadSlateToHtmlConfig.elementMap,
+          table: "table",
+          ["table-row"]: "tr",
+          ["table-cell"]: "td",
+          ["table-header"]: "thead",
+          ["table-header-cell"]: "th",
+          ["table-body"]: "tbody",
+        },
       },
-      'tags',
-      'users',
-    ]
     }),
   ],
   collections: [

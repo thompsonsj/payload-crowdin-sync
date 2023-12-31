@@ -3,7 +3,6 @@ import crowdin, {
   SourceFiles,
   UploadStorage,
 } from "@crowdin/crowdin-api-client";
-import { mockCrowdinClient } from "../mock/crowdin-client";
 import { Payload } from "payload";
 import { PluginOptions } from "../../types";
 import { toWords } from "payload/dist/utilities/formatLabels";
@@ -75,14 +74,8 @@ export class payloadCrowdinSyncFilesApi {
     const { sourceFilesApi, uploadStorageApi } = new crowdin(credentials);
     this.projectId = pluginOptions.projectId;
     this.directoryId = pluginOptions.directoryId;
-    this.sourceFilesApi =
-      process.env['NODE_ENV'] === "test"
-        ? (mockCrowdinClient(pluginOptions) as any)
-        : sourceFilesApi;
-    this.uploadStorageApi =
-      process.env['NODE_ENV'] === "test"
-        ? (mockCrowdinClient(pluginOptions) as any)
-        : uploadStorageApi;
+    this.sourceFilesApi = sourceFilesApi;
+    this.uploadStorageApi = uploadStorageApi;
     this.payload = payload;
   }
 
@@ -111,11 +104,12 @@ export class payloadCrowdinSyncFilesApi {
         });
 
       // Create article directory on Crowdin
+      const name = global ? collectionSlug : document.id
       const crowdinDirectory = await this.sourceFilesApi.createDirectory(
         this.projectId,
         {
           directoryId: crowdinPayloadCollectionDirectory['originalId'] as number,
-          name: global ? collectionSlug : document.id,
+          name,
           title: global
             ? toWords(collectionSlug)
             : document.title || document.name, // no tests for this Crowdin metadata, but makes it easier for translators
@@ -129,7 +123,7 @@ export class payloadCrowdinSyncFilesApi {
           crowdinCollectionDirectory: crowdinPayloadCollectionDirectory.id,
           originalId: crowdinDirectory.data.id,
           directoryId: crowdinDirectory.data.directoryId,
-          name: crowdinDirectory.data.name,
+          name,
           reference: {
             createdAt: crowdinDirectory.data.createdAt,
             updatedAt: crowdinDirectory.data.updatedAt,
@@ -193,7 +187,7 @@ export class payloadCrowdinSyncFilesApi {
           originalId: crowdinDirectory.data.id,
           
           directoryId: crowdinDirectory.data.directoryId,
-          name: crowdinDirectory.data.name,
+          name: collectionSlug,
           title: crowdinDirectory.data.title,
           reference: {
             createdAt: crowdinDirectory.data.createdAt,
@@ -298,7 +292,7 @@ export class payloadCrowdinSyncFilesApi {
     // Create file on Crowdin
     const crowdinFile = await this.crowdinCreateFile({
       directoryId: articleDirectory.originalId,
-      name: name,
+      name,
       fileData: value,
       fileType: fileType,
     });
@@ -326,12 +320,13 @@ export class payloadCrowdinSyncFilesApi {
     }}*/
 
     // Store result on Payload CMS
+
     if (crowdinFile) {
       const payloadCrowdinFile = await this.payload.create({
         collection: "crowdin-files", // required
         data: {
           // required
-          title: crowdinFile.data.name,
+          title: name,
           field: name,
           crowdinArticleDirectory: articleDirectory.id,
           reference: {
@@ -342,8 +337,8 @@ export class payloadCrowdinSyncFilesApi {
           originalId: crowdinFile.data.id,
           directoryId: crowdinFile.data.directoryId,
           revisionId: crowdinFile.data.revisionId,
-          name: crowdinFile.data.name,
-          type: crowdinFile.data.type,
+          name: `${name}.${fileType}`,
+          type: fileType,
           path: crowdinFile.data.path,
           ...(fileType === "json" && { fileData: { json: (value as {
             [k: string]: Partial<unknown>;

@@ -1,8 +1,9 @@
 import payload from "payload";
 import { initPayloadTest } from "../../helpers/config";
-import { connectionTimeout } from "../../config";
 import { payloadHtmlToSlateConfig, payloadCrowdinSyncTranslationsApi } from "payload-crowdin-sync";
 import nock from "nock";
+import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
+import { pluginConfig } from "../../helpers/plugin-config"
 
 /**
  * Test translations
@@ -11,19 +12,9 @@ import nock from "nock";
  * stored as expected.
  */
 
+const pluginOptionsDefault = pluginConfig()
 const pluginOptions = {
-  projectId: 323731,
-  directoryId: 1169,
-  token: process.env['CROWDIN_TOKEN'] as string,
-  localeMap: {
-    de_DE: {
-      crowdinId: "de",
-    },
-    fr_FR: {
-      crowdinId: "fr",
-    },
-  },
-  sourceLocale: "en",
+  ...pluginOptionsDefault,
   htmlToSlateConfig: {
     ...payloadHtmlToSlateConfig,
     elementTags: {
@@ -37,6 +28,7 @@ const pluginOptions = {
     },
   },
 };
+const mockClient = mockCrowdinClient(pluginOptions)
 
 /**
  * payload.config.custom-serializers.ts required for htmlToSlate.
@@ -45,26 +37,81 @@ const pluginOptions = {
  */
 describe("Translations", () => {
   beforeAll(async () => {
-    await initPayloadTest({
-      __dirname,
-      payloadConfigFile: "./../../payload.config.default.ts"
-    });
-    await new Promise((resolve) => setTimeout(resolve, connectionTimeout));
+    await initPayloadTest({});
   });
+
+  afterEach((done) => {
+    if (!nock.isDone()) {
+      throw new Error(
+        `Not all nock interceptors were used: ${JSON.stringify(
+          nock.pendingMocks()
+        )}`
+      );
+    }
+    nock.cleanAll()
+    done()
+  })
 
   afterAll(async () => {
     if (typeof payload?.db?.destroy === "function") {
       await payload.db.destroy(payload);
-      /**
-      setTimeout(async () => {
-        await payload.db.destroy(payload);
-      }, connectionTimeout);
-      */
     }
   });
 
   describe("fn: updateTranslation - custom serializer", () => {
     it("updates a Payload article with a `richText` field translation retrieved from Crowdin", async () => {
+      const fileId = 4674
+
+      nock("https://api.crowdin.com")
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .twice()
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
+          {
+            targetLanguageId: 'de',
+          }
+        )
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=de`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
+        )
+        .query({
+          targetLanguageId: 'de',
+        })
+        .reply(200, "<table><thead><tr><th>Text für Überschriftenzelle 1</th><th>Text für Überschriftenzelle 2</th><th>Text für Überschriftenzelle 3</th><th>Text für Überschriftenzelle 4</th></tr></thead><tbody><tr><td>Text für Tabellenzelle, Zeile 1, Spalte 1</td><td>Text für Tabellenzelle, Zeile 1, Spalte 2</td><td>Text für Tabellenzelle, Zeile 1, Spalte 3</td><td><p>Absatz 1-Text für Tabellenzelle, Zeile 1, Spalte 4</p><p>Absatz 2-Text für Tabellenzelle, Zeile 1, Spalte 4</p></td></tr></tbody></table>",
+        )
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
+          {
+            targetLanguageId: 'fr',
+          }
+        )
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=fr`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
+        )
+        .query({
+          targetLanguageId: 'fr',
+        })
+        .reply(200, "<table><thead><tr><th>Texte pour la cellule d'en-tête 1</th><th>Texte pour la cellule d'en-tête 2</th><th>Texte pour la cellule d'en-tête 3</th><th>Texte pour la cellule d'en-tête 4</th></tr></thead><tbody><tr><td>Texte de la cellule du tableau, ligne 1, col 1</td><td>Texte de la cellule du tableau, ligne 1, col 2</td><td>Texte de la cellule du tableau, ligne 1, col 3</td><td><p>Texte du paragraphe 1 pour la ligne 1 de la cellule du tableau, colonne 4</p><p>Texte du paragraphe 2 pour la ligne 1 de la cellule du tableau, colonne 4</p></td></tr></tbody></table>",
+        );
       const post = await payload.create({
         collection: "localized-posts",
         data: {
@@ -178,24 +225,12 @@ describe("Translations", () => {
         pluginOptions,
         payload
       );
-      nock("https://api.crowdin.com")
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
-        )
-        .reply(200, "<table><thead><tr><th>Text für Überschriftenzelle 1</th><th>Text für Überschriftenzelle 2</th><th>Text für Überschriftenzelle 3</th><th>Text für Überschriftenzelle 4</th></tr></thead><tbody><tr><td>Text für Tabellenzelle, Zeile 1, Spalte 1</td><td>Text für Tabellenzelle, Zeile 1, Spalte 2</td><td>Text für Tabellenzelle, Zeile 1, Spalte 3</td><td><p>Absatz 1-Text für Tabellenzelle, Zeile 1, Spalte 4</p><p>Absatz 2-Text für Tabellenzelle, Zeile 1, Spalte 4</p></td></tr></tbody></table>",
-        )
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
-        )
-        .reply(200, "<table><thead><tr><th>Texte pour la cellule d'en-tête 1</th><th>Texte pour la cellule d'en-tête 2</th><th>Texte pour la cellule d'en-tête 3</th><th>Texte pour la cellule d'en-tête 4</th></tr></thead><tbody><tr><td>Texte de la cellule du tableau, ligne 1, col 1</td><td>Texte de la cellule du tableau, ligne 1, col 2</td><td>Texte de la cellule du tableau, ligne 1, col 3</td><td><p>Texte du paragraphe 1 pour la ligne 1 de la cellule du tableau, colonne 4</p><p>Texte du paragraphe 2 pour la ligne 1 de la cellule du tableau, colonne 4</p></td></tr></tbody></table>",
-        );
-
-        await translationsApi.updateTranslation({
-          documentId: `${post.id}`,
-          collection: "localized-posts",
-          dryRun: false,
-        });
-        // retrieve translated post from Payload
+      await translationsApi.updateTranslation({
+        documentId: `${post.id}`,
+        collection: "localized-posts",
+        dryRun: false,
+      });
+      // retrieve translated post from Payload
       const result = await payload.findByID({
         collection: "localized-posts",
         id: post.id,

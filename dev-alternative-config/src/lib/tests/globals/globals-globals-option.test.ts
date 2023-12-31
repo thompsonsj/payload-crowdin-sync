@@ -1,7 +1,9 @@
 import payload from "payload";
-import { initPayloadTest } from "./helpers/config";
-import { connectionTimeout } from "./config";
-import { CrowdinArticleDirectory } from "../payload-types";
+import { initPayloadTest } from "../helpers/config";
+import { CrowdinArticleDirectory } from "../../payload-types";
+import nock from "nock";
+import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
+import { pluginConfig } from "../helpers/plugin-config"
 
 /**
  * Test the collections
@@ -22,18 +24,29 @@ import { CrowdinArticleDirectory } from "../payload-types";
  * - file: Crowdin File
  */
 
+const pluginOptions = pluginConfig()
+const mockClient = mockCrowdinClient(pluginOptions)
+
 describe("Globals", () => {
   beforeAll(async () => {
-    await initPayloadTest({ __dirname, payloadConfigFile: 'payload.config.globals-option.ts' })
-    await new Promise(resolve => setTimeout(resolve, connectionTimeout));
+    await initPayloadTest({})
   });
+
+  afterEach((done) => {
+    if (!nock.isDone()) {
+      throw new Error(
+        `Not all nock interceptors were used: ${JSON.stringify(
+          nock.pendingMocks()
+        )}`
+      );
+    }
+    nock.cleanAll()
+    done()
+  })
 
   afterAll(async () => {
     if (typeof payload?.db?.destroy === 'function') {
       await payload.db.destroy(payload)
-      /**
-      setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
-      */
     }
   });
 
@@ -67,6 +80,25 @@ describe("Globals", () => {
 
   describe("crowdin-article-directories", () => {
     it("creates an article directory", async () => {
+      const fileId = 43
+      
+      nock("https://api.crowdin.com")
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .twice()
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+
       await payload.updateGlobal({
         slug: "statistics",
         data: { countries: { text: "Country stats"} },

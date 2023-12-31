@@ -16,6 +16,9 @@
     "baseUrl": ".",
     "paths": {
       "@payload-crowdin-sync-nx/dev": ["dev/src/index.ts"],
+      "@payload-crowdin-sync-nx/dev-alternative-config": [
+        "dev-alternative-config/src/index.ts"
+      ],
       "payload-crowdin-sync": ["plugin/src/index.ts"]
     }
   },

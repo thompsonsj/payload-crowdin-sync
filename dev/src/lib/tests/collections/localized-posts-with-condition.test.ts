@@ -1,6 +1,8 @@
 import payload from "payload";
 import { initPayloadTest } from "../helpers/config";
-import { connectionTimeout } from "../config";
+import nock from "nock";
+import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
+import { pluginConfig } from "../helpers/plugin-config"
 
 /**
  * Test the collections
@@ -21,19 +23,29 @@ import { connectionTimeout } from "../config";
  * - file: Crowdin File
  */
 
+const pluginOptions = pluginConfig()
+const mockClient = mockCrowdinClient(pluginOptions)
+
 describe("Collection: Localized Posts With Conditon", () => {
   beforeAll(async () => {
-    await initPayloadTest({
-      __dirname,
-      payloadConfigFile: "./../payload.config.default.ts"
-    });
-    await new Promise(resolve => setTimeout(resolve, connectionTimeout));
+    await initPayloadTest({});
   });
+
+  afterEach((done) => {
+    if (!nock.isDone()) {
+      throw new Error(
+        `Not all nock interceptors were used: ${JSON.stringify(
+          nock.pendingMocks()
+        )}`
+      );
+    }
+    nock.cleanAll()
+    done()
+  })
 
   afterAll(async () => {
     if (typeof payload?.db?.destroy === 'function') {
       await payload.db.destroy(payload)
-      // setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
     }
   });
 
@@ -51,6 +63,21 @@ describe("Collection: Localized Posts With Conditon", () => {
     });
 
     it("creates an article directory if the conditon is met", async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .twice()
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({}))
+
       const post = await payload.create({
         collection: "localized-posts-with-condition",
         data: {
@@ -66,6 +93,20 @@ describe("Collection: Localized Posts With Conditon", () => {
     });
 
     it("creates an article directory if the conditon is met on an existing article", async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({}))
+
       const post = await payload.create({
         collection: "localized-posts-with-condition",
         data: { title: "Test post" },
@@ -108,6 +149,20 @@ describe("Collection: Localized Posts With Conditon", () => {
     });
 
     it("creates an article directory if the conditon is met", async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({}))
+
       const post = await payload.create({
         collection: "localized-posts-with-condition",
         data: {
@@ -125,6 +180,20 @@ describe("Collection: Localized Posts With Conditon", () => {
     });
 
     it("creates an article directory if the conditon is met on an existing article", async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({}))
+
       const post = await payload.create({
         collection: "localized-posts-with-condition",
         data: { title: "Test post" },
@@ -192,6 +261,20 @@ describe("Collection: Localized Posts With Conditon", () => {
     });
 
     it("creates an article directory if the conditon is met on an existing article", async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({}))
+
       const post = await payload.create({
         collection: "localized-posts-with-condition",
         data: { title: "Poste de test" },

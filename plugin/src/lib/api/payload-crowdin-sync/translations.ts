@@ -3,7 +3,6 @@ import crowdin, {
   Translations,
 } from "@crowdin/crowdin-api-client";
 import { payloadCrowdinSyncFilesApi } from "./files";
-import { mockCrowdinClient } from "../mock/crowdin-client";
 import { Payload } from "payload";
 import { PluginOptions } from "../../types";
 import deepEqual from "deep-equal";
@@ -73,10 +72,7 @@ export class payloadCrowdinSyncTranslationsApi {
     const { translationsApi } = new crowdin(credentials);
     this.projectId = pluginOptions.projectId;
     this.directoryId = pluginOptions.directoryId;
-    this.translationsApi =
-      process.env["NODE_ENV"] === "test"
-        ? (mockCrowdinClient(pluginOptions) as any)
-        : translationsApi;
+    this.translationsApi = translationsApi;
     this.filesApi = new payloadCrowdinSyncFilesApi(pluginOptions, payload);
     this.payload = payload;
     this.localeMap = pluginOptions.localeMap;
@@ -346,6 +342,7 @@ export class payloadCrowdinSyncTranslationsApi {
         }
       );
       const data = await this.getFileDataFromUrl(response.data.url);
+      // console.log('file', file, 'data', data)
       return file.type === "html"
         ? convertHtmlToSlate(data, this.htmlToSlateConfig)
         : JSON.parse(data);
