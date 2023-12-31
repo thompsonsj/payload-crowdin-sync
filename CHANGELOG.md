@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.5.1...source-v0.5.2) (2023-12-31)
+
+
+### Bug Fixes
+
+* **lexical:** support lexical editor configs in nested fields ([#150](https://github.com/thompsonsj/payload-crowdin-sync/issues/150)) ([645778c](https://github.com/thompsonsj/payload-crowdin-sync/commit/645778c4a1279b6aed9e58eb45066f4c827c2252))
+
 ## [0.5.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.5.0...source-v0.5.1) (2023-12-21)
 
 
