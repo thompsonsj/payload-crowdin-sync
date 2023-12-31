@@ -32,6 +32,69 @@ const nestedFieldTypes = ["array", "group", "blocks"];
 export const containsNestedFields = (field: Field) =>
   nestedFieldTypes.includes(field.type);
 
+export const findField = ({
+  dotNotation,
+  fields,
+  firstIteration = true,
+}: {
+  dotNotation: string
+  fields: Field[]
+  firstIteration?: boolean,
+}): Field | undefined => {
+  /** Run through getLocalizedFields to ignore tabs/collapssibles...etc */
+  const localizedFields = firstIteration ? getLocalizedFields({
+    fields
+  }) : fields
+  const keys = dotNotation.split(`.`)
+  if (keys.length === 0) {
+    return undefined
+  }
+  for (const field of localizedFields) {
+    if (field.type === 'group' && keys.length > 1) {
+      const dotNotation = keys.slice(1).join(`.`)
+      const search = findField({
+        dotNotation,
+        fields: field.fields,
+        firstIteration: false,
+      })
+      if (search) {
+        return search
+      }
+    }
+    if (field.type === 'array' && keys.length > 2) {
+      const dotNotation = keys.slice(2).join(`.`)
+      const search = findField({
+        dotNotation,
+        fields: field.fields,
+        firstIteration: false,
+      })
+      if (search) {
+        return search
+      }
+    }
+    if (field.type === 'blocks' && keys.length > 3) {
+      const dotNotation = keys.slice(3).join(`.`)
+      const blockType = keys[2]
+      // find the block definition
+      const block = field.blocks.find((field: Block) => field.slug === blockType)
+      if (block) {
+        const search = findField({
+          dotNotation,
+          fields: block.fields,
+          firstIteration: false,
+        })
+        if (search) {
+          return search
+        }
+      }
+    }
+    if (field.name === keys[0]) {
+      return field
+    }
+  }
+  return undefined
+}
+
 export const getLocalizedFields = ({
   fields,
   type,

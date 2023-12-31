@@ -687,11 +687,11 @@ describe('Lexical editor with blocks', () => {
     ).toBeDefined();
 
     expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(
-      `"<span>lexical configuration not found</span>"`
+      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span>unknown node</span><p></p>"`
     );
 
     expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(
-      `"<span>lexical configuration not found</span>"`
+      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span>unknown node</span><p></p>"`
     );
   });
 });
