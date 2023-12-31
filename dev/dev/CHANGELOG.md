@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.24.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.24.1...dev-v0.24.2) (2023-12-31)
+
+
+### Bug Fixes
+
+* **lexical:** support lexical editor configs in nested fields ([#150](https://github.com/thompsonsj/payload-crowdin-sync/issues/150)) ([645778c](https://github.com/thompsonsj/payload-crowdin-sync/commit/645778c4a1279b6aed9e58eb45066f4c827c2252))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.24.1 to 0.24.2
+
 ## [0.24.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.24.0...dev-v0.24.1) (2023-12-21)
 
 
