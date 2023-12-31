@@ -1,6 +1,5 @@
 import payload from "payload";
 import { initPayloadTest } from "../helpers/config";
-import { connectionTimeout } from "../config";
 import { CrowdinArticleDirectory } from "../../payload-types"
 import nock from "nock";
 import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
@@ -30,11 +29,7 @@ const mockClient = mockCrowdinClient(pluginOptions)
 
 describe("Globals", () => {
   beforeAll(async () => {
-    await initPayloadTest({
-      __dirname,
-      payloadConfigFile: "./../payload.config.default.ts"
-    });
-    await new Promise(resolve => setTimeout(resolve, connectionTimeout));
+    await initPayloadTest({});
   });
 
   afterEach((done) => {
@@ -49,15 +44,9 @@ describe("Globals", () => {
     done()
   })
 
-  afterAll(() => {
-    nock.restore()
-    nock.cleanAll()
-  })
-
   afterAll(async () => {
     if (typeof payload?.db?.destroy === 'function') {
       await payload.db.destroy(payload)
-      // setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
     }
   });
 

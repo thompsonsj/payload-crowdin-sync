@@ -1,6 +1,7 @@
-import { buildConfigWithPluginOptions, localeMap } from "./payload.config";
+import { PluginOptions } from "payload-crowdin-sync";
+import { localeMap } from "../../payload.config";
 
-export default buildConfigWithPluginOptions({
+export const pluginConfig = (): PluginOptions => ({
   projectId: parseInt(process.env['CROWDIN_PROJECT_ID'] || ``) || 323731,
   directoryId: parseInt(process.env['CROWDIN_DIRECTORY_ID'] || ``) || 1169,
   token: process.env['NODE_ENV'] === 'test' ? `fake-token` : process.env['CROWDIN_TOKEN'] || ``, // CrowdIn API is mocked but we need a token to pass schema validation
@@ -21,4 +22,4 @@ export default buildConfigWithPluginOptions({
     'tags',
     'users',
   ]
-});
+})

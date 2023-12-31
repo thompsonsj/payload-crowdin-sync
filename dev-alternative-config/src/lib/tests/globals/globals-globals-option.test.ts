@@ -1,6 +1,5 @@
 import payload from "payload";
 import { initPayloadTest } from "../helpers/config";
-import { connectionTimeout } from "../config";
 import { CrowdinArticleDirectory } from "../../payload-types";
 import nock from "nock";
 import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
@@ -30,8 +29,7 @@ const mockClient = mockCrowdinClient(pluginOptions)
 
 describe("Globals", () => {
   beforeAll(async () => {
-    await initPayloadTest({ __dirname, payloadConfigFile: './../payload.config.globals-option.ts' })
-    await new Promise(resolve => setTimeout(resolve, connectionTimeout));
+    await initPayloadTest({})
   });
 
   afterEach((done) => {
@@ -49,9 +47,6 @@ describe("Globals", () => {
   afterAll(async () => {
     if (typeof payload?.db?.destroy === 'function') {
       await payload.db.destroy(payload)
-      /**
-      setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
-      */
     }
   });
 
@@ -84,7 +79,6 @@ describe("Globals", () => {
   });
 
   describe("crowdin-article-directories", () => {
-    /**
     it("creates an article directory", async () => {
       const fileId = 43
       
@@ -92,7 +86,7 @@ describe("Globals", () => {
         .post(
           `/api/v2/projects/${pluginOptions.projectId}/directories`
         )
-        .thrice()
+        .twice()
         .reply(200, mockClient.createDirectory({}))
         .post(
           `/api/v2/storages`
@@ -116,6 +110,5 @@ describe("Globals", () => {
       const crowdinArticleDirectoryId = (result.crowdinArticleDirectory as CrowdinArticleDirectory)?.id;
       expect(crowdinArticleDirectoryId).toBeDefined();
     });
-    */
   });
 });

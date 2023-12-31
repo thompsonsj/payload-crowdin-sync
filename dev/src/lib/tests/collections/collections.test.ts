@@ -3,7 +3,6 @@ import { initPayloadTest } from "../helpers/config";
 import {
   getFilesByDocumentID,
 } from "payload-crowdin-sync";
-import { connectionTimeout } from "../config";
 import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from "../../payload-types";
 import nock from "nock";
 import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
@@ -33,11 +32,7 @@ const mockClient = mockCrowdinClient(pluginOptions)
 
 describe("Collections", () => {
   beforeAll(async () => {
-    await initPayloadTest({
-      __dirname,
-      payloadConfigFile: "./../payload.config.default.ts"
-    });
-    await new Promise(resolve => setTimeout(resolve, connectionTimeout));
+    await initPayloadTest({});
   });
 
   afterEach((done) => {
@@ -55,7 +50,6 @@ describe("Collections", () => {
   afterAll(async () => {
     if (typeof payload?.db?.destroy === 'function') {
       await payload.db.destroy(payload)
-      // setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
     }
   });
 

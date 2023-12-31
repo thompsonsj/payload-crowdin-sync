@@ -6,7 +6,6 @@ import { payloadCreateData } from "../../fixtures/nested-field-collection/simple
 import { payloadCreateBlocksRichTextData } from "../../fixtures/nested-field-collection/rich-text-blocks.fixture";
 import { payloadCreateIncludesNonLocalizedBlocksData } from "../../fixtures/nested-field-collection/simple-blocks-with-non-localized-blocks.fixture";
 import { multiRichTextFields } from "../../../collections/fields/multiRichTextFields";
-import { connectionTimeout } from "../../config";
 import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
 import { pluginConfig } from "../../helpers/plugin-config"
 
@@ -22,11 +21,7 @@ const mockClient = mockCrowdinClient(pluginOptions)
 
 describe("Translations", () => {
   beforeAll(async () => {
-    await initPayloadTest({
-      __dirname,
-      payloadConfigFile: "./../../payload.config.default.ts"
-    });
-    await new Promise(resolve => setTimeout(resolve, connectionTimeout));
+    await initPayloadTest({});
   });
 
   afterEach((done) => {
@@ -44,7 +39,6 @@ describe("Translations", () => {
   afterAll(async () => {
     if (typeof payload?.db?.destroy === 'function') {
       await payload.db.destroy(payload)
-      //setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
     }
   });
 

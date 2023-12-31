@@ -1,6 +1,5 @@
 import payload from "payload";
 import { initPayloadTest } from "../../helpers/config";
-import { connectionTimeout } from "../../config";
 import { payloadHtmlToSlateConfig, payloadCrowdinSyncTranslationsApi } from "payload-crowdin-sync";
 import nock from "nock";
 import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
@@ -38,11 +37,7 @@ const mockClient = mockCrowdinClient(pluginOptions)
  */
 describe("Translations", () => {
   beforeAll(async () => {
-    await initPayloadTest({
-      __dirname,
-      payloadConfigFile: "./../../payload.config.default.ts"
-    });
-    await new Promise((resolve) => setTimeout(resolve, connectionTimeout));
+    await initPayloadTest({});
   });
 
   afterEach((done) => {
@@ -60,11 +55,6 @@ describe("Translations", () => {
   afterAll(async () => {
     if (typeof payload?.db?.destroy === "function") {
       await payload.db.destroy(payload);
-      /**
-      setTimeout(async () => {
-        await payload.db.destroy(payload);
-      }, connectionTimeout);
-      */
     }
   });
 

@@ -1,7 +1,6 @@
 import payload from "payload";
 import { initPayloadTest } from "../helpers/config";
 import { multiRichTextFields } from "../../collections/fields/multiRichTextFields";
-import { connectionTimeout } from "../config";
 import { CrowdinArticleDirectory } from "../../payload-types";
 import nock from "nock";
 import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
@@ -31,8 +30,7 @@ const mockClient = mockCrowdinClient(pluginOptions)
 
 describe("Collections - collections option", () => {
   beforeAll(async () => {
-    await initPayloadTest({ __dirname, payloadConfigFile: './../payload.config.collections-option.ts' });
-    await new Promise(resolve => setTimeout(resolve, connectionTimeout))
+    await initPayloadTest({});
   });
 
   afterEach((done) => {
@@ -50,7 +48,6 @@ describe("Collections - collections option", () => {
   afterAll(async () => {
     if (typeof payload?.db?.destroy === 'function') {
       await payload.db.destroy(payload)
-      // setTimeout(async () => {await payload.db.destroy(payload)}, connectionTimeout)
     }
   });
 
@@ -69,11 +66,11 @@ describe("Collections - collections option", () => {
 
     it("does not create an article directory for a collection with localized fields that is not present in a defined array in the collections option", async () => {
       const post = await payload.create({
-        collection: "localized-posts",
+        collection: "policies",
         data: { title: "Test post" },
       });
       const result = await payload.findByID({
-        collection: "localized-posts",
+        collection: "policies",
         id: post.id,
       });
       expect(Object.prototype.hasOwnProperty.call(result, 'crowdinArticleDirectory')).toBeFalsy();
@@ -81,7 +78,7 @@ describe("Collections - collections option", () => {
   });
 
   describe("Localized collections", () => {
-    /**
+    
     it("creates an article directory", async () => {
       nock('https://api.crowdin.com')
         .post(
@@ -123,9 +120,7 @@ describe("Collections - collections option", () => {
       const crowdinArticleDirectoryId = (result.crowdinArticleDirectory as CrowdinArticleDirectory)?.id;
       expect(crowdinArticleDirectoryId).toBeDefined();
     });
-    */
-
-    /**
+    
     it("creates an article directory for a collection with localized fields that is defined in the collections object using an config object", async () => {
       nock('https://api.crowdin.com')
         .post(
@@ -156,6 +151,5 @@ describe("Collections - collections option", () => {
       });
       expect(Object.prototype.hasOwnProperty.call(result, 'crowdinArticleDirectory')).toBeTruthy();      
     });
-    */
   });
 });
