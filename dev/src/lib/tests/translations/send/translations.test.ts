@@ -7,6 +7,8 @@ import { payloadCreateBlocksRichTextData } from "../../fixtures/nested-field-col
 import { payloadCreateIncludesNonLocalizedBlocksData } from "../../fixtures/nested-field-collection/simple-blocks-with-non-localized-blocks.fixture";
 import { multiRichTextFields } from "../../../collections/fields/multiRichTextFields";
 import { connectionTimeout } from "../../config";
+import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
+import { pluginConfig } from "../../helpers/plugin-config"
 
 /**
  * Test translations
@@ -15,20 +17,8 @@ import { connectionTimeout } from "../../config";
  * stored as expected.
  */
 
-const pluginOptions = {
-  projectId: 323731,
-  directoryId: 1169,
-  token: process.env['CROWDIN_TOKEN'] as string,
-  localeMap: {
-    de_DE: {
-      crowdinId: "de",
-    },
-    fr_FR: {
-      crowdinId: "fr",
-    },
-  },
-  sourceLocale: "en",
-};
+const pluginOptions = pluginConfig()
+const mockClient = mockCrowdinClient(pluginOptions)
 
 describe("Translations", () => {
   beforeAll(async () => {
@@ -39,8 +29,16 @@ describe("Translations", () => {
     await new Promise(resolve => setTimeout(resolve, connectionTimeout));
   });
 
-  afterEach(async () => {
+  afterEach((done) => {
+    if (!nock.isDone()) {
+      throw new Error(
+        `Not all nock interceptors were used: ${JSON.stringify(
+          nock.pendingMocks()
+        )}`
+      );
+    }
     nock.cleanAll();
+    done();
   });
 
   afterAll(async () => {
@@ -52,6 +50,43 @@ describe("Translations", () => {
 
   describe("fn: getTranslation", () => {
     it("retrieves a translation from Crowdin", async () => {
+      const fileId = 344
+
+      nock("https://api.crowdin.com")
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .twice()
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
+          {
+            targetLanguageId: 'de',
+          }
+        )
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=de`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
+        )
+        .query({
+          targetLanguageId: 'de',
+        })
+        .reply(200, {
+          title: "Testbeitrag",
+        })
+
       const post = await payload.create({
         collection: "localized-posts",
         data: { title: "Test post" },
@@ -60,19 +95,7 @@ describe("Translations", () => {
         pluginOptions,
         payload
       );
-      nock("https://api.crowdin.com")
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
-        )
-        .reply(200, {
-          title: "Testbeitrag",
-        })
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
-        )
-        .reply(200, {
-          title: "Poste d'essai",
-        });
+        
       const translation = await translationsApi.getTranslation({
         documentId: `${post.id}`,
         fieldName: "fields",
@@ -86,6 +109,60 @@ describe("Translations", () => {
 
   describe("fn: updateTranslation", () => {
     it("updates a Payload article with a `text` field translation retrieved from Crowdin", async () => {
+      const fileId = 45674
+      
+      nock("https://api.crowdin.com")
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
+          {
+            targetLanguageId: 'de',
+          }
+        )
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=de`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
+        )
+        .query({
+          targetLanguageId: 'de',
+        })
+        .reply(200, {
+          title: "Testbeitrag",
+        })
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
+          {
+            targetLanguageId: 'fr',
+          }
+        )
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=fr`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
+        )
+        .query({
+          targetLanguageId: 'fr',
+        })
+        .reply(200, {
+          title: "Poste d'essai",
+        });
+
       const post = await payload.create({
         collection: "localized-posts",
         data: { title: "Test post" },
@@ -94,19 +171,7 @@ describe("Translations", () => {
         pluginOptions,
         payload
       );
-      nock("https://api.crowdin.com")
-        .get(
-          `/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de`
-        )
-        .reply(200, {
-          title: "Testbeitrag",
-        })
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
-        )
-        .reply(200, {
-          title: "Poste d'essai",
-        });
+
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: "localized-posts",
@@ -122,6 +187,60 @@ describe("Translations", () => {
     });
 
     it("updates a Payload article draft with a `text` field translation retrieved from Crowdin", async () => {
+      const fileId = 45674
+      
+      nock("https://api.crowdin.com")
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
+          {
+            targetLanguageId: 'de',
+          }
+        )
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=de`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
+        )
+        .query({
+          targetLanguageId: 'de',
+        })
+        .reply(200, {
+          title: "Testbeitrag",
+        })
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
+          {
+            targetLanguageId: 'fr',
+          }
+        )
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=fr`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
+        )
+        .query({
+          targetLanguageId: 'fr',
+        })
+        .reply(200, {
+          title: "Poste d'essai",
+        });
+
       const post = await payload.create({
         collection: "localized-posts",
         data: { title: "Test post" },
@@ -130,19 +249,7 @@ describe("Translations", () => {
         pluginOptions,
         payload
       );
-      nock("https://api.crowdin.com")
-        .get(
-          `/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de`
-        )
-        .reply(200, {
-          title: "Testbeitrag",
-        })
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
-        )
-        .reply(200, {
-          title: "Poste d'essai",
-        });
+
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: "localized-posts",
@@ -167,6 +274,57 @@ describe("Translations", () => {
     });
 
     it("updates a Payload article with a `richText` field translation retrieved from Crowdin", async () => {
+      const fileId = 45674
+      
+      nock("https://api.crowdin.com")
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
+          {
+            targetLanguageId: 'de',
+          }
+        )
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=de`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
+        )
+        .query({
+          targetLanguageId: 'de',
+        })
+        .reply(200, '<p>Testbeitrag</p>',
+      )
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
+          {
+            targetLanguageId: 'fr',
+          }
+        )
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=fr`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
+        )
+        .query({
+          targetLanguageId: 'fr',
+        })
+        .reply(200, "<p>Poste d'essai</p>");
+
       const post = await payload.create({
         collection: "localized-posts",
         data: {
@@ -185,17 +343,7 @@ describe("Translations", () => {
         pluginOptions,
         payload
       );
-      nock("https://api.crowdin.com")
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
-        )
-        .reply(200, "<p>Testbeitrag</p>")
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
-        )
-        .reply(200, {
-          title: "Poste d'essai",
-        });
+
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: "localized-posts",
@@ -216,6 +364,25 @@ describe("Translations", () => {
     });
 
     it("updates a Payload article with a *blocks* field translation retrieved from Crowdin", async () => {
+      const fileId = 4563
+      
+      nock("https://api.crowdin.com")
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .twice()
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+
       const post = await payload.create({
         collection: "nested-field-collection",
         data: payloadCreateData as any,
@@ -223,6 +390,7 @@ describe("Translations", () => {
       // we need the ids created by Payload to update the blocks
       const blockIds = (post["layout"] instanceof Array ? post["layout"].map((block) => block.id) : []) as string[];
       const blockTypes = post["layout"] instanceof Array ? post["layout"].map((block) => block.blockType) : [];
+
       const responseDe = {
         layout: {
           [blockIds[0]]: {
@@ -261,19 +429,46 @@ describe("Translations", () => {
           },
         },
       };
+
+      nock("https://api.crowdin.com")
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
+          {
+            targetLanguageId: 'de',
+          }
+        )
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=de`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
+        )
+        .query({
+          targetLanguageId: 'de',
+        })
+        .reply(200, responseDe)
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
+          {
+            targetLanguageId: 'fr',
+          }
+        )
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=fr`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
+        )
+        .query({
+          targetLanguageId: 'fr',
+        })
+        .reply(200, responseFr);
+
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
         payload
       );
-      nock("https://api.crowdin.com")
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
-        )
-        .reply(200, responseDe)
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
-        )
-        .reply(200, responseFr);
+      
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: "nested-field-collection",
@@ -326,6 +521,24 @@ describe("Translations", () => {
     });
 
     it("updates a Payload article with a *blocks* field translation retrieved from Crowdin and respects non-localized fields", async () => {
+      const fileId = 1533
+      
+      nock("https://api.crowdin.com")
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+
       const post = await payload.create({
         collection: "nested-field-collection",
         data: payloadCreateIncludesNonLocalizedBlocksData as any,
@@ -384,15 +597,41 @@ describe("Translations", () => {
         pluginOptions,
         payload
       );
+      
       nock("https://api.crowdin.com")
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
+          {
+            targetLanguageId: 'de',
+          }
         )
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=de`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
+        )
+        .query({
+          targetLanguageId: 'de',
+        })
         .reply(200, {})
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
+          {
+            targetLanguageId: 'fr',
+          }
         )
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=fr`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
+        )
+        .query({
+          targetLanguageId: 'fr',
+        })
         .reply(200, responseFr);
+
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: "nested-field-collection",
@@ -465,6 +704,24 @@ describe("Translations", () => {
     });
 
     it("updates a Payload article with a *blocks* field translation retrieved from Crowdin and detects no change on the next update attempt", async () => {
+      const fileId = 92228
+      
+      nock("https://api.crowdin.com")
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+
       const post = await payload.create({
         collection: "nested-field-collection",
         data: payloadCreateData as any,
@@ -514,15 +771,45 @@ describe("Translations", () => {
         pluginOptions,
         payload
       );
+      
       nock("https://api.crowdin.com")
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
+          {
+            targetLanguageId: 'de',
+          }
         )
+        .twice()
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=de`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
+        )
+        .query({
+          targetLanguageId: 'de',
+        })
+        .twice()
         .reply(200, responseDe)
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
+          {
+            targetLanguageId: 'fr',
+          }
         )
+        .twice()
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=fr`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
+        )
+        .query({
+          targetLanguageId: 'fr',
+        })
+        .twice()
         .reply(200, responseFr);
+
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: "nested-field-collection",
@@ -572,15 +859,6 @@ describe("Translations", () => {
           blockType: "basicBlock",
         },
       ]);
-      nock("https://api.crowdin.com")
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
-        )
-        .reply(200, responseDe)
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
-        )
-        .reply(200, responseFr);
       const nextTranslation = await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: "nested-field-collection",
@@ -591,6 +869,32 @@ describe("Translations", () => {
     });
 
     it("updates a Payload article with *blocks* rich text translations retrieved from Crowdin", async () => {
+      const fileIdOne = 478
+      const fileIdTwo = 479
+      
+      nock("https://api.crowdin.com")
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .twice()
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId: fileIdOne,
+        }))
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId: fileIdTwo,
+        }))
+
       const post = await payload.create({
         collection: "nested-field-collection",
         data: payloadCreateBlocksRichTextData as any,
@@ -610,38 +914,75 @@ describe("Translations", () => {
         payload
       );
       nock("https://api.crowdin.com")
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileIdOne}`,
+          {
+            targetLanguageId: 'de',
+          }
         )
-        .reply(200, responseDeTwo)
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileIdOne}/download?targetLanguageId=de`
+        }))
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=de"
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileIdOne}/download`
         )
+        .query({
+          targetLanguageId: 'de',
+        })
         .reply(200, responseDeOne)
-        .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileIdTwo}`,
+          {
+            targetLanguageId: 'de',
+          }
         )
-        .reply(200, responseFrTwo)
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileIdTwo}/download?targetLanguageId=de`
+        }))
         .get(
-          "/api/v2/projects/1/translations/builds/1/download?targetLanguageId=fr"
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileIdTwo}/download`
         )
-        .reply(200, responseFrOne);
+        .query({
+          targetLanguageId: 'de',
+        })
+        .reply(200, responseDeTwo)
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileIdOne}`,
+          {
+            targetLanguageId: 'fr',
+          }
+        )
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileIdOne}/download?targetLanguageId=fr`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileIdOne}/download`
+        )
+        .query({
+          targetLanguageId: 'fr',
+        })
+        .reply(200, responseFrOne)
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileIdTwo}`,
+          {
+            targetLanguageId: 'fr',
+          }
+        )
+        .reply(200, mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileIdTwo}/download?targetLanguageId=fr`
+        }))
+        .get(
+          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileIdTwo}/download`
+        )
+        .query({
+          targetLanguageId: 'fr',
+        })
+        .reply(200, responseFrTwo);
+
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: "nested-field-collection",
         dryRun: false,
-      });
-      // run again - hacky way to wait for all files.
-      await payload.findByID({
-        collection: "nested-field-collection",
-        id: `${post.id}`,
-        locale: "de_DE",
-      });
-      // run again - hacky way to wait for all files.
-      await payload.findByID({
-        collection: "nested-field-collection",
-        id: `${post.id}`,
-        locale: "de_DE",
       });
       // retrieve translated post from Payload
       const resultDe = await payload.findByID({
@@ -679,18 +1020,6 @@ describe("Translations", () => {
           blockType: "basicBlockRichText",
         },
       ]);
-      // run again - hacky way to wait for all files.
-      await payload.findByID({
-        collection: "nested-field-collection",
-        id: `${post.id}`,
-        locale: "fr_FR",
-      });
-      // run again - hacky way to wait for all files.
-      await payload.findByID({
-        collection: "nested-field-collection",
-        id: `${post.id}`,
-        locale: "fr_FR",
-      });
       // retrieve translated post from Payload
       const resultFr = await payload.findByID({
         collection: "nested-field-collection",
@@ -729,13 +1058,31 @@ describe("Translations", () => {
       ]);
     });
   });
-
+  
   describe('fn: getHtmlFieldSlugs', () => {
-    /**
-     * If Payload queries are not written correctly,
-     * we may end up with the default limit of 10.
-     */
+    // If Payload queries are not written we may end up with the default limit of 10.
     it("retrieves all HTML field slugs", async () => {
+      const fileId = 92228
+      
+      nock("https://api.crowdin.com")
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .twice()
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .times(11)
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .times(11)
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+
       const slug = "multi-rich-text"
 
       const data = multiRichTextFields.filter(field => field.type === 'richText').reduce((accum: {[key: string]: any}, field) => {
@@ -754,21 +1101,17 @@ describe("Translations", () => {
         collection: slug,
         data,
       });
-      // ensure all afterChange hooks have run? Getting test failures without this additional operation.
-      await payload.findByID({
-        collection: slug,
-        id: `${post.id}`,
-      });
-      // Try to enforce a little more waiting for all files to have been created.
+      /**
       const result = await payload.findByID({
         collection: slug,
         id: `${post.id}`,
       });
+      */
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
         payload
       );
-      const htmlFieldSlugs = await translationsApi.getHtmlFieldSlugs(`${result.id}`);
+      const htmlFieldSlugs = await translationsApi.getHtmlFieldSlugs(`${post.id}`);
       expect(htmlFieldSlugs.length).toEqual(11)
       expect(htmlFieldSlugs.sort()).toEqual([
           "field_0",

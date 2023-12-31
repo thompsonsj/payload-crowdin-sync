@@ -3,7 +3,6 @@ import crowdin, {
   SourceFiles,
   UploadStorage,
 } from "@crowdin/crowdin-api-client";
-import { mockCrowdinClient } from "../mock/crowdin-client";
 import { Payload } from "payload";
 import { PluginOptions } from "../../types";
 import { toWords } from "payload/dist/utilities/formatLabels";
@@ -293,7 +292,7 @@ export class payloadCrowdinSyncFilesApi {
     // Create file on Crowdin
     const crowdinFile = await this.crowdinCreateFile({
       directoryId: articleDirectory.originalId,
-      name: name,
+      name,
       fileData: value,
       fileType: fileType,
     });
@@ -321,13 +320,13 @@ export class payloadCrowdinSyncFilesApi {
     }}*/
 
     // Store result on Payload CMS
-    console.log('crowdinFile', crowdinFile)
+
     if (crowdinFile) {
       const payloadCrowdinFile = await this.payload.create({
         collection: "crowdin-files", // required
         data: {
           // required
-          title: crowdinFile.data.name,
+          title: name,
           field: name,
           crowdinArticleDirectory: articleDirectory.id,
           reference: {
@@ -338,8 +337,8 @@ export class payloadCrowdinSyncFilesApi {
           originalId: crowdinFile.data.id,
           directoryId: crowdinFile.data.directoryId,
           revisionId: crowdinFile.data.revisionId,
-          name: crowdinFile.data.name,
-          type: crowdinFile.data.type,
+          name: `${name}.${fileType}`,
+          type: fileType,
           path: crowdinFile.data.path,
           ...(fileType === "json" && { fileData: { json: (value as {
             [k: string]: Partial<unknown>;
@@ -347,7 +346,7 @@ export class payloadCrowdinSyncFilesApi {
           ...(fileType === "html" && { fileData: { html: typeof value === 'string' ? value : JSON.stringify(value) } }),
         },
       });
-      console.log('payloadCrowdinFile', payloadCrowdinFile)
+
       return payloadCrowdinFile;
     }
     return

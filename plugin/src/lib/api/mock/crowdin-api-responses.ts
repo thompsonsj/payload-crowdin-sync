@@ -37,18 +37,21 @@ class crowdinAPIWrapper {
   }
 
   createDirectory({
+    id,
     request = {
       directoryId: 1179,
       name: "post id",
       title: "undefined",
     }
   }: {
+    /** Mock the id of the object returned in the response */
+    id?: number
     request?: SourceFilesModel.CreateDirectoryRequest
   }): { data: SourceFilesModel.Directory } {
     const date = new Date().toISOString();
     return {
       data: {
-        id: 1169,
+        id: id || 1169,
         projectId: this.projectId,
         branchId: this.branchId,
         directoryId: request.directoryId || 1179,
@@ -63,15 +66,19 @@ class crowdinAPIWrapper {
     };
   }
 
-  addStorage(
-    fileName?: string,
-    request?: any,
-    contentType?: string
-  ): { data: UploadStorageModel.Storage } {
+  /**
+   * Add Storage
+   * 
+   * No parameters are required for mocks. The plugin
+   * uses a storage id returned by the API only.
+   * 
+   * @see https://developer.crowdin.com/api/v2/#operation/api.storages.post
+   */
+  addStorage(): { data: UploadStorageModel.Storage } {
     const storage = {
       data: {
         id: 1788135621,
-        fileName: fileName || `fields.json`,
+        fileName: `fields.json`,
       },
     };
     return storage;
@@ -85,18 +92,25 @@ class crowdinAPIWrapper {
     await Promise.resolve(1).then(() => undefined);
   }
 
+  /**
+   * createFile
+   * 
+   * No parameters required - plugin will prefer arguments
+   * passed to the function that creates the Crowdin
+   * file and Payload document freferencing that file.
+   */
   createFile(
     {
       fileId = 1079,
-      request: {
-      directoryId = 1172,
-      name,
-      storageId,
-      type = "html",
+      request = {
+        directoryId: 1172,
+        name: "fields",
+        storageId: 5432,
+        type: "json",
     }
   }: {
       fileId?: number,
-      request: SourceFilesModel.CreateFileRequest
+      request?: SourceFilesModel.CreateFileRequest
     }
   ): { data: SourceFilesModel.File } {
     /*const storageId = await this.addStorage({
@@ -118,11 +132,11 @@ class crowdinAPIWrapper {
         id: fileId,
         projectId: this.projectId,
         branchId: this.branchId,
-        directoryId,
-        name: name,
-        title: name,
-        type,
-        path: `/policies/security-and-privacy/${name}`,
+        directoryId: request.directoryId || 1172,
+        name: request.name || "fields",
+        title: request.name || "fields",
+        type: request.type || "json",
+        path: `/policies/security-and-privacy/${request.name  || "fields"}`,
         parserVersion: 3,
         context: "",
       },
@@ -168,33 +182,22 @@ class crowdinAPIWrapper {
     return file;
   }
 
-  async buildProjectFileTranslation(
-    projectId: number,
-    fileId: number,
-    { targetLanguageId }: TranslationsModel.BuildProjectFileTranslationRequest
-  ): Promise<
-    ResponseObject<TranslationsModel.BuildProjectFileTranslationResponse>
-  > {
-    const build = await Promise.resolve(1).then(() => {
-      const date = new Date().toISOString();
-      return {
-        data: {
-          id: 1,
-          projectId,
-          branchId: this.branchId,
-          fileId,
-          languageId: "en",
-          status: "inProgress",
-          progress: 0,
-          createdAt: date,
-          updatedAt: date,
-          etag: "string",
-          url: `https://api.crowdin.com/api/v2/projects/1/translations/builds/1/download?targetLanguageId=${targetLanguageId}`,
-          expireIn: "string",
-        },
-      };
-    });
-    return build;
+  buildProjectFileTranslation({
+    url,
+    request
+  }: {
+      url?: string
+      request?: TranslationsModel.BuildProjectFileTranslationRequest
+    }
+  ): { data: TranslationsModel.BuildProjectFileTranslationResponse } {
+    const date = new Date().toISOString();
+    return {
+      data: {
+        etag: "string",
+        url: url || `https://api.crowdin.com/api/v2/projects/1/translations/builds/1/download?targetLanguageId=${request?.targetLanguageId || 'unknown'}`,
+        expireIn: date,
+      },
+    };
   }
 }
 

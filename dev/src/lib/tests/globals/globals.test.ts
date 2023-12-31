@@ -1,7 +1,10 @@
 import payload from "payload";
-import { initPayloadTest } from "./helpers/config";
-import { connectionTimeout } from "./config";
-import { CrowdinArticleDirectory } from "../payload-types"
+import { initPayloadTest } from "../helpers/config";
+import { connectionTimeout } from "../config";
+import { CrowdinArticleDirectory } from "../../payload-types"
+import nock from "nock";
+import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
+import { pluginConfig } from "../helpers/plugin-config"
 
 /**
  * Test the collections
@@ -22,11 +25,34 @@ import { CrowdinArticleDirectory } from "../payload-types"
  * - file: Crowdin File
  */
 
+const pluginOptions = pluginConfig()
+const mockClient = mockCrowdinClient(pluginOptions)
+
 describe("Globals", () => {
   beforeAll(async () => {
-    await initPayloadTest({ __dirname });
+    await initPayloadTest({
+      __dirname,
+      payloadConfigFile: "./../payload.config.default.ts"
+    });
     await new Promise(resolve => setTimeout(resolve, connectionTimeout));
   });
+
+  afterEach((done) => {
+    if (!nock.isDone()) {
+      throw new Error(
+        `Not all nock interceptors were used: ${JSON.stringify(
+          nock.pendingMocks()
+        )}`
+      );
+    }
+    nock.cleanAll()
+    done()
+  })
+
+  afterAll(() => {
+    nock.restore()
+    nock.cleanAll()
+  })
 
   afterAll(async () => {
     if (typeof payload?.db?.destroy === 'function') {
@@ -46,12 +72,32 @@ describe("Globals", () => {
       const result = await payload.findGlobal({
         slug: "nav",
       });
-      expect(Object.prototype.hasOwnProperty.call(result, 'crowdinArticleDirectory')).toBeDefined();
+      expect(Object.prototype.hasOwnProperty.call(result, 'crowdinArticleDirectory')).toBeFalsy();
     });
   });
 
   describe("crowdin-article-directories", () => {
     it("creates an article directory", async () => {
+      // this test needs revising. fileId needs to be the same for the subsequent tests, and both need a put mock? Check the logic of using nock and what changes take place in hooks for updateGlobal
+      const fileId = 69334
+      
+      nock("https://api.crowdin.com")
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .twice()
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+
       await payload.updateGlobal({
         slug: "localized-nav",
         data: { items: [{
@@ -67,7 +113,23 @@ describe("Globals", () => {
     });
 
     it("creates only one article directory", async () => {
-       await payload.updateGlobal({
+      const fileId = 69334
+      
+      nock("https://api.crowdin.com")
+        .post(
+          `/api/v2/storages`
+        )
+        .twice()
+        .reply(200, mockClient.addStorage())
+        .put(
+          `/api/v2/projects/${pluginOptions.projectId}/files/${fileId}`
+        )
+        .twice()
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+
+      await payload.updateGlobal({
         slug: "localized-nav",
         data: { items: [{
           label: "Nav item 1"

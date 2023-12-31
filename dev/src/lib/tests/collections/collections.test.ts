@@ -5,6 +5,9 @@ import {
 } from "payload-crowdin-sync";
 import { connectionTimeout } from "../config";
 import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from "../../payload-types";
+import nock from "nock";
+import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
+import { pluginConfig } from "../helpers/plugin-config"
 
 /**
  * Test the collections
@@ -25,6 +28,9 @@ import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from
  * - file: Crowdin File
  */
 
+const pluginOptions = pluginConfig()
+const mockClient = mockCrowdinClient(pluginOptions)
+
 describe("Collections", () => {
   beforeAll(async () => {
     await initPayloadTest({
@@ -33,6 +39,18 @@ describe("Collections", () => {
     });
     await new Promise(resolve => setTimeout(resolve, connectionTimeout));
   });
+
+  afterEach((done) => {
+    if (!nock.isDone()) {
+      throw new Error(
+        `Not all nock interceptors were used: ${JSON.stringify(
+          nock.pendingMocks()
+        )}`
+      );
+    }
+    nock.cleanAll()
+    done()
+  })
 
   afterAll(async () => {
     if (typeof payload?.db?.destroy === 'function') {
@@ -57,6 +75,22 @@ describe("Collections", () => {
 
   describe("crowdin-article-directories", () => {
     it("creates an article directory", async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        // first test creates the collection directory
+        .twice()
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({}))
+
       const post = await payload.create({
         collection: "localized-posts",
         data: { title: "Test post" },
@@ -71,6 +105,31 @@ describe("Collections", () => {
     });
 
     it("creates only one article directory", async () => {
+      const fileId = 721
+
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .twice()
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+        .put(
+          `/api/v2/projects/${pluginOptions.projectId}/files/${fileId}`
+        )
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+
       const post = await payload.create({
         collection: "localized-posts",
         data: { title: "Test post" },
@@ -98,6 +157,23 @@ describe("Collections", () => {
     });
 
     it("creates unique article directories for two articles created in the same collection", async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .twice()
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .twice()
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .twice()
+        .reply(200, mockClient.createFile({}))
+
       const postOne = await payload.create({
         collection: "localized-posts",
         data: { title: "Test post 1" },
@@ -124,6 +200,20 @@ describe("Collections", () => {
 
   describe("crowdin-files", () => {
     it('creates a "fields" Crowdin file to include the title field', async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({}))
+
       const post = await payload.create({
         collection: "localized-posts",
         data: { title: "Test post" },
@@ -136,6 +226,11 @@ describe("Collections", () => {
     });
 
     it('does not create a "fields" Crowdin file if all fields are empty strings', async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
       const post = await payload.create({
         collection: "localized-posts",
         data: { title: "" },
@@ -147,6 +242,22 @@ describe("Collections", () => {
     const fieldsAndContentTestName =
       "creates a `fields` file to include the title field and a `content` file for the content richText field";
     it(`${fieldsAndContentTestName}`, async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .twice()
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .twice()
+        .reply(200, mockClient.createFile({}))
+
       const post = await payload.create({
         collection: "localized-posts",
         data: {
@@ -162,11 +273,6 @@ describe("Collections", () => {
           ],
         },
       });
-      // hacky way to wait for files to be created
-      await payload.findByID({
-        id: `${post.id}`,
-        collection: "localized-posts"
-      })
       const crowdinFiles = await getFilesByDocumentID(post.id, payload);
       expect(crowdinFiles.length).toEqual(2);
       const fields = crowdinFiles.find((doc: CrowdinFile) => doc.field === "fields");
@@ -180,6 +286,20 @@ describe("Collections", () => {
 
   describe("crowdin-collection-directories", () => {
     it("associates an article Directory with a collection directory", async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({}))
+
       const post = await payload.create({
         collection: "localized-posts",
         data: { title: "Test post" },
@@ -197,6 +317,23 @@ describe("Collections", () => {
     });
 
     it("uses the same collection directory for two articles created in the same collection", async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .twice()
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .twice()
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .twice()
+        .reply(200, mockClient.createFile({}))
+
       const postOne = await payload.create({
         collection: "localized-posts",
         data: { title: "Test post 1" },

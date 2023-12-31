@@ -1,11 +1,15 @@
 import payload from 'payload';
 import { initPayloadTest } from '../helpers/config';
 import { connectionTimeout } from '../config';
-import { getFileByDocumentID, getFilesByDocumentID, utilities } from 'plugin';
+import { getFilesByDocumentID, utilities } from 'plugin';
 import Policies from '../../collections/Policies';
 import { fixture } from './lexical-editor-with-blocks.fixture';
-import { buildPayloadUpdateObject } from 'plugin/src/lib/utilities';
-import { Policy } from '../../payload-types';
+import nock from "nock";
+import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
+import { pluginConfig } from "../helpers/plugin-config"
+
+const pluginOptions = pluginConfig()
+const mockClient = mockCrowdinClient(pluginOptions)
 
 describe('Lexical editor with blocks', () => {
   beforeAll(async () => {
@@ -15,6 +19,18 @@ describe('Lexical editor with blocks', () => {
     });
     await new Promise((resolve) => setTimeout(resolve, connectionTimeout));
   });
+
+  afterEach((done) => {
+    if (!nock.isDone()) {
+      throw new Error(
+        `Not all nock interceptors were used: ${JSON.stringify(
+          nock.pendingMocks()
+        )}`
+      );
+    }
+    nock.cleanAll()
+    done()
+  })
 
   afterAll(async () => {
     if (typeof payload?.db?.destroy === 'function') {
@@ -28,6 +44,23 @@ describe('Lexical editor with blocks', () => {
   });
 
   it('builds a Crowdin HTML object as expected', async () => {
+    nock('https://api.crowdin.com')
+      .post(
+        `/api/v2/projects/${pluginOptions.projectId}/directories`
+      )
+      .twice()
+      .reply(200, mockClient.createDirectory({}))
+      .post(
+        `/api/v2/storages`
+      )
+      .twice()
+      .reply(200, mockClient.addStorage())
+      .post(
+        `/api/v2/projects/${pluginOptions.projectId}/files`
+      )
+      .twice()
+      .reply(200, mockClient.createFile({}))
+
     const policy = await payload.create({
       collection: 'policies',
       data: {
@@ -281,6 +314,22 @@ describe('Lexical editor with blocks', () => {
   });
 
   it('builds a Crowdin JSON object as expected', async () => {
+    nock('https://api.crowdin.com')
+      .post(
+        `/api/v2/projects/${pluginOptions.projectId}/directories`
+      )
+      .reply(200, mockClient.createDirectory({}))
+      .post(
+        `/api/v2/storages`
+      )
+      .twice()
+      .reply(200, mockClient.addStorage())
+      .post(
+        `/api/v2/projects/${pluginOptions.projectId}/files`
+      )
+      .twice()
+      .reply(200, mockClient.createFile({}))
+
     const policy = await payload.create({
       collection: 'policies',
       data: {
@@ -301,6 +350,22 @@ describe('Lexical editor with blocks', () => {
   });
 
   it('builds a Payload update object as expected', async () => {
+    nock('https://api.crowdin.com')
+      .post(
+        `/api/v2/projects/${pluginOptions.projectId}/directories`
+      )
+      .reply(200, mockClient.createDirectory({}))
+      .post(
+        `/api/v2/storages`
+      )
+      .twice()
+      .reply(200, mockClient.addStorage())
+      .post(
+        `/api/v2/projects/${pluginOptions.projectId}/files`
+      )
+      .twice()
+      .reply(200, mockClient.createFile({}))
+
     const policy = await payload.create({
       collection: 'policies',
       data: {
@@ -565,6 +630,22 @@ describe('Lexical editor with blocks', () => {
   });
 
   it('creates an HTML file for Crowdin as expected', async () => {
+    nock('https://api.crowdin.com')
+      .post(
+        `/api/v2/projects/${pluginOptions.projectId}/directories`
+      )
+      .reply(200, mockClient.createDirectory({}))
+      .post(
+        `/api/v2/storages`
+      )
+      .twice()
+      .reply(200, mockClient.addStorage())
+      .post(
+        `/api/v2/projects/${pluginOptions.projectId}/files`
+      )
+      .twice()
+      .reply(200, mockClient.createFile({}))
+
     const policy = await payload.create({
       collection: 'policies',
       data: {

@@ -33,6 +33,18 @@ describe(`Crowdin file create, update and delete`, () => {
     await new Promise(resolve => setTimeout(resolve, connectionTimeout));
   });
 
+  afterEach((done) => {
+    if (!nock.isDone()) {
+      throw new Error(
+        `Not all nock interceptors were used: ${JSON.stringify(
+          nock.pendingMocks()
+        )}`
+      );
+    }
+    nock.cleanAll()
+    done()
+  })
+
   afterAll(async () => {
     if (typeof payload?.db?.destroy === 'function') {
       await payload.db.destroy(payload)
@@ -121,9 +133,18 @@ describe(`Crowdin file create, update and delete`, () => {
     });
   });
 
-  /**
   describe(`Collection: ${"nested-field-collection"}`, () => {
     it("does not create files for empty localized fields", async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+
       const article = await payload.create({
         collection: "nested-field-collection",
         data: {
@@ -137,7 +158,23 @@ describe(`Crowdin file create, update and delete`, () => {
     });
 
     it("creates files containing fieldType content", async () => {
-      const article = await payload.create({
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .twice()
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .twice()
+        .reply(200, mockClient.createFile({}))
+
+      await payload.create({
         collection: "nested-field-collection",
         locale: "en",
         data: {
@@ -154,18 +191,36 @@ describe(`Crowdin file create, update and delete`, () => {
           textareaField: "Test meta description",
           tabTwo: {},
         },
-      });
-      const crowdinFiles = await getFilesByDocumentID(`${article.id}`, payload);
-      expect(crowdinFiles.length).toEqual(2);
-      expect(
-        crowdinFiles.find((file) => file.name === "richTextField.html")
-      ).toBeDefined();
-      expect(
-        crowdinFiles.find((file) => file.name === "fields.json")
-      ).toBeDefined();
+      }).then(async (article) => {
+        const crowdinFiles = await getFilesByDocumentID(`${article.id}`, payload);
+        expect(crowdinFiles.length).toEqual(2);
+        expect(
+          crowdinFiles.find((file) => file.name === "richTextField.html")
+        ).toBeDefined();
+        expect(
+          crowdinFiles.find((file) => file.name === "fields.json")
+        ).toBeDefined();
+      }); 
     });
 
+    
     it("creates files containing `array` fieldType content", async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .thrice()
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .thrice()
+        .reply(200, mockClient.createFile({}))
+
       const article = await payload.create({
         collection: "nested-field-collection",
         data: {
@@ -200,11 +255,6 @@ describe(`Crowdin file create, update and delete`, () => {
           tabTwo: {},
         },
       });
-      // run again - hacky way to wait for all files.
-      await payload.findByID({
-        collection: "nested-field-collection",
-        id: article.id,
-      });
       const ids = article["arrayField"] instanceof Array && article["arrayField"].map((item) => item.id) || [] as string[];
       const crowdinFiles = await getFilesByDocumentID(`${article.id}`, payload);
       expect(crowdinFiles.length).toEqual(3);
@@ -222,8 +272,25 @@ describe(`Crowdin file create, update and delete`, () => {
         crowdinFiles.find((file) => file.name === "fields.json")
       ).toBeDefined();
     });
+    
 
     it("creates files containing `blocks` fieldType content", async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .times(4)
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .times(4)
+        .reply(200, mockClient.createFile({}))
+
       const article = await payload.create({
         collection: "nested-field-collection",
         data: {
@@ -314,8 +381,34 @@ describe(`Crowdin file create, update and delete`, () => {
         },
       });
     });
-
+    
     it("deletes the `fields` file when an existing article is deleted", async () => {
+      const fileId = 78
+
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+        .delete(
+          `/api/v2/projects/${pluginOptions.projectId}/files/${fileId}`
+        )
+        .reply(204)
+        .delete(
+          `/api/v2/projects/${pluginOptions.projectId}/directories/${1169}`
+        )
+        .reply(204)
+
       const post = await payload.create({
         collection: "localized-posts",
         data: { title: "Test post" },
@@ -331,6 +424,32 @@ describe(`Crowdin file create, update and delete`, () => {
     });
 
     it("deletes the collection Crowdin article directory when an existing article is deleted", async () => {
+      const fileId = 634
+
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .reply(200, mockClient.createFile({
+          fileId,
+        }))
+        .delete(
+          `/api/v2/projects/${pluginOptions.projectId}/files/${fileId}`
+        )
+        .reply(204)
+        .delete(
+          `/api/v2/projects/${pluginOptions.projectId}/directories/${1169}`
+        )
+        .reply(204)
+
       const post = await payload.create({
         collection: "localized-posts",
         data: { title: "Test post" },
@@ -348,5 +467,4 @@ describe(`Crowdin file create, update and delete`, () => {
       expect(crowdinPayloadArticleDirectory).toBeUndefined();
     });
   });
-  */
 });

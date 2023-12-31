@@ -1,5 +1,5 @@
 import { buildConfigWithPluginOptions, localeMap } from "./payload.config";
-import { payloadHtmlToSlateConfig, payloadSlateToHtmlConfig } from "../../dist";
+import { payloadSlateToHtmlConfig } from "@slate-serializers/html";
 
 export default buildConfigWithPluginOptions({
   projectId: 323731,
