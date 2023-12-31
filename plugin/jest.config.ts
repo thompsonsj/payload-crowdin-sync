@@ -11,4 +11,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../coverage/plugin',
+  prettierPath: require.resolve('prettier-2'),
 };

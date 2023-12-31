@@ -1,14 +1,14 @@
 import payload from 'payload';
 import { initPayloadTest } from '../helpers/config';
-import { getFilesByDocumentID, utilities } from 'plugin';
+import { getFilesByDocumentID, isDefined, utilities } from 'plugin';
 import Policies from '../../collections/Policies';
 import { fixture } from './lexical-editor-with-blocks.fixture';
-import nock from "nock";
-import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
-import { pluginConfig } from "../helpers/plugin-config"
+import nock from 'nock';
+import { mockCrowdinClient } from 'plugin/src/lib/api/mock/crowdin-api-responses';
+import { pluginConfig } from '../helpers/plugin-config';
 
-const pluginOptions = pluginConfig()
-const mockClient = mockCrowdinClient(pluginOptions)
+const pluginOptions = pluginConfig();
+const mockClient = mockCrowdinClient(pluginOptions);
 
 describe('Lexical editor with blocks', () => {
   beforeAll(async () => {
@@ -23,9 +23,9 @@ describe('Lexical editor with blocks', () => {
         )}`
       );
     }
-    nock.cleanAll()
-    done()
-  })
+    nock.cleanAll();
+    done();
+  });
 
   afterAll(async () => {
     if (typeof payload?.db?.destroy === 'function') {
@@ -35,21 +35,15 @@ describe('Lexical editor with blocks', () => {
 
   it('builds a Crowdin HTML object as expected', async () => {
     nock('https://api.crowdin.com')
-      .post(
-        `/api/v2/projects/${pluginOptions.projectId}/directories`
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
       .twice()
       .reply(200, mockClient.createDirectory({}))
-      .post(
-        `/api/v2/storages`
-      )
+      .post(`/api/v2/storages`)
       .twice()
       .reply(200, mockClient.addStorage())
-      .post(
-        `/api/v2/projects/${pluginOptions.projectId}/files`
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .twice()
-      .reply(200, mockClient.createFile({}))
+      .reply(200, mockClient.createFile({}));
 
     const policy = await payload.create({
       collection: 'policies',
@@ -305,20 +299,14 @@ describe('Lexical editor with blocks', () => {
 
   it('builds a Crowdin JSON object as expected', async () => {
     nock('https://api.crowdin.com')
-      .post(
-        `/api/v2/projects/${pluginOptions.projectId}/directories`
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
       .reply(200, mockClient.createDirectory({}))
-      .post(
-        `/api/v2/storages`
-      )
+      .post(`/api/v2/storages`)
       .twice()
       .reply(200, mockClient.addStorage())
-      .post(
-        `/api/v2/projects/${pluginOptions.projectId}/files`
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .twice()
-      .reply(200, mockClient.createFile({}))
+      .reply(200, mockClient.createFile({}));
 
     const policy = await payload.create({
       collection: 'policies',
@@ -341,20 +329,14 @@ describe('Lexical editor with blocks', () => {
 
   it('builds a Payload update object as expected', async () => {
     nock('https://api.crowdin.com')
-      .post(
-        `/api/v2/projects/${pluginOptions.projectId}/directories`
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
       .reply(200, mockClient.createDirectory({}))
-      .post(
-        `/api/v2/storages`
-      )
+      .post(`/api/v2/storages`)
       .twice()
       .reply(200, mockClient.addStorage())
-      .post(
-        `/api/v2/projects/${pluginOptions.projectId}/files`
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .twice()
-      .reply(200, mockClient.createFile({}))
+      .reply(200, mockClient.createFile({}));
 
     const policy = await payload.create({
       collection: 'policies',
@@ -621,20 +603,14 @@ describe('Lexical editor with blocks', () => {
 
   it('creates an HTML file for Crowdin as expected', async () => {
     nock('https://api.crowdin.com')
-      .post(
-        `/api/v2/projects/${pluginOptions.projectId}/directories`
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
       .reply(200, mockClient.createDirectory({}))
-      .post(
-        `/api/v2/storages`
-      )
+      .post(`/api/v2/storages`)
       .twice()
       .reply(200, mockClient.addStorage())
-      .post(
-        `/api/v2/projects/${pluginOptions.projectId}/files`
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .twice()
-      .reply(200, mockClient.createFile({}))
+      .reply(200, mockClient.createFile({}));
 
     const policy = await payload.create({
       collection: 'policies',
@@ -656,6 +632,65 @@ describe('Lexical editor with blocks', () => {
       (file) => file.field === 'content'
     );
     expect(contentHtmlFile?.fileData?.html).toMatchInlineSnapshot(
+      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span>unknown node</span><p></p>"`
+    );
+  });
+
+  it('creates HTML files for Crowdin as expected for lexical content within an array field that is embedded in a group', async () => {
+    nock('https://api.crowdin.com')
+      .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
+      .reply(200, mockClient.createDirectory({}))
+      .post(`/api/v2/storages`)
+      .thrice()
+      .reply(200, mockClient.addStorage())
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .thrice()
+      .reply(200, mockClient.createFile({}));
+
+    const policy = await payload.create({
+      collection: 'policies',
+      data: {
+        group: {
+          array: [
+            {
+              title: 'Test sub-policy 1',
+              content: fixture,
+            },
+            {
+              title: 'Test sub-policy 2',
+              content: fixture,
+            },
+          ],
+        },
+      },
+    });
+
+    const arrayField = isDefined(policy['group']?.['array'])
+      ? policy['group']?.['array']
+      : [];
+    const ids = arrayField.map((item) => item.id) || ([] as string[]);
+
+    const crowdinFiles = await getFilesByDocumentID(`${policy.id}`, payload);
+    expect(crowdinFiles.length).toEqual(3);
+
+    const htmlFileOne = crowdinFiles.find(
+      (file) => file.name === `group.array.${ids[0]}.content.html`
+    );
+    const htmlFileTwo = crowdinFiles.find(
+      (file) => file.name === `group.array.${ids[1]}.content.html`
+    );
+
+    expect(htmlFileOne).toBeDefined();
+    expect(htmlFileTwo).toBeDefined();
+    expect(
+      crowdinFiles.find((file) => file.name === 'fields.json')
+    ).toBeDefined();
+
+    expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(
+      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span>unknown node</span><p></p>"`
+    );
+
+    expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(
       `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span>unknown node</span><p></p>"`
     );
   });

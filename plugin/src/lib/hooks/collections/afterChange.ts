@@ -16,6 +16,7 @@ import {
   convertLexicalToHtml,
   convertSlateToHtml,
   fieldChanged,
+  findField,
 } from "../../utilities";
 import deepEqual from "deep-equal";
 import { getLocalizedFields } from "../../utilities";
@@ -195,8 +196,11 @@ const performAfterChange = async ({
     // brittle check for Lexical value - improve this detection. Type check? Anything from Payload to indicate the type?
     let html
     if (Object.prototype.hasOwnProperty.call(value, "root")) {
-      const field = collection.fields.filter(field => field.type === 'richText').find((field) => name === (field as RichTextField).name) as RichTextField
-      const editorConfig = field && (field.editor as LexicalRichTextAdapter)?.editorConfig
+      const field = findField({
+        dotNotation: name,
+        fields: collection.fields
+      }) as RichTextField
+      const editorConfig = field && field.editor && (field.editor as LexicalRichTextAdapter)?.editorConfig
       if (editorConfig) {
         html = await convertLexicalToHtml(value, editorConfig)
       } else {

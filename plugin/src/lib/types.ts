@@ -1,4 +1,4 @@
-import { CollectionConfig, Field } from "payload/types";
+import { CollectionConfig, Field, RichTextField } from "payload/types";
 import { type SlateToHtmlConfig, type HtmlToSlateConfig } from '@slate-serializers/html'
 
 type CollectionOrGlobalConfigSlug = string
@@ -15,6 +15,12 @@ export const isCollectionOrGlobalConfigSlug = (collectionOrGlobalConfig: Collect
 
 export const isDefined = <T>(val: T | undefined | null): val is T => {
   return val !== undefined && val !== null;
+}
+
+type RichTextValue = string | object | undefined;
+
+export interface CrowdinHtmlObject {
+  [key: string]: RichTextValue
 }
 
 export interface PluginOptions {

@@ -6,7 +6,7 @@ import {
   GlobalConfig,
 } from "payload/types";
 import deepEqual from "deep-equal";
-import { FieldWithName } from "../types";
+import { FieldWithName, type CrowdinHtmlObject } from "../types";
 import {
   slateToHtml,
   payloadSlateToHtmlConfig,
@@ -31,6 +31,69 @@ const nestedFieldTypes = ["array", "group", "blocks"];
 
 export const containsNestedFields = (field: Field) =>
   nestedFieldTypes.includes(field.type);
+
+export const findField = ({
+  dotNotation,
+  fields,
+  firstIteration = true,
+}: {
+  dotNotation: string
+  fields: Field[]
+  firstIteration?: boolean,
+}): Field | undefined => {
+  /** Run through getLocalizedFields to ignore tabs/collapssibles...etc */
+  const localizedFields = firstIteration ? getLocalizedFields({
+    fields
+  }) : fields
+  const keys = dotNotation.split(`.`)
+  if (keys.length === 0) {
+    return undefined
+  }
+  for (const field of localizedFields) {
+    if (field.type === 'group' && keys.length > 1) {
+      const dotNotation = keys.slice(1).join(`.`)
+      const search = findField({
+        dotNotation,
+        fields: field.fields,
+        firstIteration: false,
+      })
+      if (search) {
+        return search
+      }
+    }
+    if (field.type === 'array' && keys.length > 2) {
+      const dotNotation = keys.slice(2).join(`.`)
+      const search = findField({
+        dotNotation,
+        fields: field.fields,
+        firstIteration: false,
+      })
+      if (search) {
+        return search
+      }
+    }
+    if (field.type === 'blocks' && keys.length > 3) {
+      const dotNotation = keys.slice(3).join(`.`)
+      const blockType = keys[2]
+      // find the block definition
+      const block = field.blocks.find((field: Block) => field.slug === blockType)
+      if (block) {
+        const search = findField({
+          dotNotation,
+          fields: block.fields,
+          firstIteration: false,
+        })
+        if (search) {
+          return search
+        }
+      }
+    }
+    if (field.name === keys[0]) {
+      return field
+    }
+  }
+  return undefined
+}
 
 export const getLocalizedFields = ({
   fields,
@@ -352,7 +415,7 @@ export const buildPayloadUpdateObject = ({
   document,
 }: {
   crowdinJsonObject: { [key: string]: any };
-  crowdinHtmlObject?: { [key: string]: any };
+  crowdinHtmlObject?: CrowdinHtmlObject;
   /** Use getLocalizedFields to pass localized fields only */
   fields: Field[];
   /** Flag used internally to filter json fields before recursion. */
@@ -361,7 +424,8 @@ export const buildPayloadUpdateObject = ({
 }) => {
   let response: { [key: string]: any } = {};
   if (crowdinHtmlObject) {
-    const destructured = dot.object(crowdinHtmlObject);
+    const destructured = dot.object(crowdinHtmlObject) as {[key: string]: any };
+
     merge(crowdinJsonObject, destructured);
   }
   const filteredFields = topLevel
@@ -507,7 +571,7 @@ export const buildCrowdinHtmlObject = ({
   /** Flag used internally to filter html fields before recursion. */
   topLevel?: boolean;
 }) => {
-  let response: { [key: string]: any } = {};
+  let response: CrowdinHtmlObject  = {};
   // it is convenient to be able to pass all fields - filter in this case
   const filteredFields = topLevel
     ? getLocalizedFields({ fields, type: "html" })
@@ -572,11 +636,7 @@ export const buildCrowdinHtmlObject = ({
         ...merge({}, ...arrayValues),
       };
     } else {
-      if (doc[field.name]?.en) {
-        response[name] = doc[field.name].en;
-      } else {
-        response[name] = doc[field.name];
-      }
+      response[name] = doc[field.name]
     }
   });
   return response;
