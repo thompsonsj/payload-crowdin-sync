@@ -47,7 +47,7 @@ export const pluginCollectionOrGlobalFields = ({
         },
       },
       hooks: {
-        beforeChange: [async ({ req, siblingData }) => {
+        beforeChange: [async ({ context, req, siblingData }) => {
           if (siblingData["syncTranslations"] && siblingData["crowdinArticleDirectory"]) {
             // is this a draft?
             const draft = Boolean(siblingData["_status"] && siblingData["_status"] !== 'published')
@@ -56,18 +56,26 @@ export const pluginCollectionOrGlobalFields = ({
             if (thisLocaleIndex) {
               excludeLocales.splice(thisLocaleIndex, 1)
             }
-
-            await updatePayloadTranslation({
-              articleDirectoryId: typeof siblingData["crowdinArticleDirectory"] === 'string' ? siblingData["crowdinArticleDirectory"] : siblingData["crowdinArticleDirectory"].id,
-              pluginOptions,
-              payload: req.payload,
-              draft,
-              excludeLocales,
-            })
+            context['articleDirectoryId'] = typeof siblingData["crowdinArticleDirectory"] === 'string' ? siblingData["crowdinArticleDirectory"] : siblingData["crowdinArticleDirectory"].id
+            context['draft'] = draft
+            context['excludeLocales'] = excludeLocales
+            
           }
           // Mutate the sibling data to prevent DB storage
           // eslint-disable-next-line no-param-reassign
           siblingData["syncTranslations"] = undefined;
+        }],
+        afterChange: [async ({ context, req }) => {
+          // type check context, if valid we can safely assume translation updates are desired
+          if (typeof context['articleDirectoryId'] === 'string' && typeof context['draft'] === 'boolean' && Array.isArray(context['excludeLocales']))
+            await updatePayloadTranslation({
+              articleDirectoryId: context['articleDirectoryId'],
+              pluginOptions,
+              payload: req.payload,
+              draft: context['draft'],
+              excludeLocales: context['excludeLocales'],
+              dryRun: false,
+            })
         }],
       },
     },
@@ -85,21 +93,28 @@ export const pluginCollectionOrGlobalFields = ({
         },
       },
       hooks: {
-        beforeChange: [async ({ siblingData, req }) => {
+        beforeChange: [async ({ context, siblingData }) => {
           if (siblingData["syncAllTranslations"] && siblingData["crowdinArticleDirectory"]) {
             // is this a draft?
             const draft = Boolean(siblingData["_status"] && siblingData["_status"] !== 'published')
 
-            await updatePayloadTranslation({
-              articleDirectoryId: typeof siblingData["crowdinArticleDirectory"] === 'string' ? siblingData["crowdinArticleDirectory"] : siblingData["crowdinArticleDirectory"].id,
-              pluginOptions,
-              payload: req.payload,
-              draft,
-            })
+            context['articleDirectoryId'] = typeof siblingData["crowdinArticleDirectory"] === 'string' ? siblingData["crowdinArticleDirectory"] : siblingData["crowdinArticleDirectory"].id
+            context['draft'] = draft
           }
           // Mutate the sibling data to prevent DB storage
           // eslint-disable-next-line no-param-reassign
           siblingData["syncAllTranslations"] = undefined;
+        }],
+        afterChange: [async ({ context, req }) => {
+          // type check context, if valid we can safely assume translation updates are desired
+          if (typeof context['articleDirectoryId'] === 'string' && typeof context['draft'] === 'boolean')
+            await updatePayloadTranslation({
+              articleDirectoryId: context['articleDirectoryId'],
+              pluginOptions,
+              payload: req.payload,
+              draft: context['draft'],
+              dryRun: false,
+            })
         }],
       },
     },
