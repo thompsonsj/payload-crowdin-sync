@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.5.2...source-v0.5.3) (2024-01-17)
+
+
+### Bug Fixes
+
+* **pluginfields:** update translations afterChange ([#152](https://github.com/thompsonsj/payload-crowdin-sync/issues/152)) ([0995a6d](https://github.com/thompsonsj/payload-crowdin-sync/commit/0995a6d69339d87810989bc6dcbbab7788e48398))
+
 ## [0.5.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.5.1...source-v0.5.2) (2023-12-31)
 
 
