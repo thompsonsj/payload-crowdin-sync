@@ -22,5 +22,13 @@ payload.init({
 });
 
 // Add your own express routes here
+app.get('/collection/config/:slug', async (_, res) => {
+  const collection = payload.config.collections.find(collection => collection.slug === _.params.slug)
+
+  if (collection) {
+    res.setHeader('content-type', 'application/json')
+    res.send(collection)
+  }
+})
 
 app.listen(3000);

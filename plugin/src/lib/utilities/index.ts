@@ -4,6 +4,7 @@ import {
   CollectionConfig,
   Field,
   GlobalConfig,
+  RichTextField,
 } from "payload/types";
 import deepEqual from "deep-equal";
 import { FieldWithName, type CrowdinHtmlObject } from "../types";
@@ -24,6 +25,7 @@ import {
   convertLexicalToHTML,
   consolidateHTMLConverters,
 } from '@payloadcms/richtext-lexical'
+import { isLexical } from "./lexical";
 
 const localizedFieldTypes = ["richText", "text", "textarea"];
 
@@ -161,6 +163,9 @@ export const getLocalizedFieldsRecursive = ({
     // recursion for group, array and blocks field
     .map((field) => {
       const localizedParent = hasLocalizedProp(field);
+      if (field.type === "richText" && isLexical(field)) {
+        //
+      }
       if (field.type === "group" || field.type === "array") {
         return {
           ...field,
