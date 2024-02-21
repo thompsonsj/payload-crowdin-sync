@@ -41,6 +41,7 @@ export default buildConfig({
   editor: slateEditor({}),
   db: mongooseAdapter({
     url: process.env['MONGODB_URI'] || ``,
+    transactionOptions: false,
   }),
   serverURL: process.env['PAYLOAD_PUBLIC_SERVER_URL'] || "http://localhost:3000",
   admin: {
