@@ -163,9 +163,6 @@ export const getLocalizedFieldsRecursive = ({
     // recursion for group, array and blocks field
     .map((field) => {
       const localizedParent = hasLocalizedProp(field);
-      if (field.type === "richText" && isLexical(field)) {
-        //
-      }
       if (field.type === "group" || field.type === "array") {
         return {
           ...field,

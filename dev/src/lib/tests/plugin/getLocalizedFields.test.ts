@@ -122,6 +122,9 @@ describe('payload-crowdin-sync: getLexicalBlockFields', () => {
                           },
                         ],
                       },
+                      "generatedTypes": {
+                        "modifyOutputSchemas": [],
+                      },
                       "hooks": {
                         "afterReadPromises": [],
                         "load": [],
@@ -374,6 +377,103 @@ describe('payload-crowdin-sync: getLexicalBlockFields', () => {
             },
             "slug": "highlight",
           },
+          {
+            "fields": [
+              {
+                "localized": true,
+                "name": "text",
+                "type": "text",
+              },
+              {
+                "localized": true,
+                "name": "href",
+                "type": "text",
+              },
+              {
+                "name": "type",
+                "options": [
+                  "primary",
+                  "secondary",
+                ],
+                "type": "select",
+              },
+              {
+                "admin": {
+                  "disabled": true,
+                },
+                "hooks": {
+                  "beforeChange": [
+                    [Function],
+                  ],
+                },
+                "label": "ID",
+                "name": "id",
+                "type": "text",
+              },
+              {
+                "admin": {
+                  "disabled": true,
+                },
+                "label": "Block Name",
+                "name": "blockName",
+                "required": false,
+                "type": "text",
+              },
+            ],
+            "imageAltText": "CTA",
+            "labels": {
+              "plural": "Ctas",
+              "singular": "Cta",
+            },
+            "slug": "cta",
+          },
+          {
+            "fields": [
+              {
+                "localized": true,
+                "name": "title",
+                "type": "text",
+              },
+              {
+                "localized": true,
+                "name": "content",
+                "type": "richText",
+              },
+              {
+                "name": "image",
+                "relationTo": "media",
+                "type": "relationship",
+              },
+              {
+                "admin": {
+                  "disabled": true,
+                },
+                "hooks": {
+                  "beforeChange": [
+                    [Function],
+                  ],
+                },
+                "label": "ID",
+                "name": "id",
+                "type": "text",
+              },
+              {
+                "admin": {
+                  "disabled": true,
+                },
+                "label": "Block Name",
+                "name": "blockName",
+                "required": false,
+                "type": "text",
+              },
+            ],
+            "imageAltText": "Image with text",
+            "labels": {
+              "plural": "Image Texts",
+              "singular": "Image Text",
+            },
+            "slug": "imageText",
+          },
         ],
       }
     `);
@@ -589,6 +689,14 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                           "onClick": [Function],
                           "order": 3,
                         },
+                        {
+                          "ChildComponent": [Function],
+                          "isActive": [Function],
+                          "key": "align-justify",
+                          "label": "Align Justify",
+                          "onClick": [Function],
+                          "order": 4,
+                        },
                       ],
                       "key": "dropdown-align",
                       "order": 2,
@@ -689,6 +797,11 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                       "order": 5,
                       "type": "buttons",
                     },
+                  ],
+                },
+                "generatedTypes": {
+                  "modifyOutputSchemas": [
+                    [Function],
                   ],
                 },
                 "hooks": {
@@ -1020,6 +1133,38 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                           },
                           "setRefElement": [Function],
                         },
+                        SlashMenuOption {
+                          "Icon": [Function],
+                          "displayName": [Function],
+                          "key": "block-cta",
+                          "keyboardShortcut": undefined,
+                          "keywords": [
+                            "block",
+                            "blocks",
+                            "cta",
+                          ],
+                          "onSelect": [Function],
+                          "ref": {
+                            "current": null,
+                          },
+                          "setRefElement": [Function],
+                        },
+                        SlashMenuOption {
+                          "Icon": [Function],
+                          "displayName": [Function],
+                          "key": "block-imageText",
+                          "keyboardShortcut": undefined,
+                          "keywords": [
+                            "block",
+                            "blocks",
+                            "imageText",
+                          ],
+                          "onSelect": [Function],
+                          "ref": {
+                            "current": null,
+                          },
+                          "setRefElement": [Function],
+                        },
                       ],
                     },
                     {
@@ -1256,6 +1401,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                   "dependencies": undefined,
                   "dependenciesPriority": undefined,
                   "dependenciesSoft": undefined,
+                  "generatedTypes": {
+                    "modifyOutputSchema": [Function],
+                  },
                   "key": "blocks",
                   "nodes": [
                     {
@@ -1366,6 +1514,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                         "type": "buttons",
                                       },
                                     ],
+                                  },
+                                  "generatedTypes": {
+                                    "modifyOutputSchemas": [],
                                   },
                                   "hooks": {
                                     "afterReadPromises": [],
@@ -1619,6 +1770,103 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                         },
                         "slug": "highlight",
                       },
+                      {
+                        "fields": [
+                          {
+                            "localized": true,
+                            "name": "text",
+                            "type": "text",
+                          },
+                          {
+                            "localized": true,
+                            "name": "href",
+                            "type": "text",
+                          },
+                          {
+                            "name": "type",
+                            "options": [
+                              "primary",
+                              "secondary",
+                            ],
+                            "type": "select",
+                          },
+                          {
+                            "admin": {
+                              "disabled": true,
+                            },
+                            "hooks": {
+                              "beforeChange": [
+                                [Function],
+                              ],
+                            },
+                            "label": "ID",
+                            "name": "id",
+                            "type": "text",
+                          },
+                          {
+                            "admin": {
+                              "disabled": true,
+                            },
+                            "label": "Block Name",
+                            "name": "blockName",
+                            "required": false,
+                            "type": "text",
+                          },
+                        ],
+                        "imageAltText": "CTA",
+                        "labels": {
+                          "plural": "Ctas",
+                          "singular": "Cta",
+                        },
+                        "slug": "cta",
+                      },
+                      {
+                        "fields": [
+                          {
+                            "localized": true,
+                            "name": "title",
+                            "type": "text",
+                          },
+                          {
+                            "localized": true,
+                            "name": "content",
+                            "type": "richText",
+                          },
+                          {
+                            "name": "image",
+                            "relationTo": "media",
+                            "type": "relationship",
+                          },
+                          {
+                            "admin": {
+                              "disabled": true,
+                            },
+                            "hooks": {
+                              "beforeChange": [
+                                [Function],
+                              ],
+                            },
+                            "label": "ID",
+                            "name": "id",
+                            "type": "text",
+                          },
+                          {
+                            "admin": {
+                              "disabled": true,
+                            },
+                            "label": "Block Name",
+                            "name": "blockName",
+                            "required": false,
+                            "type": "text",
+                          },
+                        ],
+                        "imageAltText": "Image with text",
+                        "labels": {
+                          "plural": "Image Texts",
+                          "singular": "Image Text",
+                        },
+                        "slug": "imageText",
+                      },
                     ],
                   },
                   "slashMenu": {
@@ -1636,6 +1884,38 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                               "block",
                               "blocks",
                               "highlight",
+                            ],
+                            "onSelect": [Function],
+                            "ref": {
+                              "current": null,
+                            },
+                            "setRefElement": [Function],
+                          },
+                          SlashMenuOption {
+                            "Icon": [Function],
+                            "displayName": [Function],
+                            "key": "block-cta",
+                            "keyboardShortcut": undefined,
+                            "keywords": [
+                              "block",
+                              "blocks",
+                              "cta",
+                            ],
+                            "onSelect": [Function],
+                            "ref": {
+                              "current": null,
+                            },
+                            "setRefElement": [Function],
+                          },
+                          SlashMenuOption {
+                            "Icon": [Function],
+                            "displayName": [Function],
+                            "key": "block-imageText",
+                            "keyboardShortcut": undefined,
+                            "keywords": [
+                              "block",
+                              "blocks",
+                              "imageText",
                             ],
                             "onSelect": [Function],
                             "ref": {
@@ -2342,6 +2622,22 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                             "label": "Align Right",
                             "onClick": [Function],
                             "order": 3,
+                          },
+                        ],
+                        "key": "dropdown-align",
+                        "order": 2,
+                        "type": "dropdown",
+                      },
+                      {
+                        "ChildComponent": [Function],
+                        "entries": [
+                          {
+                            "ChildComponent": [Function],
+                            "isActive": [Function],
+                            "key": "align-justify",
+                            "label": "Align Justify",
+                            "onClick": [Function],
+                            "order": 4,
                           },
                         ],
                         "key": "dropdown-align",
@@ -3119,6 +3415,14 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                   "onClick": [Function],
                                   "order": 3,
                                 },
+                                {
+                                  "ChildComponent": [Function],
+                                  "isActive": [Function],
+                                  "key": "align-justify",
+                                  "label": "Align Justify",
+                                  "onClick": [Function],
+                                  "order": 4,
+                                },
                               ],
                               "key": "dropdown-align",
                               "order": 2,
@@ -3219,6 +3523,11 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                               "order": 5,
                               "type": "buttons",
                             },
+                          ],
+                        },
+                        "generatedTypes": {
+                          "modifyOutputSchemas": [
+                            [Function],
                           ],
                         },
                         "hooks": {
@@ -3550,6 +3859,38 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                   },
                                   "setRefElement": [Function],
                                 },
+                                SlashMenuOption {
+                                  "Icon": [Function],
+                                  "displayName": [Function],
+                                  "key": "block-cta",
+                                  "keyboardShortcut": undefined,
+                                  "keywords": [
+                                    "block",
+                                    "blocks",
+                                    "cta",
+                                  ],
+                                  "onSelect": [Function],
+                                  "ref": {
+                                    "current": null,
+                                  },
+                                  "setRefElement": [Function],
+                                },
+                                SlashMenuOption {
+                                  "Icon": [Function],
+                                  "displayName": [Function],
+                                  "key": "block-imageText",
+                                  "keyboardShortcut": undefined,
+                                  "keywords": [
+                                    "block",
+                                    "blocks",
+                                    "imageText",
+                                  ],
+                                  "onSelect": [Function],
+                                  "ref": {
+                                    "current": null,
+                                  },
+                                  "setRefElement": [Function],
+                                },
                               ],
                             },
                             {
@@ -3786,6 +4127,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                           "dependencies": undefined,
                           "dependenciesPriority": undefined,
                           "dependenciesSoft": undefined,
+                          "generatedTypes": {
+                            "modifyOutputSchema": [Function],
+                          },
                           "key": "blocks",
                           "nodes": [
                             {
@@ -3896,6 +4240,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                                 "type": "buttons",
                                               },
                                             ],
+                                          },
+                                          "generatedTypes": {
+                                            "modifyOutputSchemas": [],
                                           },
                                           "hooks": {
                                             "afterReadPromises": [],
@@ -4149,6 +4496,103 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                 },
                                 "slug": "highlight",
                               },
+                              {
+                                "fields": [
+                                  {
+                                    "localized": true,
+                                    "name": "text",
+                                    "type": "text",
+                                  },
+                                  {
+                                    "localized": true,
+                                    "name": "href",
+                                    "type": "text",
+                                  },
+                                  {
+                                    "name": "type",
+                                    "options": [
+                                      "primary",
+                                      "secondary",
+                                    ],
+                                    "type": "select",
+                                  },
+                                  {
+                                    "admin": {
+                                      "disabled": true,
+                                    },
+                                    "hooks": {
+                                      "beforeChange": [
+                                        [Function],
+                                      ],
+                                    },
+                                    "label": "ID",
+                                    "name": "id",
+                                    "type": "text",
+                                  },
+                                  {
+                                    "admin": {
+                                      "disabled": true,
+                                    },
+                                    "label": "Block Name",
+                                    "name": "blockName",
+                                    "required": false,
+                                    "type": "text",
+                                  },
+                                ],
+                                "imageAltText": "CTA",
+                                "labels": {
+                                  "plural": "Ctas",
+                                  "singular": "Cta",
+                                },
+                                "slug": "cta",
+                              },
+                              {
+                                "fields": [
+                                  {
+                                    "localized": true,
+                                    "name": "title",
+                                    "type": "text",
+                                  },
+                                  {
+                                    "localized": true,
+                                    "name": "content",
+                                    "type": "richText",
+                                  },
+                                  {
+                                    "name": "image",
+                                    "relationTo": "media",
+                                    "type": "relationship",
+                                  },
+                                  {
+                                    "admin": {
+                                      "disabled": true,
+                                    },
+                                    "hooks": {
+                                      "beforeChange": [
+                                        [Function],
+                                      ],
+                                    },
+                                    "label": "ID",
+                                    "name": "id",
+                                    "type": "text",
+                                  },
+                                  {
+                                    "admin": {
+                                      "disabled": true,
+                                    },
+                                    "label": "Block Name",
+                                    "name": "blockName",
+                                    "required": false,
+                                    "type": "text",
+                                  },
+                                ],
+                                "imageAltText": "Image with text",
+                                "labels": {
+                                  "plural": "Image Texts",
+                                  "singular": "Image Text",
+                                },
+                                "slug": "imageText",
+                              },
                             ],
                           },
                           "slashMenu": {
@@ -4166,6 +4610,38 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                       "block",
                                       "blocks",
                                       "highlight",
+                                    ],
+                                    "onSelect": [Function],
+                                    "ref": {
+                                      "current": null,
+                                    },
+                                    "setRefElement": [Function],
+                                  },
+                                  SlashMenuOption {
+                                    "Icon": [Function],
+                                    "displayName": [Function],
+                                    "key": "block-cta",
+                                    "keyboardShortcut": undefined,
+                                    "keywords": [
+                                      "block",
+                                      "blocks",
+                                      "cta",
+                                    ],
+                                    "onSelect": [Function],
+                                    "ref": {
+                                      "current": null,
+                                    },
+                                    "setRefElement": [Function],
+                                  },
+                                  SlashMenuOption {
+                                    "Icon": [Function],
+                                    "displayName": [Function],
+                                    "key": "block-imageText",
+                                    "keyboardShortcut": undefined,
+                                    "keywords": [
+                                      "block",
+                                      "blocks",
+                                      "imageText",
                                     ],
                                     "onSelect": [Function],
                                     "ref": {
@@ -4872,6 +5348,22 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                     "label": "Align Right",
                                     "onClick": [Function],
                                     "order": 3,
+                                  },
+                                ],
+                                "key": "dropdown-align",
+                                "order": 2,
+                                "type": "dropdown",
+                              },
+                              {
+                                "ChildComponent": [Function],
+                                "entries": [
+                                  {
+                                    "ChildComponent": [Function],
+                                    "isActive": [Function],
+                                    "key": "align-justify",
+                                    "label": "Align Justify",
+                                    "onClick": [Function],
+                                    "order": 4,
                                   },
                                 ],
                                 "key": "dropdown-align",

@@ -106,7 +106,7 @@ const performAfterChange = async ({
   /**
    * Abort if token not set and not in test mode
    */
-  if (!pluginOptions.token && process.env['NODE_ENV'] !== "test") {
+  if (!pluginOptions.token) {
     return doc;
   }
 

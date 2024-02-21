@@ -21,6 +21,7 @@ import { resolve } from "path";
 import { crowdinSync } from "payload-crowdin-sync";
 
 import dotenv from "dotenv";
+import { Media } from "./collections/Media";
 
 dotenv.config({
   path: resolve(__dirname, "../.env"),
@@ -86,6 +87,7 @@ export default buildConfig({
     Categories,
     MultiRichText,
     LocalizedPosts,
+    Media,
     NestedFieldCollection,
     Policies,
     Posts,
