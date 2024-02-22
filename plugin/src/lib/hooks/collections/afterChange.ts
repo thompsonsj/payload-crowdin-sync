@@ -5,7 +5,6 @@ import {
   GlobalConfig,
   GlobalAfterChangeHook,
   PayloadRequest,
-  CollectionBeforeChangeHook,
   RichTextField,
 } from "payload/types";
 import { Descendant } from "slate";
@@ -22,8 +21,8 @@ import deepEqual from "deep-equal";
 import { getLocalizedFields } from "../../utilities";
 import { payloadCrowdinSyncFilesApi } from "../../api/payload-crowdin-sync/files";
 import { Config } from "payload/config";
-import { sanitizeEditorConfig, type LexicalRichTextAdapter,  } from '@payloadcms/richtext-lexical'
 import { isCrowdinActive } from "../../api/helpers";
+import { getLexicalEditorConfig } from "../../utilities/lexical";
 
 /**
  * Update Crowdin collections and make updates in Crowdin
@@ -107,7 +106,7 @@ const performAfterChange = async ({
   /**
    * Abort if token not set and not in test mode
    */
-  if (!pluginOptions.token && process.env['NODE_ENV'] !== "test") {
+  if (!pluginOptions.token) {
     return doc;
   }
 
@@ -200,7 +199,8 @@ const performAfterChange = async ({
         dotNotation: name,
         fields: collection.fields
       }) as RichTextField
-      const editorConfig = field && field.editor && (field.editor as LexicalRichTextAdapter)?.editorConfig
+      const editorConfig = getLexicalEditorConfig(field)
+
       if (editorConfig) {
         html = await convertLexicalToHtml(value, editorConfig)
       } else {

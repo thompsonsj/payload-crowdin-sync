@@ -55,6 +55,51 @@ export const lexicalEditorWithBlocks: RichTextField = {
                 }),
               },
             ]
+          },
+          {
+            slug: "cta",
+            imageAltText: "CTA",
+            fields: [
+              {
+                name: "text",
+                type: "text",
+                localized: true,
+              },
+              {
+                name: "href",
+                type: "text",
+                localized: true,
+              },
+              {
+                name: "type",
+                type: "select",
+                options: [
+                  "primary",
+                  "secondary",
+                ]
+              }
+            ]
+          },
+          {
+            slug: "imageText",
+            imageAltText: "Image with text",
+            fields: [
+              {
+                name: "title",
+                type: "text",
+                localized: true,
+              },
+              {
+                name: "content",
+                type: "richText",
+                localized: true,
+              },
+              {
+                name: "image",
+                type: "relationship",
+                relationTo: "media",
+              }
+            ],
           }
         ],
       })

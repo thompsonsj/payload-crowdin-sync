@@ -52,13 +52,6 @@ interface IupdateCrowdinFile extends IcreateOrUpdateFile {
   fileId: number;
 }
 
-interface IgetTranslation {
-  documentId: string;
-  fieldName: string;
-  locale: string;
-  global?: boolean;
-}
-
 export class payloadCrowdinSyncFilesApi {
   sourceFilesApi: SourceFiles;
   uploadStorageApi: UploadStorage;
