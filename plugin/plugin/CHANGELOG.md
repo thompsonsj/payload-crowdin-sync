@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.25.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.24.3...payload-crowdin-sync-v0.25.0) (2024-02-22)
+
+
+### Features
+
+* **lexical:** methods to detect and extract config from lexical ([#155](https://github.com/thompsonsj/payload-crowdin-sync/issues/155)) ([eceb403](https://github.com/thompsonsj/payload-crowdin-sync/commit/eceb403c2b8817ad048b50302d349948d446c514))
+
+
+### Bug Fixes
+
+* **crowdinfiles:** add arbitrarily high max length for html ([#158](https://github.com/thompsonsj/payload-crowdin-sync/issues/158)) ([3a84a77](https://github.com/thompsonsj/payload-crowdin-sync/commit/3a84a773b3008a1863e1dcc5601af37ff469f48a))
+
 ## [0.24.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.24.2...payload-crowdin-sync-v0.24.3) (2024-01-17)
 
 

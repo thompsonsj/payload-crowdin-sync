@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.25.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.24.3...dev-v0.25.0) (2024-02-22)
+
+
+### Features
+
+* **lexical:** methods to detect and extract config from lexical ([#155](https://github.com/thompsonsj/payload-crowdin-sync/issues/155)) ([eceb403](https://github.com/thompsonsj/payload-crowdin-sync/commit/eceb403c2b8817ad048b50302d349948d446c514))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.24.3 to 0.25.0
+
 ## [0.24.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.24.1...dev-v0.24.2) (2023-12-31)
 
 
