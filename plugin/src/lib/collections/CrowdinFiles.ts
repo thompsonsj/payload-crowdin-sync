@@ -1,9 +1,4 @@
 import { CollectionConfig } from "payload/types";
-import {
-  buildCrowdinHtmlObject,
-  buildCrowdinJsonObject,
-  getLocalizedFields,
-} from "../utilities";
 
 /*
   Sample data returned from Crowdin API
@@ -116,6 +111,7 @@ const CrowdinFiles: CollectionConfig = {
         {
           name: "html",
           type: "textarea",
+          maxLength: 2000000,
         },
       ],
     },
