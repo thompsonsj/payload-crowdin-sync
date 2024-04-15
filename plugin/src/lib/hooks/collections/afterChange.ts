@@ -23,6 +23,8 @@ import { payloadCrowdinSyncFilesApi } from "../../api/payload-crowdin-sync/files
 import { Config } from "payload/config";
 import { isCrowdinActive } from "../../api/helpers";
 import { getLexicalEditorConfig } from "../../utilities/lexical";
+import { payloadCrowdinSyncDocumentFilesApi } from "../../api/payload-crowdin-sync/files/document";
+import { filesApiByDocument } from "../../api/payload-crowdin-sync/files/by-document";
 
 /**
  * Update Crowdin collections and make updates in Crowdin
@@ -162,60 +164,18 @@ const performAfterChange = async ({
   /**
    * Initialize Crowdin client sourceFilesApi
    */
-  const filesApi = new payloadCrowdinSyncFilesApi(pluginOptions, req.payload);
-
-  /**
-   * Retrieve the Crowdin Article Directory article
-   *
-   * Records of Crowdin directories are stored in Payload.
-   */
-  const articleDirectory = await filesApi.findOrCreateArticleDirectory({
-    document: doc,
-    collectionSlug: collection.slug as keyof Config['collections'] | keyof Config['globals'],
-    global,
-  });
+  const apiByDocument = new filesApiByDocument(
+    {
+      document: doc,
+      collectionSlug: collection.slug as keyof Config['collections'] | keyof Config['globals'],
+      global,
+      pluginOptions,
+      payload: req.payload
+    },
+  );
+  const filesApi = await apiByDocument.get()
 
   // START: function definitions
-  const createOrUpdateJsonFile = async () => {
-    await filesApi.createOrUpdateFile({
-      name: "fields",
-      value: currentCrowdinJsonData,
-      fileType: "json",
-      articleDirectory,
-    });
-  };
-
-  const createOrUpdateHtmlFile = async ({
-    name,
-    value,
-  }: {
-    name: string;
-    value: Descendant[] | any;
-  }) => {
-    // brittle check for Lexical value - improve this detection. Type check? Anything from Payload to indicate the type?
-    let html
-    if (Object.prototype.hasOwnProperty.call(value, "root")) {
-      const field = findField({
-        dotNotation: name,
-        fields: collection.fields
-      }) as RichTextField
-      const editorConfig = getLexicalEditorConfig(field)
-
-      if (editorConfig) {
-        html = await convertLexicalToHtml(value, editorConfig)
-      } else {
-        html = "<span>lexical configuration not found</span>"
-      }
-    } else {
-      html = convertSlateToHtml(value, pluginOptions.slateToHtmlConfig)
-    }
-    await filesApi.createOrUpdateFile({
-      name: name,
-      value: html,
-      fileType: "html",
-      articleDirectory,
-    });
-  };
 
   const createOrUpdateJsonSource = async () => {
     if (
@@ -223,7 +183,7 @@ const performAfterChange = async ({
         Object.keys(currentCrowdinJsonData).length !== 0) ||
       process.env['PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE'] === "true"
     ) {
-      await createOrUpdateJsonFile();
+      await filesApi.createOrUpdateJsonFile(currentCrowdinJsonData);
     }
   };
 
@@ -255,9 +215,10 @@ const performAfterChange = async ({
       ) {
         return;
       }
-      await createOrUpdateHtmlFile({
+      await filesApi.createOrUpdateHtmlFile({
         name,
         value: currentValue as Descendant[],
+        collection,
       });
     }));
   };

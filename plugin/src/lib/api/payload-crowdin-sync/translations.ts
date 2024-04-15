@@ -2,7 +2,6 @@ import crowdin, {
   Credentials,
   Translations,
 } from "@crowdin/crowdin-api-client";
-import { payloadCrowdinSyncFilesApi } from "./files";
 import { Payload } from "payload";
 import { CrowdinHtmlObject, PluginOptions } from "../../types";
 import deepEqual from "deep-equal";
@@ -23,6 +22,7 @@ import {
 } from "../../utilities";
 
 import { Config, CrowdinArticleDirectory, CrowdinFile } from "../../payload-types";
+import { getArticleDirectory, getFileByDocumentID, getFilesByDocumentID } from "../helpers";
 
 interface IgetLatestDocumentTranslation {
   collection: string;
@@ -56,7 +56,6 @@ interface IupdateTranslation {
 
 export class payloadCrowdinSyncTranslationsApi {
   translationsApi: Translations;
-  filesApi: payloadCrowdinSyncFilesApi; // our wrapper for file operations
   projectId: number;
   directoryId?: number;
   payload: Payload;
@@ -73,7 +72,6 @@ export class payloadCrowdinSyncTranslationsApi {
     this.projectId = pluginOptions.projectId;
     this.directoryId = pluginOptions.directoryId;
     this.translationsApi = translationsApi;
-    this.filesApi = new payloadCrowdinSyncFilesApi(pluginOptions, payload);
     this.payload = payload;
     this.localeMap = pluginOptions.localeMap;
     this.sourceLocale = pluginOptions.sourceLocale;
@@ -312,7 +310,7 @@ export class payloadCrowdinSyncTranslationsApi {
   }
 
   async getHtmlFieldSlugs(documentId: string): Promise<string[]> {
-    const files = await this.filesApi.getFilesByDocumentID(documentId);
+    const files = await getFilesByDocumentID(documentId, this.payload);
     const slugs = files
     .filter((file) => file.type === "html")
     .map((file) => `${file.field}`)
@@ -326,10 +324,11 @@ export class payloadCrowdinSyncTranslationsApi {
    * * returns all json fields if fieldName is 'fields'
    */
   async getTranslation({ documentId, fieldName, locale }: IgetTranslation) {
-    const articleDirectory = await this.filesApi.getArticleDirectory(
-      documentId
-    );
-    const file = await this.filesApi.getFile(fieldName, `${(articleDirectory as CrowdinArticleDirectory).id}`);
+    const articleDirectory = await getArticleDirectory(
+      documentId,
+      this.payload
+    ) as CrowdinArticleDirectory | undefined;
+    const file = await getFileByDocumentID(fieldName, `${(articleDirectory as CrowdinArticleDirectory).id}`, this.payload);
     // it is possible a file doesn't exist yet - e.g. an article with localized text fields that contains an empty html field.
     if (!file) {
       return;
@@ -337,7 +336,7 @@ export class payloadCrowdinSyncTranslationsApi {
     try {
       const response = await this.translationsApi.buildProjectFileTranslation(
         this.projectId,
-        file.originalId,
+        file.originalId as number,
         {
           targetLanguageId: this.localeMap[locale].crowdinId,
         }
