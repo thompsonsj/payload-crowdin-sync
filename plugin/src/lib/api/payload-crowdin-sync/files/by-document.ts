@@ -123,13 +123,14 @@ export class filesApiByDocument {
         },
       }) as unknown;
       crowdinPayloadArticleDirectory = result as CrowdinArticleDirectory
+      const crowdinArticleDirectory = crowdinPayloadArticleDirectory.id
 
       // Associate result with document
       if (this.global) {
         await this.payload.updateGlobal({
           slug: this.collectionSlug as keyof Config["globals"],
           data: {
-            crowdinArticleDirectory: crowdinPayloadArticleDirectory.id as string,
+            crowdinArticleDirectory,
           },
         });
       } else {
@@ -137,7 +138,7 @@ export class filesApiByDocument {
           collection: this.collectionSlug as keyof Config["collections"],
           id: this.document.id,
           data: {
-            crowdinArticleDirectory: crowdinPayloadArticleDirectory.id as string,
+            crowdinArticleDirectory,
           },
         });
       }
