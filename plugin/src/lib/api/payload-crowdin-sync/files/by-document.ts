@@ -129,7 +129,7 @@ export class filesApiByDocument {
         await this.payload.updateGlobal({
           slug: this.collectionSlug as keyof Config["globals"],
           data: {
-            crowdinArticleDirectory: crowdinPayloadArticleDirectory.id,
+            crowdinArticleDirectory: crowdinPayloadArticleDirectory.id as string,
           },
         });
       } else {
@@ -137,7 +137,7 @@ export class filesApiByDocument {
           collection: this.collectionSlug as keyof Config["collections"],
           id: this.document.id,
           data: {
-            crowdinArticleDirectory: crowdinPayloadArticleDirectory.id,
+            crowdinArticleDirectory: crowdinPayloadArticleDirectory.id as string,
           },
         });
       }
