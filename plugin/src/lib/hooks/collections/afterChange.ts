@@ -5,25 +5,18 @@ import {
   GlobalConfig,
   GlobalAfterChangeHook,
   PayloadRequest,
-  RichTextField,
 } from "payload/types";
 import { Descendant } from "slate";
 import { PluginOptions } from "../../types";
 import {
   buildCrowdinHtmlObject,
   buildCrowdinJsonObject,
-  convertLexicalToHtml,
-  convertSlateToHtml,
   fieldChanged,
-  findField,
 } from "../../utilities";
 import deepEqual from "deep-equal";
 import { getLocalizedFields } from "../../utilities";
-import { payloadCrowdinSyncFilesApi } from "../../api/payload-crowdin-sync/files";
 import { Config } from "payload/config";
 import { isCrowdinActive } from "../../api/helpers";
-import { getLexicalEditorConfig } from "../../utilities/lexical";
-import { payloadCrowdinSyncDocumentFilesApi } from "../../api/payload-crowdin-sync/files/document";
 import { filesApiByDocument } from "../../api/payload-crowdin-sync/files/by-document";
 
 /**
