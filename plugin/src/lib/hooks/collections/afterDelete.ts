@@ -1,6 +1,8 @@
 import { CollectionAfterDeleteHook } from "payload/types";
 import { payloadCrowdinSyncFilesApi } from "../../api/payload-crowdin-sync/files";
 import { PluginOptions } from "../../types";
+import { filesApiByDocument } from "../../api/payload-crowdin-sync/files/by-document";
+import { Config } from "payload/config";
 
 interface CommonArgs {
   pluginOptions: PluginOptions;
@@ -14,6 +16,7 @@ export const getAfterDeleteHook =
     req, // full express request
     id, // id of document to delete
     doc, // deleted document
+    collection,
   }) => {
     /**
      * Abort if token not set and not in test mode
@@ -25,7 +28,17 @@ export const getAfterDeleteHook =
     /**
      * Initialize Crowdin client sourceFilesApi
      */
-    const filesApi = new payloadCrowdinSyncFilesApi(pluginOptions, req.payload);
+    const global = false; // delete only on collections by nature.
+    const apiByDocument = new filesApiByDocument(
+      {
+        document: doc,
+        collectionSlug: collection.slug as keyof Config['collections'] | keyof Config['globals'],
+        global,
+        pluginOptions,
+        payload: req.payload
+      },
+    );
+    const filesApi = await apiByDocument.get()
 
-    await filesApi.deleteFilesAndDirectory(`${id}`);
+    await filesApi.deleteFilesAndDirectory();
   };
