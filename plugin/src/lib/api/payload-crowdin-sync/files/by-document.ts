@@ -91,17 +91,17 @@ export class filesApiByDocument {
     } else {
       const crowdinPayloadCollectionDirectory =
         await this.findOrCreateCollectionDirectory({
-          collectionSlug: global ? "globals" : this.collectionSlug,
+          collectionSlug: this.global ? "globals" : this.collectionSlug,
         });
 
       // Create article directory on Crowdin
-      const name = global ? this.collectionSlug : this.document.id
+      const name = this.global ? this.collectionSlug : this.document.id
       const crowdinDirectory = await this.sourceFilesApi.createDirectory(
         this.projectId,
         {
           directoryId: crowdinPayloadCollectionDirectory['originalId'] as number,
           name,
-          title: global
+          title: this.global
             ? toWords(this.collectionSlug)
             : this.document.title || this.document.name, // no tests for this Crowdin metadata, but makes it easier for translators
         }
@@ -125,7 +125,7 @@ export class filesApiByDocument {
       crowdinPayloadArticleDirectory = result as CrowdinArticleDirectory
 
       // Associate result with document
-      if (global) {
+      if (this.global) {
         await this.payload.updateGlobal({
           slug: this.collectionSlug as keyof Config["globals"],
           data: {

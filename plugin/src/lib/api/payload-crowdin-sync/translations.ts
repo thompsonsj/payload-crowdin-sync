@@ -324,11 +324,7 @@ export class payloadCrowdinSyncTranslationsApi {
    * * returns all json fields if fieldName is 'fields'
    */
   async getTranslation({ documentId, fieldName, locale }: IgetTranslation) {
-    const articleDirectory = await getArticleDirectory(
-      documentId,
-      this.payload
-    ) as CrowdinArticleDirectory | undefined;
-    const file = await getFileByDocumentID(fieldName, `${(articleDirectory as CrowdinArticleDirectory).id}`, this.payload);
+    const file = await getFileByDocumentID(fieldName, `${documentId}`, this.payload);
     // it is possible a file doesn't exist yet - e.g. an article with localized text fields that contains an empty html field.
     if (!file) {
       return;
@@ -342,7 +338,6 @@ export class payloadCrowdinSyncTranslationsApi {
         }
       );
       const data = await this.getFileDataFromUrl(response.data.url);
-      // console.log('file', file, 'data', data)
       return file.type === "html"
         ? convertHtmlToSlate(data, this.htmlToSlateConfig)
         : JSON.parse(data);
