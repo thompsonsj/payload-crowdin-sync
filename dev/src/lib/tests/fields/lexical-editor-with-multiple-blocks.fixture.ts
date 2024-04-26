@@ -1,3 +1,5 @@
+import { Policy } from "../../payload-types"
+
 export const fixture = {
   "root": {
       "type": "root",
@@ -175,43 +177,7 @@ export const fixture = {
                   "blockName": "",
                   "blockType": "imageText",
                   "title": "Testing a range of fields",
-                  "image": {
-                      "id": "65d67e6a7fb7e9426b3f9f5f",
-                      "filename": "phone-icon-small.png",
-                      "mimeType": "image/png",
-                      "filesize": 11150,
-                      "width": 80,
-                      "height": 80,
-                      "sizes": {
-                          "thumbnail": {
-                              "width": null,
-                              "height": null,
-                              "mimeType": null,
-                              "filesize": null,
-                              "filename": null,
-                              "url": null
-                          },
-                          "card": {
-                              "width": null,
-                              "height": null,
-                              "mimeType": null,
-                              "filesize": null,
-                              "filename": null,
-                              "url": null
-                          },
-                          "tablet": {
-                              "width": 1024,
-                              "height": 1024,
-                              "mimeType": "image/png",
-                              "filesize": 241498,
-                              "filename": "phone-icon-small-1024x1024.png",
-                              "url": "http://localhost:3000/media/phone-icon-small-1024x1024.png"
-                          }
-                      },
-                      "createdAt": "2024-02-21T22:51:22.836Z",
-                      "updatedAt": "2024-02-21T22:51:22.836Z",
-                      "url": "http://localhost:3000/media/phone-icon-small.png"
-                  }
+                  "image": "65d67e6a7fb7e9426b3f9f5f",
               }
           },
           {
@@ -238,4 +204,4 @@ export const fixture = {
       ],
       "direction": "ltr"
   }
-}
+} as Policy['content']
