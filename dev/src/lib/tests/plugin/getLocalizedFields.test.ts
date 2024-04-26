@@ -37,12 +37,10 @@ describe('payload-crowdin-sync: getLexicalBlockFields', () => {
               {
                 "fields": [
                   {
-                    "localized": true,
                     "name": "title",
                     "type": "text",
                   },
                   {
-                    "localized": true,
                     "name": "preTitle",
                     "type": "text",
                   },
@@ -380,12 +378,10 @@ describe('payload-crowdin-sync: getLexicalBlockFields', () => {
           {
             "fields": [
               {
-                "localized": true,
                 "name": "text",
                 "type": "text",
               },
               {
-                "localized": true,
                 "name": "href",
                 "type": "text",
               },
@@ -430,12 +426,10 @@ describe('payload-crowdin-sync: getLexicalBlockFields', () => {
           {
             "fields": [
               {
-                "localized": true,
                 "name": "title",
                 "type": "text",
               },
               {
-                "localized": true,
                 "name": "content",
                 "type": "richText",
               },
@@ -1430,12 +1424,10 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                           {
                             "fields": [
                               {
-                                "localized": true,
                                 "name": "title",
                                 "type": "text",
                               },
                               {
-                                "localized": true,
                                 "name": "preTitle",
                                 "type": "text",
                               },
@@ -1773,12 +1765,10 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                       {
                         "fields": [
                           {
-                            "localized": true,
                             "name": "text",
                             "type": "text",
                           },
                           {
-                            "localized": true,
                             "name": "href",
                             "type": "text",
                           },
@@ -1823,12 +1813,10 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                       {
                         "fields": [
                           {
-                            "localized": true,
                             "name": "title",
                             "type": "text",
                           },
                           {
-                            "localized": true,
                             "name": "content",
                             "type": "richText",
                           },
@@ -4156,12 +4144,10 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                   {
                                     "fields": [
                                       {
-                                        "localized": true,
                                         "name": "title",
                                         "type": "text",
                                       },
                                       {
-                                        "localized": true,
                                         "name": "preTitle",
                                         "type": "text",
                                       },
@@ -4499,12 +4485,10 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                               {
                                 "fields": [
                                   {
-                                    "localized": true,
                                     "name": "text",
                                     "type": "text",
                                   },
                                   {
-                                    "localized": true,
                                     "name": "href",
                                     "type": "text",
                                   },
@@ -4549,12 +4533,10 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                               {
                                 "fields": [
                                   {
-                                    "localized": true,
                                     "name": "title",
                                     "type": "text",
                                   },
                                   {
-                                    "localized": true,
                                     "name": "content",
                                     "type": "richText",
                                   },

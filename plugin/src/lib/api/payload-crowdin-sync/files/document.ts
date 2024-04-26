@@ -12,7 +12,7 @@ import {
 } from "../../helpers";
 import { Descendant } from "slate";
 import { convertLexicalToHtml, convertSlateToHtml, findField } from '../../../utilities';
-import { getLexicalEditorConfig } from '../../../utilities/lexical';
+import { extractLexicalBlockContent, getLexicalEditorConfig } from '../../../utilities/lexical';
 
 type FileData = string | object;
 
@@ -225,6 +225,8 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
 
       if (editorConfig) {
         html = await convertLexicalToHtml(value, editorConfig)
+        const blockContent = value && extractLexicalBlockContent(value.root)
+        console.log('blockContent', blockContent)
       } else {
         html = "<span>lexical configuration not found</span>"
       }

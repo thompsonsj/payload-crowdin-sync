@@ -4,7 +4,6 @@ import {
   CollectionConfig,
   Field,
   GlobalConfig,
-  RichTextField,
 } from "payload/types";
 import deepEqual from "deep-equal";
 import { FieldWithName, type CrowdinHtmlObject } from "../types";
@@ -25,7 +24,6 @@ import {
   convertLexicalToHTML,
   consolidateHTMLConverters,
 } from '@payloadcms/richtext-lexical'
-import { isLexical } from "./lexical";
 
 const localizedFieldTypes = ["richText", "text", "textarea"];
 
@@ -101,33 +99,18 @@ export const getLocalizedFields = ({
   fields,
   type,
   localizedParent = false,
+  isLocalized = isLocalizedField,
 }: {
   fields: Field[];
   type?: "json" | "html";
   localizedParent?: boolean;
-}): any[] => {
-  const localizedFields = getLocalizedFieldsRecursive({
-    fields,
-    type,
-    localizedParent,
-  });
-  return localizedFields;
-};
-
-export const getLocalizedFieldsRecursive = ({
-  fields,
-  type,
-  localizedParent = false,
-}: {
-  fields: Field[];
-  type?: "json" | "html";
-  localizedParent?: boolean;
+  isLocalized?: (field: Field, localizedParent?: boolean) => boolean
 }): any[] => [
   ...fields
     // localized or group fields only.
     .filter(
       (field) =>
-        isLocalizedField(field, localizedParent) || containsNestedFields(field)
+        isLocalized(field, localizedParent) || containsNestedFields(field)
     )
     // further filter on Crowdin field type
     .filter((field) => {
@@ -291,12 +274,25 @@ const hasLocalizedProp = (field: Field) =>
  */
 export const isLocalizedField = (
   field: Field,
-  addLocalizedProp: boolean = false
+  addLocalizedProp = false
 ) =>
   (hasLocalizedProp(field) || addLocalizedProp) &&
   localizedFieldTypes.includes(field.type) &&
   !excludeBasedOnDescription(field) &&
-  (field as any).name !== "id";
+  (field as FieldWithName).name !== "id";
+
+/**
+ * Re-localize Field
+ *
+ * Is Localized Field - for non-localized field collections. e.g.
+ * fields within blocks nested in a localized Lexical rich text block.
+ */
+export const reLocalizeField = (
+  field: Field,
+) =>
+  localizedFieldTypes.includes(field.type) &&
+  !excludeBasedOnDescription(field) &&
+  (field as FieldWithName).name !== "id";
 
 const excludeBasedOnDescription = (field: Field) => {
   const description = get(field, "admin.description", "");

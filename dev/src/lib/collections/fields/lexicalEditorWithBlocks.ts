@@ -22,12 +22,10 @@ export const lexicalEditorWithBlocks: RichTextField = {
                   {
                     name: 'title',
                     type: 'text',
-                    localized: true,
                   },
                   {
                     name: 'preTitle',
                     type: 'text',
-                    localized: true,
                   },
                 ]
               },
@@ -63,12 +61,10 @@ export const lexicalEditorWithBlocks: RichTextField = {
               {
                 name: "text",
                 type: "text",
-                localized: true,
               },
               {
                 name: "href",
                 type: "text",
-                localized: true,
               },
               {
                 name: "type",
@@ -87,12 +83,10 @@ export const lexicalEditorWithBlocks: RichTextField = {
               {
                 name: "title",
                 type: "text",
-                localized: true,
               },
               {
                 name: "content",
                 type: "richText",
-                localized: true,
               },
               {
                 name: "image",
