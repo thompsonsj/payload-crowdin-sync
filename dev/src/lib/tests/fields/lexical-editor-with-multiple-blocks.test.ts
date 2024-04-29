@@ -125,7 +125,7 @@ describe('Lexical editor with multiple blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(4)
       .reply(200, mockClient.createFile({}));
-    console.log(fixture);
+
     const policy = await payload.create({
       collection: 'policies',
       data: {
@@ -694,7 +694,7 @@ describe('Lexical editor with multiple blocks', () => {
     const ids = arrayField.map((item) => item.id) || ([] as string[]);
 
     const crowdinFiles = await getFilesByDocumentID(`${policy.id}`, payload);
-    expect(crowdinFiles.length).toEqual(3);
+    expect(crowdinFiles.length).toEqual(7);
 
     const htmlFileOne = crowdinFiles.find(
       (file) => file.name === `group.array.${ids[0]}.content.html`

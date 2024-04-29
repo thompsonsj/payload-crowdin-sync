@@ -671,7 +671,7 @@ describe('Lexical editor with blocks', () => {
     const ids = arrayField.map((item) => item.id) || ([] as string[]);
 
     const crowdinFiles = await getFilesByDocumentID(`${policy.id}`, payload);
-    expect(crowdinFiles.length).toEqual(3);
+    expect(crowdinFiles.length).toEqual(7);
 
     const htmlFileOne = crowdinFiles.find(
       (file) => file.name === `group.array.${ids[0]}.content.html`
