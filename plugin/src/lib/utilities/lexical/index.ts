@@ -1,5 +1,5 @@
 import { LexicalRichTextAdapter, SanitizedEditorConfig } from "@payloadcms/richtext-lexical";
-import { RichTextField } from "payload/types";
+import { Block, RichTextField } from "payload/types";
 import { SerializedRootNode, SerializedLexicalNode } from "lexical"
 import { SerializedBlockNode } from "@payloadcms/richtext-lexical";
 
@@ -18,7 +18,9 @@ export const getLexicalEditorConfig = (field: RichTextField) => {
   return undefined
 }
 
-export const getLexicalBlockFields = (editorConfig: SanitizedEditorConfig) => editorConfig.resolvedFeatureMap.get('blocks')?.props
+export const getLexicalBlockFields = (editorConfig: SanitizedEditorConfig) => editorConfig.resolvedFeatureMap.get('blocks')?.props as {
+  blocks: Block[]
+}
 
 export const extractLexicalBlockContent = (root: SerializedRootNode) => {
   const nodes = root.children

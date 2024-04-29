@@ -11,8 +11,8 @@ import {
   getFiles
 } from "../../helpers";
 import { Descendant } from "slate";
-import { convertLexicalToHtml, convertSlateToHtml, findField } from '../../../utilities';
-import { extractLexicalBlockContent, getLexicalEditorConfig } from '../../../utilities/lexical';
+import { buildCrowdinHtmlObject, buildCrowdinJsonObject, convertLexicalToHtml, convertSlateToHtml, findField, reLocalizeField } from '../../../utilities';
+import { extractLexicalBlockContent, getLexicalBlockFields, getLexicalEditorConfig } from '../../../utilities/lexical';
 
 type FileData = string | object;
 
@@ -197,9 +197,9 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     return payloadFile;
   }
 
-  async createOrUpdateJsonFile(fileData: FileData) {
+  async createOrUpdateJsonFile(fileData: FileData, fileName = "fields") {
     await this.createOrUpdateFile({
-      name: "fields",
+      name: fileName,
       fileData,
       fileType: "json",
     });
@@ -225,8 +225,45 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
 
       if (editorConfig) {
         html = await convertLexicalToHtml(value, editorConfig)
+        // no need to detect change - this has already been done on the field's JSON object
         const blockContent = value && extractLexicalBlockContent(value.root)
-        console.log('blockContent', blockContent)
+        const blockConfig = getLexicalBlockFields(editorConfig)
+        const fieldName = `${name}--blocks`
+        const currentCrowdinJsonData = buildCrowdinJsonObject({
+          doc: {
+            [fieldName]: blockContent,
+          },
+          fields: [
+            {
+              name: fieldName,
+              type: 'blocks',
+              blocks: blockConfig.blocks,
+            }
+          ],
+          isLocalized: reLocalizeField, // ignore localized attribute
+        });
+        const currentCrowdinHtmlData = buildCrowdinHtmlObject({
+          doc: {
+            [fieldName]: blockContent,
+          },
+          fields: [
+            {
+              name: fieldName,
+              type: 'blocks',
+              blocks: blockConfig.blocks,
+            }
+          ],
+          isLocalized: reLocalizeField, // ignore localized attribute
+        });
+        console.log('currentCrowdinJsonData', currentCrowdinJsonData, 'currentCrowdinHtmlData', currentCrowdinHtmlData)
+        await this.createOrUpdateJsonFile(currentCrowdinJsonData, fieldName);
+        await Promise.all(Object.keys(currentCrowdinHtmlData).map(async (name) => {
+          await this.createOrUpdateHtmlFile({
+            name,
+            value: currentCrowdinHtmlData[name] as Descendant[],
+            collection,
+          });
+        }));
       } else {
         html = "<span>lexical configuration not found</span>"
       }

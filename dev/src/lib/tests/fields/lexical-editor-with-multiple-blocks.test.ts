@@ -120,10 +120,10 @@ describe('Lexical editor with multiple blocks', () => {
       .twice()
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
-      .twice()
+      .times(4)
       .reply(200, mockClient.addStorage())
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
-      .twice()
+      .times(4)
       .reply(200, mockClient.createFile({}));
     console.log(fixture);
     const policy = await payload.create({
@@ -354,10 +354,10 @@ describe('Lexical editor with multiple blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
-      .twice()
+      .times(4)
       .reply(200, mockClient.addStorage())
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
-      .twice()
+      .times(4)
       .reply(200, mockClient.createFile({}));
 
     const policy = await payload.create({
@@ -384,10 +384,10 @@ describe('Lexical editor with multiple blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
-      .twice()
+      .times(4)
       .reply(200, mockClient.addStorage())
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
-      .twice()
+      .times(4)
       .reply(200, mockClient.createFile({}));
 
     const policy = await payload.create({
@@ -629,10 +629,10 @@ describe('Lexical editor with multiple blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
-      .twice()
+      .times(4)
       .reply(200, mockClient.addStorage())
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
-      .twice()
+      .times(4)
       .reply(200, mockClient.createFile({}));
 
     const policy = await payload.create({
@@ -664,10 +664,10 @@ describe('Lexical editor with multiple blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
-      .thrice()
+      .times(7)
       .reply(200, mockClient.addStorage())
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
-      .thrice()
+      .times(7)
       .reply(200, mockClient.createFile({}));
 
     const policy = await payload.create({
