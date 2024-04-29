@@ -71,6 +71,7 @@ export default buildConfig({
 | `pluginCollectionAccess` | `undefined` | `access` collection config to pass to all the Crowdin collections created by this plugin. |
 | `pluginCollectionAdmin` | `undefined`<br />`{ hidden: ({ user }) => !userIsAdmin({ user }) }` | `admin` collection config to pass to all the Crowdin collections created by this plugin. |
 | `tabbedUI` | `undefined`<br />`true` | Appends `Crowdin` tab onto your config using Payload's [Tabs Field](https://payloadcms.com/docs/fields/tabs). If your collection is not already tab-enabled, meaning the first field in your config is not of type `tabs`, then one will be created for you called `Content`. |
+| `richTextBlockFieldNameSeparator` | `$$$` | Default `--`. Used as a separator when constructing file names for Lexical block fields in Crowdin. |
 
 ### Environment variables
 
