@@ -228,7 +228,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
         // no need to detect change - this has already been done on the field's JSON object
         const blockContent = value && extractLexicalBlockContent(value.root)
         const blockConfig = getLexicalBlockFields(editorConfig)
-        const fieldName = `${name}--blocks`
+        const fieldName = `${name}${this.pluginOptions.richTextBlockFieldNameSeparator}blocks`
         const currentCrowdinJsonData = buildCrowdinJsonObject({
           doc: {
             [fieldName]: blockContent,
