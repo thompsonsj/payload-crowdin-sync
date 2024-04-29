@@ -624,7 +624,7 @@ describe('Lexical editor with multiple blocks', () => {
     `);
   });
 
-  it('creates an HTML file for Crowdin as expected', async () => {
+  it('creates HTML files for Crowdin as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
       .reply(200, mockClient.createDirectory({}))
@@ -651,11 +651,20 @@ describe('Lexical editor with multiple blocks', () => {
       },
     });
     const crowdinFiles = await getFilesByDocumentID(policy.id, payload);
+    console.log(crowdinFiles);
     const contentHtmlFile = crowdinFiles.find(
       (file) => file.field === 'content'
     );
     expect(contentHtmlFile?.fileData?.html).toMatchInlineSnapshot(
       `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span>unknown node</span><p>A bulleted list in-between some blocks consisting of:</p><ul class="bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span>unknown node</span><span>unknown node</span><ul class="bullet"><li value=1></li></ul>"`
+    );
+    const contentBlocksHtmlFile = crowdinFiles.find(
+      (file) =>
+        file.field?.endsWith('.highlight.content') &&
+        file.field?.startsWith('content--blocks.')
+    );
+    expect(contentBlocksHtmlFile?.fileData?.html).toMatchInlineSnapshot(
+      `"<p>The plugin parses your block configuration for the Lexical rich text editor. It extracts all block values from the rich text field and then treats this config/data combination as a regular \`blocks\` field.</p><p>Markers are placed in the html and this content is restored into the correct place on translation.</p>"`
     );
   });
 
