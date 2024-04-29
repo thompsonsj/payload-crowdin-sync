@@ -651,7 +651,6 @@ describe('Lexical editor with multiple blocks', () => {
       },
     });
     const crowdinFiles = await getFilesByDocumentID(policy.id, payload);
-    console.log(crowdinFiles);
     const contentHtmlFile = crowdinFiles.find(
       (file) => file.field === 'content'
     );

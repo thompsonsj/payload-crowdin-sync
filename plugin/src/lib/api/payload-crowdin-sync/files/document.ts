@@ -255,7 +255,6 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
           ],
           isLocalized: reLocalizeField, // ignore localized attribute
         });
-        // console.log('currentCrowdinJsonData', currentCrowdinJsonData, 'currentCrowdinHtmlData', currentCrowdinHtmlData)
         await this.createOrUpdateJsonFile(currentCrowdinJsonData, fieldName);
         await Promise.all(Object.keys(currentCrowdinHtmlData).map(async (name) => {
           await this.createOrUpdateHtmlFile({
