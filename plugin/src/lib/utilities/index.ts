@@ -4,7 +4,6 @@ import {
   CollectionConfig,
   Field,
   GlobalConfig,
-  RichTextField,
 } from "payload/types";
 import deepEqual from "deep-equal";
 import { FieldWithName, type CrowdinHtmlObject } from "../types";
@@ -25,11 +24,12 @@ import {
   convertLexicalToHTML,
   consolidateHTMLConverters,
 } from '@payloadcms/richtext-lexical'
-import { isLexical } from "./lexical";
 
 const localizedFieldTypes = ["richText", "text", "textarea"];
 
 const nestedFieldTypes = ["array", "group", "blocks"];
+
+type IsLocalized = (field: Field, localizedParent?: boolean) => boolean
 
 export const containsNestedFields = (field: Field) =>
   nestedFieldTypes.includes(field.type);
@@ -101,33 +101,18 @@ export const getLocalizedFields = ({
   fields,
   type,
   localizedParent = false,
+  isLocalized = isLocalizedField,
 }: {
   fields: Field[];
   type?: "json" | "html";
   localizedParent?: boolean;
-}): any[] => {
-  const localizedFields = getLocalizedFieldsRecursive({
-    fields,
-    type,
-    localizedParent,
-  });
-  return localizedFields;
-};
-
-export const getLocalizedFieldsRecursive = ({
-  fields,
-  type,
-  localizedParent = false,
-}: {
-  fields: Field[];
-  type?: "json" | "html";
-  localizedParent?: boolean;
+  isLocalized?: IsLocalized
 }): any[] => [
   ...fields
     // localized or group fields only.
     .filter(
       (field) =>
-        isLocalizedField(field, localizedParent) || containsNestedFields(field)
+        isLocalized(field, localizedParent) || containsNestedFields(field)
     )
     // further filter on Crowdin field type
     .filter((field) => {
@@ -147,6 +132,7 @@ export const getLocalizedFieldsRecursive = ({
           fields: field.fields,
           type,
           localizedParent,
+          isLocalized,
         });
       }
       if (field.type === "blocks") {
@@ -155,6 +141,7 @@ export const getLocalizedFieldsRecursive = ({
             fields: block.fields,
             type,
             localizedParent,
+            isLocalized,
           })
         );
       }
@@ -170,6 +157,7 @@ export const getLocalizedFieldsRecursive = ({
             fields: field.fields,
             type,
             localizedParent,
+            isLocalized,
           }),
         };
       }
@@ -181,6 +169,7 @@ export const getLocalizedFieldsRecursive = ({
                 fields: block.fields,
                 type,
                 localizedParent,
+                isLocalized,
               })
             ) {
               return {
@@ -189,6 +178,7 @@ export const getLocalizedFieldsRecursive = ({
                   fields: block.fields,
                   type,
                   localizedParent,
+                  isLocalized,
                 }),
               };
             }
@@ -291,12 +281,24 @@ const hasLocalizedProp = (field: Field) =>
  */
 export const isLocalizedField = (
   field: Field,
-  addLocalizedProp: boolean = false
+  addLocalizedProp = false
 ) =>
   (hasLocalizedProp(field) || addLocalizedProp) &&
   localizedFieldTypes.includes(field.type) &&
   !excludeBasedOnDescription(field) &&
-  (field as any).name !== "id";
+  (field as FieldWithName).name !== "id";
+
+/**
+ * Re-localize Field
+ *
+ * Is Localized Field - for non-localized field collections. e.g.
+ * fields within blocks nested in a localized Lexical rich text block.
+ */
+export const reLocalizeField = (
+  field: Field,
+) => localizedFieldTypes.includes(field.type) &&
+  !excludeBasedOnDescription(field) &&
+  (field as FieldWithName).name !== "id";
 
 const excludeBasedOnDescription = (field: Field) => {
   const description = get(field, "admin.description", "");
@@ -310,12 +312,14 @@ export const containsLocalizedFields = ({
   fields,
   type,
   localizedParent,
+  isLocalized = isLocalizedField,
 }: {
   fields: Field[];
   type?: "json" | "html";
   localizedParent?: boolean;
+  isLocalized?: IsLocalized;
 }): boolean => {
-  return !isEmpty(getLocalizedFields({ fields, type, localizedParent }));
+  return !isEmpty(getLocalizedFields({ fields, type, localizedParent, isLocalized }));
 };
 
 export const fieldChanged = (
@@ -493,16 +497,18 @@ export const buildCrowdinJsonObject = ({
   doc,
   fields,
   topLevel = true,
+  isLocalized,
 }: {
   doc: { [key: string]: any };
   /** Use getLocalizedFields to pass localized fields only */
   fields: Field[];
   /** Flag used internally to filter json fields before recursion. */
   topLevel?: boolean;
+  isLocalized?: IsLocalized;
 }) => {
   let response: { [key: string]: any } = {};
   const filteredFields = topLevel
-    ? getLocalizedFields({ fields, type: "json" })
+    ? getLocalizedFields({ fields, type: "json", isLocalized })
     : fields;
   filteredFields.forEach((field) => {
     if (!doc[field.name]) {
@@ -513,6 +519,7 @@ export const buildCrowdinJsonObject = ({
         doc: doc[field.name],
         fields: field.fields,
         topLevel: false,
+        isLocalized,
       });
     } else if (field.type === "array") {
       response[field.name] = doc[field.name]
@@ -521,6 +528,7 @@ export const buildCrowdinJsonObject = ({
             doc: item,
             fields: field.fields,
             topLevel: false,
+            isLocalized,
           });
           if (!isEmpty(crowdinJsonObject)) {
             return {
@@ -540,6 +548,7 @@ export const buildCrowdinJsonObject = ({
               field.blocks.find((block: Block) => block.slug === item.blockType)
                 ?.fields || [],
             topLevel: false,
+            isLocalized,
           });
           if (!isEmpty(crowdinJsonObject)) {
             return {
@@ -564,6 +573,7 @@ export const buildCrowdinHtmlObject = ({
   fields,
   prefix = "",
   topLevel = true,
+  isLocalized,
 }: {
   doc: { [key: string]: any };
   /** Use getLocalizedFields to pass localized fields only */
@@ -572,11 +582,16 @@ export const buildCrowdinHtmlObject = ({
   prefix?: string;
   /** Flag used internally to filter html fields before recursion. */
   topLevel?: boolean;
+  isLocalized?: IsLocalized;
 }) => {
   let response: CrowdinHtmlObject  = {};
   // it is convenient to be able to pass all fields - filter in this case
   const filteredFields = topLevel
-    ? getLocalizedFields({ fields, type: "html" })
+    ? getLocalizedFields({
+      fields,
+      type: "html",
+      isLocalized,
+    })
     : fields;
   filteredFields.forEach((field) => {
     const name = [prefix, (field as FieldWithName).name]
@@ -596,6 +611,7 @@ export const buildCrowdinHtmlObject = ({
           fields: field.fields,
           prefix: subPrefix,
           topLevel: false,
+          isLocalized,
         }),
       };
     } else if (field.type === "array") {
@@ -608,6 +624,7 @@ export const buildCrowdinHtmlObject = ({
           fields: field.fields,
           prefix: subPrefix,
           topLevel: false,
+          isLocalized,
         });
       });
       response = {
@@ -631,6 +648,7 @@ export const buildCrowdinHtmlObject = ({
               ?.fields || [],
           prefix: subPrefix,
           topLevel: false,
+          isLocalized,
         });
       });
       response = {

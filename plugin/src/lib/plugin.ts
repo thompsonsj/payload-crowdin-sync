@@ -99,6 +99,7 @@ export const crowdinSync =
       pluginCollectionAccess: Joi.object(),
       pluginCollectionAdmin: Joi.object(),
       tabbedUI: Joi.boolean(),
+      richTextBlockFieldNameSeparator: Joi.string(),
     });
 
     const validate = schema.validate(pluginOptions);
@@ -109,6 +110,9 @@ export const crowdinSync =
         validate.error
       );
     }
+
+    // option defaults
+    pluginOptions.richTextBlockFieldNameSeparator = pluginOptions.richTextBlockFieldNameSeparator || '--';
 
     return {
       ...config,

@@ -21,8 +21,8 @@ import {
   convertHtmlToSlate,
 } from "../../utilities";
 
-import { Config, CrowdinArticleDirectory, CrowdinFile } from "../../payload-types";
-import { getArticleDirectory, getFileByDocumentID, getFilesByDocumentID } from "../helpers";
+import { Config } from "../../payload-types";
+import { getFileByDocumentID, getFilesByDocumentID } from "../helpers";
 
 interface IgetLatestDocumentTranslation {
   collection: string;

@@ -43,6 +43,7 @@ export interface PluginOptions {
   pluginCollectionAccess?: CollectionConfig["access"];
   pluginCollectionAdmin?: CollectionConfig["admin"];
   tabbedUI?: boolean
+  richTextBlockFieldNameSeparator?: string
 }
 
 export type FieldWithName = Field & { name: string };
