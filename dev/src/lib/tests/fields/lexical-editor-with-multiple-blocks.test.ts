@@ -655,7 +655,7 @@ describe('Lexical editor with multiple blocks', () => {
       (file) => file.field === 'content'
     );
     expect(contentHtmlFile?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span>unknown node</span><p>A bulleted list in-between some blocks consisting of:</p><ul class="bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span>unknown node</span><span>unknown node</span><ul class="bullet"><li value=1></li></ul>"`
+      `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7}></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8}></span><span data-block-id=65d67e2291c92e447e7472f9}></span><ul class="bullet"><li value=1></li></ul>"`
     );
     const contentBlocksHtmlFile = crowdinFiles.find(
       (file) =>
@@ -718,11 +718,11 @@ describe('Lexical editor with multiple blocks', () => {
     ).toBeDefined();
 
     expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span>unknown node</span><p>A bulleted list in-between some blocks consisting of:</p><ul class="bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span>unknown node</span><span>unknown node</span><ul class="bullet"><li value=1></li></ul>"`
+      `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7}></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8}></span><span data-block-id=65d67e2291c92e447e7472f9}></span><ul class="bullet"><li value=1></li></ul>"`
     );
 
     expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span>unknown node</span><p>A bulleted list in-between some blocks consisting of:</p><ul class="bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span>unknown node</span><span>unknown node</span><ul class="bullet"><li value=1></li></ul>"`
+      `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7}></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8}></span><span data-block-id=65d67e2291c92e447e7472f9}></span><ul class="bullet"><li value=1></li></ul>"`
     );
   });
 });

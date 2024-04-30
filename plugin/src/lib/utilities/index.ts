@@ -20,9 +20,12 @@ import { get, isEmpty, map, merge, omitBy } from "lodash";
 import dot from "dot-object";
 import type { SerializedEditorState } from 'lexical'
 import {
+  BlockNode,
+  HTMLConverter,
   type SanitizedEditorConfig,
   convertLexicalToHTML,
   consolidateHTMLConverters,
+  SerializedBlockNode,
 } from '@payloadcms/richtext-lexical'
 
 const localizedFieldTypes = ["richText", "text", "textarea"];
@@ -669,9 +672,19 @@ export const convertSlateToHtml = (slate: Descendant[], customConfig?: SlateToHt
   return slateToHtml(slate, payloadSlateToHtmlConfig);
 };
 
+const BlockHTMLConverter: HTMLConverter<any> = {
+  converter: async ({ node }) => {
+    return `<span data-block-id=${node.fields.id}}></span>`
+  },
+  nodeTypes: [BlockNode.getType()],
+}
+
 export const convertLexicalToHtml = async (editorData: SerializedEditorState, editorConfig: SanitizedEditorConfig) => {
   return await convertLexicalToHTML({
-    converters: consolidateHTMLConverters({ editorConfig }),
+    converters: [
+      ...consolidateHTMLConverters({ editorConfig }),
+      BlockHTMLConverter,
+    ],
     data: editorData,
   })
 }
