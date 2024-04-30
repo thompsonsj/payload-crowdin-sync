@@ -11,7 +11,8 @@ import {
   getFiles
 } from "../../helpers";
 import { Descendant } from "slate";
-import { buildCrowdinHtmlObject, buildCrowdinJsonObject, convertLexicalToHtml, convertSlateToHtml, findField, reLocalizeField } from '../../../utilities';
+import { buildCrowdinHtmlObject, buildCrowdinJsonObject, findField, reLocalizeField } from '../../../utilities';
+import { convertLexicalToHtml, convertSlateToHtml } from '../../../utilities/richTextConversion'
 import { extractLexicalBlockContent, getLexicalBlockFields, getLexicalEditorConfig } from '../../../utilities/lexical';
 
 type FileData = string | object;

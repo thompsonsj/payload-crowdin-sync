@@ -18,8 +18,10 @@ import {
   buildCrowdinHtmlObject,
   buildPayloadUpdateObject,
   getLocalizedRequiredFields,
-  convertHtmlToSlate,
 } from "../../utilities";
+import {
+  convertHtmlToSlate
+} from '../../utilities/richTextConversion'
 
 import { Config } from "../../payload-types";
 import { getFileByDocumentID, getFilesByDocumentID } from "../helpers";
