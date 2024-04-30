@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.26.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.25.0...dev-v0.26.0) (2024-04-30)
+
+
+### Features
+
+* **document:** send Lexical blocks for translation ([#161](https://github.com/thompsonsj/payload-crowdin-sync/issues/161)) ([2cb4f1c](https://github.com/thompsonsj/payload-crowdin-sync/commit/2cb4f1c1d6df555d353c5aca691f06974bca71c8))
+* **utilities:** reference blocks in Crowdin HTML ([#163](https://github.com/thompsonsj/payload-crowdin-sync/issues/163)) ([8f01501](https://github.com/thompsonsj/payload-crowdin-sync/commit/8f01501b85e364e82d02574c93601c07753c5944))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.25.0 to 0.26.0
+
 ## [0.25.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.24.3...dev-v0.25.0) (2024-02-22)
 
 
