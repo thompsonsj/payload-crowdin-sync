@@ -1,4 +1,4 @@
-import { convertSlateToHtml } from "..";
+import { convertSlateToHtml } from "../richTextConversion";
 import { payloadSlateToHtmlConfig } from "@slate-serializers/html";
 
 describe("convertSlateToHtml", () => {

@@ -7,26 +7,9 @@ import {
 } from "payload/types";
 import deepEqual from "deep-equal";
 import { FieldWithName, type CrowdinHtmlObject } from "../types";
-import {
-  slateToHtml,
-  payloadSlateToHtmlConfig,
-  type SlateToHtmlConfig,
-  htmlToSlate,
-  payloadHtmlToSlateConfig,
-  type HtmlToSlateConfig,
-} from "@slate-serializers/html"
-import type { Descendant } from "slate";
+
 import { get, isEmpty, map, merge, omitBy } from "lodash";
 import dot from "dot-object";
-import type { SerializedEditorState } from 'lexical'
-import {
-  BlockNode,
-  HTMLConverter,
-  type SanitizedEditorConfig,
-  convertLexicalToHTML,
-  consolidateHTMLConverters,
-  SerializedBlockNode,
-} from '@payloadcms/richtext-lexical'
 
 const localizedFieldTypes = ["richText", "text", "textarea"];
 
@@ -663,35 +646,4 @@ export const buildCrowdinHtmlObject = ({
     }
   });
   return response;
-};
-
-export const convertSlateToHtml = (slate: Descendant[], customConfig?: SlateToHtmlConfig): string => {
-  if (customConfig) {
-    return slateToHtml(slate, customConfig);
-  }
-  return slateToHtml(slate, payloadSlateToHtmlConfig);
-};
-
-const BlockHTMLConverter: HTMLConverter<any> = {
-  converter: async ({ node }) => {
-    return `<span data-block-id=${node.fields.id}}></span>`
-  },
-  nodeTypes: [BlockNode.getType()],
-}
-
-export const convertLexicalToHtml = async (editorData: SerializedEditorState, editorConfig: SanitizedEditorConfig) => {
-  return await convertLexicalToHTML({
-    converters: [
-      ...consolidateHTMLConverters({ editorConfig }),
-      BlockHTMLConverter,
-    ],
-    data: editorData,
-  })
-}
-
-export const convertHtmlToSlate = (html: string, customConfig?: HtmlToSlateConfig): Descendant[] => {
-  if (customConfig) {
-    return htmlToSlate(html, customConfig);
-  }
-  return htmlToSlate(html, payloadHtmlToSlateConfig);
 };

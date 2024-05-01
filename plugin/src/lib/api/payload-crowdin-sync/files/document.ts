@@ -11,7 +11,8 @@ import {
   getFiles
 } from "../../helpers";
 import { Descendant } from "slate";
-import { buildCrowdinHtmlObject, buildCrowdinJsonObject, convertLexicalToHtml, convertSlateToHtml, findField, reLocalizeField } from '../../../utilities';
+import { buildCrowdinHtmlObject, buildCrowdinJsonObject, findField, reLocalizeField } from '../../../utilities';
+import { convertLexicalToHtml, convertSlateToHtml } from '../../../utilities/richTextConversion'
 import { extractLexicalBlockContent, getLexicalBlockFields, getLexicalEditorConfig } from '../../../utilities/lexical';
 
 type FileData = string | object;
@@ -20,6 +21,7 @@ interface IupdateOrCreateFile {
   name: string;
   fileData: FileData;
   fileType: "html" | "json";
+  editor?: "lexical" | "slate"; 
 }
 
 export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesApi {
@@ -82,6 +84,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     name,
     fileData,
     fileType,
+    editor,
   }: IupdateOrCreateFile) {
     const empty = isEmpty(fileData);
     // Check whether file exists on Crowdin
@@ -93,6 +96,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
           name,
           fileData,
           fileType,
+          editor,
         });
       } else {
         updatedCrowdinFile = await this.updateFile({
@@ -100,6 +104,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
           name: name,
           fileData,
           fileType,
+          editor,
         });
       }
     } else {
@@ -115,6 +120,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     name,
     fileData,
     fileType,
+    editor,
   }: {crowdinFile: CrowdinFile} & IupdateOrCreateFile) {
     // Update file on Crowdin
     const updatedCrowdinFile = await this.crowdinUpdateFile({
@@ -135,6 +141,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
           [k: string]: Partial<unknown>;
         }) }}),
         ...(fileType === "html" && { fileData: { html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData) } }),
+        editor,
       },
     });
   }
@@ -143,6 +150,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     name,
     fileData,
     fileType,
+    editor,
   }: IupdateOrCreateFile) {
     // Create file on Crowdin
     const originalId = this.articleDirectory.originalId
@@ -177,6 +185,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
               [k: string]: Partial<unknown>;
             }) } }),
             ...(fileType === "html" && { fileData: { html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData) } }),
+            editor,
           },
         });
         return payloadCrowdinFile;
@@ -216,7 +225,8 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
   }) {
     // brittle check for Lexical value - improve this detection. Type check? Anything from Payload to indicate the type?
     let html
-    if (Object.prototype.hasOwnProperty.call(value, "root")) {
+    const isLexical = Object.prototype.hasOwnProperty.call(value, "root")
+    if (isLexical) {
       const field = findField({
         dotNotation: name,
         fields: collection.fields
@@ -273,6 +283,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       name: name,
       fileData: html,
       fileType: "html",
+      editor: isLexical ? "lexical" : "slate",
     });
   }
 

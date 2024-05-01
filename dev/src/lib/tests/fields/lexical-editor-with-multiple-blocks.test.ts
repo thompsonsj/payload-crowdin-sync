@@ -1,6 +1,11 @@
 import payload from 'payload';
 import { initPayloadTest } from '../helpers/config';
-import { getFilesByDocumentID, isDefined, utilities } from 'plugin';
+import {
+  getFilesByDocumentID,
+  isDefined,
+  payloadCrowdinSyncTranslationsApi,
+  utilities,
+} from 'plugin';
 import Policies from '../../collections/Policies';
 import { fixture } from './lexical-editor-with-multiple-blocks.fixture';
 import nock from 'nock';
@@ -724,5 +729,317 @@ describe('Lexical editor with multiple blocks', () => {
     expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(
       `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7}></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8}></span><span data-block-id=65d67e2291c92e447e7472f9}></span><ul class="bullet"><li value=1></li></ul>"`
     );
+  });
+
+  it('updates a Payload article with a rich text field that uses the Lexical editor with multiple blocks with a translation received from Crowdin', async () => {
+    nock('https://api.crowdin.com')
+      .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
+      .reply(200, mockClient.createDirectory({}))
+      .post(`/api/v2/storages`)
+      .times(4)
+      .reply(200, mockClient.addStorage())
+      // file 1 creation
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .reply(
+        200,
+        mockClient.createFile({
+          fileId: 56641,
+        })
+      )
+      // file 2 creation
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .reply(
+        200,
+        mockClient.createFile({
+          fileId: 56642,
+        })
+      )
+      // file 3 creation
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .reply(
+        200,
+        mockClient.createFile({
+          fileId: 56643,
+        })
+      )
+      // file 4 creation
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .reply(
+        200,
+        mockClient.createFile({
+          fileId: 56644,
+        })
+      )
+      // de - file 1 get translation
+      .post(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/files/${56641}`,
+        {
+          targetLanguageId: 'de',
+        }
+      )
+      .reply(
+        200,
+        mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${
+            pluginOptions.projectId
+          }/translations/builds/${56641}/download?targetLanguageId=fr`,
+        })
+      )
+      // de - file 4 get translation
+      .post(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/files/${56644}`,
+        {
+          targetLanguageId: 'de',
+        }
+      )
+      .reply(
+        200,
+        mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${
+            pluginOptions.projectId
+          }/translations/builds/${56644}/download?targetLanguageId=fr`,
+        })
+      )
+      // de - file 3 get translation
+      .post(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/files/${56643}`,
+        {
+          targetLanguageId: 'de',
+        }
+      )
+      .reply(
+        200,
+        mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${
+            pluginOptions.projectId
+          }/translations/builds/${56643}/download?targetLanguageId=fr`,
+        })
+      )
+      // fr - file 1 get translation
+      .post(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/files/${56641}`,
+        {
+          targetLanguageId: 'fr',
+        }
+      )
+      .reply(
+        200,
+        mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${
+            pluginOptions.projectId
+          }/translations/builds/${56641}/download?targetLanguageId=fr`,
+        })
+      )
+      .get(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/${56641}/download`
+      )
+      .times(2)
+      .query({
+        targetLanguageId: 'fr',
+      })
+      .reply(200, {})
+      // fr - file 2 get translation
+      /**
+      .post(
+        `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${56642}`,
+        {
+          targetLanguageId: 'fr',
+        }
+      )
+      .reply(200, mockClient.buildProjectFileTranslation({
+        url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56642}/download?targetLanguageId=fr`
+      }))
+      .get(
+        `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56642}/download`
+      )
+      .query({
+        targetLanguageId: 'fr',
+      })
+      .reply(200, {})
+      */
+      // fr - file 3 get translation
+      .post(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/files/${56643}`,
+        {
+          targetLanguageId: 'fr',
+        }
+      )
+      .reply(
+        200,
+        mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${
+            pluginOptions.projectId
+          }/translations/builds/${56643}/download?targetLanguageId=fr`,
+        })
+      )
+      .get(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/${56643}/download`
+      )
+      .times(2)
+      .query({
+        targetLanguageId: 'fr',
+      })
+      // all files have the same fileID - we provide the same response for each translation request, therefore only one file can be tested in each test
+      .reply(200, "<p>Poste d'essai</p>")
+      // fr - file 4 get translation
+      .post(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/files/${56644}`,
+        {
+          targetLanguageId: 'fr',
+        }
+      )
+      .reply(
+        200,
+        mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${
+            pluginOptions.projectId
+          }/translations/builds/${56644}/download?targetLanguageId=fr`,
+        })
+      )
+      .get(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/${56644}/download`
+      )
+      .times(2)
+      .query({
+        targetLanguageId: 'fr',
+      })
+      .reply(
+        200,
+        `<p>Exemple de contenu pour un champ de texte enrichi lexical avec plusieurs blocs.</p><span data-block-id=65d67d2591c92e447e7472f7}></span><p>Une liste à puces entre certains blocs composée de:</p><ul class="bullet"><li value=1>un élément de liste à puces ; et</li><li value=2>
+      un autre!</li></ul><span data-block-id=65d67d8191c92e447e7472f8}></span><span data-block-id=65d67e2291c92e447e7472f9}></span><ul class="bullet"><li value=1></li></ul>`
+      );
+
+    const policy = await payload.create({
+      collection: 'policies',
+      data: {
+        title: 'Test policy',
+        content: fixture,
+      },
+    });
+    const crowdinFiles = await getFilesByDocumentID(policy.id, payload);
+
+    // check file ids are always mapped in the same way
+    const fileIds = crowdinFiles.map((file) => ({
+      fileId: file.originalId,
+      field: file.field,
+    }));
+    expect(fileIds).toEqual([
+      {
+        field: 'content',
+        fileId: 56644,
+      },
+      {
+        field: 'content--blocks.65d67d8191c92e447e7472f8.highlight.content',
+        fileId: 56643,
+      },
+      {
+        field: 'content--blocks',
+        fileId: 56642,
+      },
+      {
+        field: 'fields',
+        fileId: 56641,
+      },
+    ]);
+    const translationsApi = new payloadCrowdinSyncTranslationsApi(
+      pluginOptions,
+      payload
+    );
+    await translationsApi.updateTranslation({
+      documentId: `${policy.id}`,
+      collection: 'policies',
+      dryRun: false,
+    });
+    // retrieve translated post from Payload
+    const result = await payload.findByID({
+      collection: 'policies',
+      id: `${policy.id}`,
+      locale: 'fr_FR',
+    });
+    expect(result['content']).toMatchInlineSnapshot(`
+      {
+        "root": {
+          "children": [
+            {
+              "children": [
+                {
+                  "detail": 0,
+                  "format": 0,
+                  "mode": "normal",
+                  "style": "",
+                  "text": "Exemple de contenu pour un champ de texte enrichi lexical avec plusieurs blocs.",
+                  "type": "text",
+                  "version": 1,
+                },
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "paragraph",
+              "version": 1,
+            },
+            {
+              "children": [
+                {
+                  "detail": 0,
+                  "format": 0,
+                  "mode": "normal",
+                  "style": "",
+                  "text": "Une liste à puces entre certains blocs composée de:",
+                  "type": "text",
+                  "version": 1,
+                },
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "paragraph",
+              "version": 1,
+            },
+            {
+              "children": [
+                {
+                  "detail": 0,
+                  "format": 0,
+                  "mode": "normal",
+                  "style": "",
+                  "text": "un élément de liste à puces ; etun autre!",
+                  "type": "text",
+                  "version": 1,
+                },
+              ],
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "paragraph",
+              "version": 1,
+            },
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1,
+        },
+      }
+    `);
   });
 });
