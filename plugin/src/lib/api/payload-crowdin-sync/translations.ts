@@ -8,6 +8,7 @@ import deepEqual from "deep-equal";
 import {
   CollectionConfig,
   GlobalConfig,
+  RichTextField,
   SanitizedCollectionConfig,
   SanitizedGlobalConfig,
 } from "payload/types";
@@ -18,13 +19,16 @@ import {
   buildCrowdinHtmlObject,
   buildPayloadUpdateObject,
   getLocalizedRequiredFields,
+  findField,
 } from "../../utilities";
 import {
+  convertHtmlToLexical,
   convertHtmlToSlate
 } from '../../utilities/richTextConversion'
 
 import { Config } from "../../payload-types";
 import { getFileByDocumentID, getFilesByDocumentID } from "../helpers";
+import { getLexicalEditorConfig } from "../../utilities/lexical";
 
 interface IgetLatestDocumentTranslation {
   collection: string;
@@ -45,6 +49,7 @@ interface IgetTranslation {
   fieldName: string;
   locale: string;
   global?: boolean;
+  collection?: CollectionConfig | GlobalConfig;
 }
 
 interface IupdateTranslation {
@@ -281,6 +286,7 @@ export class payloadCrowdinSyncTranslationsApi {
         documentId: global ? collectionConfig.slug : doc.id,
         fieldName: field,
         locale: locale,
+        collection: collectionConfig,
       });
     }
 
@@ -325,7 +331,7 @@ export class payloadCrowdinSyncTranslationsApi {
    * * returns Slate object for html fields
    * * returns all json fields if fieldName is 'fields'
    */
-  async getTranslation({ documentId, fieldName, locale }: IgetTranslation) {
+  async getTranslation({ documentId, fieldName, locale, collection }: IgetTranslation) {
     const file = await getFileByDocumentID(fieldName, `${documentId}`, this.payload);
     // it is possible a file doesn't exist yet - e.g. an article with localized text fields that contains an empty html field.
     if (!file) {
@@ -340,9 +346,54 @@ export class payloadCrowdinSyncTranslationsApi {
         }
       );
       const data = await this.getFileDataFromUrl(response.data.url);
-      return file.type === "html"
-        ? convertHtmlToSlate(data, this.htmlToSlateConfig)
-        : JSON.parse(data);
+      if (file.type === "html") {
+        // cannot regenerate types? Try later and remove 'any'
+        if ((file as any).editor === "lexical" && collection) {
+          // looks like we need to get the field config anyway! So possibly take away the customization of storing the editor type?
+          const field = findField({
+            dotNotation: fieldName,
+            fields: collection.fields
+          }) as RichTextField
+          const editorConfig = getLexicalEditorConfig(field)
+          if (editorConfig) {
+            return convertHtmlToLexical(data, editorConfig)
+          } else {
+            return {
+              "root": {
+                  "type": "root",
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                      {
+                          "children": [
+                              {
+                                  "detail": 0,
+                                  "format": 0,
+                                  "mode": "normal",
+                                  "style": "",
+                                  "text": "lexical configuration not found",
+                                  "type": "text",
+                                  "version": 1
+                              }
+                          ],
+                          "direction": "ltr",
+                          "format": "",
+                          "indent": 0,
+                          "type": "quote",
+                          "version": 1
+                      }
+                  ],
+                  "direction": "ltr"
+              }
+            }
+          }
+        } else {
+          return convertHtmlToSlate(data, this.htmlToSlateConfig)
+        }
+      } else {
+        return JSON.parse(data);
+      }
     } catch (error) {
       console.log(error);
     }

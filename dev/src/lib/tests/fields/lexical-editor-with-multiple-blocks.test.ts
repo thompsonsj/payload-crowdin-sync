@@ -975,58 +975,71 @@ describe('Lexical editor with multiple blocks', () => {
       locale: 'fr_FR',
     });
     expect(result['content']).toMatchInlineSnapshot(`
-      [
-        {
-          "children": [
-            {
-              "text": "Exemple de contenu pour un champ de texte enrichi lexical avec plusieurs blocs.",
-            },
-          ],
-          "type": "p",
-        },
-        {
-          "children": [
-            {
-              "text": "Une liste à puces entre certains blocs composée de:",
-            },
-          ],
-          "type": "p",
-        },
-        {
+      {
+        "root": {
           "children": [
             {
               "children": [
                 {
-                  "text": "un élément de liste à puces ; et",
+                  "detail": 0,
+                  "format": 0,
+                  "mode": "normal",
+                  "style": "",
+                  "text": "Exemple de contenu pour un champ de texte enrichi lexical avec plusieurs blocs.",
+                  "type": "text",
+                  "version": 1,
                 },
               ],
-              "type": "li",
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "paragraph",
+              "version": 1,
             },
             {
               "children": [
                 {
-                  "text": "un autre!",
+                  "detail": 0,
+                  "format": 0,
+                  "mode": "normal",
+                  "style": "",
+                  "text": "Une liste à puces entre certains blocs composée de:",
+                  "type": "text",
+                  "version": 1,
                 },
               ],
-              "type": "li",
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "paragraph",
+              "version": 1,
             },
-          ],
-          "type": "ul",
-        },
-        {
-          "children": [
             {
               "children": [
                 {
-                  "text": "",
+                  "detail": 0,
+                  "format": 0,
+                  "mode": "normal",
+                  "style": "",
+                  "text": "un élément de liste à puces ; etun autre!",
+                  "type": "text",
+                  "version": 1,
                 },
               ],
-              "type": "li",
+              "direction": null,
+              "format": "",
+              "indent": 0,
+              "type": "paragraph",
+              "version": 1,
             },
           ],
-          "type": "ul",
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "type": "root",
+          "version": 1,
         },
-      ]
+      }
     `);
   });
 });
