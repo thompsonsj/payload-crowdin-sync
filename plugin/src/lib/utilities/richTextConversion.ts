@@ -24,7 +24,7 @@ import { Window } from 'happy-dom'
 
 const BlockHTMLConverter: HTMLConverter<any> = {
   converter: async ({ node }) => {
-    return `<span data-block-id=${node.fields.id}}></span>`
+    return `<span data-block-id=${node.fields.id}></span>`
   },
   nodeTypes: [BlockNode.getType()],
 }
