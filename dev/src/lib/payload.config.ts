@@ -56,7 +56,7 @@ export default buildConfig({
           }
         },
         externals: {
-          'happy-dom': 'happy-dom',
+          'happy-dom': 'window',
         }
       }
     },
