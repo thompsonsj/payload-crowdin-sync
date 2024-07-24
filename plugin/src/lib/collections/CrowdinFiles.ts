@@ -91,7 +91,11 @@ const CrowdinFiles: CollectionConfig = {
     },
     {
       name: "type",
-      type: "text",
+      type: "select",
+      options: [
+        "json",
+        "html"
+      ]
     },
     {
       name: "path",

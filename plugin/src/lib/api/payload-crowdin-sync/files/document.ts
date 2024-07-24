@@ -11,7 +11,8 @@ import {
   getFiles
 } from "../../helpers";
 import { Descendant } from "slate";
-import { buildCrowdinHtmlObject, buildCrowdinJsonObject, convertLexicalToHtml, convertSlateToHtml, findField, reLocalizeField } from '../../../utilities';
+import { buildCrowdinHtmlObject, buildCrowdinJsonObject, findField, reLocalizeField } from '../../../utilities';
+import { convertLexicalToHtml, convertSlateToHtml } from '../../../utilities/richTextConversion'
 import { extractLexicalBlockContent, getLexicalBlockFields, getLexicalEditorConfig } from '../../../utilities/lexical';
 
 type FileData = string | object;
@@ -216,7 +217,8 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
   }) {
     // brittle check for Lexical value - improve this detection. Type check? Anything from Payload to indicate the type?
     let html
-    if (Object.prototype.hasOwnProperty.call(value, "root")) {
+    const isLexical = Object.prototype.hasOwnProperty.call(value, "root")
+    if (isLexical) {
       const field = findField({
         dotNotation: name,
         fields: collection.fields
