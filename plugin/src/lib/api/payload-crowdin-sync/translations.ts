@@ -347,18 +347,15 @@ export class payloadCrowdinSyncTranslationsApi {
       );
       const data = await this.getFileDataFromUrl(response.data.url);
       if (file.type === "html") {
-        // cannot regenerate types? Try later and remove 'any'
-        if ((file as any).editor === "lexical" && collection) {
-          // looks like we need to get the field config anyway! So possibly take away the customization of storing the editor type?
+        if (collection) {
           const field = findField({
             dotNotation: fieldName,
             fields: collection.fields
           }) as RichTextField
           const editorConfig = getLexicalEditorConfig(field)
+          // isLexical?
           if (editorConfig) {
-            return convertHtmlToLexical(data, editorConfig)
-          } else {
-            return {
+            return convertHtmlToLexical(data, editorConfig) || {
               "root": {
                   "type": "root",
                   "format": "",
@@ -388,9 +385,8 @@ export class payloadCrowdinSyncTranslationsApi {
               }
             }
           }
-        } else {
-          return convertHtmlToSlate(data, this.htmlToSlateConfig)
         }
+        return convertHtmlToSlate(data, this.htmlToSlateConfig)
       } else {
         return JSON.parse(data);
       }

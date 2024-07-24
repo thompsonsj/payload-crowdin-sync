@@ -98,18 +98,6 @@ const CrowdinFiles: CollectionConfig = {
       ]
     },
     {
-      name: 'editor',
-      label: 'Rich text editor',
-      type: 'select',
-      options: [
-        'lexical',
-        'slate'
-      ],
-      admin: {
-        condition: (_, siblingData) => siblingData['type'] === 'html',
-      },
-    },
-    {
       name: "path",
       type: "text",
     },
