@@ -43,17 +43,15 @@ export const convertHtmlToLexical = async (htmlString: string, editorConfig: San
   const headlessEditor = createHeadlessEditor({ ...editorConfig, nodes: [] });
   headlessEditor.update(() => {
     
-    const contextWindow = ((): Window => {
-      if (process.env['NODE_ENV'] === "test") {
-        
-        return new Window();
-      }
-      /* eslint-disable  @typescript-eslint/no-explicit-any */
-      return (window as any) as Window
-    })()
-
-    const document = contextWindow.document;
-    document.body.innerHTML = htmlString;
+    let document
+    if (process.env['NODE_ENV'] === "test") {
+      const contextWindow = new Window()
+      document = contextWindow.document;
+      document.body.innerHTML = htmlString;
+    } else {
+      const parser = new DOMParser();
+      document = parser.parseFromString(htmlString, "text/html");
+    }
 
     // Once you have the DOM instance it's easy to generate LexicalNodes.
     // type any required to pass Document type
