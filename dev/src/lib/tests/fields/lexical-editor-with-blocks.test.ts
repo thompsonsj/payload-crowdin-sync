@@ -632,7 +632,7 @@ describe('Lexical editor with blocks', () => {
       (file) => file.field === 'content'
     );
     expect(contentHtmlFile?.fileData?.html).toMatchInlineSnapshot(
-      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span data-block-id=6582d48f2037fb3ca72ed2cf}></span><p></p>"`
+      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span data-block-id=6582d48f2037fb3ca72ed2cf></span><p></p>"`
     );
   });
 
@@ -687,11 +687,11 @@ describe('Lexical editor with blocks', () => {
     ).toBeDefined();
 
     expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(
-      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span data-block-id=6582d48f2037fb3ca72ed2cf}></span><p></p>"`
+      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span data-block-id=6582d48f2037fb3ca72ed2cf></span><p></p>"`
     );
 
     expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(
-      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span data-block-id=6582d48f2037fb3ca72ed2cf}></span><p></p>"`
+      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span data-block-id=6582d48f2037fb3ca72ed2cf></span><p></p>"`
     );
   });
 });
