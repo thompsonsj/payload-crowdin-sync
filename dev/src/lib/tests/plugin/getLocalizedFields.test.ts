@@ -430,6 +430,13 @@ describe('payload-crowdin-sync: getLexicalBlockFields', () => {
                 "type": "text",
               },
               {
+                "editor": {
+                  "CellComponent": [Function],
+                  "FieldComponent": [Function],
+                  "outputSchema": [Function],
+                  "populationPromise": [Function],
+                  "validate": [Function],
+                },
                 "name": "content",
                 "type": "richText",
               },
@@ -534,6 +541,12 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                         "upload",
                       ],
                     },
+                    {
+                      "converter": [Function],
+                      "nodeTypes": [
+                        "horizontalrule",
+                      ],
+                    },
                   ],
                 },
                 "enabledFeatures": [
@@ -557,6 +570,7 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                   "relationship",
                   "blockquote",
                   "upload",
+                  "horizontalrule",
                 ],
                 "floatingSelectToolbar": {
                   "sections": [
@@ -1034,6 +1048,18 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                       [Function],
                     ],
                   },
+                  {
+                    "converters": {
+                      "html": {
+                        "converter": [Function],
+                        "nodeTypes": [
+                          "horizontalrule",
+                        ],
+                      },
+                    },
+                    "node": [Function],
+                    "type": "horizontalrule",
+                  },
                 ],
                 "plugins": [
                   {
@@ -1084,6 +1110,11 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                   {
                     "Component": [Function],
                     "key": "upload0",
+                    "position": "normal",
+                  },
+                  {
+                    "Component": [Function],
+                    "key": "horizontalrule0",
                     "position": "normal",
                   },
                 ],
@@ -1369,6 +1400,23 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                             "picture",
                             "photo",
                             "media",
+                          ],
+                          "onSelect": [Function],
+                          "ref": {
+                            "current": null,
+                          },
+                          "setRefElement": [Function],
+                        },
+                        SlashMenuOption {
+                          "Icon": [Function],
+                          "displayName": "Horizontal Rule",
+                          "key": "horizontalrule",
+                          "keyboardShortcut": undefined,
+                          "keywords": [
+                            "hr",
+                            "horizontal rule",
+                            "line",
+                            "separator",
                           ],
                           "onSelect": [Function],
                           "ref": {
@@ -1817,6 +1865,13 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                             "type": "text",
                           },
                           {
+                            "editor": {
+                              "CellComponent": [Function],
+                              "FieldComponent": [Function],
+                              "outputSchema": [Function],
+                              "populationPromise": [Function],
+                              "validate": [Function],
+                            },
                             "name": "content",
                             "type": "richText",
                           },
@@ -3184,6 +3239,60 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                     ],
                   },
                 },
+                "horizontalrule" => {
+                  "dependencies": undefined,
+                  "dependenciesPriority": undefined,
+                  "dependenciesSoft": undefined,
+                  "key": "horizontalrule",
+                  "nodes": [
+                    {
+                      "converters": {
+                        "html": {
+                          "converter": [Function],
+                          "nodeTypes": [
+                            "horizontalrule",
+                          ],
+                        },
+                      },
+                      "node": [Function],
+                      "type": "horizontalrule",
+                    },
+                  ],
+                  "plugins": [
+                    {
+                      "Component": [Function],
+                      "position": "normal",
+                    },
+                  ],
+                  "props": null,
+                  "slashMenu": {
+                    "options": [
+                      {
+                        "displayName": "Basic",
+                        "key": "basic",
+                        "options": [
+                          SlashMenuOption {
+                            "Icon": [Function],
+                            "displayName": "Horizontal Rule",
+                            "key": "horizontalrule",
+                            "keyboardShortcut": undefined,
+                            "keywords": [
+                              "hr",
+                              "horizontal rule",
+                              "line",
+                              "separator",
+                            ],
+                            "onSelect": [Function],
+                            "ref": {
+                              "current": null,
+                            },
+                            "setRefElement": [Function],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                },
               },
             },
             "outputSchema": [Function],
@@ -3254,6 +3363,12 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                 "upload",
                               ],
                             },
+                            {
+                              "converter": [Function],
+                              "nodeTypes": [
+                                "horizontalrule",
+                              ],
+                            },
                           ],
                         },
                         "enabledFeatures": [
@@ -3277,6 +3392,7 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                           "relationship",
                           "blockquote",
                           "upload",
+                          "horizontalrule",
                         ],
                         "floatingSelectToolbar": {
                           "sections": [
@@ -3754,6 +3870,18 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                               [Function],
                             ],
                           },
+                          {
+                            "converters": {
+                              "html": {
+                                "converter": [Function],
+                                "nodeTypes": [
+                                  "horizontalrule",
+                                ],
+                              },
+                            },
+                            "node": [Function],
+                            "type": "horizontalrule",
+                          },
                         ],
                         "plugins": [
                           {
@@ -3804,6 +3932,11 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                           {
                             "Component": [Function],
                             "key": "upload0",
+                            "position": "normal",
+                          },
+                          {
+                            "Component": [Function],
+                            "key": "horizontalrule0",
                             "position": "normal",
                           },
                         ],
@@ -4089,6 +4222,23 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                     "picture",
                                     "photo",
                                     "media",
+                                  ],
+                                  "onSelect": [Function],
+                                  "ref": {
+                                    "current": null,
+                                  },
+                                  "setRefElement": [Function],
+                                },
+                                SlashMenuOption {
+                                  "Icon": [Function],
+                                  "displayName": "Horizontal Rule",
+                                  "key": "horizontalrule",
+                                  "keyboardShortcut": undefined,
+                                  "keywords": [
+                                    "hr",
+                                    "horizontal rule",
+                                    "line",
+                                    "separator",
                                   ],
                                   "onSelect": [Function],
                                   "ref": {
@@ -4537,6 +4687,13 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                     "type": "text",
                                   },
                                   {
+                                    "editor": {
+                                      "CellComponent": [Function],
+                                      "FieldComponent": [Function],
+                                      "outputSchema": [Function],
+                                      "populationPromise": [Function],
+                                      "validate": [Function],
+                                    },
                                     "name": "content",
                                     "type": "richText",
                                   },
@@ -5892,6 +6049,60 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                       "picture",
                                       "photo",
                                       "media",
+                                    ],
+                                    "onSelect": [Function],
+                                    "ref": {
+                                      "current": null,
+                                    },
+                                    "setRefElement": [Function],
+                                  },
+                                ],
+                              },
+                            ],
+                          },
+                        },
+                        "horizontalrule" => {
+                          "dependencies": undefined,
+                          "dependenciesPriority": undefined,
+                          "dependenciesSoft": undefined,
+                          "key": "horizontalrule",
+                          "nodes": [
+                            {
+                              "converters": {
+                                "html": {
+                                  "converter": [Function],
+                                  "nodeTypes": [
+                                    "horizontalrule",
+                                  ],
+                                },
+                              },
+                              "node": [Function],
+                              "type": "horizontalrule",
+                            },
+                          ],
+                          "plugins": [
+                            {
+                              "Component": [Function],
+                              "position": "normal",
+                            },
+                          ],
+                          "props": null,
+                          "slashMenu": {
+                            "options": [
+                              {
+                                "displayName": "Basic",
+                                "key": "basic",
+                                "options": [
+                                  SlashMenuOption {
+                                    "Icon": [Function],
+                                    "displayName": "Horizontal Rule",
+                                    "key": "horizontalrule",
+                                    "keyboardShortcut": undefined,
+                                    "keywords": [
+                                      "hr",
+                                      "horizontal rule",
+                                      "line",
+                                      "separator",
                                     ],
                                     "onSelect": [Function],
                                     "ref": {
