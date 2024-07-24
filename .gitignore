@@ -39,7 +39,9 @@ testem.log
 Thumbs.db
 
 .nx/cache
+.nx/workspace-data
 
 # Added
 
 .env
+nx-cloud.env

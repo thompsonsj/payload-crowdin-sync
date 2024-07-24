@@ -117,7 +117,7 @@ describe("Collections - collections option", () => {
         collection: "multi-rich-text",
         id: post.id,
       });
-      const crowdinArticleDirectoryId = (result.crowdinArticleDirectory as CrowdinArticleDirectory)?.id;
+      const crowdinArticleDirectoryId = (result['crowdinArticleDirectory'] as CrowdinArticleDirectory)?.id;
       expect(crowdinArticleDirectoryId).toBeDefined();
     });
     

@@ -6,6 +6,7 @@ import { fixture } from './lexical-editor-with-blocks.fixture';
 import nock from 'nock';
 import { mockCrowdinClient } from 'plugin/src/lib/api/mock/crowdin-api-responses';
 import { pluginConfig } from '../helpers/plugin-config';
+import { Policy } from '../../payload-types';
 
 const pluginOptions = pluginConfig();
 const mockClient = mockCrowdinClient(pluginOptions);
@@ -627,7 +628,7 @@ describe('Lexical editor with blocks', () => {
         title: 'Test policy',
       },
     });
-    const crowdinFiles = await getFilesByDocumentID(policy.id, payload);
+    const crowdinFiles = await getFilesByDocumentID(`${policy.id}`, payload);
     const contentHtmlFile = crowdinFiles.find(
       (file) => file.field === 'content'
     );
@@ -647,7 +648,7 @@ describe('Lexical editor with blocks', () => {
       .times(7)
       .reply(200, mockClient.createFile({}));
 
-    const policy = await payload.create({
+    const policy: Policy = await payload.create({
       collection: 'policies',
       data: {
         group: {
@@ -663,7 +664,7 @@ describe('Lexical editor with blocks', () => {
           ],
         },
       },
-    });
+    }) as any;
 
     const arrayField = isDefined(policy['group']?.['array'])
       ? policy['group']?.['array']

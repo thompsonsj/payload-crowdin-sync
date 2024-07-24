@@ -107,7 +107,7 @@ describe("Globals", () => {
       const result = await payload.findGlobal({
         slug: "statistics",
       });
-      const crowdinArticleDirectoryId = (result.crowdinArticleDirectory as CrowdinArticleDirectory)?.id;
+      const crowdinArticleDirectoryId = (result['crowdinArticleDirectory'] as CrowdinArticleDirectory)?.id;
       expect(crowdinArticleDirectoryId).toBeDefined();
     });
   });

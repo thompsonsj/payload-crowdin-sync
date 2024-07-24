@@ -111,7 +111,7 @@ export class filesApiByDocument {
       const result = await this.payload.create({
         collection: "crowdin-article-directories",
         data: {
-          crowdinCollectionDirectory: crowdinPayloadCollectionDirectory.id,
+          crowdinCollectionDirectory: `${crowdinPayloadCollectionDirectory['id']}`,
           originalId: crowdinDirectory.data.id,
           directoryId: crowdinDirectory.data.directoryId,
           name,

@@ -94,7 +94,7 @@ describe("Collections", () => {
         collection: "localized-posts",
         id: post.id,
       });
-      const crowdinArticleDirectoryId = (result.crowdinArticleDirectory as CrowdinArticleDirectory)?.id;
+      const crowdinArticleDirectoryId = (result['crowdinArticleDirectory'] as CrowdinArticleDirectory)?.id;
       expect(crowdinArticleDirectoryId).toBeDefined();
     });
 
@@ -134,7 +134,7 @@ describe("Collections", () => {
         id: post.id,
       });
       const crowdinArticleDirectoryId =
-        (postRefreshed.crowdinArticleDirectory as CrowdinArticleDirectory)?.id;
+        (postRefreshed['crowdinArticleDirectory'] as CrowdinArticleDirectory)?.id;
       const updatedPost = await payload.update({
         id: post.id,
         collection: "localized-posts",
@@ -145,7 +145,7 @@ describe("Collections", () => {
         collection: "localized-posts",
         id: updatedPost.id,
       });
-      expect((updatedPostRefreshed.crowdinArticleDirectory as CrowdinArticleDirectory)?.id).toEqual(
+      expect((updatedPostRefreshed['crowdinArticleDirectory'] as CrowdinArticleDirectory)?.id).toEqual(
         crowdinArticleDirectoryId
       );
     });
@@ -186,8 +186,8 @@ describe("Collections", () => {
         collection: "localized-posts",
         id: postTwo.id,
       });
-      expect((postOneRefreshed.crowdinArticleDirectory as CrowdinArticleDirectory).id).not.toEqual(
-        (postTwoRefreshed.crowdinArticleDirectory as CrowdinArticleDirectory).id
+      expect((postOneRefreshed['crowdinArticleDirectory'] as CrowdinArticleDirectory).id).not.toEqual(
+        (postTwoRefreshed['crowdinArticleDirectory'] as CrowdinArticleDirectory).id
       );
     });
   });
@@ -212,7 +212,7 @@ describe("Collections", () => {
         collection: "localized-posts",
         data: { title: "Test post" },
       });
-      const crowdinFiles = await getFilesByDocumentID(post.id, payload as any);
+      const crowdinFiles = await getFilesByDocumentID(`${post.id}`, payload as any);
       expect(crowdinFiles.length).toEqual(1);
       const file = crowdinFiles.find((doc: CrowdinFile) => doc.field === "fields");
       expect(file).not.toEqual(undefined);
@@ -229,7 +229,7 @@ describe("Collections", () => {
         collection: "localized-posts",
         data: { title: "" },
       });
-      const crowdinFiles = await getFilesByDocumentID(post.id, payload as any);
+      const crowdinFiles = await getFilesByDocumentID(`${post.id}`, payload as any);
       expect(crowdinFiles.length).toEqual(0);
     });
 
@@ -267,7 +267,7 @@ describe("Collections", () => {
           ],
         },
       });
-      const crowdinFiles = await getFilesByDocumentID(post.id, payload);
+      const crowdinFiles = await getFilesByDocumentID(`${post.id}`, payload);
       expect(crowdinFiles.length).toEqual(2);
       const fields = crowdinFiles.find((doc: CrowdinFile) => doc.field === "fields");
       const content = crowdinFiles.find((doc: CrowdinFile) => doc.field === "content");
@@ -303,7 +303,7 @@ describe("Collections", () => {
         collection: "localized-posts",
         id: post.id,
       });
-      const crowdinArticleDirectory = result.crowdinArticleDirectory as CrowdinArticleDirectory
+      const crowdinArticleDirectory = result['crowdinArticleDirectory'] as CrowdinArticleDirectory
       expect(crowdinArticleDirectory.id).toBeDefined();
       expect(
         (crowdinArticleDirectory.crowdinCollectionDirectory as CrowdinCollectionDirectory)?.name
@@ -346,8 +346,8 @@ describe("Collections", () => {
         collection: "localized-posts",
         id: postTwo.id,
       });
-      const crowdinArticleDirectoryOne = postOneRefreshed.crowdinArticleDirectory as CrowdinArticleDirectory
-      const crowdinArticleDirectoryTwo = postTwoRefreshed.crowdinArticleDirectory as CrowdinArticleDirectory
+      const crowdinArticleDirectoryOne = postOneRefreshed['crowdinArticleDirectory'] as CrowdinArticleDirectory
+      const crowdinArticleDirectoryTwo = postTwoRefreshed['crowdinArticleDirectory'] as CrowdinArticleDirectory
       expect(
         crowdinArticleDirectoryOne.crowdinCollectionDirectory
       ).toEqual(
