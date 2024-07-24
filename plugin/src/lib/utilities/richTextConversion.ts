@@ -20,8 +20,7 @@ import {
 import { createHeadlessEditor } from '@lexical/headless';
 import {$generateNodesFromDOM} from '@lexical/html';
 import { $getRoot, $getSelection } from 'lexical'
-import jsdom from "jsdom";
-const { JSDOM } = jsdom;
+import { Window } from 'happy-dom'
 
 const BlockHTMLConverter: HTMLConverter<any> = {
   converter: async ({ node }) => {
@@ -43,11 +42,24 @@ export const convertLexicalToHtml = async (editorData: SerializedEditorState, ed
 export const convertHtmlToLexical = async (htmlString: string, editorConfig: SanitizedEditorConfig) => {
   const headlessEditor = createHeadlessEditor({ ...editorConfig, nodes: [] });
   headlessEditor.update(() => {
-    // In a headless environment you can use a package such as JSDom to parse the HTML string.
-    const dom = new JSDOM(htmlString)
-  
+    
+    const contextWindow = ((): Window => {
+      if (process.env['NODE_ENV'] === "test") {
+        
+        return new Window();
+      }
+      /* eslint-disable  @typescript-eslint/no-explicit-any */
+      return (window as any) as Window
+    })()
+
+    const document = contextWindow.document;
+    document.body.innerHTML = htmlString;
+
     // Once you have the DOM instance it's easy to generate LexicalNodes.
-    const nodes = $generateNodesFromDOM(headlessEditor, dom.window.document)
+    // type any required to pass Document type
+    // @see https://github.com/capricorn86/happy-dom/issues/1227
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    const nodes = $generateNodesFromDOM(headlessEditor, document as any)
   
     // Select the root
     $getRoot().select()
