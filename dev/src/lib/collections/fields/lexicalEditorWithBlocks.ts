@@ -1,5 +1,6 @@
 import { RichTextField } from 'payload/types';
 import { BlocksFeature, BoldTextFeature, lexicalEditor, LinkFeature, SlateToLexicalFeature } from '@payloadcms/richtext-lexical'
+import { slateEditor } from '@payloadcms/richtext-slate';
 
 export const lexicalEditorWithBlocks: RichTextField = {
   name: 'content',
@@ -87,6 +88,7 @@ export const lexicalEditorWithBlocks: RichTextField = {
               {
                 name: "content",
                 type: "richText",
+                editor: slateEditor({}),
               },
               {
                 name: "image",
