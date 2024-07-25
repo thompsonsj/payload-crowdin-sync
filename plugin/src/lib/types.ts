@@ -1,6 +1,6 @@
 import { CollectionConfig, Field, RichTextField } from "payload/types";
 import { type SlateToHtmlConfig, type HtmlToSlateConfig } from '@slate-serializers/html'
-import { CrowdinCollectionDirectory } from "./payload-types";
+import { CrowdinArticleDirectory, CrowdinCollectionDirectory } from "./payload-types";
 
 type CollectionOrGlobalConfigSlug = string
 type CollectionOrGlobalConfigObject = {
@@ -49,6 +49,10 @@ export interface PluginOptions {
 export type FieldWithName = Field & { name: string };
 
 // Type checkers
+export const isCrowdinArticleDirectory = (val: CrowdinArticleDirectory | string | undefined | null): val is CrowdinArticleDirectory => {
+  return val !== undefined && val !== null && typeof val !== 'string';
+}
+
 export const isCrowdinCollectionDirectory = (val: CrowdinCollectionDirectory | string | undefined | null): val is CrowdinCollectionDirectory => {
   return val !== undefined && val !== null && typeof val !== 'string';
 }

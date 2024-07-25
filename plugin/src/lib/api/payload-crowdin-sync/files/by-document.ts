@@ -1,7 +1,7 @@
 import { Payload } from "payload";
 import { CrowdinArticleDirectory } from "../../../payload-types";
 import { Config } from "payload/config";
-import { PluginOptions } from "../../../types";
+import { isCrowdinArticleDirectory, PluginOptions } from "../../../types";
 import { Document } from 'payload/types';
 import { toWords } from 'payload/dist/utilities/formatLabels';
 import crowdin, { Credentials, SourceFiles } from "@crowdin/crowdin-api-client";
@@ -11,6 +11,17 @@ interface IfindOrCreateCollectionDirectory {
   collectionSlug: keyof Config['collections'] | "globals";
 }
 
+/**
+ * Get Files API by document
+ * 
+ * Initialize filesApiByDocument and use the getter to retrive
+ * an instance of the files API.
+ * 
+ * The files API does not need to know specifics about setting
+ * up Crowdin Article Directories...etc. All that logic is
+ * handled here and a getter is used in order to be able to
+ * pass properties dynamically.
+ */
 export class filesApiByDocument {
   sourceFilesApi: SourceFiles;
   projectId: number;
@@ -21,6 +32,7 @@ export class filesApiByDocument {
   global: boolean;
   pluginOptions: PluginOptions;
   payload: Payload;
+  parent?: CrowdinArticleDirectory['parent'];
 
   constructor({
     document,
@@ -28,12 +40,15 @@ export class filesApiByDocument {
     global,
     pluginOptions,
     payload,
+    parent,
   }: {
     document: Document,
     collectionSlug:  keyof Config['collections'] | "globals",
     global: boolean,
     pluginOptions: PluginOptions,
-    payload: Payload
+    payload: Payload,
+    /** Lexical field blocks use their own CrowdinArticleDirectory. */
+    parent?: CrowdinArticleDirectory['parent'],
   }) {
     // credentials
     const credentials: Credentials = {
@@ -48,6 +63,7 @@ export class filesApiByDocument {
     this.global = global
     this.pluginOptions = pluginOptions
     this.payload = payload
+    this.parent = parent
     /**
      * Create a undefined Crowdin Article Directory
      * 
@@ -94,12 +110,17 @@ export class filesApiByDocument {
           collectionSlug: this.global ? "globals" : this.collectionSlug,
         });
 
+      const parent: CrowdinArticleDirectory = isCrowdinArticleDirectory(this.parent) ? this.parent : this.parent && await this.payload.findByID({
+          collection: "crowdin-article-directories",
+          id: this.parent,
+        }) as any;
+
       // Create article directory on Crowdin
       const name = this.global ? this.collectionSlug : this.document.id
       const crowdinDirectory = await this.sourceFilesApi.createDirectory(
         this.projectId,
         {
-          directoryId: crowdinPayloadCollectionDirectory['originalId'] as number,
+          directoryId: (parent ? parent.originalId : crowdinPayloadCollectionDirectory['originalId']) as number,
           name,
           title: this.global
             ? toWords(this.collectionSlug)
@@ -126,21 +147,23 @@ export class filesApiByDocument {
       const crowdinArticleDirectory = crowdinPayloadArticleDirectory.id
 
       // Associate result with document
-      if (this.global) {
-        await this.payload.updateGlobal({
-          slug: this.collectionSlug as keyof Config["globals"],
-          data: {
-            crowdinArticleDirectory,
-          } as never,
-        });
-      } else {
-        await this.payload.update({
-          collection: this.collectionSlug as keyof Config["collections"],
-          id: this.document.id,
-          data: {
-            crowdinArticleDirectory,
-          } as never,
-        });
+      if (!this.parent) {
+        if (this.global) {
+          await this.payload.updateGlobal({
+            slug: this.collectionSlug as keyof Config["globals"],
+            data: {
+              crowdinArticleDirectory,
+            } as never,
+          });
+        } else {
+          await this.payload.update({
+            collection: this.collectionSlug as keyof Config["collections"],
+            id: this.document.id,
+            data: {
+              crowdinArticleDirectory,
+            } as never,
+          });
+        }
       }
     }
 
