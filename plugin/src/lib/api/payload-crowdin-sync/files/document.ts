@@ -231,17 +231,6 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
         // no need to detect change - this has already been done on the field's JSON object
         const blockContent = value && extractLexicalBlockContent(value.root)
         const blockConfig = getLexicalBlockFields(editorConfig)
-
-        /**
-         * Manage block fields
-         * Use another instance of this class that sets name as the lexical field name. Compare this to a document that uses it's id.
-         * 
-         * Advantages:
-         * * Reuse logic (e.g. preparing JSON/HTML for Crowdin)
-         * * Organise Lexical block fields into a folder (easier to review)
-         * * Remove the need for richTextBlockFieldNameSeparator. the use of this led to field names that don't exist.
-         * * Logical - fields in blocks are easier to treat as a new 'document' rather than continuing to name them with increasing long field names to describe where they are nested.
-         */
         
         /**
          * Initialize Crowdin client sourceFilesApi
