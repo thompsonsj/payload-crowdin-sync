@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.26.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.25.0...dev-v0.26.0) (2024-07-26)
+
+
+### Features
+
+* **crowdinarticledirectories:** add parent field ([#171](https://github.com/thompsonsj/payload-crowdin-sync/issues/171)) ([9f330f2](https://github.com/thompsonsj/payload-crowdin-sync/commit/9f330f2f1785d04cf6b771db42307fcf8eb595f9))
+* **document:** send Lexical blocks for translation ([#161](https://github.com/thompsonsj/payload-crowdin-sync/issues/161)) ([2cb4f1c](https://github.com/thompsonsj/payload-crowdin-sync/commit/2cb4f1c1d6df555d353c5aca691f06974bca71c8))
+* **translations:** load lexical translations from Crowdin ([#164](https://github.com/thompsonsj/payload-crowdin-sync/issues/164)) ([71d2665](https://github.com/thompsonsj/payload-crowdin-sync/commit/71d266525c34b269a351a3d6e8766376798b95e3))
+* **utilities:** reference blocks in Crowdin HTML ([#163](https://github.com/thompsonsj/payload-crowdin-sync/issues/163)) ([8f01501](https://github.com/thompsonsj/payload-crowdin-sync/commit/8f01501b85e364e82d02574c93601c07753c5944))
+
+
+### Bug Fixes
+
+* **payloadconfig:** replace happy-dom with existing global ([#170](https://github.com/thompsonsj/payload-crowdin-sync/issues/170)) ([3fc7bc6](https://github.com/thompsonsj/payload-crowdin-sync/commit/3fc7bc63643dc6e2a390b467833ebdce16d88714))
+* **richtextconversion:** remove accidental right curly brace ([#166](https://github.com/thompsonsj/payload-crowdin-sync/issues/166)) ([05e7a54](https://github.com/thompsonsj/payload-crowdin-sync/commit/05e7a548bca66d997bda765248d7ec3249ebd075))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.25.0 to 0.26.0
+
 ## [0.25.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.24.3...dev-v0.25.0) (2024-02-22)
 
 
