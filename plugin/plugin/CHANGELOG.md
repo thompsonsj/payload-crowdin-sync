@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.26.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.26.3...payload-crowdin-sync-v0.26.4) (2024-07-26)
+
+
+### Bug Fixes
+
+* **document:** do not update lexical blocks if empty ([#178](https://github.com/thompsonsj/payload-crowdin-sync/issues/178)) ([4e4f8bf](https://github.com/thompsonsj/payload-crowdin-sync/commit/4e4f8bf9919a15d3dce42dcb654219642b03419f))
+
 ## [0.26.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.26.2...payload-crowdin-sync-v0.26.3) (2024-07-26)
 
 
