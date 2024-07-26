@@ -120,7 +120,7 @@ export class filesApiByDocument {
       const crowdinDirectory = await this.sourceFilesApi.createDirectory(
         this.projectId,
         {
-          directoryId: (parent ? parent.originalId : crowdinPayloadCollectionDirectory['originalId']) as number,
+          directoryId: (parent ? parent.originalId : crowdinPayloadCollectionDirectory?.['originalId']) as number,
           name,
           title: this.global
             ? toWords(this.collectionSlug)
@@ -132,7 +132,9 @@ export class filesApiByDocument {
       const result = await this.payload.create({
         collection: "crowdin-article-directories",
         data: {
-          crowdinCollectionDirectory: `${crowdinPayloadCollectionDirectory['id']}`,
+          ...(crowdinPayloadCollectionDirectory?.['id'] && {
+            crowdinCollectionDirectory: `${crowdinPayloadCollectionDirectory?.['id']}`,
+          }),
           originalId: crowdinDirectory.data.id,
           directoryId: crowdinDirectory.data.directoryId,
           name,
@@ -174,6 +176,10 @@ export class filesApiByDocument {
   private async findOrCreateCollectionDirectory({
     collectionSlug,
   }: IfindOrCreateCollectionDirectory) {
+    if (this.parent) {
+      return undefined
+    }
+
     let crowdinPayloadCollectionDirectory;
     // Check whether collection directory exists on Crowdin
     const query = await this.payload.find({
