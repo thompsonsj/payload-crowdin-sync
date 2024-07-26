@@ -9,93 +9,162 @@
 export interface Config {
   collections: {
     categories: Category;
-    "localized-posts": LocalizedPost;
-    "nested-field-collection": NestedFieldCollection;
+    'multi-rich-text': MultiRichText;
+    'localized-posts': LocalizedPost;
+    media: Media;
+    'nested-field-collection': NestedFieldCollection;
+    policies: Policy;
     posts: Post;
+    'localized-posts-with-condition': LocalizedPostsWithCondition;
     tags: Tag;
     users: User;
-    "crowdin-files": CrowdinFile;
-    "crowdin-collection-directories": CrowdinCollectionDirectory;
-    "crowdin-article-directories": CrowdinArticleDirectory;
+    'crowdin-files': CrowdinFile;
+    'crowdin-collection-directories': CrowdinCollectionDirectory;
+    'crowdin-article-directories': CrowdinArticleDirectory;
+    'payload-preferences': PayloadPreference;
+    'payload-migrations': PayloadMigration;
   };
   globals: {
+    'localized-nav': LocalizedNav;
     nav: Nav;
+    statistics: Statistic;
   };
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
 export interface Category {
   id: string;
-  name?: string;
+  name?: string | null;
 }
-export interface LocalizedPost {
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "multi-rich-text".
+ */
+export interface MultiRichText {
   id: string;
-  title?: string;
-  author?: string | User;
-  publishedDate?: string;
-  category?: string | Category;
-  tags?: string[] | Tag[];
-  content?: {
-    [k: string]: unknown;
-  }[];
-  status?: "draft" | "published";
-  crowdinArticleDirectory?: string | CrowdinArticleDirectory;
+  field_0?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_1?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_2?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_3?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_4?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_5?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_6?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_7?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_8?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_9?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  field_10?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   updatedAt: string;
   createdAt: string;
 }
-export interface User {
-  id: string;
-  name?: string;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string;
-  resetPasswordExpiration?: string;
-  salt?: string;
-  hash?: string;
-  loginAttempts?: number;
-  lockUntil?: string;
-  password?: string;
-}
-export interface Tag {
-  id: string;
-  name?: string;
-}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "crowdin-article-directories".
+ */
 export interface CrowdinArticleDirectory {
   id: string;
-  name?: string;
-  crowdinCollectionDirectory?: string | CrowdinCollectionDirectory;
-  crowdinFiles?: string[] | CrowdinFile[];
-  createdAt: string;
+  excludeLocales?: ('de_DE' | 'fr_FR')[] | null;
+  name?: string | null;
+  crowdinCollectionDirectory?: (string | null) | CrowdinCollectionDirectory;
+  crowdinFiles?: (string | CrowdinFile)[] | null;
+  parent?: (string | null) | CrowdinArticleDirectory;
+  reference?: {
+    createdAt?: string | null;
+    updatedAt?: string | null;
+    projectId?: number | null;
+  };
+  originalId?: number | null;
+  directoryId?: number | null;
   updatedAt: string;
-  originalId?: number;
-  projectId?: number;
-  directoryId?: number;
-  excludeLocales?: ("de_DE" | "fr_FR")[];
+  createdAt: string;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "crowdin-collection-directories".
+ */
 export interface CrowdinCollectionDirectory {
   id: string;
-  name?: string;
-  title?: string;
-  collectionSlug?: string;
-  createdAt: string;
+  name?: string | null;
+  title?: string | null;
+  collectionSlug?: string | null;
+  reference?: {
+    createdAt?: string | null;
+    updatedAt?: string | null;
+    projectId?: number | null;
+  };
+  originalId?: number | null;
+  directoryId?: number | null;
   updatedAt: string;
-  originalId?: number;
-  projectId?: number;
-  directoryId?: number;
+  createdAt: string;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "crowdin-files".
+ */
 export interface CrowdinFile {
   id: string;
-  title?: string;
-  field?: string;
-  crowdinArticleDirectory?: string | CrowdinArticleDirectory;
-  createdAt: string;
-  updatedAt: string;
-  originalId?: number;
-  projectId?: number;
-  directoryId?: number;
-  revisionId?: number;
-  name?: string;
-  type?: string;
-  path?: string;
+  title?: string | null;
+  field?: string | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  reference?: {
+    createdAt?: string | null;
+    updatedAt?: string | null;
+    projectId?: number | null;
+  };
+  originalId?: number | null;
+  directoryId?: number | null;
+  revisionId?: number | null;
+  name?: string | null;
+  type?: ('json' | 'html') | null;
+  path?: string | null;
   fileData?: {
     json?:
       | {
@@ -106,109 +175,404 @@ export interface CrowdinFile {
       | number
       | boolean
       | null;
-    html?: string;
+    html?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "localized-posts".
+ */
+export interface LocalizedPost {
+  id: string;
+  title?: string | null;
+  author?: (string | null) | User;
+  publishedDate?: string | null;
+  category?: (string | null) | Category;
+  tags?: (string | Tag)[] | null;
+  content?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  status?: ('draft' | 'published') | null;
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: string;
+  name?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  password: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: string;
+  name?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: string;
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    tablet?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
   };
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "nested-field-collection".
+ */
 export interface NestedFieldCollection {
   id: string;
-  textField?: string;
-  richTextField?: {
-    [k: string]: unknown;
-  }[];
-  textareaField?: string;
-  arrayField?: {
-    textField?: string;
-    richTextField?: {
-      [k: string]: unknown;
-    }[];
-    textareaField?: string;
-    id?: string;
-  }[];
-  layout?: (
+  title?: string | null;
+  textField?: string | null;
+  richTextField?:
     | {
-        textField?: string;
-        richTextField?: {
-          [k: string]: unknown;
-        }[];
-        textareaField?: string;
-        id?: string;
-        blockName?: string;
-        blockType: "basicBlock";
-      }
+        [k: string]: unknown;
+      }[]
+    | null;
+  textareaField?: string | null;
+  arrayField?:
     | {
-        richTextField?: {
-          [k: string]: unknown;
-        }[];
-        id?: string;
-        blockName?: string;
-        blockType: "basicBlockRichText";
-      }
-    | {
-        textField?: string;
-        richTextField?: {
-          [k: string]: unknown;
-        }[];
-        textareaField?: string;
-        id?: string;
-        blockName?: string;
-        blockType: "basicBlockMixed";
-      }
-    | {
-        title?: string;
-        messages?: {
-          title?: string;
-          message?: {
-            [k: string]: unknown;
-          }[];
-          id?: string;
-        }[];
-        id?: string;
-        blockName?: string;
-        blockType: "testBlockArrayOfRichText";
-      }
-  )[];
+        textField?: string | null;
+        richTextField?:
+          | {
+              [k: string]: unknown;
+            }[]
+          | null;
+        textareaField?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  layout?:
+    | (
+        | {
+            textField?: string | null;
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            textareaField?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlock';
+          }
+        | {
+            textField?: string | null;
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            textareaField?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlockNonLocalized';
+          }
+        | {
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlockRichText';
+          }
+        | {
+            textField?: string | null;
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            textareaField?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlockMixed';
+          }
+        | {
+            title?: string | null;
+            messages?:
+              | {
+                  title?: string | null;
+                  message?:
+                    | {
+                        [k: string]: unknown;
+                      }[]
+                    | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'testBlockArrayOfRichText';
+          }
+      )[]
+    | null;
   group?: {
-    textField?: string;
-    richTextField?: {
-      [k: string]: unknown;
-    }[];
-    textareaField?: string;
+    textField?: string | null;
+    richTextField?:
+      | {
+          [k: string]: unknown;
+        }[]
+      | null;
+    textareaField?: string | null;
   };
-  tabOneTitle?: string;
-  tabOneContent?: {
-    [k: string]: unknown;
-  }[];
+  tabOneTitle?: string | null;
+  tabOneContent?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
   tabTwo: {
-    tabTwoTitle?: string;
-    tabTwoContent?: {
-      [k: string]: unknown;
-    }[];
+    tabTwoTitle?: string | null;
+    tabTwoContent?:
+      | {
+          [k: string]: unknown;
+        }[]
+      | null;
   };
-  crowdinArticleDirectory?: string | CrowdinArticleDirectory;
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   updatedAt: string;
   createdAt: string;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "policies".
+ */
+export interface Policy {
+  id: string;
+  title?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  group?: {
+    array?:
+      | {
+          title?: string | null;
+          content?: {
+            root: {
+              type: string;
+              children: {
+                type: string;
+                version: number;
+                [k: string]: unknown;
+              }[];
+              direction: ('ltr' | 'rtl') | null;
+              format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+              indent: number;
+              version: number;
+            };
+            [k: string]: unknown;
+          } | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
 export interface Post {
   id: string;
-  title?: string;
-  author?: string | User;
-  publishedDate?: string;
-  category?: string | Category;
-  tags?: string[] | Tag[];
-  content?: {
-    [k: string]: unknown;
-  }[];
-  status?: "draft" | "published";
+  title?: string | null;
+  author?: (string | null) | User;
+  publishedDate?: string | null;
+  category?: (string | null) | Category;
+  tags?: (string | Tag)[] | null;
+  content?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  status?: ('draft' | 'published') | null;
   updatedAt: string;
   createdAt: string;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "localized-posts-with-condition".
+ */
+export interface LocalizedPostsWithCondition {
+  id: string;
+  title?: string | null;
+  translateWithCrowdin?: boolean | null;
+  author?: (string | null) | User;
+  publishedDate?: string | null;
+  category?: (string | null) | Category;
+  tags?: (string | Tag)[] | null;
+  content?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  status?: ('draft' | 'published') | null;
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-preferences".
+ */
+export interface PayloadPreference {
+  id: string;
+  user: {
+    relationTo: 'users';
+    value: string | User;
+  };
+  key?: string | null;
+  value?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-migrations".
+ */
+export interface PayloadMigration {
+  id: string;
+  name?: string | null;
+  batch?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "localized-nav".
+ */
+export interface LocalizedNav {
+  id: string;
+  items: {
+    label?: string | null;
+    id?: string | null;
+  }[];
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "nav".
+ */
 export interface Nav {
   id: string;
   items: {
-    label?: string;
-    id?: string;
+    label?: string | null;
+    id?: string | null;
   }[];
-  crowdinArticleDirectory?: string | CrowdinArticleDirectory;
-  updatedAt?: string;
-  createdAt?: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "statistics".
+ */
+export interface Statistic {
+  id: string;
+  users?: {
+    text?: string | null;
+    number?: number | null;
+  };
+  countries?: {
+    text?: string | null;
+    number?: number | null;
+  };
+  syncTranslations?: boolean | null;
+  syncAllTranslations?: boolean | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
 }

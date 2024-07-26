@@ -43,6 +43,14 @@ const CrowdinArticleDirectories: CollectionConfig = {
         readOnly: true,
       }
     },
+    {
+      name: "parent",
+      type: "relationship",
+      relationTo: "crowdin-article-directories",
+      admin: {
+        readOnly: true,
+      }
+    },
     /* Crowdin fields */
     {
       type: "group",

@@ -1,9 +1,7 @@
-import payload, { Payload } from "payload";
+import { Payload } from "payload";
 import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from "../payload-types";
 import { payloadCrowdinSyncTranslationsApi } from "./payload-crowdin-sync/translations";
 import { PluginOptions, isCollectionOrGlobalConfigObject, isCollectionOrGlobalConfigSlug } from "../types";
-import { ReadableStreamDefaultController } from "stream/web";
-import { Plugin } from "payload/config";
 
 /**
  * get Crowdin Article Directory for a given documentId
@@ -15,7 +13,8 @@ import { Plugin } from "payload/config";
 export async function getArticleDirectory(
   documentId: string,
   payload: Payload,
-  allowEmpty?: boolean
+  allowEmpty?: boolean,
+  parent?: CrowdinArticleDirectory,
 ) {
   // Get directory
   const crowdinPayloadArticleDirectory = await payload.find({
@@ -24,6 +23,11 @@ export async function getArticleDirectory(
       name: {
         equals: documentId,
       },
+      ...(parent && {
+        parent: {
+          equals: parent?.id,
+        }
+      })
     },
   });
   if (crowdinPayloadArticleDirectory.totalDocs === 0 && allowEmpty) {
@@ -82,9 +86,10 @@ export async function getFileByDocumentID(
 
 export async function getFilesByDocumentID(
   documentId: string,
-  payload: Payload
+  payload: Payload,
+  parent?: CrowdinArticleDirectory,
 ): Promise<CrowdinFile[]> {
-  const articleDirectory = await getArticleDirectory(documentId, payload);
+  const articleDirectory = await getArticleDirectory(documentId, payload, false, parent);
   if (!articleDirectory) {
     // tests call this function to make sure files are deleted
     return [];

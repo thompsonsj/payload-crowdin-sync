@@ -14,6 +14,7 @@ import { Descendant } from "slate";
 import { buildCrowdinHtmlObject, buildCrowdinJsonObject, findField, reLocalizeField } from '../../../utilities';
 import { convertLexicalToHtml, convertSlateToHtml } from '../../../utilities/richTextConversion'
 import { extractLexicalBlockContent, getLexicalBlockFields, getLexicalEditorConfig } from '../../../utilities/lexical';
+import { filesApiByDocument } from './by-document';
 
 type FileData = string | object;
 
@@ -33,7 +34,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     document,
     articleDirectory,
     collectionSlug,
-    global
+    global,
   }: {
     document: Document,
     articleDirectory: CrowdinArticleDirectory,
@@ -230,7 +231,29 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
         // no need to detect change - this has already been done on the field's JSON object
         const blockContent = value && extractLexicalBlockContent(value.root)
         const blockConfig = getLexicalBlockFields(editorConfig)
-        const fieldName = `${name}${this.pluginOptions.richTextBlockFieldNameSeparator}blocks`
+        
+        /**
+         * Initialize Crowdin client sourceFilesApi
+         */
+        const apiByDocument = new filesApiByDocument(
+          {
+            document: {
+              /** Lexical field name used for documentId */
+              id: name,
+              /** Friendly name for directory */
+              title: name,
+            },
+            collectionSlug: collection.slug as keyof Config['collections'] | keyof Config['globals'],
+            global: false,
+            pluginOptions: this.pluginOptions,
+            payload: this.payload,
+            /** Important: Identify that this article directory has a parent - logic changes for non-top-level directories. */
+            parent: this.articleDirectory,
+          },
+        );
+        const filesApi = await apiByDocument.get()
+
+        const fieldName = `blocks`
         const currentCrowdinJsonData = buildCrowdinJsonObject({
           doc: {
             [fieldName]: blockContent,
@@ -257,9 +280,9 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
           ],
           isLocalized: reLocalizeField, // ignore localized attribute
         });
-        await this.createOrUpdateJsonFile(currentCrowdinJsonData, fieldName);
+        await filesApi.createOrUpdateJsonFile(currentCrowdinJsonData, fieldName);
         await Promise.all(Object.keys(currentCrowdinHtmlData).map(async (name) => {
-          await this.createOrUpdateHtmlFile({
+          await filesApi.createOrUpdateHtmlFile({
             name,
             value: currentCrowdinHtmlData[name] as Descendant[],
             collection,

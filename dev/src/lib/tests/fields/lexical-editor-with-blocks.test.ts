@@ -6,7 +6,7 @@ import { fixture } from './lexical-editor-with-blocks.fixture';
 import nock from 'nock';
 import { mockCrowdinClient } from 'plugin/src/lib/api/mock/crowdin-api-responses';
 import { pluginConfig } from '../helpers/plugin-config';
-import { Policy } from '../../payload-types';
+import { CrowdinArticleDirectory, Policy } from '../../payload-types';
 
 const pluginOptions = pluginConfig();
 const mockClient = mockCrowdinClient(pluginOptions);
@@ -37,7 +37,7 @@ describe('Lexical editor with blocks', () => {
   it('builds a Crowdin HTML object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-      .twice()
+      .times(4)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
       .times(4)
@@ -301,6 +301,7 @@ describe('Lexical editor with blocks', () => {
   it('builds a Crowdin JSON object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
+      .times(3)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
       .times(4)
@@ -331,6 +332,7 @@ describe('Lexical editor with blocks', () => {
   it('builds a Payload update object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
+      .thrice()
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
       .times(4)
@@ -605,6 +607,7 @@ describe('Lexical editor with blocks', () => {
   it('creates an HTML file for Crowdin as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
+      .thrice()
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
       .times(4)
@@ -640,6 +643,7 @@ describe('Lexical editor with blocks', () => {
   it('creates HTML files for Crowdin as expected for lexical content within an array field that is embedded in a group', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
+      .times(5)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
       .times(7)
@@ -672,7 +676,7 @@ describe('Lexical editor with blocks', () => {
     const ids = arrayField.map((item) => item.id) || ([] as string[]);
 
     const crowdinFiles = await getFilesByDocumentID(`${policy.id}`, payload);
-    expect(crowdinFiles.length).toEqual(7);
+    expect(crowdinFiles.length).toEqual(3);
 
     const htmlFileOne = crowdinFiles.find(
       (file) => file.name === `group.array.${ids[0]}.content.html`
@@ -686,6 +690,11 @@ describe('Lexical editor with blocks', () => {
     expect(
       crowdinFiles.find((file) => file.name === 'fields.json')
     ).toBeDefined();
+    
+    const fileOneCrowdinFiles = await getFilesByDocumentID(`group.array.${ids[0]}.content`, payload, policy.crowdinArticleDirectory as CrowdinArticleDirectory);
+    const fileTwoCrowdinFiles = await getFilesByDocumentID(`group.array.${ids[1]}.content`, payload, policy.crowdinArticleDirectory as CrowdinArticleDirectory);
+    expect(fileOneCrowdinFiles.length).toEqual(2);
+    expect(fileTwoCrowdinFiles.length).toEqual(2);
 
     expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(
       `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span data-block-id=6582d48f2037fb3ca72ed2cf></span><p></p>"`

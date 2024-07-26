@@ -29,10 +29,18 @@ export interface Config {
     statistics: Statistic;
   };
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
 export interface Category {
   id: string;
   name?: string | null;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "multi-rich-text".
+ */
 export interface MultiRichText {
   id: string;
   field_0?:
@@ -96,12 +104,17 @@ export interface MultiRichText {
   updatedAt: string;
   createdAt: string;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "crowdin-article-directories".
+ */
 export interface CrowdinArticleDirectory {
   id: string;
   excludeLocales?: ('de_DE' | 'fr_FR')[] | null;
   name?: string | null;
   crowdinCollectionDirectory?: (string | null) | CrowdinCollectionDirectory;
   crowdinFiles?: (string | CrowdinFile)[] | null;
+  parent?: (string | null) | CrowdinArticleDirectory;
   reference?: {
     createdAt?: string | null;
     updatedAt?: string | null;
@@ -112,6 +125,10 @@ export interface CrowdinArticleDirectory {
   updatedAt: string;
   createdAt: string;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "crowdin-collection-directories".
+ */
 export interface CrowdinCollectionDirectory {
   id: string;
   name?: string | null;
@@ -127,6 +144,10 @@ export interface CrowdinCollectionDirectory {
   updatedAt: string;
   createdAt: string;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "crowdin-files".
+ */
 export interface CrowdinFile {
   id: string;
   title?: string | null;
@@ -141,7 +162,7 @@ export interface CrowdinFile {
   directoryId?: number | null;
   revisionId?: number | null;
   name?: string | null;
-  type?: string | null;
+  type?: ('json' | 'html') | null;
   path?: string | null;
   fileData?: {
     json?:
@@ -158,6 +179,10 @@ export interface CrowdinFile {
   updatedAt: string;
   createdAt: string;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "localized-posts".
+ */
 export interface LocalizedPost {
   id: string;
   title?: string | null;
@@ -178,6 +203,10 @@ export interface LocalizedPost {
   createdAt: string;
   _status?: ('draft' | 'published') | null;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
 export interface User {
   id: string;
   name?: string | null;
@@ -192,10 +221,18 @@ export interface User {
   lockUntil?: string | null;
   password: string | null;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
 export interface Tag {
   id: string;
   name?: string | null;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "nested-field-collection".
+ */
 export interface NestedFieldCollection {
   id: string;
   title?: string | null;
@@ -308,17 +345,19 @@ export interface NestedFieldCollection {
         }[]
       | null;
   };
-  syncTranslations?: boolean | null;
-  syncAllTranslations?: boolean | null;
-  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   updatedAt: string;
   createdAt: string;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "policies".
+ */
 export interface Policy {
   id: string;
   title?: string | null;
   content?: {
     root: {
+      type: string;
       children: {
         type: string;
         version: number;
@@ -327,17 +366,17 @@ export interface Policy {
       direction: ('ltr' | 'rtl') | null;
       format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
       indent: number;
-      type: string;
       version: number;
     };
     [k: string]: unknown;
   } | null;
-  syncTranslations?: boolean | null;
-  syncAllTranslations?: boolean | null;
-  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   updatedAt: string;
   createdAt: string;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
 export interface Post {
   id: string;
   title?: string | null;
@@ -354,6 +393,10 @@ export interface Post {
   updatedAt: string;
   createdAt: string;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "localized-posts-with-condition".
+ */
 export interface LocalizedPostsWithCondition {
   id: string;
   title?: string | null;
@@ -375,6 +418,10 @@ export interface LocalizedPostsWithCondition {
   createdAt: string;
   _status?: ('draft' | 'published') | null;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-preferences".
+ */
 export interface PayloadPreference {
   id: string;
   user: {
@@ -394,6 +441,10 @@ export interface PayloadPreference {
   updatedAt: string;
   createdAt: string;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-migrations".
+ */
 export interface PayloadMigration {
   id: string;
   name?: string | null;
@@ -401,18 +452,23 @@ export interface PayloadMigration {
   updatedAt: string;
   createdAt: string;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "localized-nav".
+ */
 export interface LocalizedNav {
   id: string;
   items: {
     label?: string | null;
     id?: string | null;
   }[];
-  syncTranslations?: boolean | null;
-  syncAllTranslations?: boolean | null;
-  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "nav".
+ */
 export interface Nav {
   id: string;
   items: {
@@ -422,6 +478,10 @@ export interface Nav {
   updatedAt?: string | null;
   createdAt?: string | null;
 }
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "statistics".
+ */
 export interface Statistic {
   id: string;
   users?: {
