@@ -1,6 +1,6 @@
 {
   "name": "payload-crowdin-sync",
-  "version": "0.26.1",
+  "version": "0.26.2",
   "description": "Automatically upload/sync localized fields from the default locale to Crowdin. Make these fields read-only in other locales and update them using Crowdin translations.",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/.bin/jest --forceExit --detectOpenHandles",

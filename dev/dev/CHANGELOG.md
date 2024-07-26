@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.26.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.26.1...dev-v0.26.2) (2024-07-26)
+
+
+### Bug Fixes
+
+* **document:** unique lexical blocks folder names ([#174](https://github.com/thompsonsj/payload-crowdin-sync/issues/174)) ([677bd9a](https://github.com/thompsonsj/payload-crowdin-sync/commit/677bd9a791926f761a2118c287390a46fd300335))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.26.1 to 0.26.2
+
 ## [0.26.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.26.0...dev-v0.26.1) (2024-07-26)
 
 
