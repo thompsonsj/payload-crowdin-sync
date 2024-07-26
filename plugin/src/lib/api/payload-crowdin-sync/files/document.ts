@@ -7,6 +7,7 @@ import { Config } from 'payload/config';
 
 import { isEmpty } from 'lodash';
 import {
+  getArticleDirectory,
   getFile,
   getFiles
 } from "../../helpers";
@@ -235,6 +236,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
         /**
          * Initialize Crowdin client sourceFilesApi
          */
+        const crowdinArticleDirectory = await getArticleDirectory(name, this.payload, false, this.articleDirectory)
         const apiByDocument = new filesApiByDocument(
           {
             document: {
@@ -242,6 +244,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
               id: name,
               /** Friendly name for directory */
               title: name,
+              crowdinArticleDirectory,
             },
             collectionSlug: collection.slug as keyof Config['collections'] | keyof Config['globals'],
             global: false,
