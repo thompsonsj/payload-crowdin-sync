@@ -182,17 +182,19 @@ export const getLocalizedFields = ({
       (field) =>
         (field as any).type !== "collapsible" && (field as any).type !== "tabs"
     ),
-  ...convertTabs({ fields }),
+  ...convertTabs({ fields, isLocalized }),
   // recursion for collapsible field - flatten results into the returned array
-  ...getCollapsibleLocalizedFields({ fields, type }),
+  ...getCollapsibleLocalizedFields({ fields, type, isLocalized }),
 ];
 
 export const getCollapsibleLocalizedFields = ({
   fields,
   type,
+  isLocalized = isLocalizedField,
 }: {
   fields: Field[];
   type?: "json" | "html";
+  isLocalized?: IsLocalized;
 }): any[] =>
   fields
     .filter((field) => field.type === "collapsible")
@@ -200,15 +202,18 @@ export const getCollapsibleLocalizedFields = ({
       getLocalizedFields({
         fields: (field as CollapsibleField).fields,
         type,
+        isLocalized,
       })
     );
 
 export const convertTabs = ({
   fields,
   type,
+  isLocalized = isLocalizedField,
 }: {
   fields: Field[];
   type?: "json" | "html";
+  isLocalized?: IsLocalized;
 }): any[] =>
   fields
     .filter((field) => field.type === "tabs")
@@ -233,6 +238,7 @@ export const convertTabs = ({
         return getLocalizedFields({
           fields: flattenedFields,
           type,
+          isLocalized,
         });
       }
       return field;
