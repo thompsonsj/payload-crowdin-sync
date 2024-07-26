@@ -1,7 +1,7 @@
 import { Payload } from "payload";
 import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from "../payload-types";
 import { payloadCrowdinSyncTranslationsApi } from "./payload-crowdin-sync/translations";
-import { PluginOptions, isCollectionOrGlobalConfigObject, isCollectionOrGlobalConfigSlug } from "../types";
+import { PluginOptions, isCollectionOrGlobalConfigObject, isCollectionOrGlobalConfigSlug, isCrowdinArticleDirectory } from "../types";
 
 /**
  * get Crowdin Article Directory for a given documentId
@@ -14,9 +14,8 @@ export async function getArticleDirectory(
   documentId: string,
   payload: Payload,
   allowEmpty?: boolean,
-  parent?: CrowdinArticleDirectory,
+  parent?: CrowdinArticleDirectory | null | string,
 ) {
-  // Get directory
   const crowdinPayloadArticleDirectory = await payload.find({
     collection: "crowdin-article-directories",
     where: {
@@ -25,7 +24,7 @@ export async function getArticleDirectory(
       },
       ...(parent && {
         parent: {
-          equals: parent?.id,
+          equals: isCrowdinArticleDirectory(parent) ? parent?.id : parent,
         }
       })
     },

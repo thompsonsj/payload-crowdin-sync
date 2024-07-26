@@ -1,6 +1,7 @@
 import payload from 'payload';
 import { initPayloadTest } from '../helpers/config';
 import {
+  getArticleDirectory,
   getFilesByDocumentID,
   isDefined,
   payloadCrowdinSyncTranslationsApi,
@@ -630,6 +631,44 @@ describe('Lexical editor with multiple blocks', () => {
         "title": "Test policy",
       }
     `);
+  });
+
+  it('associates a parent Crowdin article directory with a lexical blocks Crowdin article directory', async () => {
+    nock('https://api.crowdin.com')
+      .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
+      .twice()
+      .reply(200, mockClient.createDirectory({}))
+      .post(`/api/v2/storages`)
+      .times(4)
+      .reply(200, mockClient.addStorage())
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .times(4)
+      .reply(200, mockClient.createFile({}));
+
+    const create = await payload.create({
+      collection: 'policies',
+      data: {
+        title: 'Test policy',
+        content: fixture,
+      },
+    });
+    // update now that a Crowdin article directory is available
+    const policy: Policy = await payload.update({
+      id: create.id,
+      collection: 'policies',
+      data: {
+        title: 'Test policy',
+      },
+    }) as any;
+    const lexicalBlocksArticleDirectory: CrowdinArticleDirectory = await getArticleDirectory(
+      `${pluginOptions.lexicalBlockFolderPrefix}content`,
+      payload,
+      false,
+      policy.crowdinArticleDirectory,
+    ) as any
+    expect(lexicalBlocksArticleDirectory).toBeDefined()
+    /** Important: ensure an article directory was not queried/returned without a parent */
+    expect(lexicalBlocksArticleDirectory?.parent).toBeDefined()
   });
 
   it('creates HTML files for Crowdin as expected', async () => {
