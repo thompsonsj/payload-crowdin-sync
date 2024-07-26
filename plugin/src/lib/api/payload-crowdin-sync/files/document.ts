@@ -239,7 +239,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
           /**
            * Initialize Crowdin client sourceFilesApi
            */
-          const crowdinArticleDirectory = await getArticleDirectory(name, this.payload, false, this.articleDirectory)
+          const crowdinArticleDirectory = await getArticleDirectory(folderName, this.payload, false, this.articleDirectory)
           const apiByDocument = new filesApiByDocument(
             {
               document: {
