@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.26.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.26.4...dev-v0.26.5) (2024-07-26)
+
+
+### Bug Fixes
+
+* **bydocument:** lexical blocks article directory has parent ([#180](https://github.com/thompsonsj/payload-crowdin-sync/issues/180)) ([35d7fbd](https://github.com/thompsonsj/payload-crowdin-sync/commit/35d7fbd18b2fe7ace493be0e3b6016d36a6e941f))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.26.4 to 0.26.5
+
 ## [0.26.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.26.3...dev-v0.26.4) (2024-07-26)
 
 
