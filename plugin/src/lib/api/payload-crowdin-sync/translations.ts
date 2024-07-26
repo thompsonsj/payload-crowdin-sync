@@ -74,6 +74,7 @@ export class payloadCrowdinSyncTranslationsApi {
     // credentials
     const credentials: Credentials = {
       token: pluginOptions.token,
+      organization: pluginOptions.organization,
     };
     const { translationsApi } = new crowdin(credentials);
     this.projectId = pluginOptions.projectId;
@@ -119,7 +120,7 @@ export class payloadCrowdinSyncTranslationsApi {
         continue;
       }
       report[locale] = {};
-      report[locale].draft = draft,  
+      report[locale].draft = draft,
       report[locale].currentTranslations =
         await this.getCurrentDocumentTranslation({
           doc: doc,

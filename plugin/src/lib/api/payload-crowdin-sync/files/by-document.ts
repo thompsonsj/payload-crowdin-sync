@@ -13,10 +13,10 @@ interface IfindOrCreateCollectionDirectory {
 
 /**
  * Get Files API by document
- * 
+ *
  * Initialize filesApiByDocument and use the getter to retrive
  * an instance of the files API.
- * 
+ *
  * The files API does not need to know specifics about setting
  * up Crowdin Article Directories...etc. All that logic is
  * handled here and a getter is used in order to be able to
@@ -53,6 +53,7 @@ export class filesApiByDocument {
     // credentials
     const credentials: Credentials = {
       token: pluginOptions.token,
+      organization: pluginOptions.organization,
     };
     const { sourceFilesApi } = new crowdin(credentials);
     this.projectId = pluginOptions.projectId;
@@ -66,7 +67,7 @@ export class filesApiByDocument {
     this.parent = parent
     /**
      * Create a undefined Crowdin Article Directory
-     * 
+     *
      * Alternative approach: https://www.typescriptlang.org/tsconfig#strictPropertyInitialization
      */
     this.articleDirectory = {
@@ -208,7 +209,7 @@ export class filesApiByDocument {
         data: {
           collectionSlug: collectionSlug,
           originalId: crowdinDirectory.data.id,
-          
+
           directoryId: crowdinDirectory.data.directoryId,
           name: collectionSlug,
           title: crowdinDirectory.data.title,
