@@ -231,7 +231,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
         html = await convertLexicalToHtml(value, editorConfig)
         // no need to detect change - this has already been done on the field's JSON object
         const blockContent = value && extractLexicalBlockContent(value.root)
-        if (blockContent) {
+        if (blockContent && blockContent.length > 0) {
           // directory name must be unique from file names - Crowdin API
           const folderName = `${this.pluginOptions.lexicalBlockFolderPrefix}${name}`
           const blockConfig = getLexicalBlockFields(editorConfig)

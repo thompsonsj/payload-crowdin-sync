@@ -37,7 +37,7 @@ describe('Lexical editor with blocks', () => {
   it('builds a Crowdin HTML object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-      .times(4)
+      .times(3)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
       .times(4)
@@ -301,7 +301,7 @@ describe('Lexical editor with blocks', () => {
   it('builds a Crowdin JSON object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-      .times(3)
+      .times(2)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
       .times(4)
@@ -332,7 +332,7 @@ describe('Lexical editor with blocks', () => {
   it('builds a Payload update object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-      .thrice()
+      .twice()
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
       .times(4)
@@ -607,7 +607,7 @@ describe('Lexical editor with blocks', () => {
   it('creates an HTML file for Crowdin as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-      .thrice()
+      .twice()
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
       .times(4)
@@ -643,7 +643,7 @@ describe('Lexical editor with blocks', () => {
   it('creates HTML files for Crowdin as expected for lexical content within an array field that is embedded in a group', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-      .times(5)
+      .times(3)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
       .times(7)
