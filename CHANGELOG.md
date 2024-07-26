@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.7.1...source-v0.7.2) (2024-07-26)
+
+
+### Bug Fixes
+
+* **document:** unique lexical blocks folder names ([#174](https://github.com/thompsonsj/payload-crowdin-sync/issues/174)) ([677bd9a](https://github.com/thompsonsj/payload-crowdin-sync/commit/677bd9a791926f761a2118c287390a46fd300335))
+
 ## [0.7.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.7.0...source-v0.7.1) (2024-07-26)
 
 
