@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.7.0...source-v0.7.1) (2024-07-26)
+
+
+### Bug Fixes
+
+* **document:** check article directory exists lexical blocks ([#172](https://github.com/thompsonsj/payload-crowdin-sync/issues/172)) ([c0f0273](https://github.com/thompsonsj/payload-crowdin-sync/commit/c0f02736a2e72a5816995235cad3b79fe59c2826))
+
 ## [0.7.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.6.0...source-v0.7.0) (2024-07-26)
 
 
