@@ -1,6 +1,6 @@
 {
   "name": "@payload-crowdin-sync-nx/dev",
-  "version": "0.26.4",
+  "version": "0.26.5",
   "private": true,
   "scripts": {
     "dev": "cross-env PAYLOAD_CONFIG_PATH=src/lib/payload.config.ts nodemon",
@@ -13,7 +13,7 @@
     "generate:graphQLSchema": "PAYLOAD_CONFIG_PATH=src/lib/payload.config.ts payload generate:graphQLSchema"
   },
   "dependencies": {
-    "payload-crowdin-sync": "0.26.4",
+    "payload-crowdin-sync": "0.26.5",
     "tslib": "^2.3.0"
   },
   "type": "commonjs",
