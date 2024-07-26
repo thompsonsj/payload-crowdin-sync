@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.26.6](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.26.5...payload-crowdin-sync-v0.26.6) (2024-07-26)
+
+
+### Bug Fixes
+
+* **utilities:** relocalize fn for tabs and collapsibles ([#182](https://github.com/thompsonsj/payload-crowdin-sync/issues/182)) ([de62e80](https://github.com/thompsonsj/payload-crowdin-sync/commit/de62e8029486fab9ff83a61928c60da278ed9da2))
+
 ## [0.26.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.26.4...payload-crowdin-sync-v0.26.5) (2024-07-26)
 
 
