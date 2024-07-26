@@ -1,6 +1,6 @@
 {
   "name": "@payload-crowdin-sync-nx/source",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "license": "MIT",
   "scripts": {
     "release": "nx build plugin && cd dist/plugin && npm publish",
