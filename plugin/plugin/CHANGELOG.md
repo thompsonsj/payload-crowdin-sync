@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.26.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.26.2...payload-crowdin-sync-v0.26.3) (2024-07-26)
+
+
+### Bug Fixes
+
+* **document:** existing lexical folder check ([#176](https://github.com/thompsonsj/payload-crowdin-sync/issues/176)) ([598ca6c](https://github.com/thompsonsj/payload-crowdin-sync/commit/598ca6cd7e9528eb4f6a84b978287b062eea59cf))
+
 ## [0.26.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.26.1...payload-crowdin-sync-v0.26.2) (2024-07-26)
 
 
