@@ -99,7 +99,7 @@ export const crowdinSync =
       pluginCollectionAccess: Joi.object(),
       pluginCollectionAdmin: Joi.object(),
       tabbedUI: Joi.boolean(),
-      richTextBlockFieldNameSeparator: Joi.string(),
+      lexicalBlockFolderPrefix: Joi.string(),
     });
 
     const validate = schema.validate(pluginOptions);
@@ -112,7 +112,7 @@ export const crowdinSync =
     }
 
     // option defaults
-    pluginOptions.richTextBlockFieldNameSeparator = pluginOptions.richTextBlockFieldNameSeparator || '--';
+    pluginOptions.lexicalBlockFolderPrefix = pluginOptions.lexicalBlockFolderPrefix || 'lex.';
 
     return {
       ...config,

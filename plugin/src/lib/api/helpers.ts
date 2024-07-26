@@ -89,7 +89,7 @@ export async function getFilesByDocumentID(
   payload: Payload,
   parent?: CrowdinArticleDirectory,
 ): Promise<CrowdinFile[]> {
-  const articleDirectory = await getArticleDirectory(documentId, payload, false, parent);
+  const articleDirectory = await getArticleDirectory(`${documentId}`, payload, false, parent);
   if (!articleDirectory) {
     // tests call this function to make sure files are deleted
     return [];

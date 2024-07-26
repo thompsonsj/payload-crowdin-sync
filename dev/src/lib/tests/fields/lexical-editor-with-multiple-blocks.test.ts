@@ -666,7 +666,7 @@ describe('Lexical editor with multiple blocks', () => {
     expect(contentHtmlFile?.fileData?.html).toMatchInlineSnapshot(
       `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8></span><span data-block-id=65d67e2291c92e447e7472f9></span><ul class="bullet"><li value=1></li></ul>"`
     );
-    const contentBlocksCrowdinFiles = await getFilesByDocumentID(`content`, payload, policy['crowdinArticleDirectory'] as CrowdinArticleDirectory);
+    const contentBlocksCrowdinFiles = await getFilesByDocumentID(`${pluginOptions.lexicalBlockFolderPrefix}content`, payload, policy['crowdinArticleDirectory'] as CrowdinArticleDirectory);
     //const contentBlocksHtmlFile = crowdinFiles.find(
     const contentBlocksHtmlFile = contentBlocksCrowdinFiles.find(
       (file) =>
@@ -731,8 +731,8 @@ describe('Lexical editor with multiple blocks', () => {
     ).toBeDefined();
 
 
-    const fileOneCrowdinFiles = await getFilesByDocumentID(`group.array.${ids[0]}.content`, payload, policy.crowdinArticleDirectory as CrowdinArticleDirectory);
-    const fileTwoCrowdinFiles = await getFilesByDocumentID(`group.array.${ids[1]}.content`, payload, policy.crowdinArticleDirectory as CrowdinArticleDirectory);
+    const fileOneCrowdinFiles = await getFilesByDocumentID(`${pluginOptions.lexicalBlockFolderPrefix}group.array.${ids[0]}.content`, payload, policy.crowdinArticleDirectory as CrowdinArticleDirectory);
+    const fileTwoCrowdinFiles = await getFilesByDocumentID(`${pluginOptions.lexicalBlockFolderPrefix}group.array.${ids[1]}.content`, payload, policy.crowdinArticleDirectory as CrowdinArticleDirectory);
     expect(fileOneCrowdinFiles.length).toEqual(2);
     expect(fileTwoCrowdinFiles.length).toEqual(2);
 
@@ -971,7 +971,7 @@ describe('Lexical editor with multiple blocks', () => {
       },
     });
     const crowdinFiles = await getFilesByDocumentID(`${policy.id}`, payload);
-    const contentCrowdinFiles = await getFilesByDocumentID(`content`, payload, policy['crowdinArticleDirectory'] as CrowdinArticleDirectory);
+    const contentCrowdinFiles = await getFilesByDocumentID(`${pluginOptions.lexicalBlockFolderPrefix}content`, payload, policy['crowdinArticleDirectory'] as CrowdinArticleDirectory);
 
     // check file ids are always mapped in the same way
     const fileIds = crowdinFiles.map((file) => ({
@@ -994,7 +994,7 @@ describe('Lexical editor with multiple blocks', () => {
     ]);
     expect(contentFileIds).toEqual([
       {
-        field: 'blocks.65d67d8191c92e447e7472f8.highlight.content',
+        field: `blocks.65d67d8191c92e447e7472f8.highlight.content`,
         fileId: 56643,
       },
       {
