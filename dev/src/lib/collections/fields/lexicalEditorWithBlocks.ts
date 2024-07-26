@@ -96,7 +96,7 @@ export const lexicalEditorWithBlocks: RichTextField = {
                 relationTo: "media",
               }
             ],
-          }
+          },
         ],
       })
     ],
