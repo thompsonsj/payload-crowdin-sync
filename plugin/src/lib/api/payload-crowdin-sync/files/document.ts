@@ -231,66 +231,70 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
         html = await convertLexicalToHtml(value, editorConfig)
         // no need to detect change - this has already been done on the field's JSON object
         const blockContent = value && extractLexicalBlockContent(value.root)
-        const blockConfig = getLexicalBlockFields(editorConfig)
-        
-        /**
-         * Initialize Crowdin client sourceFilesApi
-         */
-        const crowdinArticleDirectory = await getArticleDirectory(name, this.payload, false, this.articleDirectory)
-        const apiByDocument = new filesApiByDocument(
-          {
-            document: {
-              /** Lexical field name used for documentId */
-              id: name,
-              /** Friendly name for directory */
-              title: name,
-              crowdinArticleDirectory,
+        if (blockContent) {
+          // directory name must be unique from file names - Crowdin API
+          const folderName = `${this.pluginOptions.lexicalBlockFolderPrefix}${name}`
+          const blockConfig = getLexicalBlockFields(editorConfig)
+          
+          /**
+           * Initialize Crowdin client sourceFilesApi
+           */
+          const crowdinArticleDirectory = await getArticleDirectory(name, this.payload, false, this.articleDirectory)
+          const apiByDocument = new filesApiByDocument(
+            {
+              document: {
+                /** Lexical field name used for documentId */
+                id: folderName,
+                /** Friendly name for directory */
+                title: name,
+                crowdinArticleDirectory,
+              },
+              collectionSlug: collection.slug as keyof Config['collections'] | keyof Config['globals'],
+              global: false,
+              pluginOptions: this.pluginOptions,
+              payload: this.payload,
+              /** Important: Identify that this article directory has a parent - logic changes for non-top-level directories. */
+              parent: this.articleDirectory,
             },
-            collectionSlug: collection.slug as keyof Config['collections'] | keyof Config['globals'],
-            global: false,
-            pluginOptions: this.pluginOptions,
-            payload: this.payload,
-            /** Important: Identify that this article directory has a parent - logic changes for non-top-level directories. */
-            parent: this.articleDirectory,
-          },
-        );
-        const filesApi = await apiByDocument.get()
+          );
+          const filesApi = await apiByDocument.get()
 
-        const fieldName = `blocks`
-        const currentCrowdinJsonData = buildCrowdinJsonObject({
-          doc: {
-            [fieldName]: blockContent,
-          },
-          fields: [
-            {
-              name: fieldName,
-              type: 'blocks',
-              blocks: blockConfig.blocks,
-            }
-          ],
-          isLocalized: reLocalizeField, // ignore localized attribute
-        });
-        const currentCrowdinHtmlData = buildCrowdinHtmlObject({
-          doc: {
-            [fieldName]: blockContent,
-          },
-          fields: [
-            {
-              name: fieldName,
-              type: 'blocks',
-              blocks: blockConfig.blocks,
-            }
-          ],
-          isLocalized: reLocalizeField, // ignore localized attribute
-        });
-        await filesApi.createOrUpdateJsonFile(currentCrowdinJsonData, fieldName);
-        await Promise.all(Object.keys(currentCrowdinHtmlData).map(async (name) => {
-          await filesApi.createOrUpdateHtmlFile({
-            name,
-            value: currentCrowdinHtmlData[name] as Descendant[],
-            collection,
+          const fieldName = `blocks`
+          const currentCrowdinJsonData = buildCrowdinJsonObject({
+            doc: {
+              [fieldName]: blockContent,
+            },
+            fields: [
+              {
+                name: fieldName,
+                type: 'blocks',
+                blocks: blockConfig.blocks,
+              }
+            ],
+            isLocalized: reLocalizeField, // ignore localized attribute
           });
-        }));
+          const currentCrowdinHtmlData = buildCrowdinHtmlObject({
+            doc: {
+              [fieldName]: blockContent,
+            },
+            fields: [
+              {
+                name: fieldName,
+                type: 'blocks',
+                blocks: blockConfig.blocks,
+              }
+            ],
+            isLocalized: reLocalizeField, // ignore localized attribute
+          });
+          await filesApi.createOrUpdateJsonFile(currentCrowdinJsonData, fieldName);
+          await Promise.all(Object.keys(currentCrowdinHtmlData).map(async (name) => {
+            await filesApi.createOrUpdateHtmlFile({
+              name,
+              value: currentCrowdinHtmlData[name] as Descendant[],
+              collection,
+            });
+          }));
+        }
       } else {
         html = "<span>lexical configuration not found</span>"
       }

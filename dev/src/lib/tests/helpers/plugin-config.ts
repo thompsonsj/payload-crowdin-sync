@@ -21,5 +21,6 @@ export const pluginConfig = (): PluginOptions => ({
     },
     'tags',
     'users',
-  ]
+  ],
+  lexicalBlockFolderPrefix: 'lex.',
 })

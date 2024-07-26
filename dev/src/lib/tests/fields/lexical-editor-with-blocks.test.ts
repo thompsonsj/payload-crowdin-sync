@@ -691,8 +691,8 @@ describe('Lexical editor with blocks', () => {
       crowdinFiles.find((file) => file.name === 'fields.json')
     ).toBeDefined();
     
-    const fileOneCrowdinFiles = await getFilesByDocumentID(`group.array.${ids[0]}.content`, payload, policy.crowdinArticleDirectory as CrowdinArticleDirectory);
-    const fileTwoCrowdinFiles = await getFilesByDocumentID(`group.array.${ids[1]}.content`, payload, policy.crowdinArticleDirectory as CrowdinArticleDirectory);
+    const fileOneCrowdinFiles = await getFilesByDocumentID(`${pluginOptions.lexicalBlockFolderPrefix}group.array.${ids[0]}.content`, payload, policy.crowdinArticleDirectory as CrowdinArticleDirectory);
+    const fileTwoCrowdinFiles = await getFilesByDocumentID(`${pluginOptions.lexicalBlockFolderPrefix}group.array.${ids[1]}.content`, payload, policy.crowdinArticleDirectory as CrowdinArticleDirectory);
     expect(fileOneCrowdinFiles.length).toEqual(2);
     expect(fileTwoCrowdinFiles.length).toEqual(2);
 
