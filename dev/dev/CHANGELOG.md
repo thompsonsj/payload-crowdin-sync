@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.26.7](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.26.6...dev-v0.26.7) (2024-08-13)
+
+
+### Bug Fixes
+
+* **richtextconversion:** use slate convertor to generate lexical ([#184](https://github.com/thompsonsj/payload-crowdin-sync/issues/184)) ([16fdc2a](https://github.com/thompsonsj/payload-crowdin-sync/commit/16fdc2a13d6926730f5326086851604596963d13))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.26.6 to 0.26.7
+
 ## [0.26.6](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.26.5...dev-v0.26.6) (2024-07-26)
 
 
