@@ -55,9 +55,6 @@ export default buildConfig({
             "payload-crowdin-sync": path.resolve(__dirname, "../../../plugin/src/index.ts"),
           }
         },
-        externals: {
-          'happy-dom': 'window',
-        }
       }
     },
     user: Users.slug,
