@@ -4,6 +4,8 @@ import nock from "nock";
 import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
 import { pluginConfig } from "../../helpers/plugin-config"
 
+import { nockCreateSourceTranslationFiles } from "../../helpers/nock"
+
 /**
  * Test virtual fields
  *
@@ -44,20 +46,9 @@ describe("Virtual fields", () => {
 
   describe("No database storage", () => {
     it("does not store syncTranslations", async () => {
-      nock('https://api.crowdin.com')
-        .post(
-          `/api/v2/projects/${pluginOptions.projectId}/directories`
-        )
-        .twice()
-        .reply(200, mockClient.createDirectory({}))
-        .post(
-          `/api/v2/storages`
-        )
-        .reply(200, mockClient.addStorage())
-        .post(
-          `/api/v2/projects/${pluginOptions.projectId}/files`
-        )
-        .reply(200, mockClient.createFile({}))
+      nockCreateSourceTranslationFiles({
+        createProjectDirectory: true,
+      })
 
       const post = await payload.create({
         collection: "localized-posts",
@@ -75,19 +66,7 @@ describe("Virtual fields", () => {
     });
 
     it("does not store syncAllTranslations", async () => {
-      nock('https://api.crowdin.com')
-        .post(
-          `/api/v2/projects/${pluginOptions.projectId}/directories`
-        )
-        .reply(200, mockClient.createDirectory({}))
-        .post(
-          `/api/v2/storages`
-        )
-        .reply(200, mockClient.addStorage())
-        .post(
-          `/api/v2/projects/${pluginOptions.projectId}/files`
-        )
-        .reply(200, mockClient.createFile({}))
+      nockCreateSourceTranslationFiles({})
 
       const post = await payload.create({
         collection: "localized-posts",
