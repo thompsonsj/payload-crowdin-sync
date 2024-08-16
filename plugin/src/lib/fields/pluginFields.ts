@@ -67,7 +67,7 @@ export const pluginCollectionOrGlobalFields = ({
         }],
         afterChange: [async ({ context, req }) => {
           // type check context, if valid we can safely assume translation updates are desired
-          if (typeof context['articleDirectoryId'] === 'string' && typeof context['draft'] === 'boolean' && Array.isArray(context['excludeLocales']) && context["syncTranslations"])
+          if (typeof context['articleDirectoryId'] === 'string' && typeof context['draft'] === 'boolean' && Array.isArray(context['excludeLocales']) && typeof context["syncTranslations"] === 'boolean')
             await updatePayloadTranslation({
               articleDirectoryId: context['articleDirectoryId'],
               pluginOptions,
@@ -108,7 +108,7 @@ export const pluginCollectionOrGlobalFields = ({
         }],
         afterChange: [async ({ context, req }) => {
           // type check context, if valid we can safely assume translation updates are desired
-          if (typeof context['articleDirectoryId'] === 'string' && typeof context['draft'] === 'boolean' && context["syncAllTranslations"])
+          if (typeof context['articleDirectoryId'] === 'string' && typeof context['draft'] === 'boolean' && typeof context["syncAllTranslations"] === 'boolean')
             await updatePayloadTranslation({
               articleDirectoryId: context['articleDirectoryId'],
               pluginOptions,
