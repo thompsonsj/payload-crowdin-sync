@@ -59,7 +59,7 @@ export const pluginCollectionOrGlobalFields = ({
             context['articleDirectoryId'] = typeof siblingData["crowdinArticleDirectory"] === 'string' ? siblingData["crowdinArticleDirectory"] : siblingData["crowdinArticleDirectory"].id
             context['draft'] = draft
             context['excludeLocales'] = excludeLocales
-            
+            context["syncTranslations"] = true
           }
           // Mutate the sibling data to prevent DB storage
           // eslint-disable-next-line no-param-reassign
@@ -67,7 +67,7 @@ export const pluginCollectionOrGlobalFields = ({
         }],
         afterChange: [async ({ context, req }) => {
           // type check context, if valid we can safely assume translation updates are desired
-          if (typeof context['articleDirectoryId'] === 'string' && typeof context['draft'] === 'boolean' && Array.isArray(context['excludeLocales']))
+          if (typeof context['articleDirectoryId'] === 'string' && typeof context['draft'] === 'boolean' && Array.isArray(context['excludeLocales']) && context["syncTranslations"])
             await updatePayloadTranslation({
               articleDirectoryId: context['articleDirectoryId'],
               pluginOptions,
@@ -100,6 +100,7 @@ export const pluginCollectionOrGlobalFields = ({
 
             context['articleDirectoryId'] = typeof siblingData["crowdinArticleDirectory"] === 'string' ? siblingData["crowdinArticleDirectory"] : siblingData["crowdinArticleDirectory"].id
             context['draft'] = draft
+            context["syncAllTranslations"] = true
           }
           // Mutate the sibling data to prevent DB storage
           // eslint-disable-next-line no-param-reassign
@@ -107,7 +108,7 @@ export const pluginCollectionOrGlobalFields = ({
         }],
         afterChange: [async ({ context, req }) => {
           // type check context, if valid we can safely assume translation updates are desired
-          if (typeof context['articleDirectoryId'] === 'string' && typeof context['draft'] === 'boolean')
+          if (typeof context['articleDirectoryId'] === 'string' && typeof context['draft'] === 'boolean' && context["syncAllTranslations"])
             await updatePayloadTranslation({
               articleDirectoryId: context['articleDirectoryId'],
               pluginOptions,
