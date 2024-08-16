@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.26.8](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.26.7...payload-crowdin-sync-v0.26.8) (2024-08-16)
+
+
+### Bug Fixes
+
+* **pluginfields:** additional flag for translation sync checkboxes ([#188](https://github.com/thompsonsj/payload-crowdin-sync/issues/188)) ([8480024](https://github.com/thompsonsj/payload-crowdin-sync/commit/84800242a4e9eea3962ed1d1e3999c6ba5efd75b))
+
 ## [0.26.7](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.26.6...payload-crowdin-sync-v0.26.7) (2024-08-13)
 
 
