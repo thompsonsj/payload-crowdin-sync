@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.1.8](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.1.7...dev-alternative-config-v0.1.8) (2024-08-16)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.26.7 to 0.26.8
+
+## [0.1.7](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.1.6...dev-alternative-config-v0.1.7) (2024-08-13)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.26.6 to 0.26.7
+
+## [0.1.6](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.1.5...dev-alternative-config-v0.1.6) (2024-07-26)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.26.5 to 0.26.6
+
+## [0.1.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.1.4...dev-alternative-config-v0.1.5) (2024-07-26)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.26.4 to 0.26.5
+
 ## [0.1.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.1.3...dev-alternative-config-v0.1.4) (2024-07-26)
 
 

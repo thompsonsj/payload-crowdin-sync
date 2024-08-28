@@ -90,6 +90,47 @@ describe("presentation only tab fields", () => {
     ]);
   });
 
+  it("returns localized fields in tabs within an array", () => {
+    // fixture from https://payloadcms.com/docs/fields/tabs
+    const fields: Field[] = [
+      {
+        name: 'items',
+        type: 'array',
+        fields:[
+          {
+            type: "tabs",
+            tabs: [
+              {
+                label: "Tab One Label",
+                description: "This will appear within the tab above the fields.",
+                fields: basicLocalizedFields,
+              },
+            ],
+          },
+        ]
+      } 
+    ];
+
+    expect(getLocalizedFields({ fields })).toEqual([
+      {
+        name: 'items',
+        type: 'array',
+        fields: [
+          {
+            name: "textField",
+            type: "text",
+            localized: true,
+          },
+          {
+            name: "textareaField",
+            type: "textarea",
+            localized: true,
+          },
+        ]
+      }
+    ]);
+  });
+
   it("returns localized fields in tab respecting tab names", () => {
     // fixture from https://payloadcms.com/docs/fields/tabs
     const fields: Field[] = [

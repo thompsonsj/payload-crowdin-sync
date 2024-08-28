@@ -143,7 +143,10 @@ export class filesApiByDocument {
             createdAt: crowdinDirectory.data.createdAt,
             updatedAt: crowdinDirectory.data.updatedAt,
             projectId: this.projectId,
-          }
+          },
+          ...(parent && {
+            parent: parent.id,
+          })
         },
       }) as unknown;
       crowdinPayloadArticleDirectory = result as CrowdinArticleDirectory

@@ -1,5 +1,56 @@
 # Changelog
 
+## [0.26.8](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.26.7...dev-v0.26.8) (2024-08-16)
+
+
+### Bug Fixes
+
+* **pluginfields:** additional flag for translation sync checkboxes ([#188](https://github.com/thompsonsj/payload-crowdin-sync/issues/188)) ([8480024](https://github.com/thompsonsj/payload-crowdin-sync/commit/84800242a4e9eea3962ed1d1e3999c6ba5efd75b))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.26.7 to 0.26.8
+
+## [0.26.7](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.26.6...dev-v0.26.7) (2024-08-13)
+
+
+### Bug Fixes
+
+* **richtextconversion:** use slate convertor to generate lexical ([#184](https://github.com/thompsonsj/payload-crowdin-sync/issues/184)) ([16fdc2a](https://github.com/thompsonsj/payload-crowdin-sync/commit/16fdc2a13d6926730f5326086851604596963d13))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.26.6 to 0.26.7
+
+## [0.26.6](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.26.5...dev-v0.26.6) (2024-07-26)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.26.5 to 0.26.6
+
+## [0.26.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.26.4...dev-v0.26.5) (2024-07-26)
+
+
+### Bug Fixes
+
+* **bydocument:** lexical blocks article directory has parent ([#180](https://github.com/thompsonsj/payload-crowdin-sync/issues/180)) ([35d7fbd](https://github.com/thompsonsj/payload-crowdin-sync/commit/35d7fbd18b2fe7ace493be0e3b6016d36a6e941f))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.26.4 to 0.26.5
+
 ## [0.26.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.26.3...dev-v0.26.4) (2024-07-26)
 
 
