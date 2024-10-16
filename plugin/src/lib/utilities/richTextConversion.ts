@@ -23,6 +23,8 @@ import {
   defaultSlateConverters,
 } from '@payloadcms/richtext-lexical'
 
+import { getAttributeValue } from 'domutils'
+
 const BlockHTMLConverter: HTMLConverter<any> = {
   converter: async ({ node }) => {
     return `<span data-block-id=${node.fields.id}></span>`
@@ -46,9 +48,19 @@ export const convertHtmlToLexical = (htmlString: string, editorConfig: Sanitized
     ...defaultSlateConverters,
     // AnotherCustomConverter
   ])
+  const htmlToSlateConfig = {
+    ...payloadHtmlToSlateConfig,
+    elementTags: {
+      ...payloadHtmlToSlateConfig.elementTags,
+      span: (el) => ({
+        type: 'block',
+        id: el && getAttributeValue(el, 'data-block-id'),
+      }),
+    },
+  } as HtmlToSlateConfig
   return convertSlateToLexical({
     converters: converters,
-    slateData: convertHtmlToSlate(htmlString),
+    slateData: convertHtmlToSlate(htmlString, htmlToSlateConfig),
   })
 }
 
