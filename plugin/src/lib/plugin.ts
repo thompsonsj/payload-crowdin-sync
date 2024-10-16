@@ -32,11 +32,11 @@ interface CollectionOrGlobalConfigActive {
 
 /**
  * Collection/Global active config
- * 
+ *
  * * If no `collections` or `globals` array is defined; or
  * * Array is defined and slug present in the array:
  * * * return true if contains compatible localized fields.
- * 
+ *
  * * If an array is defined, return false for any slugs that
  * are not present in the array.
  */
@@ -76,6 +76,7 @@ export const crowdinSync =
 
       // optional - if not provided, the plugin will not do anything in the afterChange hook.
       token: Joi.string(),
+      organization: Joi.string().allow(null, ''),
 
       localeMap: Joi.object().pattern(
         /./,

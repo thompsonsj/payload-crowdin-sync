@@ -10,7 +10,7 @@ type CollectionOrGlobalConfigObject = {
 
 type CollectionOrGlobalConfig = CollectionOrGlobalConfigSlug | CollectionOrGlobalConfigObject
 
-// type guard: determine type of config 
+// type guard: determine type of config
 export const isCollectionOrGlobalConfigObject = (collectionOrGlobalConfig: CollectionOrGlobalConfig): collectionOrGlobalConfig is CollectionOrGlobalConfigObject => typeof collectionOrGlobalConfig === 'object';
 export const isCollectionOrGlobalConfigSlug = (collectionOrGlobalConfig: CollectionOrGlobalConfig): collectionOrGlobalConfig is CollectionOrGlobalConfigSlug => typeof collectionOrGlobalConfig === 'string';
 
@@ -29,6 +29,7 @@ export interface PluginOptions {
   /** This should be optional? */
   directoryId?: number;
   token: string;
+  organization?: string;
   //client: crowdinAPIService,
   localeMap: {
     [key: string]: {

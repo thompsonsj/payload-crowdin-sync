@@ -33,6 +33,7 @@ export default buildConfig({
     crowdinSync({
       projectId: 323731,
       token: process.env.CROWDIN_TOKEN,
+      organization: process.env.CROWDIN_ORGANIZATION,
       localeMap: {
         de_DE: {
           crowdinId: "de",
