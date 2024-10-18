@@ -86,7 +86,6 @@ export async function getFileByParent(
     },
   });
 
-  //console.log('name', name, 'crowdinArticleDirectory', crowdinArticleDirectory, 'crowdin-files', result.docs)
   return result.docs[0];
 }
 
@@ -94,6 +93,33 @@ export async function getFiles(
   crowdinArticleDirectoryId: string,
   payload: Payload
 ): Promise<any> {
+  const result = await payload.find({
+    collection: "crowdin-files",
+    limit: 10000,
+    where: {
+      crowdinArticleDirectory: {
+        equals: crowdinArticleDirectoryId,
+      },
+    },
+  });
+  return result.docs;
+}
+
+export async function getFilesByParent(
+  parentCrowdinArticleDirectoryId: string,
+  payload: Payload
+): Promise<any> {
+  const dirResult = await payload.find({
+    collection: "crowdin-article-directories",
+    where: {
+      parent: {
+        equals: parentCrowdinArticleDirectoryId,
+      },
+    },
+  });
+  const crowdinArticleDirectory = dirResult.docs[0]
+  const crowdinArticleDirectoryId = getRelationshipId(crowdinArticleDirectory as any)
+
   const result = await payload.find({
     collection: "crowdin-files",
     limit: 10000,

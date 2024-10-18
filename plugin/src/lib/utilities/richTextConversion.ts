@@ -46,7 +46,9 @@ export const convertLexicalToHtml = async (editorData: SerializedEditorState, ed
   })
 }
 
-export const convertHtmlToLexical = (htmlString: string, editorConfig: SanitizedEditorConfig, crowdinArticleDirectoryId?: string) => {
+export const convertHtmlToLexical = (htmlString: string, editorConfig: SanitizedEditorConfig, blockTranslations?: {
+  [key: string]: any;
+} | null) => {
   // use editorConfig to determine custom convertors
   const converters = cloneDeep([
     ...defaultSlateConverters,
@@ -61,14 +63,13 @@ export const convertHtmlToLexical = (htmlString: string, editorConfig: Sanitized
       span: (el) => {
         const blockId = el && getAttributeValue(el, 'data-block-id')
         const blockType = el && getAttributeValue(el, 'data-block-type')
-        const blockConfig = getLexicalBlockFields(editorConfig).blocks.filter(block => block.slug === blockType)
+        const translation = (blockTranslations?.['blocks'] || []).find((block: any) => block.id === blockId)
 
           return {
           // use a relatively obscure name to reduce likelihood of a clash with an existing Slate editor configuration `nodeType`.
           type: 'pcs-block',
           // fieldName needed to obtain translations?
-          crowdinArticleDirectoryId,
-          blockConfig,
+          translation,
           blockId,
           blockType,
         }

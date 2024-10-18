@@ -6,6 +6,7 @@ import { Payload } from "payload";
 import { CrowdinHtmlObject, PluginOptions } from "../../types";
 import deepEqual from "deep-equal";
 import {
+  Block,
   CollectionConfig,
   Field,
   GlobalConfig,
@@ -28,9 +29,10 @@ import {
 } from '../../utilities/richTextConversion'
 
 import { Config, CrowdinFile } from "../../payload-types";
-import { getFile, getFileByDocumentID, getFileByParent, getFiles, getFilesByDocumentID } from "../helpers";
+import { getFile, getFileByDocumentID, getFileByParent, getFiles, getFilesByDocumentID, getFilesByParent } from "../helpers";
 import { getLexicalBlockFields, getLexicalEditorConfig } from "../../utilities/lexical";
 import { getRelationshipId } from "../../utilities/payload";
+import { SerializedBlockNode } from "@payloadcms/richtext-lexical";
 
 interface IgetLatestDocumentTranslation {
   collection: string;
@@ -331,8 +333,8 @@ export class payloadCrowdinSyncTranslationsApi {
     return slugs;
   }
 
-  async getHtmlFieldSlugsByArticleDirectory(crowdinArticleDirectoryId?: string): Promise<string[]> {
-    const files = await getFiles(`${crowdinArticleDirectoryId}`, this.payload) as CrowdinFile[];
+  async getHtmlFieldSlugsByArticleDirectory(parentCrowdinArticleDirectoryId?: string): Promise<string[]> {
+    const files = await getFilesByParent(`${parentCrowdinArticleDirectoryId}`, this.payload) as CrowdinFile[];
     const slugs = files
     .filter((file) => file.type === "html")
     .map((file) => `${file.field}`)
@@ -366,7 +368,9 @@ export class payloadCrowdinSyncTranslationsApi {
         if (allFields) {
           const field = findField({
             dotNotation: fieldName,
-            fields: allFields
+            fields: allFields,
+            // do not filter out localized fields if lexical block fields
+            filterLocalizedFields:!(parentCrowdinArticleDirectoryId),
           }) as RichTextField
           const editorConfig = getLexicalEditorConfig(field)
           // isLexical?
@@ -374,51 +378,14 @@ export class payloadCrowdinSyncTranslationsApi {
             // get translations here and pass it to convertHtmlToLexical
             // easier than passing `payload` and `pluginOptions` to create a new instance of the class we are in right now - keep convertHtmlToLexical focussed.
             const blockConfig = getLexicalBlockFields(editorConfig)
-            // link with plugin/src/lib/api/payload-crowdin-sync/files/document.ts - store as variable?
-            const fieldName = `blocks`
-            // find a way to `getTranslation` or getPayloadTranslation` for the subfolder.
-            // add ability to pass `fields` and `crowdinArticleDirectory` to `getTranslation`. That will do it.
-            const fields: Field[] = [
-              {
-                name: fieldName,
-                type: 'blocks',
-                blocks: blockConfig.blocks,
-              }
-            ]
-            let docTranslations: { [key: string]: any } = {};
-            // add json fields
-            const crowdinJsonObject =
-              (await this.getTranslation({
-                // field name in dot notation is the 'id' for getTranslation
-                documentId: fieldName,
-                fieldName: "blocks",
-                locale: locale,
-                parentCrowdinArticleDirectoryId: getRelationshipId(file.crowdinArticleDirectory),
+            
+            const blockTranslations = blockConfig ? await this.getBlockTranslations({
+              blockConfig,
+              file,
+              locale
+            }) : null
 
-              })) || {};
-            // add html fields
-            const localizedHtmlFields = await this.getHtmlFieldSlugsByArticleDirectory(getRelationshipId(file.crowdinArticleDirectory));
-            const crowdinHtmlObject: CrowdinHtmlObject = {};
-            for (const field of localizedHtmlFields) {
-              // need to get the field definiton here somehow?
-              crowdinHtmlObject[field] = await this.getTranslation({
-                documentId: field,
-                fieldName: field,
-                locale: locale,
-                fields,
-              });
-            }
-
-            docTranslations = buildPayloadUpdateObject({
-              crowdinJsonObject,
-              crowdinHtmlObject,
-              fields,
-              filterLocalizedFields: false,
-            });
-
-            console.log('crowdinJsonObject', crowdinJsonObject, 'crowdinHtmlObject', crowdinHtmlObject, 'fields', fields, 'docTranslations', docTranslations)
-
-            return convertHtmlToLexical(data, editorConfig, getRelationshipId(file.crowdinArticleDirectory)) || {
+            return convertHtmlToLexical(data, editorConfig, blockTranslations) || {
               "root": {
                   "type": "root",
                   "format": "",
@@ -456,6 +423,63 @@ export class payloadCrowdinSyncTranslationsApi {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  private async getBlockTranslations({
+    blockConfig,
+    file,
+    locale
+  }: {
+    blockConfig: {
+      blocks: Block[]
+    },
+    file: CrowdinFile,
+    locale: string
+  }) {
+    // link with plugin/src/lib/api/payload-crowdin-sync/files/document.ts - store as variable?
+    const fieldName = `blocks`
+    // find a way to `getTranslation` or getPayloadTranslation` for the subfolder.
+    // add ability to pass `fields` and `crowdinArticleDirectory` to `getTranslation`. That will do it.
+    const fields: Field[] = [
+      {
+        name: fieldName,
+        type: 'blocks',
+        blocks: blockConfig.blocks,
+      }
+    ]
+    let docTranslations: { [key: string]: any } = {};
+    // add json fields
+    const crowdinJsonObject =
+      (await this.getTranslation({
+        // field name in dot notation is the 'id' for getTranslation
+        documentId: fieldName,
+        fieldName: "blocks",
+        locale: locale,
+        parentCrowdinArticleDirectoryId: getRelationshipId(file.crowdinArticleDirectory),
+
+      })) || {};
+    // add html fields
+    const localizedHtmlFields = await this.getHtmlFieldSlugsByArticleDirectory(getRelationshipId(file.crowdinArticleDirectory));
+    const crowdinHtmlObject: CrowdinHtmlObject = {};
+    for (const field of localizedHtmlFields) {
+      // need to get the field definiton here somehow?
+      crowdinHtmlObject[field] = await this.getTranslation({
+        documentId: field,
+        fieldName: field,
+        locale: locale,
+        fields,
+        parentCrowdinArticleDirectoryId: getRelationshipId(file.crowdinArticleDirectory),
+      });
+    }
+
+    docTranslations = buildPayloadUpdateObject({
+      crowdinJsonObject,
+      crowdinHtmlObject,
+      fields,
+      filterLocalizedFields: false,
+    });
+
+    return docTranslations
   }
 
   private async getFileDataFromUrl(url: string) {

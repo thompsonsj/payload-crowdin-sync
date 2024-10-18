@@ -24,15 +24,17 @@ export const findField = ({
   dotNotation,
   fields,
   firstIteration = true,
+  filterLocalizedFields = true,
 }: {
   dotNotation: string
   fields: Field[]
   firstIteration?: boolean,
+  filterLocalizedFields?: boolean,
 }): Field | undefined => {
   /** Run through getLocalizedFields to ignore tabs/collapssibles...etc */
-  const localizedFields = firstIteration ? getLocalizedFields({
+  const localizedFields = filterLocalizedFields ? (firstIteration ? getLocalizedFields({
     fields
-  }) : fields
+  }) : fields) : fields
   const keys = dotNotation.split(`.`)
   if (keys.length === 0) {
     return undefined
