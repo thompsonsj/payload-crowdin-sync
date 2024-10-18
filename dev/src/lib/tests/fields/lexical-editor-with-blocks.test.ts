@@ -636,7 +636,7 @@ describe('Lexical editor with blocks', () => {
       (file) => file.field === 'content'
     );
     expect(contentHtmlFile?.fileData?.html).toMatchInlineSnapshot(
-      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span data-block-id=6582d48f2037fb3ca72ed2cf></span><p></p>"`
+      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span data-block-id=6582d48f2037fb3ca72ed2cf data-block-type=highlight></span><p></p>"`
     );
   });
 
@@ -652,7 +652,7 @@ describe('Lexical editor with blocks', () => {
       .times(7)
       .reply(200, mockClient.createFile({}));
 
-    const policy: Policy = await payload.create({
+    const policy: Policy = (await payload.create({
       collection: 'policies',
       data: {
         group: {
@@ -668,7 +668,7 @@ describe('Lexical editor with blocks', () => {
           ],
         },
       },
-    }) as any;
+    })) as any;
 
     const arrayField = isDefined(policy['group']?.['array'])
       ? policy['group']?.['array']
@@ -690,18 +690,26 @@ describe('Lexical editor with blocks', () => {
     expect(
       crowdinFiles.find((file) => file.name === 'fields.json')
     ).toBeDefined();
-    
-    const fileOneCrowdinFiles = await getFilesByDocumentID(`${pluginOptions.lexicalBlockFolderPrefix}group.array.${ids[0]}.content`, payload, policy.crowdinArticleDirectory as CrowdinArticleDirectory);
-    const fileTwoCrowdinFiles = await getFilesByDocumentID(`${pluginOptions.lexicalBlockFolderPrefix}group.array.${ids[1]}.content`, payload, policy.crowdinArticleDirectory as CrowdinArticleDirectory);
+
+    const fileOneCrowdinFiles = await getFilesByDocumentID(
+      `${pluginOptions.lexicalBlockFolderPrefix}group.array.${ids[0]}.content`,
+      payload,
+      policy.crowdinArticleDirectory as CrowdinArticleDirectory
+    );
+    const fileTwoCrowdinFiles = await getFilesByDocumentID(
+      `${pluginOptions.lexicalBlockFolderPrefix}group.array.${ids[1]}.content`,
+      payload,
+      policy.crowdinArticleDirectory as CrowdinArticleDirectory
+    );
     expect(fileOneCrowdinFiles.length).toEqual(2);
     expect(fileTwoCrowdinFiles.length).toEqual(2);
 
     expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(
-      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span data-block-id=6582d48f2037fb3ca72ed2cf></span><p></p>"`
+      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span data-block-id=6582d48f2037fb3ca72ed2cf data-block-type=highlight></span><p></p>"`
     );
 
     expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(
-      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span data-block-id=6582d48f2037fb3ca72ed2cf></span><p></p>"`
+      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p>Try it out for yourself!</p><p></p><span data-block-id=6582d48f2037fb3ca72ed2cf data-block-type=highlight></span><p></p>"`
     );
   });
 });

@@ -704,7 +704,7 @@ describe('Lexical editor with multiple blocks', () => {
       (file) => file.field === 'content'
     );
     expect(contentHtmlFile?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8></span><span data-block-id=65d67e2291c92e447e7472f9></span><ul class="bullet"><li value=1></li></ul>"`
+      `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8 data-block-type=highlight></span><span data-block-id=65d67e2291c92e447e7472f9 data-block-type=imageText></span><ul class="bullet"><li value=1></li></ul>"`
     );
     const contentBlocksCrowdinFiles = await getFilesByDocumentID(
       `${pluginOptions.lexicalBlockFolderPrefix}content`,
@@ -788,11 +788,11 @@ describe('Lexical editor with multiple blocks', () => {
     expect(fileTwoCrowdinFiles.length).toEqual(2);
 
     expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8></span><span data-block-id=65d67e2291c92e447e7472f9></span><ul class="bullet"><li value=1></li></ul>"`
+      `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8 data-block-type=highlight></span><span data-block-id=65d67e2291c92e447e7472f9 data-block-type=imageText></span><ul class="bullet"><li value=1></li></ul>"`
     );
 
     expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8></span><span data-block-id=65d67e2291c92e447e7472f9></span><ul class="bullet"><li value=1></li></ul>"`
+      `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8 data-block-type=highlight></span><span data-block-id=65d67e2291c92e447e7472f9 data-block-type=imageText></span><ul class="bullet"><li value=1></li></ul>"`
     );
   });
 
@@ -888,8 +888,55 @@ describe('Lexical editor with multiple blocks', () => {
         targetLanguageId: 'de',
       })
       .reply(200, {})
+      // de - file 2 get translation
+      .post(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/files/${56642}`,
+        {
+          targetLanguageId: 'de',
+        }
+      )
+      .reply(
+        200,
+        mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${
+            pluginOptions.projectId
+          }/translations/builds/${56642}/download?targetLanguageId=de`,
+        })
+      )
+      .get(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/${56642}/download`
+      )
+      .query({
+        targetLanguageId: 'de',
+      })
+      .reply(200, {
+        blocks: {
+          '65d67d2591c92e447e7472f7': {
+            cta: {
+              text: 'Laden Sie payload-crowdin-sync auf npm herunter!',
+              href: 'https://www.npmjs.com/package/payload-crowdin-sync',
+            },
+          },
+          '65d67d8191c92e447e7472f8': {
+            highlight: {
+              heading: {
+                title: 'Blöcke werden in ihre eigenen Felder extrahiert',
+                preTitle: 'Wie das Plugin Blöcke im Lexikaleditor behandelt',
+              },
+            },
+          },
+          '65d67e2291c92e447e7472f9': {
+            imageText: {
+              title: 'Testen einer Reihe von Feldern',
+            },
+          },
+        },
+      })
       // de - file 3 get translation
-      /**
       .post(
         `/api/v2/projects/${
           pluginOptions.projectId
@@ -903,10 +950,21 @@ describe('Lexical editor with multiple blocks', () => {
         mockClient.buildProjectFileTranslation({
           url: `https://api.crowdin.com/api/v2/projects/${
             pluginOptions.projectId
-          }/translations/builds/${56643}/download?targetLanguageId=fr`,
+          }/translations/builds/${56643}/download?targetLanguageId=de`,
         })
       )
-      */
+      .get(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/${56643}/download`
+      )
+      .query({
+        targetLanguageId: 'de',
+      })
+      .reply(
+        200,
+        '<p>Das Plugin analysiert Ihre Blockkonfiguration für den Lexical-Rich-Text-Editor. Es extrahiert alle Blockwerte aus dem Rich-Text-Feld und behandelt diese Konfigurations-/Datenkombination dann als reguläres „Blocks“-Feld.</p<p>>Im HTML werden Markierungen platziert und dieser Inhalt wird bei der Übersetzung an der richtigen Stelle wiederhergestellt.</p>'
+      )
       // fr - file 1 get translation
       .post(
         `/api/v2/projects/${
@@ -934,26 +992,56 @@ describe('Lexical editor with multiple blocks', () => {
       })
       .reply(200, {})
       // fr - file 2 get translation
-      /**
       .post(
-        `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${56642}`,
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/files/${56642}`,
         {
           targetLanguageId: 'fr',
         }
       )
-      .reply(200, mockClient.buildProjectFileTranslation({
-        url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56642}/download?targetLanguageId=fr`
-      }))
+      .reply(
+        200,
+        mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${
+            pluginOptions.projectId
+          }/translations/builds/${56642}/download?targetLanguageId=fr`,
+        })
+      )
       .get(
-        `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56642}/download`
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/${56642}/download`
       )
       .query({
         targetLanguageId: 'fr',
       })
-      .reply(200, {})
-      */
+      .reply(200, {
+        blocks: {
+          '65d67d2591c92e447e7472f7': {
+            cta: {
+              text: 'Téléchargez payload-crowdin-sync sur npm!',
+              href: 'https://www.npmjs.com/package/payload-crowdin-sync',
+            },
+          },
+          '65d67d8191c92e447e7472f8': {
+            highlight: {
+              heading: {
+                title: 'Les blocs sont extraits dans leurs propres champs',
+                preTitle:
+                  "Comment le plugin gère les blocs dans l'éditeur lexical",
+              },
+            },
+          },
+          '65d67e2291c92e447e7472f9': {
+            imageText: {
+              title: 'Tester une gamme de domaines',
+            },
+          },
+        },
+      })
       // fr - file 3 get translation
-      /**
+
       .post(
         `/api/v2/projects/${
           pluginOptions.projectId
@@ -975,14 +1063,14 @@ describe('Lexical editor with multiple blocks', () => {
           pluginOptions.projectId
         }/translations/builds/${56643}/download`
       )
-      .times(2)
       .query({
         targetLanguageId: 'fr',
       })
-        
-      // all files have the same fileID - we provide the same response for each translation request, therefore only one file can be tested in each test
-      .reply(200, "<p>Poste d'essai</p>")
-      */
+      .reply(
+        200,
+        "<p>Le plugin analyse la configuration de votre bloc pour l'éditeur de texte enrichi lexical. Il extrait toutes les valeurs de bloc du champ de texte enrichi, puis traite cette combinaison configuration/données comme un champ « blocs » normal.</p<p>>Les marqueurs sont placés dans le code HTML et ce contenu est restauré au bon endroit lors de la traduction.</p>"
+      )
+
       // fr - file 4 get translation
       .post(
         `/api/v2/projects/${
@@ -1010,8 +1098,8 @@ describe('Lexical editor with multiple blocks', () => {
       })
       .reply(
         200,
-        `<p>Exemple de contenu pour un champ de texte enrichi lexical avec plusieurs blocs.</p><span data-block-id=65d67d2591c92e447e7472f7}></span><p>Une liste à puces entre certains blocs composée de:</p><ul class="bullet"><li value=1>un élément de liste à puces ; et</li><li value=2>
-      un autre!</li></ul><span data-block-id=65d67d8191c92e447e7472f8}></span><span data-block-id=65d67e2291c92e447e7472f9}></span><ul class="bullet"><li value=1></li></ul>`
+        `<p>Exemple de contenu pour un champ de texte enrichi lexical avec plusieurs blocs.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>Une liste à puces entre certains blocs composée de:</p><ul class="bullet"><li value=1>un élément de liste à puces ; et</li><li value=2>
+      un autre!</li></ul><span data-block-id=65d67d8191c92e447e7472f8 data-block-type=highlight></span><span data-block-id=65d67e2291c92e447e7472f9 data-block-type=imageText></span><ul class="bullet"><li value=1></li></ul>`
       );
 
     const policy = await payload.create({
@@ -1095,6 +1183,17 @@ describe('Lexical editor with multiple blocks', () => {
               "version": 1,
             },
             {
+              "fields": {
+                "blockType": "cta",
+                "href": "https://www.npmjs.com/package/payload-crowdin-sync",
+                "id": "65d67d2591c92e447e7472f7",
+                "text": "Téléchargez payload-crowdin-sync sur npm!",
+              },
+              "format": "",
+              "type": "block",
+              "version": 2,
+            },
+            {
               "children": [
                 {
                   "detail": 0,
@@ -1161,6 +1260,58 @@ describe('Lexical editor with multiple blocks', () => {
               "tag": "ul",
               "type": "list",
               "version": 1,
+            },
+            {
+              "fields": {
+                "blockType": "highlight",
+                "content": {
+                  "root": {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "detail": 0,
+                            "format": 0,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "Le plugin analyse la configuration de votre bloc pour l'éditeur de texte enrichi lexical. Il extrait toutes les valeurs de bloc du champ de texte enrichi, puis traite cette combinaison configuration/données comme un champ « blocs » normal.>Les marqueurs sont placés dans le code HTML et ce contenu est restauré au bon endroit lors de la traduction.",
+                            "type": "text",
+                            "version": 1,
+                          },
+                        ],
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1,
+                      },
+                    ],
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "root",
+                    "version": 1,
+                  },
+                },
+                "heading": {
+                  "preTitle": "Comment le plugin gère les blocs dans l'éditeur lexical",
+                  "title": "Les blocs sont extraits dans leurs propres champs",
+                },
+                "id": "65d67d8191c92e447e7472f8",
+              },
+              "format": "",
+              "type": "block",
+              "version": 2,
+            },
+            {
+              "fields": {
+                "blockType": "imageText",
+                "id": "65d67e2291c92e447e7472f9",
+                "title": "Tester une gamme de domaines",
+              },
+              "format": "",
+              "type": "block",
+              "version": 2,
             },
             {
               "children": [

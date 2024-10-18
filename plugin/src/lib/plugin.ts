@@ -14,7 +14,6 @@ import { containsLocalizedFields } from "./utilities";
 import { getReviewTranslationEndpoint } from "./endpoints/globals/reviewTranslation";
 import { getReviewFieldsEndpoint } from "./endpoints/globals/reviewFields";
 import Joi from "joi";
-import { isArray } from "lodash";
 import { crowdinArticleDirectoryFields } from "./fields/crowdinArticleDirectoryFields";
 
 /**
