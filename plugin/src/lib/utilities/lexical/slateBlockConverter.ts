@@ -1,7 +1,7 @@
 import type { SerializedBlockNode } from "@payloadcms/richtext-lexical"
 import type { SlateNodeConverter } from '@payloadcms/richtext-lexical'
 
-export const SlateUploadConverter: SlateNodeConverter = {
+export const SlateBlockConverter: SlateNodeConverter = {
   converter({ slateNode }) {
 
 

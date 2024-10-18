@@ -24,10 +24,14 @@ import {
 } from '@payloadcms/richtext-lexical'
 
 import { getAttributeValue } from 'domutils'
+import { SlateBlockConverter } from "./lexical/slateBlockConverter";
+import { getLexicalBlockFields } from "./lexical";
+import { Field } from "payload/types";
+import { payloadCrowdinSyncTranslationsApi } from "../api/payload-crowdin-sync/translations";
 
 const BlockHTMLConverter: HTMLConverter<any> = {
   converter: async ({ node }) => {
-    return `<span data-block-id=${node.fields.id}></span>`
+    return `<span data-block-id=${node.fields.id} data-block-type=${node.fields.blockType}></span>`
   },
   nodeTypes: [BlockNode.getType()],
 }
@@ -42,20 +46,33 @@ export const convertLexicalToHtml = async (editorData: SerializedEditorState, ed
   })
 }
 
-export const convertHtmlToLexical = (htmlString: string, editorConfig: SanitizedEditorConfig) => {
+export const convertHtmlToLexical = (htmlString: string, editorConfig: SanitizedEditorConfig, crowdinArticleDirectoryId?: string) => {
   // use editorConfig to determine custom convertors
   const converters = cloneDeep([
     ...defaultSlateConverters,
+    SlateBlockConverter,
     // AnotherCustomConverter
   ])
+
   const htmlToSlateConfig = {
     ...payloadHtmlToSlateConfig,
     elementTags: {
       ...payloadHtmlToSlateConfig.elementTags,
-      span: (el) => ({
-        type: 'block',
-        id: el && getAttributeValue(el, 'data-block-id'),
-      }),
+      span: (el) => {
+        const blockId = el && getAttributeValue(el, 'data-block-id')
+        const blockType = el && getAttributeValue(el, 'data-block-type')
+        const blockConfig = getLexicalBlockFields(editorConfig).blocks.filter(block => block.slug === blockType)
+
+          return {
+          // use a relatively obscure name to reduce likelihood of a clash with an existing Slate editor configuration `nodeType`.
+          type: 'pcs-block',
+          // fieldName needed to obtain translations?
+          crowdinArticleDirectoryId,
+          blockConfig,
+          blockId,
+          blockType,
+        }
+      },
     },
   } as HtmlToSlateConfig
   return convertSlateToLexical({

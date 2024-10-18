@@ -1010,8 +1010,8 @@ describe('Lexical editor with multiple blocks', () => {
       })
       .reply(
         200,
-        `<p>Exemple de contenu pour un champ de texte enrichi lexical avec plusieurs blocs.</p><span data-block-id=65d67d2591c92e447e7472f7}></span><p>Une liste à puces entre certains blocs composée de:</p><ul class="bullet"><li value=1>un élément de liste à puces ; et</li><li value=2>
-      un autre!</li></ul><span data-block-id=65d67d8191c92e447e7472f8}></span><span data-block-id=65d67e2291c92e447e7472f9}></span><ul class="bullet"><li value=1></li></ul>`
+        `<p>Exemple de contenu pour un champ de texte enrichi lexical avec plusieurs blocs.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>Une liste à puces entre certains blocs composée de:</p><ul class="bullet"><li value=1>un élément de liste à puces ; et</li><li value=2>
+      un autre!</li></ul><span data-block-id=65d67d8191c92e447e7472f8 data-block-type=highlight></span><span data-block-id=65d67e2291c92e447e7472f9 data-block-type=imageText></span><ul class="bullet"><li value=1></li></ul>`
       );
 
     const policy = await payload.create({

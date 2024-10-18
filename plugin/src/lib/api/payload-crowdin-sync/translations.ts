@@ -7,6 +7,7 @@ import { CrowdinHtmlObject, PluginOptions } from "../../types";
 import deepEqual from "deep-equal";
 import {
   CollectionConfig,
+  Field,
   GlobalConfig,
   RichTextField,
   SanitizedCollectionConfig,
@@ -26,9 +27,10 @@ import {
   convertHtmlToSlate
 } from '../../utilities/richTextConversion'
 
-import { Config } from "../../payload-types";
-import { getFileByDocumentID, getFilesByDocumentID } from "../helpers";
-import { getLexicalEditorConfig } from "../../utilities/lexical";
+import { Config, CrowdinFile } from "../../payload-types";
+import { getFile, getFileByDocumentID, getFiles, getFilesByDocumentID } from "../helpers";
+import { getLexicalBlockFields, getLexicalEditorConfig } from "../../utilities/lexical";
+import { getRelationshipId } from "../../utilities/payload";
 
 interface IgetLatestDocumentTranslation {
   collection: string;
@@ -50,6 +52,9 @@ interface IgetTranslation {
   locale: string;
   global?: boolean;
   collection?: CollectionConfig | GlobalConfig;
+  /** Pass crowdinArticleDirectoryId to retrieve `crowdin-files` documents with a parent (i.e. Lexical field blocks) */
+  parentCrowdinArticleDirectoryId?: string;
+  fields?: Field[]
 }
 
 interface IupdateTranslation {
@@ -310,7 +315,7 @@ export class payloadCrowdinSyncTranslationsApi {
         global,
       });
       requiredFieldSlugs.forEach((slug) => {
-        if (!docTranslations.hasOwnProperty(slug)) {
+        if (!Object.prototype.hasOwnProperty.call(docTranslations, slug)) {
           docTranslations[slug] = currentTranslations[slug];
         }
       });
@@ -326,14 +331,23 @@ export class payloadCrowdinSyncTranslationsApi {
     return slugs;
   }
 
+  async getHtmlFieldSlugsByArticleDirectory(crowdinArticleDirectoryId?: string): Promise<string[]> {
+    const files = await getFiles(`${crowdinArticleDirectoryId}`, this.payload) as CrowdinFile[];
+    const slugs = files
+    .filter((file) => file.type === "html")
+    .map((file) => `${file.field}`)
+    return slugs;
+  }
+
   /**
    * Retrieve translations for a document field name
    *
    * * returns Slate object for html fields
    * * returns all json fields if fieldName is 'fields'
    */
-  async getTranslation({ documentId, fieldName, locale, collection }: IgetTranslation) {
-    const file = await getFileByDocumentID(fieldName, `${documentId}`, this.payload);
+  // TODO refactor out fields override - replace `collection` with `fields`
+  async getTranslation({ documentId, fieldName, locale, collection, parentCrowdinArticleDirectoryId, fields }: IgetTranslation) {
+    const file = (typeof parentCrowdinArticleDirectoryId === 'string' ? await getFile(fieldName, parentCrowdinArticleDirectoryId, this.payload) : await getFileByDocumentID(fieldName, `${documentId}`, this.payload)) as CrowdinFile;
     // it is possible a file doesn't exist yet - e.g. an article with localized text fields that contains an empty html field.
     if (!file) {
       return;
@@ -348,15 +362,62 @@ export class payloadCrowdinSyncTranslationsApi {
       );
       const data = await this.getFileDataFromUrl(response.data.url);
       if (file.type === "html") {
-        if (collection) {
+        const allFields = collection ? collection.fields : fields
+        if (allFields) {
           const field = findField({
             dotNotation: fieldName,
-            fields: collection.fields
+            fields: allFields
           }) as RichTextField
           const editorConfig = getLexicalEditorConfig(field)
           // isLexical?
           if (editorConfig) {
-            return convertHtmlToLexical(data, editorConfig) || {
+            // get translations here and pass it to convertHtmlToLexical
+            // easier than passing `payload` and `pluginOptions` to create a new instance of the class we are in right now - keep convertHtmlToLexical focussed.
+            const blockConfig = getLexicalBlockFields(editorConfig)
+            // link with plugin/src/lib/api/payload-crowdin-sync/files/document.ts - store as variable?
+            const fieldName = `blocks`
+            // find a way to `getTranslation` or getPayloadTranslation` for the subfolder.
+            // add ability to pass `fields` and `crowdinArticleDirectory` to `getTranslation`. That will do it.
+            const fields: Field[] = [
+              {
+                name: fieldName,
+                type: 'blocks',
+                blocks: blockConfig.blocks,
+              }
+            ]
+            let docTranslations: { [key: string]: any } = {};
+            // add json fields
+            const crowdinJsonObject =
+              (await this.getTranslation({
+                // field name in dot notation is the 'id' for getTranslation
+                documentId: fieldName,
+                fieldName: "fields",
+                locale: locale,
+                parentCrowdinArticleDirectoryId: getRelationshipId(file.crowdinArticleDirectory),
+
+              })) || {};
+            // add html fields
+            const localizedHtmlFields = await this.getHtmlFieldSlugsByArticleDirectory(getRelationshipId(file.crowdinArticleDirectory));
+            const crowdinHtmlObject: CrowdinHtmlObject = {};
+            for (const field of localizedHtmlFields) {
+              // need to get the field definiton here somehow?
+              crowdinHtmlObject[field] = await this.getTranslation({
+                documentId: field,
+                fieldName: field,
+                locale: locale,
+                fields,
+              });
+            }
+
+            docTranslations = buildPayloadUpdateObject({
+              crowdinJsonObject,
+              crowdinHtmlObject,
+              fields,
+            });
+
+            console.log(docTranslations)
+
+            return convertHtmlToLexical(data, editorConfig, getRelationshipId(file.crowdinArticleDirectory)) || {
               "root": {
                   "type": "root",
                   "format": "",
@@ -417,9 +478,9 @@ export class payloadCrowdinSyncTranslationsApi {
   restoreIdAndBlockType = (
     document: any,
     translations: any,
-    key: string = "layout"
+    key = "layout"
   ) => {
-    if (translations.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(translations, key)) {
       translations[key] = translations[key].map(
         (block: any, index: number) => ({
           ...block,
