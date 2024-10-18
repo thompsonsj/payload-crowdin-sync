@@ -888,6 +888,45 @@ describe('Lexical editor with multiple blocks', () => {
         targetLanguageId: 'de',
       })
       .reply(200, {})
+      // de - file 2 get translation
+      .post(
+        `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${56642}`,
+        {
+          targetLanguageId: 'de',
+        }
+      )
+      .reply(200, mockClient.buildProjectFileTranslation({
+        url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56642}/download?targetLanguageId=de`
+      }))
+      .get(
+        `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56642}/download`
+      )
+      .query({
+        targetLanguageId: 'de',
+      })
+      .reply(200, {
+        "blocks": {
+          "65d67d2591c92e447e7472f7": {
+            "cta": {
+              "text": "Download payload-crowdin-sync on npm!",
+              "href": "https://www.npmjs.com/package/payload-crowdin-sync"
+            }
+          },
+          "65d67d8191c92e447e7472f8": {
+            "highlight": {
+              "heading": {
+                "title": "Blocks are extracted into their own fields",
+                "preTitle": "How the plugin handles blocks in the Lexical editor"
+              }
+            }
+          },
+          "65d67e2291c92e447e7472f9": {
+            "imageText": {
+              "title": "Testing a range of fields"
+            }
+          }
+        }
+      })
       // de - file 3 get translation
       /**
       .post(
@@ -934,7 +973,6 @@ describe('Lexical editor with multiple blocks', () => {
       })
       .reply(200, {})
       // fr - file 2 get translation
-      /**
       .post(
         `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${56642}`,
         {
@@ -950,8 +988,29 @@ describe('Lexical editor with multiple blocks', () => {
       .query({
         targetLanguageId: 'fr',
       })
-      .reply(200, {})
-      */
+      .reply(200, {
+        "blocks": {
+          "65d67d2591c92e447e7472f7": {
+            "cta": {
+              "text": "Download payload-crowdin-sync on npm!",
+              "href": "https://www.npmjs.com/package/payload-crowdin-sync"
+            }
+          },
+          "65d67d8191c92e447e7472f8": {
+            "highlight": {
+              "heading": {
+                "title": "Blocks are extracted into their own fields",
+                "preTitle": "How the plugin handles blocks in the Lexical editor"
+              }
+            }
+          },
+          "65d67e2291c92e447e7472f9": {
+            "imageText": {
+              "title": "Testing a range of fields"
+            }
+          }
+        }
+      })
       // fr - file 3 get translation
       /**
       .post(

@@ -2,6 +2,8 @@ import { Payload } from "payload";
 import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from "../payload-types";
 import { payloadCrowdinSyncTranslationsApi } from "./payload-crowdin-sync/translations";
 import { PluginOptions, isCollectionOrGlobalConfigObject, isCollectionOrGlobalConfigSlug, isCrowdinArticleDirectory } from "../types";
+import { getRelationshipId } from "../utilities/payload";
+import { PaginatedDocs } from "payload/database";
 
 /**
  * get Crowdin Article Directory for a given documentId
@@ -55,6 +57,36 @@ export async function getFile(
       },
     },
   });
+  return result.docs[0];
+}
+
+export async function getFileByParent(
+  name: string,
+  parentCrowdinArticleDirectoryId: string,
+  payload: Payload
+): Promise<any> {
+  const dirResult = await payload.find({
+    collection: "crowdin-article-directories",
+    where: {
+      parent: {
+        equals: parentCrowdinArticleDirectoryId,
+      },
+    },
+  });
+  const crowdinArticleDirectory = dirResult.docs[0]
+  const crowdinArticleDirectoryId = getRelationshipId(crowdinArticleDirectory as any)
+
+  const result = await payload.find({
+    collection: "crowdin-files",
+    where: {
+      field: { equals: name },
+      crowdinArticleDirectory: {
+        equals: crowdinArticleDirectoryId,
+      },
+    },
+  });
+
+  //console.log('name', name, 'crowdinArticleDirectory', crowdinArticleDirectory, 'crowdin-files', result.docs)
   return result.docs[0];
 }
 

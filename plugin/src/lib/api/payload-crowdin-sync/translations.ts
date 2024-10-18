@@ -28,7 +28,7 @@ import {
 } from '../../utilities/richTextConversion'
 
 import { Config, CrowdinFile } from "../../payload-types";
-import { getFile, getFileByDocumentID, getFiles, getFilesByDocumentID } from "../helpers";
+import { getFile, getFileByDocumentID, getFileByParent, getFiles, getFilesByDocumentID } from "../helpers";
 import { getLexicalBlockFields, getLexicalEditorConfig } from "../../utilities/lexical";
 import { getRelationshipId } from "../../utilities/payload";
 
@@ -347,7 +347,7 @@ export class payloadCrowdinSyncTranslationsApi {
    */
   // TODO refactor out fields override - replace `collection` with `fields`
   async getTranslation({ documentId, fieldName, locale, collection, parentCrowdinArticleDirectoryId, fields }: IgetTranslation) {
-    const file = (typeof parentCrowdinArticleDirectoryId === 'string' ? await getFile(fieldName, parentCrowdinArticleDirectoryId, this.payload) : await getFileByDocumentID(fieldName, `${documentId}`, this.payload)) as CrowdinFile;
+    const file = (typeof parentCrowdinArticleDirectoryId === 'string' ? await getFileByParent(fieldName, parentCrowdinArticleDirectoryId, this.payload) : await getFileByDocumentID(fieldName, `${documentId}`, this.payload)) as CrowdinFile;
     // it is possible a file doesn't exist yet - e.g. an article with localized text fields that contains an empty html field.
     if (!file) {
       return;
@@ -391,7 +391,7 @@ export class payloadCrowdinSyncTranslationsApi {
               (await this.getTranslation({
                 // field name in dot notation is the 'id' for getTranslation
                 documentId: fieldName,
-                fieldName: "fields",
+                fieldName: "blocks",
                 locale: locale,
                 parentCrowdinArticleDirectoryId: getRelationshipId(file.crowdinArticleDirectory),
 
@@ -413,9 +413,10 @@ export class payloadCrowdinSyncTranslationsApi {
               crowdinJsonObject,
               crowdinHtmlObject,
               fields,
+              filterLocalizedFields: false,
             });
 
-            console.log(docTranslations)
+            console.log('crowdinJsonObject', crowdinJsonObject, 'crowdinHtmlObject', crowdinHtmlObject, 'fields', fields, 'docTranslations', docTranslations)
 
             return convertHtmlToLexical(data, editorConfig, getRelationshipId(file.crowdinArticleDirectory)) || {
               "root": {

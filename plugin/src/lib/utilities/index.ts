@@ -411,6 +411,7 @@ export const buildPayloadUpdateObject = ({
   fields,
   topLevel = true,
   document,
+  filterLocalizedFields = true,
 }: {
   crowdinJsonObject: { [key: string]: any };
   crowdinHtmlObject?: CrowdinHtmlObject;
@@ -419,6 +420,7 @@ export const buildPayloadUpdateObject = ({
   /** Flag used internally to filter json fields before recursion. */
   topLevel?: boolean;
   document?: { [key: string]: any };
+  filterLocalizedFields?: boolean;
 }) => {
   let response: { [key: string]: any } = {};
   if (crowdinHtmlObject) {
@@ -426,12 +428,12 @@ export const buildPayloadUpdateObject = ({
 
     merge(crowdinJsonObject, destructured);
   }
-  const filteredFields = topLevel
+  const filteredFields = filterLocalizedFields ? (topLevel
     ? getLocalizedFields({
         fields,
         type: !crowdinHtmlObject ? "json" : undefined,
       })
-    : fields;
+    : fields) : fields;
   filteredFields.forEach((field) => {
     if (!crowdinJsonObject[field.name]) {
       return;
