@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.7.8...source-v0.8.0) (2024-10-18)
+
+
+### Features
+
+* **translations:** receive translations for lexical blocks ([#194](https://github.com/thompsonsj/payload-crowdin-sync/issues/194)) ([866e62c](https://github.com/thompsonsj/payload-crowdin-sync/commit/866e62c8bd26a00be95a1212e02950471e193311))
+
 ## [0.7.8](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.7.7...source-v0.7.8) (2024-08-16)
 
 
