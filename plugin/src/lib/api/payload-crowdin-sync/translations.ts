@@ -29,10 +29,9 @@ import {
 } from '../../utilities/richTextConversion'
 
 import { Config, CrowdinFile } from "../../payload-types";
-import { getFile, getFileByDocumentID, getFileByParent, getFiles, getFilesByDocumentID, getFilesByParent } from "../helpers";
+import { getFileByDocumentID, getFileByParent, getFilesByDocumentID, getFilesByParent } from "../helpers";
 import { getLexicalBlockFields, getLexicalEditorConfig } from "../../utilities/lexical";
 import { getRelationshipId } from "../../utilities/payload";
-import { SerializedBlockNode } from "@payloadcms/richtext-lexical";
 
 interface IgetLatestDocumentTranslation {
   collection: string;

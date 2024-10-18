@@ -25,9 +25,6 @@ import {
 
 import { getAttributeValue } from 'domutils'
 import { SlateBlockConverter } from "./lexical/slateBlockConverter";
-import { getLexicalBlockFields } from "./lexical";
-import { Field } from "payload/types";
-import { payloadCrowdinSyncTranslationsApi } from "../api/payload-crowdin-sync/translations";
 
 const BlockHTMLConverter: HTMLConverter<any> = {
   converter: async ({ node }) => {

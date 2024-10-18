@@ -82,6 +82,11 @@ A `crowdin-article-directories` document represents a folder created on Crowdin 
 
 `crowdin-article-directories` can also have a one-to-one relationship with each other through the `parent` field. These directories are created within parent diretories to contain translations for blocks within a Lexical `richText` field.
 
+`crowdin-article-directories` documents created for Lexical blocks have the following differences:
+
+- The `name` field is set to the Lexical field name in dot notation prefixed with `pluginOptions.lexicalBlockFolderPrefix`. Normal `crowdin-article-directories` documents set the `name` field as the `id` of the corresponding document.
+- The `parent` field is defined. Normal `crowdin-article-directories` documents have an `parent` of `undefined`.
+
 ### `crowdin-files`
 
 Each entry in the `crowdin-files` collection has a one-to-one relationship with an entry in the `crowdin-article-directories` collection.

@@ -3,7 +3,6 @@ import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from
 import { payloadCrowdinSyncTranslationsApi } from "./payload-crowdin-sync/translations";
 import { PluginOptions, isCollectionOrGlobalConfigObject, isCollectionOrGlobalConfigSlug, isCrowdinArticleDirectory } from "../types";
 import { getRelationshipId } from "../utilities/payload";
-import { PaginatedDocs } from "payload/database";
 
 /**
  * get Crowdin Article Directory for a given documentId
