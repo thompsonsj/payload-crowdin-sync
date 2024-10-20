@@ -503,9 +503,14 @@ export const buildCrowdinJsonObject = ({
   isLocalized?: IsLocalized;
 }) => {
   let response: { [key: string]: any } = {};
-  const filteredFields = topLevel
-    ? getLocalizedFields({ fields, type: "json", isLocalized })
-    : fields;
+  
+  const filteredFields = getLocalizedFields({
+    fields,
+    type: "json",
+    // localization check not needed after `topLevel`, but still need to filter field type.
+    isLocalized: topLevel ? isLocalized : (field) => !!(field),
+  });
+
   filteredFields.forEach((field) => {
     if (!doc[field.name]) {
       return;
@@ -582,13 +587,13 @@ export const buildCrowdinHtmlObject = ({
 }) => {
   let response: CrowdinHtmlObject  = {};
   // it is convenient to be able to pass all fields - filter in this case
-  const filteredFields = topLevel
-    ? getLocalizedFields({
-      fields,
-      type: "html",
-      isLocalized,
-    })
-    : fields;
+  const filteredFields = getLocalizedFields({
+    fields,
+    type: "html",
+    // localization check not needed after `topLevel`, but still need to filter field type.
+    isLocalized: topLevel ? isLocalized : (field) => !!(field),
+  });
+
   filteredFields.forEach((field) => {
     const name = [prefix, (field as FieldWithName).name]
       .filter((string) => string)

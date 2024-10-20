@@ -1,6 +1,7 @@
 import { Block, CollectionConfig } from "payload/types";
 import { basicLocalizedFields } from "./fields/basicLocalizedFields";
 import { delocalizeFields } from "../utils";
+import { lexicalEditorWithBlocks } from "./fields/lexicalEditorWithBlocks";
 
 const BasicBlockTextFields: Block = {
   slug: "basicBlock", // required
@@ -29,6 +30,13 @@ const BasicBlockMixedFields: Block = {
     ...basicLocalizedFields,
   ],
 };
+
+const BasicBlockLexical: Block = {
+  slug: "basicBlockLexical",
+  fields: [
+    lexicalEditorWithBlocks,
+  ]
+}
 
 const TestBlockArrayOfRichText: Block = {
   slug: "testBlockArrayOfRichText",
@@ -117,6 +125,33 @@ const NestedFieldCollection: CollectionConfig = {
               localized: true,
             },
           ],
+        },
+        {
+          label: "Block Layout Tab",
+          fields: [
+            {
+              name: 'items',
+              type: 'array',
+              minRows: 1,
+              maxRows: 20,
+              fields: [
+                {
+                  name: "heading",
+                  type: "text",
+                  localized: true,
+                },
+                {
+                  name: 'block',
+                  type: 'blocks',
+                  minRows: 1,
+                  maxRows: 1,
+                  blocks: [
+                    BasicBlockLexical,
+                  ]
+                },
+              ],
+            },
+          ]
         },
         {
           name: "tabTwo",

@@ -371,6 +371,7 @@ export class payloadCrowdinSyncTranslationsApi {
             // do not filter out localized fields if lexical block fields
             filterLocalizedFields:!(parentCrowdinArticleDirectoryId),
           }) as RichTextField
+          console.log('field', field, 'allFields', allFields)
           const editorConfig = getLexicalEditorConfig(field)
           // isLexical?
           if (editorConfig) {

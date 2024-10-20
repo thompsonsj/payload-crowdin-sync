@@ -382,6 +382,34 @@ export interface NestedFieldCollection {
         [k: string]: unknown;
       }[]
     | null;
+  items?:
+    | {
+        heading?: string | null;
+        block?:
+          | {
+              content?: {
+                root: {
+                  type: string;
+                  children: {
+                    type: string;
+                    version: number;
+                    [k: string]: unknown;
+                  }[];
+                  direction: ('ltr' | 'rtl') | null;
+                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                  indent: number;
+                  version: number;
+                };
+                [k: string]: unknown;
+              } | null;
+              id?: string | null;
+              blockName?: string | null;
+              blockType: 'basicBlockLexical';
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
   tabTwo: {
     tabTwoTitle?: string | null;
     tabTwoContent?:
