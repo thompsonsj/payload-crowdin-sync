@@ -24,16 +24,29 @@
 
 Run `nx build plugin` to build the library.
 
-## Running unit tests
+## Tests
 
-Run `nx test plugin` to execute the unit tests via [Jest](https://jestjs.io).
+Plugin test coverage is not 100%, but seeks to cover as many use cases as possible. This includes:
+
+- Testing various field configurations for a collection.
+- Using `nock` to intercept calls to the Crowdin API and ensure the right calls are being made.
+- Unit tests to cover as many caes as possible for the supporting functions, which include a lot of recursion.
+
+### Run
+
+Run `npm run test` to execute unit and integration tests via [Jest](https://jestjs.io).
 
 A Jest test suite is included comprising of:
 
 - unit tests (`*.spec.ts`) within the `src` folder adjacent to files/functions that they are testing; and
-- integrations tests (`*.test.ts`) in the `dev/tests` folder.
+- integration tests (`*.test.ts`) in the `dev/src/lib/tests` folder.
+- integration tests (`*.test.ts`) in the `dev-alternative-config/src/lib/tests` folder.
 
-Integration tests use Payload's [Local API](https://payloadcms.com/docs/local-api/overview) to run tests against a configured Payload installation in the `dev` folder. Tests use [mongodb-memory-server](https://github.com/nodkz/mongodb-memory-server) to connect to for all tests, so it is not necessary to add test documents to a development database.
+Integration tests use Payload's [Local API](https://payloadcms.com/docs/local-api/overview) to run tests against a configured Payload installation in both the `dev` and `dev-alternative-config` folder. Tests use [mongodb-memory-server](https://github.com/nodkz/mongodb-memory-server) to connect to for all tests, so it is not necessary to add test documents to a development database.
+
+### Fixtures
+
+Use `nx dev dev` or `nx dev dev-alternative-config` to run either of the local Payload installations. These local instances can be used to generate fixtures for use with integration tests.
 
 ### References
 

@@ -475,7 +475,7 @@ export class payloadCrowdinSyncTranslationsApi {
       crowdinJsonObject,
       crowdinHtmlObject,
       fields,
-      filterLocalizedFields: false,
+      isLocalized: (field) => !!(field),
     });
 
     return docTranslations

@@ -7,7 +7,7 @@ const isSerializedBlockNode = (node: SerializedLexicalNode): node is SerializedB
   return node.type === 'block';
 }
 
-export const isLexical = (field: RichTextField): field is RichTextField => field.editor && "editorConfig" in field.editor && "lexical" in (field.editor as LexicalRichTextAdapter).editorConfig || false
+export const isLexical = (field: RichTextField): field is RichTextField => field && field.editor && "editorConfig" in field.editor && "lexical" in (field.editor as LexicalRichTextAdapter).editorConfig || false
 
 export const getLexicalEditorConfig = (field: RichTextField) => {
   if (isLexical(field)) {
