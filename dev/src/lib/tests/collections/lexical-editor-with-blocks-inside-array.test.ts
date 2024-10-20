@@ -11,7 +11,10 @@ import {
   CrowdinArticleDirectory,
   NestedFieldCollection as NestedFieldCollectionType,
 } from '../../payload-types';
-import { getFilesByParent } from 'plugin/src/lib/api/helpers';
+import {
+  getFilesByDocumentID,
+  getFilesByParent,
+} from 'plugin/src/lib/api/helpers';
 import { getRelationshipId } from 'plugin/src/lib/utilities/payload';
 
 const pluginOptions = pluginConfig();
@@ -662,7 +665,76 @@ describe('Lexical editor with multiple blocks', () => {
     });
   });
 
-  it('associates a parent Crowdin article directory with a lexical blocks Crowdin article directory', async () => {
+  it('creates files for rich text files with expected data', async () => {
+    nock('https://api.crowdin.com')
+      .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
+      .times(2)
+      .reply(200, mockClient.createDirectory({}))
+      .post(`/api/v2/storages`)
+      .times(5)
+      .reply(200, mockClient.addStorage())
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .times(5)
+      .reply(200, mockClient.createFile({}));
+
+    const create = await payload.create({
+      collection: 'nested-field-collection',
+      data: fixture,
+    });
+    // update now that a Crowdin article directory is available
+    const doc: NestedFieldCollectionType = (await payload.update({
+      id: create.id,
+      collection: 'nested-field-collection',
+      data: {
+        title: 'Test nested field collection',
+      },
+    })) as any;
+
+    const arrayIds =
+      (doc.items || []).map((item) => item.id) || ([] as string[]);
+    const blockIds =
+      (doc.items || []).map(
+        (item) => (item.block || []).find((x) => x !== undefined)?.id
+      ) || ([] as string[]);
+    const firstLexicalBlock = doc.items?.[1]?.block?.[0]?.content;
+
+    const lexicalBlockIds = firstLexicalBlock
+      ? extractLexicalBlockContent(firstLexicalBlock.root).map(
+          (block) => block.id
+        )
+      : ['lexical-block-id-not-found'];
+
+    const files = await getFilesByDocumentID(`${doc.id}`, payload);
+
+    expect(files.length).toEqual(3);
+
+    expect(files[0].fileData).toEqual(
+      {
+        "html": `<p>If you add custom blocks, these will also be translated!</p><span data-block-id=${lexicalBlockIds[0]} data-block-type=highlight></span>`,
+      }
+    );
+    expect(files[1].fileData).toMatchInlineSnapshot(`
+      {
+        "html": "<p>Lexical fields nested within complex layouts - such as this one (a <code>blocks</code> field in an <code>array</code> item within a <code>tab</code>), are supported.</p>",
+      }
+    `);
+    expect(files[2].fileData).toEqual(
+      {
+        "json": {
+          "items": {
+            [`${arrayIds[0]}`]: {
+              "heading": "Nested Lexical fields are supported",
+            },
+            [`${arrayIds[1]}`]: {
+              "heading": "Nested Lexical fields are supported - and blocks in that Lexical field are also translated",
+            },
+          },
+        },
+      }
+    );
+  });
+
+  it('creates files for Lexical block with expected data', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
       .times(2)
@@ -694,11 +766,17 @@ describe('Lexical editor with multiple blocks', () => {
 
     expect(files.length).toEqual(2);
 
+    expect(
+      (files[0]?.crowdinArticleDirectory as CrowdinArticleDirectory)?.parent
+    ).toBeDefined();
     expect(files[0].fileData).toMatchInlineSnapshot(`
       {
         "html": "<p>Note a key difference with regular blocks - all <code>text</code>, <code>textarea</code> and <code>richText</code> fields will be sent to Crowdin regardless of whether or not they are <a href="https://payloadcms.com/docs/configuration/localization#field-by-field-localization">localized fields</a>.</p>",
       }
     `);
+    expect(
+      (files[1]?.crowdinArticleDirectory as CrowdinArticleDirectory)?.parent
+    ).toBeDefined();
     expect(files[1].fileData).toMatchInlineSnapshot(`
       {
         "json": {

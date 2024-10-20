@@ -107,7 +107,7 @@ export async function getFiles(
 export async function getFilesByParent(
   parentCrowdinArticleDirectoryId: string,
   payload: Payload
-): Promise<any> {
+): Promise<CrowdinFile[]> {
   const dirResult = await payload.find({
     collection: "crowdin-article-directories",
     where: {
@@ -128,7 +128,7 @@ export async function getFilesByParent(
       },
     },
   });
-  return result.docs;
+  return result.docs as any;
 }
 
 export async function getFileByDocumentID(
