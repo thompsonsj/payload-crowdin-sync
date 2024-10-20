@@ -18,7 +18,7 @@ export const isDefined = <T>(val: T | undefined | null): val is T => {
   return val !== undefined && val !== null;
 }
 
-type RichTextValue = string | object | undefined;
+type RichTextValue = string | object | undefined | {[key: string]: RichTextValue};
 
 export interface CrowdinHtmlObject {
   [key: string]: RichTextValue

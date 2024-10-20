@@ -56,263 +56,265 @@ describe('Lexical editor with multiple blocks', () => {
       .times(5)
       .reply(200, mockClient.createFile({}));
 
-    const doc: NestedFieldCollectionType = await payload.create({
+    const doc: NestedFieldCollectionType = (await payload.create({
       collection: 'nested-field-collection',
       data: fixture,
-    }) as any;
+    })) as any;
 
-    const arrayIds = (doc.items || []).map((item) => item.id) || ([] as string[]);
-    const blockIds = (doc.items || []).map((item) => (item.block || []).find(x =>x !== undefined)?.id) || ([] as string[])
+    const arrayIds =
+      (doc.items || []).map((item) => item.id) || ([] as string[]);
+    const blockIds =
+      (doc.items || []).map(
+        (item) => (item.block || []).find((x) => x !== undefined)?.id
+      ) || ([] as string[]);
 
     expect(
       utilities.buildCrowdinHtmlObject({
         doc,
         fields: NestedFieldCollection.fields,
       })
-    ).toEqual(
-      {
-        [`items.${arrayIds[0]}.block.${blockIds[0]}.basicBlockLexical.content`]: {
-          "root": {
-            "children": [
-              {
-                "children": [
-                  {
-                    "detail": 0,
-                    "format": 0,
-                    "mode": "normal",
-                    "style": "",
-                    "text": "Lexical fields nested within complex layouts - such as this one (a ",
-                    "type": "text",
-                    "version": 1,
-                  },
-                  {
-                    "detail": 0,
-                    "format": 16,
-                    "mode": "normal",
-                    "style": "",
-                    "text": "blocks",
-                    "type": "text",
-                    "version": 1,
-                  },
-                  {
-                    "detail": 0,
-                    "format": 0,
-                    "mode": "normal",
-                    "style": "",
-                    "text": " field in an ",
-                    "type": "text",
-                    "version": 1,
-                  },
-                  {
-                    "detail": 0,
-                    "format": 16,
-                    "mode": "normal",
-                    "style": "",
-                    "text": "array",
-                    "type": "text",
-                    "version": 1,
-                  },
-                  {
-                    "detail": 0,
-                    "format": 0,
-                    "mode": "normal",
-                    "style": "",
-                    "text": " item within a ",
-                    "type": "text",
-                    "version": 1,
-                  },
-                  {
-                    "detail": 0,
-                    "format": 16,
-                    "mode": "normal",
-                    "style": "",
-                    "text": "tab",
-                    "type": "text",
-                    "version": 1,
-                  },
-                  {
-                    "detail": 0,
-                    "format": 0,
-                    "mode": "normal",
-                    "style": "",
-                    "text": "), are supported.",
-                    "type": "text",
-                    "version": 1,
-                  },
-                ],
-                "direction": "ltr",
-                "format": "",
-                "indent": 0,
-                "type": "paragraph",
-                "version": 1,
-              },
-            ],
-            "direction": "ltr",
-            "format": "",
-            "indent": 0,
-            "type": "root",
-            "version": 1,
-          },
-        },
-        [`items.${arrayIds[1]}.block.${blockIds[1]}.basicBlockLexical.content`]: {
-          "root": {
-            "children": [
-              {
-                "children": [
-                  {
-                    "detail": 0,
-                    "format": 0,
-                    "mode": "normal",
-                    "style": "",
-                    "text": "If you add custom blocks, these will also be translated!",
-                    "type": "text",
-                    "version": 1,
-                  },
-                ],
-                "direction": "ltr",
-                "format": "",
-                "indent": 0,
-                "type": "paragraph",
-                "version": 1,
-              },
-              {
-                "fields": {
-                  "blockName": "",
-                  "blockType": "highlight",
-                  "content": {
-                    "root": {
-                      "children": [
-                        {
-                          "children": [
-                            {
-                              "detail": 0,
-                              "format": 0,
-                              "mode": "normal",
-                              "style": "",
-                              "text": "Note a key difference with regular blocks - all ",
-                              "type": "text",
-                              "version": 1,
-                            },
-                            {
-                              "detail": 0,
-                              "format": 16,
-                              "mode": "normal",
-                              "style": "",
-                              "text": "text",
-                              "type": "text",
-                              "version": 1,
-                            },
-                            {
-                              "detail": 0,
-                              "format": 0,
-                              "mode": "normal",
-                              "style": "",
-                              "text": ", ",
-                              "type": "text",
-                              "version": 1,
-                            },
-                            {
-                              "detail": 0,
-                              "format": 16,
-                              "mode": "normal",
-                              "style": "",
-                              "text": "textarea",
-                              "type": "text",
-                              "version": 1,
-                            },
-                            {
-                              "detail": 0,
-                              "format": 0,
-                              "mode": "normal",
-                              "style": "",
-                              "text": " and ",
-                              "type": "text",
-                              "version": 1,
-                            },
-                            {
-                              "detail": 0,
-                              "format": 16,
-                              "mode": "normal",
-                              "style": "",
-                              "text": "richText",
-                              "type": "text",
-                              "version": 1,
-                            },
-                            {
-                              "detail": 0,
-                              "format": 0,
-                              "mode": "normal",
-                              "style": "",
-                              "text": " fields will be sent to Crowdin regardless of whether or not they are ",
-                              "type": "text",
-                              "version": 1,
-                            },
-                            {
-                              "children": [
-                                {
-                                  "detail": 0,
-                                  "format": 0,
-                                  "mode": "normal",
-                                  "style": "",
-                                  "text": "localized fields",
-                                  "type": "text",
-                                  "version": 1,
-                                },
-                              ],
-                              "direction": "ltr",
-                              "fields": {
-                                "linkType": "custom",
-                                "newTab": false,
-                                "url": "https://payloadcms.com/docs/configuration/localization#field-by-field-localization",
-                              },
-                              "format": "",
-                              "indent": 0,
-                              "type": "link",
-                              "version": 2,
-                            },
-                            {
-                              "detail": 0,
-                              "format": 0,
-                              "mode": "normal",
-                              "style": "",
-                              "text": ".",
-                              "type": "text",
-                              "version": 1,
-                            },
-                          ],
-                          "direction": "ltr",
-                          "format": "",
-                          "indent": 0,
-                          "type": "paragraph",
-                          "version": 1,
-                        },
-                      ],
-                      "direction": "ltr",
-                      "format": "",
-                      "indent": 0,
-                      "type": "root",
-                      "version": 1,
-                    },
-                  },
-                  "heading": {
-                    "title": "Block configuration in Lexical fields",
-                  },
-                  "id": "6712ec66a81e050bf5f31b43",
+    ).toEqual({
+      [`items.${arrayIds[0]}.block.${blockIds[0]}.basicBlockLexical.content`]: {
+        root: {
+          children: [
+            {
+              children: [
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: 'Lexical fields nested within complex layouts - such as this one (a ',
+                  type: 'text',
+                  version: 1,
                 },
-                "format": "",
-                "type": "block",
-                "version": 2,
-              },
-            ],
-            "direction": "ltr",
-            "format": "",
-            "indent": 0,
-            "type": "root",
-            "version": 1,
-          },
+                {
+                  detail: 0,
+                  format: 16,
+                  mode: 'normal',
+                  style: '',
+                  text: 'blocks',
+                  type: 'text',
+                  version: 1,
+                },
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: ' field in an ',
+                  type: 'text',
+                  version: 1,
+                },
+                {
+                  detail: 0,
+                  format: 16,
+                  mode: 'normal',
+                  style: '',
+                  text: 'array',
+                  type: 'text',
+                  version: 1,
+                },
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: ' item within a ',
+                  type: 'text',
+                  version: 1,
+                },
+                {
+                  detail: 0,
+                  format: 16,
+                  mode: 'normal',
+                  style: '',
+                  text: 'tab',
+                  type: 'text',
+                  version: 1,
+                },
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: '), are supported.',
+                  type: 'text',
+                  version: 1,
+                },
+              ],
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              type: 'paragraph',
+              version: 1,
+            },
+          ],
+          direction: 'ltr',
+          format: '',
+          indent: 0,
+          type: 'root',
+          version: 1,
         },
-      }
-    );
+      },
+      [`items.${arrayIds[1]}.block.${blockIds[1]}.basicBlockLexical.content`]: {
+        root: {
+          children: [
+            {
+              children: [
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: 'If you add custom blocks, these will also be translated!',
+                  type: 'text',
+                  version: 1,
+                },
+              ],
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              type: 'paragraph',
+              version: 1,
+            },
+            {
+              fields: {
+                blockName: '',
+                blockType: 'highlight',
+                content: {
+                  root: {
+                    children: [
+                      {
+                        children: [
+                          {
+                            detail: 0,
+                            format: 0,
+                            mode: 'normal',
+                            style: '',
+                            text: 'Note a key difference with regular blocks - all ',
+                            type: 'text',
+                            version: 1,
+                          },
+                          {
+                            detail: 0,
+                            format: 16,
+                            mode: 'normal',
+                            style: '',
+                            text: 'text',
+                            type: 'text',
+                            version: 1,
+                          },
+                          {
+                            detail: 0,
+                            format: 0,
+                            mode: 'normal',
+                            style: '',
+                            text: ', ',
+                            type: 'text',
+                            version: 1,
+                          },
+                          {
+                            detail: 0,
+                            format: 16,
+                            mode: 'normal',
+                            style: '',
+                            text: 'textarea',
+                            type: 'text',
+                            version: 1,
+                          },
+                          {
+                            detail: 0,
+                            format: 0,
+                            mode: 'normal',
+                            style: '',
+                            text: ' and ',
+                            type: 'text',
+                            version: 1,
+                          },
+                          {
+                            detail: 0,
+                            format: 16,
+                            mode: 'normal',
+                            style: '',
+                            text: 'richText',
+                            type: 'text',
+                            version: 1,
+                          },
+                          {
+                            detail: 0,
+                            format: 0,
+                            mode: 'normal',
+                            style: '',
+                            text: ' fields will be sent to Crowdin regardless of whether or not they are ',
+                            type: 'text',
+                            version: 1,
+                          },
+                          {
+                            children: [
+                              {
+                                detail: 0,
+                                format: 0,
+                                mode: 'normal',
+                                style: '',
+                                text: 'localized fields',
+                                type: 'text',
+                                version: 1,
+                              },
+                            ],
+                            direction: 'ltr',
+                            fields: {
+                              linkType: 'custom',
+                              newTab: false,
+                              url: 'https://payloadcms.com/docs/configuration/localization#field-by-field-localization',
+                            },
+                            format: '',
+                            indent: 0,
+                            type: 'link',
+                            version: 2,
+                          },
+                          {
+                            detail: 0,
+                            format: 0,
+                            mode: 'normal',
+                            style: '',
+                            text: '.',
+                            type: 'text',
+                            version: 1,
+                          },
+                        ],
+                        direction: 'ltr',
+                        format: '',
+                        indent: 0,
+                        type: 'paragraph',
+                        version: 1,
+                      },
+                    ],
+                    direction: 'ltr',
+                    format: '',
+                    indent: 0,
+                    type: 'root',
+                    version: 1,
+                  },
+                },
+                heading: {
+                  title: 'Block configuration in Lexical fields',
+                },
+                id: '6712ec66a81e050bf5f31b43',
+              },
+              format: '',
+              type: 'block',
+              version: 2,
+            },
+          ],
+          direction: 'ltr',
+          format: '',
+          indent: 0,
+          type: 'root',
+          version: 1,
+        },
+      },
+    });
   });
 
   it('builds a Crowdin JSON object as expected', async () => {
@@ -327,10 +329,10 @@ describe('Lexical editor with multiple blocks', () => {
       .times(5)
       .reply(200, mockClient.createFile({}));
 
-    const doc: NestedFieldCollectionType = await payload.create({
+    const doc: NestedFieldCollectionType = (await payload.create({
       collection: 'nested-field-collection',
       data: fixture,
-    }) as any;
+    })) as any;
     const ids = (doc.items || []).map((item) => item.id) || ([] as string[]);
 
     expect(
@@ -338,18 +340,17 @@ describe('Lexical editor with multiple blocks', () => {
         doc,
         fields: NestedFieldCollection.fields,
       })
-    ).toEqual(
-      {
-        "items": {
-          [`${ids[0]}`]: {
-            "heading": "Nested Lexical fields are supported",
-          },
-          [`${ids[1]}`]: {
-            "heading": "Nested Lexical fields are supported - and blocks in that Lexical field are also translated",
-          },
+    ).toEqual({
+      items: {
+        [`${ids[0]}`]: {
+          heading: 'Nested Lexical fields are supported',
         },
-      }
-    );
+        [`${ids[1]}`]: {
+          heading:
+            'Nested Lexical fields are supported - and blocks in that Lexical field are also translated',
+        },
+      },
+    });
   });
 
   it('builds a Payload update object as expected', async () => {
@@ -383,6 +384,271 @@ describe('Lexical editor with multiple blocks', () => {
         fields: NestedFieldCollection.fields,
         document: doc,
       })
-    ).toMatchInlineSnapshot(`{}`);
+    ).toMatchInlineSnapshot(`
+      {
+        "items": [
+          {
+            "block": [
+              {
+                "blockType": "basicBlockLexical",
+                "content": {
+                  "root": {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "detail": 0,
+                            "format": 0,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "Lexical fields nested within complex layouts - such as this one (a ",
+                            "type": "text",
+                            "version": 1,
+                          },
+                          {
+                            "detail": 0,
+                            "format": 16,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "blocks",
+                            "type": "text",
+                            "version": 1,
+                          },
+                          {
+                            "detail": 0,
+                            "format": 0,
+                            "mode": "normal",
+                            "style": "",
+                            "text": " field in an ",
+                            "type": "text",
+                            "version": 1,
+                          },
+                          {
+                            "detail": 0,
+                            "format": 16,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "array",
+                            "type": "text",
+                            "version": 1,
+                          },
+                          {
+                            "detail": 0,
+                            "format": 0,
+                            "mode": "normal",
+                            "style": "",
+                            "text": " item within a ",
+                            "type": "text",
+                            "version": 1,
+                          },
+                          {
+                            "detail": 0,
+                            "format": 16,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "tab",
+                            "type": "text",
+                            "version": 1,
+                          },
+                          {
+                            "detail": 0,
+                            "format": 0,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "), are supported.",
+                            "type": "text",
+                            "version": 1,
+                          },
+                        ],
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1,
+                      },
+                    ],
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "root",
+                    "version": 1,
+                  },
+                },
+                "id": "671567db767f555449196536",
+              },
+            ],
+            "heading": "Nested Lexical fields are supported",
+            "id": "671567db767f555449196534",
+          },
+          {
+            "block": [
+              {
+                "blockType": "basicBlockLexical",
+                "content": {
+                  "root": {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "detail": 0,
+                            "format": 0,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "If you add custom blocks, these will also be translated!",
+                            "type": "text",
+                            "version": 1,
+                          },
+                        ],
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1,
+                      },
+                      {
+                        "fields": {
+                          "blockName": "",
+                          "blockType": "highlight",
+                          "content": {
+                            "root": {
+                              "children": [
+                                {
+                                  "children": [
+                                    {
+                                      "detail": 0,
+                                      "format": 0,
+                                      "mode": "normal",
+                                      "style": "",
+                                      "text": "Note a key difference with regular blocks - all ",
+                                      "type": "text",
+                                      "version": 1,
+                                    },
+                                    {
+                                      "detail": 0,
+                                      "format": 16,
+                                      "mode": "normal",
+                                      "style": "",
+                                      "text": "text",
+                                      "type": "text",
+                                      "version": 1,
+                                    },
+                                    {
+                                      "detail": 0,
+                                      "format": 0,
+                                      "mode": "normal",
+                                      "style": "",
+                                      "text": ", ",
+                                      "type": "text",
+                                      "version": 1,
+                                    },
+                                    {
+                                      "detail": 0,
+                                      "format": 16,
+                                      "mode": "normal",
+                                      "style": "",
+                                      "text": "textarea",
+                                      "type": "text",
+                                      "version": 1,
+                                    },
+                                    {
+                                      "detail": 0,
+                                      "format": 0,
+                                      "mode": "normal",
+                                      "style": "",
+                                      "text": " and ",
+                                      "type": "text",
+                                      "version": 1,
+                                    },
+                                    {
+                                      "detail": 0,
+                                      "format": 16,
+                                      "mode": "normal",
+                                      "style": "",
+                                      "text": "richText",
+                                      "type": "text",
+                                      "version": 1,
+                                    },
+                                    {
+                                      "detail": 0,
+                                      "format": 0,
+                                      "mode": "normal",
+                                      "style": "",
+                                      "text": " fields will be sent to Crowdin regardless of whether or not they are ",
+                                      "type": "text",
+                                      "version": 1,
+                                    },
+                                    {
+                                      "children": [
+                                        {
+                                          "detail": 0,
+                                          "format": 0,
+                                          "mode": "normal",
+                                          "style": "",
+                                          "text": "localized fields",
+                                          "type": "text",
+                                          "version": 1,
+                                        },
+                                      ],
+                                      "direction": "ltr",
+                                      "fields": {
+                                        "linkType": "custom",
+                                        "newTab": false,
+                                        "url": "https://payloadcms.com/docs/configuration/localization#field-by-field-localization",
+                                      },
+                                      "format": "",
+                                      "indent": 0,
+                                      "type": "link",
+                                      "version": 2,
+                                    },
+                                    {
+                                      "detail": 0,
+                                      "format": 0,
+                                      "mode": "normal",
+                                      "style": "",
+                                      "text": ".",
+                                      "type": "text",
+                                      "version": 1,
+                                    },
+                                  ],
+                                  "direction": "ltr",
+                                  "format": "",
+                                  "indent": 0,
+                                  "type": "paragraph",
+                                  "version": 1,
+                                },
+                              ],
+                              "direction": "ltr",
+                              "format": "",
+                              "indent": 0,
+                              "type": "root",
+                              "version": 1,
+                            },
+                          },
+                          "heading": {
+                            "title": "Block configuration in Lexical fields",
+                          },
+                          "id": "6712ec66a81e050bf5f31b43",
+                        },
+                        "format": "",
+                        "type": "block",
+                        "version": 2,
+                      },
+                    ],
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "root",
+                    "version": 1,
+                  },
+                },
+                "id": "671567db767f555449196537",
+              },
+            ],
+            "heading": "Nested Lexical fields are supported - and blocks in that Lexical field are also translated",
+            "id": "671567db767f555449196535",
+          },
+        ],
+      }
+    `);
   });
 });

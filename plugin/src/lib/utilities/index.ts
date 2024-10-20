@@ -184,7 +184,15 @@ export const getLocalizedFields = ({
       (field) =>
         (field as any).type !== "collapsible" && (field as any).type !== "tabs"
     ),
-  ...convertTabs({ fields, isLocalized }),
+  ...convertTabs({
+    fields,
+    isLocalized,
+    callback: (fields) => getLocalizedFields({
+      fields,
+      type,
+      isLocalized,
+    })
+  }),
   // recursion for collapsible field - flatten results into the returned array
   ...getCollapsibleLocalizedFields({ fields, type, isLocalized }),
 ];
@@ -210,12 +218,12 @@ export const getCollapsibleLocalizedFields = ({
 
 export const convertTabs = ({
   fields,
-  type,
-  isLocalized = isLocalizedField,
+  callback,
 }: {
   fields: Field[];
   type?: "json" | "html";
   isLocalized?: IsLocalized;
+  callback: (fields: Field[]) => any
 }): any[] =>
   fields
     .filter((field) => field.type === "tabs")
@@ -237,11 +245,7 @@ export const convertTabs = ({
                 } as Field),
           ];
         }, [] as Field[]);
-        return getLocalizedFields({
-          fields: flattenedFields,
-          type,
-          isLocalized,
-        });
+        return callback(flattenedFields);
       }
       return field;
     });
@@ -350,6 +354,12 @@ export const restoreOrder = ({
   if (!document) {
     return updateDocument;
   }
+  // use getLocalizedFields with no type or localization check
+  // gets an appropriate updateDocument structure: flattens collapsible/tag fields
+  fields = getLocalizedFields({
+    fields,
+    isLocalized: (fields) => !!(fields)
+  })
   fields.forEach((field: any) => {
     if (!updateDocument || !updateDocument[field.name]) {
       return;
@@ -413,7 +423,7 @@ export const buildPayloadUpdateObject = ({
   fields,
   topLevel = true,
   document,
-  filterLocalizedFields = true,
+  isLocalized,
 }: {
   crowdinJsonObject: { [key: string]: any };
   crowdinHtmlObject?: CrowdinHtmlObject;
@@ -422,7 +432,7 @@ export const buildPayloadUpdateObject = ({
   /** Flag used internally to filter json fields before recursion. */
   topLevel?: boolean;
   document?: { [key: string]: any };
-  filterLocalizedFields?: boolean;
+  isLocalized?: IsLocalized;
 }) => {
   let response: { [key: string]: any } = {};
   if (crowdinHtmlObject) {
@@ -430,12 +440,11 @@ export const buildPayloadUpdateObject = ({
 
     merge(crowdinJsonObject, destructured);
   }
-  const filteredFields = filterLocalizedFields ? (topLevel
-    ? getLocalizedFields({
-        fields,
-        type: !crowdinHtmlObject ? "json" : undefined,
-      })
-    : fields) : fields;
+  const filteredFields = getLocalizedFields({
+    fields,
+    type: topLevel ? (!crowdinHtmlObject ? "json" : undefined) : undefined,
+    isLocalized: topLevel ? isLocalized : (field) => !!(field)
+  });
   filteredFields.forEach((field) => {
     if (!crowdinJsonObject[field.name]) {
       return;
@@ -463,7 +472,7 @@ export const buildPayloadUpdateObject = ({
         // get first and only object key
         const blockType = Object.keys(item)[0];
         const payloadUpdateObject = buildPayloadUpdateObject({
-          crowdinJsonObject: item[blockType],
+          crowdinJsonObject: item[blockType], 
           fields:
             field.blocks.find((block: Block) => block.slug === blockType)
               ?.fields || [],
@@ -510,7 +519,6 @@ export const buildCrowdinJsonObject = ({
     // localization check not needed after `topLevel`, but still need to filter field type.
     isLocalized: topLevel ? isLocalized : (field) => !!(field),
   });
-
   filteredFields.forEach((field) => {
     if (!doc[field.name]) {
       return;
