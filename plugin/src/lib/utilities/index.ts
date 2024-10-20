@@ -186,7 +186,6 @@ export const getLocalizedFields = ({
     ),
   ...convertTabs({
     fields,
-    isLocalized,
     callback: (fields) => getLocalizedFields({
       fields,
       type,
@@ -221,10 +220,8 @@ export const convertTabs = ({
   callback,
 }: {
   fields: Field[];
-  type?: "json" | "html";
-  isLocalized?: IsLocalized;
-  callback: (fields: Field[]) => any
-}): any[] =>
+  callback: (fields: Field[]) => Field[]
+}): Field[] =>
   fields
     .filter((field) => field.type === "tabs")
     .flatMap((field) => {

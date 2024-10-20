@@ -365,10 +365,21 @@ describe('Lexical editor with multiple blocks', () => {
       .times(5)
       .reply(200, mockClient.createFile({}));
 
-    const doc = await payload.create({
+    const doc: NestedFieldCollectionType = await payload.create({
       collection: 'nested-field-collection',
       data: fixture,
-    });
+    }) as any;
+
+    const arrayIds =
+      (doc.items || []).map((item) => item.id) || ([] as string[]);
+    const blockIds =
+      (doc.items || []).map(
+        (item) => (item.block || []).find((x) => x !== undefined)?.id
+      ) || ([] as string[]);
+    const firstLexicalBlock = doc.items?.[1]?.block?.[0]?.content
+
+    const lexicalBlockIds = firstLexicalBlock ? extractLexicalBlockContent(firstLexicalBlock.root).map(block => block.id) : ['lexical-block-id-not-found']
+
     const crowdinHtmlObject = utilities.buildCrowdinHtmlObject({
       doc,
       fields: NestedFieldCollection.fields,
@@ -384,7 +395,7 @@ describe('Lexical editor with multiple blocks', () => {
         fields: NestedFieldCollection.fields,
         document: doc,
       })
-    ).toMatchInlineSnapshot(`
+    ).toEqual(
       {
         "items": [
           {
@@ -474,11 +485,11 @@ describe('Lexical editor with multiple blocks', () => {
                     "version": 1,
                   },
                 },
-                "id": "671567db767f555449196536",
+                "id": `${blockIds[0]}`,
               },
             ],
             "heading": "Nested Lexical fields are supported",
-            "id": "671567db767f555449196534",
+            "id": `${arrayIds[0]}`,
           },
           {
             "block": [
@@ -627,7 +638,7 @@ describe('Lexical editor with multiple blocks', () => {
                           "heading": {
                             "title": "Block configuration in Lexical fields",
                           },
-                          "id": "6712ec66a81e050bf5f31b43",
+                          "id": `${lexicalBlockIds[0]}`,
                         },
                         "format": "",
                         "type": "block",
@@ -641,14 +652,14 @@ describe('Lexical editor with multiple blocks', () => {
                     "version": 1,
                   },
                 },
-                "id": "671567db767f555449196537",
+                "id": `${blockIds[1]}`,
               },
             ],
             "heading": "Nested Lexical fields are supported - and blocks in that Lexical field are also translated",
-            "id": "671567db767f555449196535",
+            "id": `${arrayIds[1]}`,
           },
         ],
       }
-    `);
+    );
   });
 });
