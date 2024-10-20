@@ -31,10 +31,10 @@ export const findField = ({
   firstIteration?: boolean,
   filterLocalizedFields?: boolean,
 }): Field | undefined => {
-  /** Run through getLocalizedFields to ignore tabs/collapssibles...etc */
-  const localizedFields = filterLocalizedFields ? (firstIteration ? getLocalizedFields({
-    fields
-  }) : fields) : fields
+  const localizedFields = getLocalizedFields({
+    fields,
+    isLocalized: (firstIteration && filterLocalizedFields) ? undefined : (field) => !!(field),
+  })
   const keys = dotNotation.split(`.`)
   if (keys.length === 0) {
     return undefined
