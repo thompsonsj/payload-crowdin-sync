@@ -223,7 +223,8 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     if (isLexical) {
       const field = findField({
         dotNotation: name,
-        fields: collection.fields
+        fields: collection.fields,
+        filterLocalizedFields: collection.slug === 'mock-collection-for-lexical-blocks' ? false : true,
       }) as RichTextField
       const editorConfig = getLexicalEditorConfig(field)
 
@@ -291,7 +292,16 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
             await filesApi.createOrUpdateHtmlFile({
               name,
               value: currentCrowdinHtmlData[name] as Descendant[],
-              collection,
+              collection: {
+                slug: 'mock-collection-for-lexical-blocks',
+                fields: [
+                  {
+                    name: fieldName,
+                    type: 'blocks',
+                    blocks: blockConfig.blocks,
+                  }
+                ],
+              },
             });
           }));
         }
