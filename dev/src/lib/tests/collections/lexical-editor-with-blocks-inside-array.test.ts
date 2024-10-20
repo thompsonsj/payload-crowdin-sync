@@ -1,10 +1,6 @@
 import payload from 'payload';
 import { initPayloadTest } from '../helpers/config';
 import {
-  getArticleDirectory,
-  getFilesByDocumentID,
-  isDefined,
-  payloadCrowdinSyncTranslationsApi,
   utilities,
 } from 'plugin';
 import NestedFieldCollection from '../../collections/NestedFieldCollection';
@@ -14,7 +10,6 @@ import { extractLexicalBlockContent } from 'plugin/src/lib/utilities/lexical';
 import { mockCrowdinClient } from 'plugin/src/lib/api/mock/crowdin-api-responses';
 import { pluginConfig } from '../helpers/plugin-config';
 import {
-  CrowdinArticleDirectory,
   NestedFieldCollection as NestedFieldCollectionType,
 } from '../../payload-types';
 
