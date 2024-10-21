@@ -106,6 +106,16 @@ Your [Crowdin API token](https://support.crowdin.com/enterprise/personal-access-
 }
 ```
 
+### `organizationId` (required)
+
+Your [Crowdin organization ID](https://support.crowdin.com/enterprise/organization/).
+
+```js
+{
+  organizationId: 200000000
+}
+```
+
 ### `directoryId`
 
 Crowdin directory ID to store translations. To get the directory ID without making an API call, inspect the page source of your folder in [Sources > Files](https://support.crowdin.com/file-management/#branches-and-folders).
@@ -327,6 +337,7 @@ The document will be updated and the same report will be generated as for a revi
 ##### Notes
 
 - Pass the `draft=true` query parameter to update as a draft rather than a published version.
+- Pass a `locale` parameter to perform a review/update for one locale only. e.g. `locale=fr_FR`.
 - The source locale (e.g. `en`) is not affected.
 - Use the `excludeLocales` field on documents in the `crowdin-article-directories` collection to prevent some locales from being included in the review/update operation.
 - If supplied translations do not contain required fields, translation updates will not be applied and validation errors will be returned in the API response.
