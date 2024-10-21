@@ -1,6 +1,6 @@
 import payload from 'payload';
 import { initPayloadTest } from '../helpers/config';
-import { getArticleDirectory, utilities } from 'plugin';
+import { getArticleDirectory, payloadCrowdinSyncTranslationsApi, utilities } from 'plugin';
 import NestedFieldCollection from '../../collections/NestedFieldCollection';
 import { fixture } from './lexical-editor-with-blocks-inside-array.fixture';
 import nock from 'nock';
@@ -692,10 +692,6 @@ describe('Lexical editor with multiple blocks', () => {
 
     const arrayIds =
       (doc.items || []).map((item) => item.id) || ([] as string[]);
-    const blockIds =
-      (doc.items || []).map(
-        (item) => (item.block || []).find((x) => x !== undefined)?.id
-      ) || ([] as string[]);
     const firstLexicalBlock = doc.items?.[1]?.block?.[0]?.content;
 
     const lexicalBlockIds = firstLexicalBlock
@@ -792,5 +788,270 @@ describe('Lexical editor with multiple blocks', () => {
         },
       }
     `);
+  });
+
+  it('updates the Payload document with a translation from Crowdin', async () => {
+    nock('https://api.crowdin.com')
+      .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
+      .twice()
+      .reply(200, mockClient.createDirectory({}))
+      .post(`/api/v2/storages`)
+      .times(5)
+      .reply(200, mockClient.addStorage())
+      // file 1 creation
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .reply(
+        200,
+        mockClient.createFile({
+          fileId: 48311,
+        })
+      )
+      // file 2 creation
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .reply(
+        200,
+        mockClient.createFile({
+          fileId: 48312,
+        })
+      )
+      // file 3 creation
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .reply(
+        200,
+        mockClient.createFile({
+          fileId: 48313,
+        })
+      )
+      // file 4 creation
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .reply(
+        200,
+        mockClient.createFile({
+          fileId: 48314,
+        })
+      )
+      // file 5 creation
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .reply(
+        200,
+        mockClient.createFile({
+          fileId: 48314,
+        })
+      )
+      // fr - file 1 get translation
+      .post(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/files/${48311}`,
+        {
+          targetLanguageId: 'fr',
+        }
+      )
+      .reply(
+        200,
+        mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${
+            pluginOptions.projectId
+          }/translations/builds/${48311}/download?targetLanguageId=fr`,
+        })
+      )
+      .get(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/${48311}/download`
+      )
+      .query({
+        targetLanguageId: 'fr',
+      })
+      .reply(200, {})
+      // fr - file 2 get translation
+      .post(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/files/${48312}`,
+        {
+          targetLanguageId: 'fr',
+        }
+      )
+      .reply(
+        200,
+        mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${
+            pluginOptions.projectId
+          }/translations/builds/${48312}/download?targetLanguageId=fr`,
+        })
+      )
+      .get(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/${48312}/download`
+      )
+      .query({
+        targetLanguageId: 'fr',
+      })
+      .reply(200, {})
+      // fr - file 3 get translation
+      .post(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/files/${48313}`,
+        {
+          targetLanguageId: 'fr',
+        }
+      )
+      .reply(
+        200,
+        mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${
+            pluginOptions.projectId
+          }/translations/builds/${48313}/download?targetLanguageId=fr`,
+        })
+      )
+      .get(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/${48313}/download`
+      )
+      .query({
+        targetLanguageId: 'fr',
+      })
+      .reply(
+        200,
+        ""
+      )
+      // fr - file 4 get translation
+      .post(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/files/${48314}`,
+        {
+          targetLanguageId: 'fr',
+        }
+      )
+      .reply(
+        200,
+        mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${
+            pluginOptions.projectId
+          }/translations/builds/${48314}/download?targetLanguageId=fr`,
+        })
+      )
+      .get(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/${48314}/download`
+      )
+      .query({
+        targetLanguageId: 'fr',
+      })
+      .reply(
+        200,
+        ``
+      )
+      // fr - file 5 get translation
+      .post(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/files/${48315}`,
+        {
+          targetLanguageId: 'fr',
+        }
+      )
+      .reply(
+        200,
+        mockClient.buildProjectFileTranslation({
+          url: `https://api.crowdin.com/api/v2/projects/${
+            pluginOptions.projectId
+          }/translations/builds/${48315}/download?targetLanguageId=fr`,
+        })
+      )
+      .get(
+        `/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/${48315}/download`
+      )
+      .query({
+        targetLanguageId: 'fr',
+      })
+      .reply(
+        200,
+        ``
+      );
+
+    const doc: NestedFieldCollectionType = await payload.create({
+      collection: 'nested-field-collection',
+      data: fixture,
+    }) as any;
+
+    const arrayIds =
+      (doc.items || []).map((item) => item.id) || ([] as string[]);
+    const blockIds =
+      (doc.items || []).map(
+        (item) => (item.block || []).find((x) => x !== undefined)?.id
+      ) || ([] as string[]);
+    const firstLexicalBlock = doc.items?.[1]?.block?.[0]?.content;
+
+    const lexicalBlockIds = firstLexicalBlock
+      ? extractLexicalBlockContent(firstLexicalBlock.root).map(
+          (block) => block.id
+        )
+      : ['lexical-block-id-not-found'];
+
+    const crowdinFiles = await getFilesByDocumentID(`${doc.id}`, payload);
+    const contentCrowdinFiles = await getFilesByParent(
+      `${getRelationshipId(doc.crowdinArticleDirectory)}`,
+      payload
+    );
+console.log('contentCrowdinFiles', contentCrowdinFiles)
+    // check file ids are always mapped in the same way
+    const fileIds = crowdinFiles.map((file) => ({
+      fileId: file.originalId,
+      field: file.field,
+    }));
+    const contentFileIds = contentCrowdinFiles.map((file) => ({
+      fileId: file.originalId,
+      field: file.field,
+    }));
+    expect(fileIds).toEqual([
+      {
+        field: `items.${arrayIds[1]}.block.${blockIds[1]}.basicBlockLexical.content`,
+        fileId: 48314,
+      },
+      {
+        field: `items.${arrayIds[0]}.block.${blockIds[0]}.basicBlockLexical.content`,
+        fileId: 48312,
+      },
+      {
+        field: 'fields',
+        fileId: 48311,
+      },
+    ]);
+    expect(contentFileIds).toEqual([
+      {
+        field: `blocks.${lexicalBlockIds[0]}.highlight.content`,
+        fileId: 48313,
+      },
+      {
+        field: 'blocks',
+        fileId: 48315,
+      },
+    ]);
+    const translationsApi = new payloadCrowdinSyncTranslationsApi(
+      pluginOptions,
+      payload
+    );
+    await translationsApi.updateTranslation({
+      documentId: `${doc.id}`,
+      collection: 'nested-field-collection',
+      dryRun: false,
+      excludeLocales: ['de_DE'],
+    });
+    // retrieve translated post from Payload
+    const result = await payload.findByID({
+      collection: 'nested-field-collection',
+      id: `${doc.id}`,
+      locale: 'fr_FR',
+    });
+    expect(result['items']).toMatchInlineSnapshot();
   });
 });
