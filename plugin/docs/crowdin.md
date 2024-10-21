@@ -70,6 +70,8 @@ Three new collections are created.
 
 For each document in a collection that contains localized fields, an additonal field is added: `crowdinArticleDirectory`. This is a one-to-one relationship with an article created in the `crowdin-article-directories` collection.
 
+To completely uninstall the plugin, delete the three collections and delete the `crowdinArticleDirectory` field from any of your localized documents as appropriate.
+
 ### `crowdin-collection-directories`
 
 Each entry in the `crowdin-article-directories` collection has a one-to-one relationship with an entry in the `crowdin-collection-directories` collection.
