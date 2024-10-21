@@ -1,19 +1,18 @@
 # Payload Crowdin Sync Plugin
 
-Automatically upload/sync localized fields from the default locale to Crowdin. Make these fields read-only in other locales and update them using Crowdin translations.
+Automatically upload/sync localized fields from the default locale to Crowdin. Load translations from Crowdin into Payload CMS.
 
-- Development guidance: [docs/development.md](docs/development.md)
-- Engineering decisions: [docs/enginering.md](docs/engineering.md)
-- Crowdin collections: [docs/crowdin.md](docs/crowdin.md)
-- NX generated docs: [docs/nx.md](docs/nx.md)
+Table of contents:
 
-Note: This plugin is still in development. A todo list is maintained at [docs/development.md](docs/development.md).
+- [Install](#install)
+- [Database changes](#database-changes)
+- [Options](#options)
+- [Sync translations](#sync-translations)
+- [Further documentation](#further-documentation)
 
-## Requirements
+## Install
 
 - Payload version `1.0.19` or higher is required
-
-## Usage
 
 ```
 #npm
@@ -49,30 +48,214 @@ export default buildConfig({
 });
 ```
 
-### Options
+## Database changes
 
-#### Required
+This plugin add three collections to your database:
 
-| Option | Example | Description |
-| ------ | ------- | ----------- |
-| `projectId` | `323731` | Your [Crowdin project ID](https://support.crowdin.com/enterprise/project-settings/#details). |
-| `localeMap` | `{ de_DE: { crowdinId: "de" } }` | Map your Payload locales to Crowdin locale ids. |
-| ` sourceLocale` | `en` | The Payload locale that syncs to source translations (files) on Crowdin. |
+- `crowdin-files`
+- `crowdin-article-directories`
+- `crowdin-collection-directories`
 
-#### Optional
+Localized documents have an extra field added to them - `crowdinArticleDirectory`.
 
-| Option | Example | Description |
-| ------ | ------- | ----------- |
-| `token` | `xxxxxxx` | Your [Crowdin API token](https://support.crowdin.com/enterprise/personal-access-tokens/). If empty, changes to files are disabled. |
-| `directoryId` | `1169` | Crowdin directory ID to store translations. To get the directory ID without making an API call, inspect the page source of your folder in [Sources > Files](https://support.crowdin.com/file-management/#branches-and-folders). |
-| `collections` | `undefined`<br />`[]`<br />`['posts', 'categories']`<br />`['posts', { slug: 'categories', condition: ({doc}) => doc.translateWithCrowdin]` | Define an array of collection slugs for which the plugin is active.<br /><br />If undefined, the plugin will detect localized fields on all collections.<br /><br />Use an empty array to disable all collections.<br /><br />Use an object to define a condition that activates Crowdin based on the document data. |
-| `globals` | `undefined`<br />`[]`<br />`['nav']`<br />`[{ slug: 'nav', condition: ({doc}) => doc.translateWithCrowdin]` | Define an array of global slugs for which the plugin is active.<br /><br />If undefined, the plugin will detect localized fields on all globals.<br /><br />Use an empty array to disable all globals.<br /><br />Use an object to define a condition that activates Crowdin based on the document data. |
-| `slateToHtmlConfig` | `undefined` | Pass a custom config for the `slateToHtml` serializer used to convert Payload CMS Slate JSON to HTML for Crowdin translation. See [Serializer configuration](docs/serializer.md). |
-| `htmlToSlateConfig` | `undefined` | Pass a custom config for the `htmlToSlate` serializer used to conver HTML to Payload CMS Slate JSON when retrieving Crowdin translation. See [Serializer configuration](docs/serializer.md). |
-| `pluginCollectionAccess` | `undefined` | `access` collection config to pass to all the Crowdin collections created by this plugin. |
-| `pluginCollectionAdmin` | `undefined`<br />`{ hidden: ({ user }) => !userIsAdmin({ user }) }` | `admin` collection config to pass to all the Crowdin collections created by this plugin. |
-| `tabbedUI` | `undefined`<br />`true` | Appends `Crowdin` tab onto your config using Payload's [Tabs Field](https://payloadcms.com/docs/fields/tabs). If your collection is not already tab-enabled, meaning the first field in your config is not of type `tabs`, then one will be created for you called `Content`. |
-| `lexicalBlockFolderPrefix` | `blocks-` | Default `lex.`. Used as a prefix when constructing directory names for Lexical block fields in Crowdin. |
+For details, see [docs/crowdin.md](docs/crowdin.md).
+
+## Options
+
+### `projectId` (required)
+
+Your [Crowdin project ID](https://support.crowdin.com/enterprise/project-settings/#details).
+
+```js
+{
+  projectId: 323731
+}
+```
+
+### `localeMap` (required)
+
+Map your Payload locales to Crowdin locale ids.
+
+```js
+{
+  localeMap: {
+    de_DE: {
+      crowdinId: "de"
+    }
+  }
+}
+```
+
+### `sourceLocale` (required)
+
+The Payload locale that syncs to source translations (files) on Crowdin.
+
+```js
+{
+  sourceLocale: "en"
+}
+```
+
+### `token`
+
+Your [Crowdin API token](https://support.crowdin.com/enterprise/personal-access-tokens/). If empty, changes to files are disabled.
+
+```js
+{
+  token: "xxxxxxx"
+}
+```
+
+### `directoryId`
+
+Crowdin directory ID to store translations. To get the directory ID without making an API call, inspect the page source of your folder in [Sources > Files](https://support.crowdin.com/file-management/#branches-and-folders).
+
+```js
+{
+  directoryId: 1169
+}
+```
+
+### `collections`
+
+Define an array of collection slugs for which the plugin is active.
+
+```js
+{
+  collections: ['posts', 'categories']
+}
+```
+
+If undefined, the plugin will detect localized fields on all collections.
+
+```js
+{
+  collections: undefined
+}
+```
+
+Use an empty array to disable all collections.
+
+```js
+{
+  collections: []
+}
+```
+
+Use an object to define a condition that activates Crowdin based on the document data.
+
+```js
+{
+  collections: [
+    'posts',
+    {
+      slug: 'categories',
+      condition: ({doc}) => doc.translateWithCrowdin
+    }
+  ]
+}
+```
+
+### `globals`
+
+Define an array of global slugs for which the plugin is active.
+
+```js
+{
+  globals: ['nav']
+}
+```
+
+If undefined, the plugin will detect localized fields on all globals.
+
+```js
+{
+  globals: undefined
+}
+```
+
+Use an empty array to disable all globals.
+
+```js
+{
+  globals: []
+}
+```
+
+Use an object to define a condition that activates Crowdin based on the document data.
+
+```js
+{
+  globals: [
+    {
+      slug: 'nav',
+      condition: ({doc}) => doc.translateWithCrowdin
+    }
+  ]
+}
+```
+
+### `slateToHtmlConfig`
+
+Pass a custom config for the `slateToHtml` serializer used to convert Payload CMS Slate JSON to HTML for Crowdin translation. See [Serializer configuration](docs/serializer.md).
+
+```js
+{
+  slateToHtmlConfig: undefined
+}
+```
+
+### `htmlToSlateConfig`
+
+Pass a custom config for the `htmlToSlate` serializer used to conver HTML to Payload CMS Slate JSON when retrieving Crowdin translation. See [Serializer configuration](docs/serializer.md).
+
+```js
+{
+  htmlToSlateConfig: undefined
+}
+```
+
+### `pluginCollectionAccess`
+
+`access` collection config to pass to all the Crowdin collections created by this plugin.
+
+```js
+{
+  pluginCollectionAccess: undefined
+}
+```
+
+### `pluginCollectionAdmin`
+
+`admin` collection config to pass to all the Crowdin collections created by this plugin.
+
+```js
+{
+  pluginCollectionAdmin: {
+    hidden: ({ user }) => !userIsAdmin({ user })
+  }
+}
+```
+
+### `tabbedUI`
+
+Appends `Crowdin` tab onto your config using Payload's [Tabs Field](https://payloadcms.com/docs/fields/tabs). If your collection is not already tab-enabled, meaning the first field in your config is not of type `tabs`, then one will be created for you called `Content`.
+
+```js
+{
+  tabbedUI: true
+}
+```
+
+### `lexicalBlockFolderPrefix`
+
+Default `lex.`. Used as a prefix when constructing directory names for Lexical block fields in Crowdin.
+
+```js
+{
+  lexicalBlockFolderPrefix: `blocks-`
+}
+```
 
 ### Environment variables
 
@@ -85,27 +268,41 @@ By default, updates will only be sent to Crowdin in the following scenarios.
 
 It is useful to have a convenient way of forcing all localized fields to update at once. For example, if the plugin is activated on an existing install, it is convenient to trigger all updates on Crowdin for a given article without having to change every `richText` field or one of the `text` fields.
 
-## Details
+## Sync translations
 
-### Sync translations
+### Upload source translations
 
-Translation synchronisation refers to the process of loading translations from Crowdin into Payload CMS. If [drafts](https://payloadcms.com/docs/versions/drafts) are enabled, this will create a new version in Payload CMS for each locale. The source locale (e.g. `en`) is not affected.
+On save draft or publish, content from [localized fields](https://payloadcms.com/docs/configuration/localization) in [Collections](https://payloadcms.com/docs/configuration/collections) and/or [globals](https://payloadcms.com/docs/configuration/globals) is organised into directories and files in your Crowdin project as configured in [options](#options).
 
-**A UI has not been developed for this feature yet**. To perform updates now, use custom REST API endpoints that are made available by this plugin.
+<img width="1000" alt="Screenshot 2024-02-06 at 22 02 38" src="https://github.com/thompsonsj/payload-crowdin-sync/assets/44806974/2c31050d-fee4-4275-bca2-7e4b48743999">
 
-If supplied translations do not contain required fields, translation updates will not be applied and validation errors will be returned in the API response.
+### Download translations
 
-#### Sync global translations
+To load translations into Payload CMS, use either: 
 
-To sync global translations, add a new article in **Crowdin Translations** that contains the global `slug`. Each article contains an `excludeLocales` field that can be used to prevent some locales from being included in the update operation.
+- virtual fields added to each localized document (convenient); or
+- endpoints added to the API (can do a dry run of changes).
 
-##### Dry run
+#### Virtual fields
+
+When in a locale other than the source locale:
+
+- Check the `Sync all translations` checkbox on a given collection document/global and save draft (loads translations as draft) or publish.
+- Check the `Sync translations` checkbox to synchronise for the current locale only.
+
+<img width="766" alt="Screenshot 2024-02-06 at 22 08 48" src="https://github.com/thompsonsj/payload-crowdin-sync/assets/44806974/2aa9c493-7792-422f-bf8d-a91c23893682">
+
+#### Endpoints
+
+API endpoints are added to the `crowdin-article-directories` collection.
+
+##### Review (dry run)
 
 To review translations, visit:
 
 `<payload-base-url>/api/crowdin-article-directories/<article-id>/review`
 
-e.g. `https://my-payload-app.com/api/crowdin-article-directories/64a880bb87ef685285a4d9dc/update`
+e.g. `https://my-payload-app.com/api/crowdin-article-directories/64a880bb87ef685285a4d9dc/review`
 
 A JSON object is returned that allows you to review what will be updated in the database. The JSON object will contain the following keys:
 
@@ -117,14 +314,28 @@ A JSON object is returned that allows you to review what will be updated in the 
     - `currentTranslations` localized fields populated with values from Crowdin.
     - `changed` boolean to indicate whether any changes have been made in Crowdin.
 
-#### Update
+##### Update
 
 To update translations, visit:
 
-`<payload-base-url>/api/crowdin-article-directories/<article-id>/review`
+`<payload-base-url>/api/crowdin-article-directories/<article-id>/update`
 
 e.g. `https://my-payload-app.com/api/crowdin-article-directories/64a880bb87ef685285a4d9dc/update`
 
-Pass the `draft=true` query parameter to update as a draft rather than a published version.
-
 The document will be updated and the same report will be generated as for a review.
+
+##### Notes
+
+- Pass the `draft=true` query parameter to update as a draft rather than a published version.
+- The source locale (e.g. `en`) is not affected.
+- Use the `excludeLocales` field on documents in the `crowdin-article-directories` collection to prevent some locales from being included in the review/update operation.
+- If supplied translations do not contain required fields, translation updates will not be applied and validation errors will be returned in the API response.
+
+## Further documentation
+
+- Development guidance: [docs/development.md](docs/development.md)
+- Engineering decisions: [docs/enginering.md](../docs/engineering.md)
+- Crowdin collections: [docs/crowdin.md](docs/crowdin.md)
+- NX generated docs: [docs/nx.md](docs/nx.md)
+
+Note: This plugin is still in development. A todo list is maintained at [docs/development.md](docs/development.md).
