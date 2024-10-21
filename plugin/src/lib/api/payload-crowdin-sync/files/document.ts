@@ -200,7 +200,13 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     return payloadFile;
   }
 
-  async createOrUpdateJsonFile(fileData: FileData, fileName = "fields") {
+  async createOrUpdateJsonFile({
+    fileData,
+    fileName = "fields",
+  }: {
+    fileData: FileData,
+    fileName?: string,
+  }) {
     await this.createOrUpdateFile({
       name: fileName,
       fileData,
@@ -287,7 +293,10 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
             ],
             isLocalized: reLocalizeField, // ignore localized attribute
           });
-          await filesApi.createOrUpdateJsonFile(currentCrowdinJsonData, fieldName);
+          await filesApi.createOrUpdateJsonFile({
+            fileData: currentCrowdinJsonData,
+            fileName: fieldName,
+          });
           await Promise.all(Object.keys(currentCrowdinHtmlData).map(async (name) => {
             await filesApi.createOrUpdateHtmlFile({
               name,

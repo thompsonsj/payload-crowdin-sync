@@ -176,7 +176,9 @@ const performAfterChange = async ({
         Object.keys(currentCrowdinJsonData).length !== 0) ||
       process.env['PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE'] === "true"
     ) {
-      await filesApi.createOrUpdateJsonFile(currentCrowdinJsonData);
+      await filesApi.createOrUpdateJsonFile({
+        fileData: currentCrowdinJsonData
+      });
     }
   };
 
