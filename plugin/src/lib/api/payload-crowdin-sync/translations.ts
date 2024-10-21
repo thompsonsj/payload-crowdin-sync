@@ -377,7 +377,7 @@ export class payloadCrowdinSyncTranslationsApi {
             // get translations here and pass it to convertHtmlToLexical
             // easier than passing `payload` and `pluginOptions` to create a new instance of the class we are in right now - keep convertHtmlToLexical focussed.
             const blockConfig = getLexicalBlockFields(editorConfig)
-            
+
             const blockTranslations = blockConfig ? await this.getBlockTranslations({
               blockConfig,
               file,
@@ -461,7 +461,7 @@ export class payloadCrowdinSyncTranslationsApi {
     const localizedHtmlFields = await this.getHtmlFieldSlugsByArticleDirectory(getRelationshipId(file.crowdinArticleDirectory));
     const crowdinHtmlObject: CrowdinHtmlObject = {};
     for (const field of localizedHtmlFields) {
-      // need to get the field definiton here somehow?
+      // need to get the field definition here somehow?
       crowdinHtmlObject[field] = await this.getTranslation({
         documentId: field,
         fieldName: field,

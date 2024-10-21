@@ -18,8 +18,16 @@ export const getLexicalEditorConfig = (field: RichTextField) => {
   return undefined
 }
 
-export const getLexicalBlockFields = (editorConfig: SanitizedEditorConfig) => editorConfig.resolvedFeatureMap.get('blocks')?.props as {
+export const getLexicalBlockFields = (editorConfig: SanitizedEditorConfig): {
   blocks: Block[]
+} | undefined => {
+  const blocks = editorConfig.resolvedFeatureMap.get('blocks')
+  if (blocks) {
+    return blocks.props as {
+      blocks: Block[]
+    }
+  }
+  return undefined
 }
 
 export const extractLexicalBlockContent = (root: SerializedRootNode) => {

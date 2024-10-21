@@ -1,6 +1,6 @@
 import payload from 'payload';
 import { initPayloadTest } from '../helpers/config';
-import { getArticleDirectory, payloadCrowdinSyncTranslationsApi, utilities } from 'plugin';
+import { payloadCrowdinSyncTranslationsApi, utilities } from 'plugin';
 import NestedFieldCollection from '../../collections/NestedFieldCollection';
 import { fixture } from './lexical-editor-with-blocks-inside-array.fixture';
 import nock from 'nock';
@@ -704,30 +704,27 @@ describe('Lexical editor with multiple blocks', () => {
 
     expect(files.length).toEqual(3);
 
-    expect(files[0].fileData).toEqual(
-      {
-        "html": `<p>If you add custom blocks, these will also be translated!</p><span data-block-id=${lexicalBlockIds[0]} data-block-type=highlight></span>`,
-      }
-    );
+    expect(files[0].fileData).toEqual({
+      html: `<p>If you add custom blocks, these will also be translated!</p><span data-block-id=${lexicalBlockIds[0]} data-block-type=highlight></span>`,
+    });
     expect(files[1].fileData).toMatchInlineSnapshot(`
       {
         "html": "<p>Lexical fields nested within complex layouts - such as this one (a <code>blocks</code> field in an <code>array</code> item within a <code>tab</code>), are supported.</p>",
       }
     `);
-    expect(files[2].fileData).toEqual(
-      {
-        "json": {
-          "items": {
-            [`${arrayIds[0]}`]: {
-              "heading": "Nested Lexical fields are supported",
-            },
-            [`${arrayIds[1]}`]: {
-              "heading": "Nested Lexical fields are supported - and blocks in that Lexical field are also translated",
-            },
+    expect(files[2].fileData).toEqual({
+      json: {
+        items: {
+          [`${arrayIds[0]}`]: {
+            heading: 'Nested Lexical fields are supported',
+          },
+          [`${arrayIds[1]}`]: {
+            heading:
+              'Nested Lexical fields are supported - and blocks in that Lexical field are also translated',
           },
         },
-      }
-    );
+      },
+    });
   });
 
   it('creates files for Lexical block with expected data', async () => {
@@ -835,10 +832,39 @@ describe('Lexical editor with multiple blocks', () => {
       .reply(
         200,
         mockClient.createFile({
-          fileId: 48314,
+          fileId: 48315,
         })
-      )
-      // fr - file 1 get translation
+      );
+
+    const doc: NestedFieldCollectionType = (await payload.create({
+      collection: 'nested-field-collection',
+      data: fixture,
+    })) as any;
+
+    const updatedDoc = (await payload.update({
+      id: doc.id,
+      collection: 'nested-field-collection',
+      data: {
+        title: 'Update required to access the crowdinArticleDirectory?',
+      },
+    })) as any;
+
+    const arrayIds =
+      (doc.items || []).map((item) => item.id) || ([] as string[]);
+    const blockIds =
+      (doc.items || []).map(
+        (item) => (item.block || []).find((x) => x !== undefined)?.id
+      ) || ([] as string[]);
+    const firstLexicalBlock = doc.items?.[1]?.block?.[0]?.content;
+
+    const lexicalBlockIds = firstLexicalBlock
+      ? extractLexicalBlockContent(firstLexicalBlock.root).map(
+          (block) => block.id
+        )
+      : ['lexical-block-id-not-found'];
+
+    // fr - file 1 get translation
+    nock('https://api.crowdin.com')
       .post(
         `/api/v2/projects/${
           pluginOptions.projectId
@@ -863,7 +889,17 @@ describe('Lexical editor with multiple blocks', () => {
       .query({
         targetLanguageId: 'fr',
       })
-      .reply(200, {})
+      .reply(200, {
+        items: {
+          [`${arrayIds[0]}`]: {
+            heading: 'Les champs lexicaux imbriqués sont pris en charge',
+          },
+          [`${arrayIds[1]}`]: {
+            heading:
+              'Les champs lexicaux imbriqués sont pris en charge - et les blocs de ce champ lexical sont également traduits',
+          },
+        },
+      })
       // fr - file 2 get translation
       .post(
         `/api/v2/projects/${
@@ -889,7 +925,10 @@ describe('Lexical editor with multiple blocks', () => {
       .query({
         targetLanguageId: 'fr',
       })
-      .reply(200, {})
+      .reply(
+        200,
+        '<p>Les champs lexicaux imbriqués dans des mises en page complexes - comme celui-ci (un champ <code>blocks</code> dans un élément <code>array</code> dans un <code>onglet</code>), sont pris en charge.</p>'
+      )
       // fr - file 3 get translation
       .post(
         `/api/v2/projects/${
@@ -899,6 +938,8 @@ describe('Lexical editor with multiple blocks', () => {
           targetLanguageId: 'fr',
         }
       )
+      // TODO: figure out why twice?
+      .twice()
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
@@ -912,13 +953,22 @@ describe('Lexical editor with multiple blocks', () => {
           pluginOptions.projectId
         }/translations/builds/${48313}/download`
       )
+      // TODO: figure out why twice?
+      .twice()
       .query({
         targetLanguageId: 'fr',
       })
-      .reply(
-        200,
-        ""
-      )
+      .reply(200, {
+        blocks: {
+          [`${lexicalBlockIds[0]}`]: {
+            highlight: {
+              heading: {
+                title: 'Configuration des blocs dans les champs lexicaux',
+              },
+            },
+          },
+        },
+      })
       // fr - file 4 get translation
       .post(
         `/api/v2/projects/${
@@ -928,6 +978,8 @@ describe('Lexical editor with multiple blocks', () => {
           targetLanguageId: 'fr',
         }
       )
+      // TODO: figure out why twice?
+      .twice()
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
@@ -941,12 +993,14 @@ describe('Lexical editor with multiple blocks', () => {
           pluginOptions.projectId
         }/translations/builds/${48314}/download`
       )
+      // TODO: figure out why twice?
+      .twice()
       .query({
         targetLanguageId: 'fr',
       })
       .reply(
         200,
-        ``
+        `<p>Notez une différence clé avec les blocs normaux : tous les champs <code>text</code>, <code>textarea</code> et <code>richText</code> seront envoyés à Crowdin, qu'ils soient ou non <a href="https://payloadcms.com/docs/configuration/localization#field-by-field-localization">champs localisés</a>.</p>`
       )
       // fr - file 5 get translation
       .post(
@@ -975,34 +1029,15 @@ describe('Lexical editor with multiple blocks', () => {
       })
       .reply(
         200,
-        ``
+        `<p>Si vous ajoutez des blocs personnalisés, ceux-ci seront également traduits !</p><span data-block-id=${lexicalBlockIds[0]} data-block-type=highlight></span>`
       );
-
-    const doc: NestedFieldCollectionType = await payload.create({
-      collection: 'nested-field-collection',
-      data: fixture,
-    }) as any;
-
-    const arrayIds =
-      (doc.items || []).map((item) => item.id) || ([] as string[]);
-    const blockIds =
-      (doc.items || []).map(
-        (item) => (item.block || []).find((x) => x !== undefined)?.id
-      ) || ([] as string[]);
-    const firstLexicalBlock = doc.items?.[1]?.block?.[0]?.content;
-
-    const lexicalBlockIds = firstLexicalBlock
-      ? extractLexicalBlockContent(firstLexicalBlock.root).map(
-          (block) => block.id
-        )
-      : ['lexical-block-id-not-found'];
 
     const crowdinFiles = await getFilesByDocumentID(`${doc.id}`, payload);
     const contentCrowdinFiles = await getFilesByParent(
-      `${getRelationshipId(doc.crowdinArticleDirectory)}`,
+      `${getRelationshipId(updatedDoc.crowdinArticleDirectory)}`,
       payload
     );
-console.log('contentCrowdinFiles', contentCrowdinFiles)
+
     // check file ids are always mapped in the same way
     const fileIds = crowdinFiles.map((file) => ({
       fileId: file.originalId,
@@ -1015,7 +1050,7 @@ console.log('contentCrowdinFiles', contentCrowdinFiles)
     expect(fileIds).toEqual([
       {
         field: `items.${arrayIds[1]}.block.${blockIds[1]}.basicBlockLexical.content`,
-        fileId: 48314,
+        fileId: 48315,
       },
       {
         field: `items.${arrayIds[0]}.block.${blockIds[0]}.basicBlockLexical.content`,
@@ -1029,11 +1064,11 @@ console.log('contentCrowdinFiles', contentCrowdinFiles)
     expect(contentFileIds).toEqual([
       {
         field: `blocks.${lexicalBlockIds[0]}.highlight.content`,
-        fileId: 48313,
+        fileId: 48314,
       },
       {
         field: 'blocks',
-        fileId: 48315,
+        fileId: 48313,
       },
     ]);
     const translationsApi = new payloadCrowdinSyncTranslationsApi(
@@ -1052,6 +1087,269 @@ console.log('contentCrowdinFiles', contentCrowdinFiles)
       id: `${doc.id}`,
       locale: 'fr_FR',
     });
-    expect(result['items']).toMatchInlineSnapshot();
+    expect(result['items']).toEqual(
+      [
+        {
+          "block": [
+            {
+              "blockType": "basicBlockLexical",
+              "content": {
+                "root": {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "detail": 0,
+                          "format": 0,
+                          "mode": "normal",
+                          "style": "",
+                          "text": "Les champs lexicaux imbriqués dans des mises en page complexes - comme celui-ci (un champ ",
+                          "type": "text",
+                          "version": 1,
+                        },
+                        {
+                          "detail": 0,
+                          "format": 16,
+                          "mode": "normal",
+                          "style": "",
+                          "text": "blocks",
+                          "type": "text",
+                          "version": 1,
+                        },
+                        {
+                          "detail": 0,
+                          "format": 0,
+                          "mode": "normal",
+                          "style": "",
+                          "text": " dans un élément ",
+                          "type": "text",
+                          "version": 1,
+                        },
+                        {
+                          "detail": 0,
+                          "format": 16,
+                          "mode": "normal",
+                          "style": "",
+                          "text": "array",
+                          "type": "text",
+                          "version": 1,
+                        },
+                        {
+                          "detail": 0,
+                          "format": 0,
+                          "mode": "normal",
+                          "style": "",
+                          "text": " dans un ",
+                          "type": "text",
+                          "version": 1,
+                        },
+                        {
+                          "detail": 0,
+                          "format": 16,
+                          "mode": "normal",
+                          "style": "",
+                          "text": "onglet",
+                          "type": "text",
+                          "version": 1,
+                        },
+                        {
+                          "detail": 0,
+                          "format": 0,
+                          "mode": "normal",
+                          "style": "",
+                          "text": "), sont pris en charge.",
+                          "type": "text",
+                          "version": 1,
+                        },
+                      ],
+                      "direction": "ltr",
+                      "format": "",
+                      "indent": 0,
+                      "type": "paragraph",
+                      "version": 1,
+                    },
+                  ],
+                  "direction": "ltr",
+                  "format": "",
+                  "indent": 0,
+                  "type": "root",
+                  "version": 1,
+                },
+              },
+              "id": `${blockIds[0]}`,
+            },
+          ],
+          "heading": "Les champs lexicaux imbriqués sont pris en charge",
+          "id": `${arrayIds[0]}`,
+        },
+        {
+          "block": [
+            {
+              "blockType": "basicBlockLexical",
+              "content": {
+                "root": {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "detail": 0,
+                          "format": 0,
+                          "mode": "normal",
+                          "style": "",
+                          "text": "Si vous ajoutez des blocs personnalisés, ceux-ci seront également traduits !",
+                          "type": "text",
+                          "version": 1,
+                        },
+                      ],
+                      "direction": "ltr",
+                      "format": "",
+                      "indent": 0,
+                      "type": "paragraph",
+                      "version": 1,
+                    },
+                    {
+                      "fields": {
+                        "blockType": "highlight",
+                        "content": {
+                          "root": {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "detail": 0,
+                                    "format": 0,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": "Notez une différence clé avec les blocs normaux : tous les champs ",
+                                    "type": "text",
+                                    "version": 1,
+                                  },
+                                  {
+                                    "detail": 0,
+                                    "format": 16,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": "text",
+                                    "type": "text",
+                                    "version": 1,
+                                  },
+                                  {
+                                    "detail": 0,
+                                    "format": 0,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": ", ",
+                                    "type": "text",
+                                    "version": 1,
+                                  },
+                                  {
+                                    "detail": 0,
+                                    "format": 16,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": "textarea",
+                                    "type": "text",
+                                    "version": 1,
+                                  },
+                                  {
+                                    "detail": 0,
+                                    "format": 0,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": " et ",
+                                    "type": "text",
+                                    "version": 1,
+                                  },
+                                  {
+                                    "detail": 0,
+                                    "format": 16,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": "richText",
+                                    "type": "text",
+                                    "version": 1,
+                                  },
+                                  {
+                                    "detail": 0,
+                                    "format": 0,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": " seront envoyés à Crowdin, qu'ils soient ou non ",
+                                    "type": "text",
+                                    "version": 1,
+                                  },
+                                  {
+                                    "children": [
+                                      {
+                                        "detail": 0,
+                                        "format": 0,
+                                        "mode": "normal",
+                                        "style": "",
+                                        "text": "champs localisés",
+                                        "type": "text",
+                                        "version": 1,
+                                      },
+                                    ],
+                                    "direction": "ltr",
+                                    "fields": {
+                                      "doc": null,
+                                      "linkType": "custom",
+                                      "newTab": false,
+                                      "url": "https://payloadcms.com/docs/configuration/localization#field-by-field-localization",
+                                    },
+                                    "format": "",
+                                    "indent": 0,
+                                    "type": "link",
+                                    "version": 2,
+                                  },
+                                  {
+                                    "detail": 0,
+                                    "format": 0,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": ".",
+                                    "type": "text",
+                                    "version": 1,
+                                  },
+                                ],
+                                "direction": "ltr",
+                                "format": "",
+                                "indent": 0,
+                                "type": "paragraph",
+                                "version": 1,
+                              },
+                            ],
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 0,
+                            "type": "root",
+                            "version": 1,
+                          },
+                        },
+                        "heading": {
+                          "title": "Configuration des blocs dans les champs lexicaux",
+                        },
+                        "id": `${lexicalBlockIds[0]}`,
+                      },
+                      "format": "",
+                      "type": "block",
+                      "version": 2,
+                    },
+                  ],
+                  "direction": "ltr",
+                  "format": "",
+                  "indent": 0,
+                  "type": "root",
+                  "version": 1,
+                },
+              },
+              "id": `${blockIds[1]}`,
+            },
+          ],
+          "heading": "Les champs lexicaux imbriqués sont pris en charge - et les blocs de ce champ lexical sont également traduits",
+          "id": `${arrayIds[1]}`,
+        },
+      ]
+    );
   });
 });

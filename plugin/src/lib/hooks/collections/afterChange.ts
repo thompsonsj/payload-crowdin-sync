@@ -163,7 +163,7 @@ const performAfterChange = async ({
       collectionSlug: collection.slug as keyof Config['collections'] | keyof Config['globals'],
       global,
       pluginOptions,
-      payload: req.payload
+      req: req
     },
   );
   const filesApi = await apiByDocument.get()
