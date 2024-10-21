@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.27.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.27.0...payload-crowdin-sync-v0.27.1) (2024-10-21)
+
+
+### Bug Fixes
+
+* **document:** detect lexical field collection inside a lexical block ([#198](https://github.com/thompsonsj/payload-crowdin-sync/issues/198)) ([77ee0b2](https://github.com/thompsonsj/payload-crowdin-sync/commit/77ee0b2b010959d6fb5738670a55cb81c0721e4b))
+* **utilities:** crowdin object filtered fields logic ([#196](https://github.com/thompsonsj/payload-crowdin-sync/issues/196)) ([2d788e5](https://github.com/thompsonsj/payload-crowdin-sync/commit/2d788e50f0308891344a4198c128138a0b9dcfca))
+
 ## [0.27.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.26.8...payload-crowdin-sync-v0.27.0) (2024-10-18)
 
 
