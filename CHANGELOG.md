@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.8.1...source-v0.9.0) (2024-10-21)
+
+
+### Features
+
+* **reviewtranslation:** locale parameter ([#203](https://github.com/thompsonsj/payload-crowdin-sync/issues/203)) ([34352b8](https://github.com/thompsonsj/payload-crowdin-sync/commit/34352b8f34dac710033e5e805916c35f571868e4))
+
 ## [0.8.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.8.0...source-v0.8.1) (2024-10-21)
 
 
