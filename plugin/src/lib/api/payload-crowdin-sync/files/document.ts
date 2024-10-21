@@ -1,8 +1,7 @@
 import { PluginOptions } from '../../../index';
 import { payloadCrowdinSyncFilesApi } from ".";
-import { Payload } from "payload";
 import { CrowdinArticleDirectory, CrowdinFile } from './../../../payload-types';
-import { CollectionConfig, Document, GlobalConfig, RichTextField } from 'payload/types';
+import { CollectionConfig, Document, GlobalConfig, PayloadRequest, RichTextField } from 'payload/types';
 import { Config } from 'payload/config';
 
 import { isEmpty } from 'lodash';
@@ -41,8 +40,8 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     articleDirectory: CrowdinArticleDirectory,
     collectionSlug:  keyof Config['collections'] | "globals",
     global: boolean,
-  }, pluginOptions: PluginOptions, payload: Payload) {
-    super(pluginOptions, payload);
+  }, pluginOptions: PluginOptions, req: PayloadRequest) {
+    super(pluginOptions, req);
     this.document = document
     this.articleDirectory = articleDirectory
     this.collectionSlug = collectionSlug
@@ -58,7 +57,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
    * @returns CrowdinFile
    */
   async getFile(name: string): Promise<CrowdinFile> {
-    return getFile(name, this.articleDirectory.id, this.payload);
+    return getFile(name, this.articleDirectory.id, this.req.payload);
   }
 
   /**
@@ -69,7 +68,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
    * @returns CrowdinFile[]
    */
   async getFiles(): Promise<CrowdinFile[]> {
-    return getFiles(this.articleDirectory.id, this.payload);
+    return getFiles(this.articleDirectory.id, this.req.payload);
   }
 
   /**
@@ -127,7 +126,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       fileType,
     });
 
-    await this.payload.update({
+    await this.req.payload.update({
       collection: "crowdin-files", // required
       id: crowdinFile.id,
       data: {
@@ -139,6 +138,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
         }) }}),
         ...(fileType === "html" && { fileData: { html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData) } }),
       },
+      req: this.req,
     });
   }
 
@@ -158,7 +158,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       });
       // Store result on Payload CMS
       if (crowdinFile) {
-        const payloadCrowdinFile = await this.payload.create({
+        const payloadCrowdinFile = await this.req.payload.create({
           collection: "crowdin-files", // required
           data: {
             // required
@@ -181,6 +181,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
             }) } }),
             ...(fileType === "html" && { fileData: { html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData) } }),
           },
+          req: this.req,
         });
         return payloadCrowdinFile;
       }
@@ -193,14 +194,23 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       this.projectId,
       crowdinFile.originalId as number
     );
-    const payloadFile = await this.payload.delete({
+    const payloadFile = await this.req.payload.delete({
       collection: "crowdin-files", // required
       id: crowdinFile.id, // required
+      req: this.req,
     });
     return payloadFile;
   }
 
-  async createOrUpdateJsonFile(fileData: FileData, fileName = "fields") {
+  async createOrUpdateJsonFile({
+    fileData,
+    fileName = "fields",
+    req,
+  }: {
+    fileData: FileData,
+    fileName?: string,
+    req?: PayloadRequest
+  }) {
     await this.createOrUpdateFile({
       name: fileName,
       fileData,
@@ -237,10 +247,14 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
           const folderName = `${this.pluginOptions.lexicalBlockFolderPrefix}${name}`
           const blockConfig = getLexicalBlockFields(editorConfig)
           
+          if (!blockConfig) {
+            return
+          }
+
           /**
            * Initialize Crowdin client sourceFilesApi
            */
-          const crowdinArticleDirectory = await getArticleDirectory(folderName, this.payload, false, this.articleDirectory)
+          const crowdinArticleDirectory = await getArticleDirectory(folderName, this.req.payload, false, this.articleDirectory)
           const apiByDocument = new filesApiByDocument(
             {
               document: {
@@ -253,41 +267,44 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
               collectionSlug: collection.slug as keyof Config['collections'] | keyof Config['globals'],
               global: false,
               pluginOptions: this.pluginOptions,
-              payload: this.payload,
+              req: this.req,
               /** Important: Identify that this article directory has a parent - logic changes for non-top-level directories. */
               parent: this.articleDirectory,
             },
           );
           const filesApi = await apiByDocument.get()
 
-          const fieldName = `blocks`
-          const currentCrowdinJsonData = buildCrowdinJsonObject({
-            doc: {
-              [fieldName]: blockContent,
-            },
-            fields: [
-              {
-                name: fieldName,
-                type: 'blocks',
-                blocks: blockConfig.blocks,
-              }
-            ],
-            isLocalized: reLocalizeField, // ignore localized attribute
+            const fieldName = `blocks`
+            const currentCrowdinJsonData = buildCrowdinJsonObject({
+              doc: {
+                [fieldName]: blockContent,
+              },
+              fields: [
+                {
+                  name: fieldName,
+                  type: 'blocks',
+                  blocks: blockConfig.blocks,
+                }
+              ],
+              isLocalized: reLocalizeField, // ignore localized attribute
+            });
+            const currentCrowdinHtmlData = buildCrowdinHtmlObject({
+              doc: {
+                [fieldName]: blockContent,
+              },
+              fields: [
+                {
+                  name: fieldName,
+                  type: 'blocks',
+                  blocks: blockConfig.blocks,
+                }
+              ],
+              isLocalized: reLocalizeField, // ignore localized attribute
+            });
+          await filesApi.createOrUpdateJsonFile({
+            fileData: currentCrowdinJsonData,
+            fileName: fieldName,
           });
-          const currentCrowdinHtmlData = buildCrowdinHtmlObject({
-            doc: {
-              [fieldName]: blockContent,
-            },
-            fields: [
-              {
-                name: fieldName,
-                type: 'blocks',
-                blocks: blockConfig.blocks,
-              }
-            ],
-            isLocalized: reLocalizeField, // ignore localized attribute
-          });
-          await filesApi.createOrUpdateJsonFile(currentCrowdinJsonData, fieldName);
           await Promise.all(Object.keys(currentCrowdinHtmlData).map(async (name) => {
             await filesApi.createOrUpdateHtmlFile({
               name,

@@ -2,7 +2,7 @@ import { Payload } from "payload";
 import { CrowdinArticleDirectory } from "../../../payload-types";
 import { Config } from "payload/config";
 import { isCrowdinArticleDirectory, PluginOptions } from "../../../types";
-import { Document } from 'payload/types';
+import { Document, PayloadRequest } from 'payload/types';
 import { toWords } from 'payload/dist/utilities/formatLabels';
 import crowdin, { Credentials, SourceFiles } from "@crowdin/crowdin-api-client";
 import { payloadCrowdinSyncDocumentFilesApi } from "./document";
@@ -31,7 +31,7 @@ export class filesApiByDocument {
   collectionSlug: keyof Config['collections'] | "globals";
   global: boolean;
   pluginOptions: PluginOptions;
-  payload: Payload;
+  req: PayloadRequest;
   parent?: CrowdinArticleDirectory['parent'];
 
   constructor({
@@ -39,14 +39,14 @@ export class filesApiByDocument {
     collectionSlug,
     global,
     pluginOptions,
-    payload,
+    req,
     parent,
   }: {
     document: Document,
     collectionSlug:  keyof Config['collections'] | "globals",
     global: boolean,
     pluginOptions: PluginOptions,
-    payload: Payload,
+    req: PayloadRequest,
     /** Lexical field blocks use their own CrowdinArticleDirectory. */
     parent?: CrowdinArticleDirectory['parent'],
   }) {
@@ -63,7 +63,7 @@ export class filesApiByDocument {
     this.collectionSlug = collectionSlug
     this.global = global
     this.pluginOptions = pluginOptions
-    this.payload = payload
+    this.req = req
     this.parent = parent
     /**
      * Create a undefined Crowdin Article Directory
@@ -84,7 +84,7 @@ export class filesApiByDocument {
       articleDirectory: this.articleDirectory,
       collectionSlug: this.collectionSlug,
       global: this.global
-    }, this.pluginOptions, this.payload)
+    }, this.pluginOptions, this.req)
   }
 
   async assertArticleDirectoryProvided() {
@@ -101,9 +101,10 @@ export class filesApiByDocument {
       // The name of the directory is Crowdin specific helper text to give
       // context to translators.
       // See https://developer.crowdin.com/api/v2/#operation/api.projects.directories.getMany
-      crowdinPayloadArticleDirectory = this.document.crowdinArticleDirectory.id ? this.document.crowdinArticleDirectory : await this.payload.findByID({
+      crowdinPayloadArticleDirectory = this.document.crowdinArticleDirectory.id ? this.document.crowdinArticleDirectory : await this.req.payload.findByID({
         collection: "crowdin-article-directories",
         id: this.document.crowdinArticleDirectory,
+        req: this.req,
       }) as unknown;
     } else {
       const crowdinPayloadCollectionDirectory =
@@ -111,9 +112,10 @@ export class filesApiByDocument {
           collectionSlug: this.global ? "globals" : this.collectionSlug,
         });
 
-      const parent: CrowdinArticleDirectory = isCrowdinArticleDirectory(this.parent) ? this.parent : this.parent && await this.payload.findByID({
+      const parent: CrowdinArticleDirectory = isCrowdinArticleDirectory(this.parent) ? this.parent : this.parent && await this.req.payload.findByID({
           collection: "crowdin-article-directories",
           id: this.parent,
+          req: this.req,
         }) as any;
 
       // Create article directory on Crowdin
@@ -130,7 +132,7 @@ export class filesApiByDocument {
       );
 
       // Store result in Payload CMS
-      const result = await this.payload.create({
+      const result = await this.req.payload.create({
         collection: "crowdin-article-directories",
         data: {
           ...(crowdinPayloadCollectionDirectory?.['id'] && {
@@ -148,6 +150,7 @@ export class filesApiByDocument {
             parent: parent.id,
           })
         },
+        req: this.req,
       }) as unknown;
       crowdinPayloadArticleDirectory = result as CrowdinArticleDirectory
       const crowdinArticleDirectory = crowdinPayloadArticleDirectory.id
@@ -155,19 +158,21 @@ export class filesApiByDocument {
       // Associate result with document
       if (!this.parent) {
         if (this.global) {
-          await this.payload.updateGlobal({
+          await this.req.payload.updateGlobal({
             slug: this.collectionSlug as keyof Config["globals"],
             data: {
               crowdinArticleDirectory,
             } as never,
+            req: this.req,
           });
         } else {
-          await this.payload.update({
+          await this.req.payload.update({
             collection: this.collectionSlug as keyof Config["collections"],
             id: this.document.id,
             data: {
               crowdinArticleDirectory,
             } as never,
+            req: this.req,
           });
         }
       }
@@ -186,13 +191,14 @@ export class filesApiByDocument {
 
     let crowdinPayloadCollectionDirectory;
     // Check whether collection directory exists on Crowdin
-    const query = await this.payload.find({
+    const query = await this.req.payload.find({
       collection: "crowdin-collection-directories",
       where: {
         collectionSlug: {
           equals: collectionSlug,
         },
       },
+      req: this.req,
     });
 
     if (query.totalDocs === 0) {
@@ -207,7 +213,7 @@ export class filesApiByDocument {
       );
 
       // Store result in Payload CMS
-      crowdinPayloadCollectionDirectory = await this.payload.create({
+      crowdinPayloadCollectionDirectory = await this.req.payload.create({
         collection: "crowdin-collection-directories",
         data: {
           collectionSlug: collectionSlug,
@@ -222,6 +228,7 @@ export class filesApiByDocument {
             projectId: this.projectId,
           }
         },
+        req: this.req,
       });
     } else {
       crowdinPayloadCollectionDirectory = query.docs[0];

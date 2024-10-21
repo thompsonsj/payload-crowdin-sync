@@ -163,7 +163,7 @@ const performAfterChange = async ({
       collectionSlug: collection.slug as keyof Config['collections'] | keyof Config['globals'],
       global,
       pluginOptions,
-      payload: req.payload
+      req: req
     },
   );
   const filesApi = await apiByDocument.get()
@@ -176,7 +176,9 @@ const performAfterChange = async ({
         Object.keys(currentCrowdinJsonData).length !== 0) ||
       process.env['PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE'] === "true"
     ) {
-      await filesApi.createOrUpdateJsonFile(currentCrowdinJsonData);
+      await filesApi.createOrUpdateJsonFile({
+        fileData: currentCrowdinJsonData
+      });
     }
   };
 
