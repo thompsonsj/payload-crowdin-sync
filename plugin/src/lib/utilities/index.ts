@@ -296,7 +296,7 @@ export const reLocalizeField = (
   (field as FieldWithName).name !== "id";
 
 const excludeBasedOnDescription = (field: Field) => {
-  const description = get(field, "admin.description", "");
+  const description = `${get(field, "admin.description", "")}`;
   if (description.includes("Not sent to Crowdin. Localize in the CMS.")) {
     return true;
   }
