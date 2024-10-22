@@ -2,6 +2,7 @@ import type { Field, TabsField } from "payload/types";
 import { updatePayloadTranslation } from "../api/helpers";
 import { PluginOptions } from "../types";
 import { DocumentCustomUIField } from "./documentUI";
+import { getOtherLocales } from "../utilities/locales";
 
 interface Args {
   fields: Field[];
@@ -51,11 +52,10 @@ export const pluginCollectionOrGlobalFields = ({
           if (siblingData["syncTranslations"] && siblingData["crowdinArticleDirectory"]) {
             // is this a draft?
             const draft = Boolean(siblingData["_status"] && siblingData["_status"] !== 'published')
-            const excludeLocales = Object.keys(pluginOptions.localeMap)
-            const thisLocaleIndex = req.locale && excludeLocales.indexOf(req.locale)
-            if (thisLocaleIndex) {
-              excludeLocales.splice(thisLocaleIndex, 1)
-            }
+            const excludeLocales = getOtherLocales({
+              locale: `${req.locale}`,
+              localeMap: pluginOptions.localeMap
+            })
             context['articleDirectoryId'] = typeof siblingData["crowdinArticleDirectory"] === 'string' ? siblingData["crowdinArticleDirectory"] : siblingData["crowdinArticleDirectory"].id
             context['draft'] = draft
             context['excludeLocales'] = excludeLocales
