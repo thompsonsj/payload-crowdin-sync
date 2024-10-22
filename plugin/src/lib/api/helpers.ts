@@ -203,6 +203,19 @@ export async function updatePayloadTranslation({
       ...translations
     };
   } catch (error) {
+    console.log(
+      'updatePayloadTranslation',
+      {
+        articleDirectoryId,
+        pluginOptions,
+        payload,
+        draft,
+        dryRun,
+        excludeLocales,
+      },
+      'error',
+      error
+    )
     return {
       status: 400,
       error,

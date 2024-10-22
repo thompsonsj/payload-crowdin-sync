@@ -160,7 +160,19 @@ export class payloadCrowdinSyncTranslationsApi {
               },
             });
           } catch (error) {
-            console.log(error);
+            console.log(
+              'updateTranslation',
+              {
+                documentId,
+                collection,
+                dryRun,
+                global,
+                draft,
+                excludeLocales,
+              },
+              'error',
+              error
+            );
           }
         } else {
           try {
@@ -172,7 +184,19 @@ export class payloadCrowdinSyncTranslationsApi {
               data: report[locale].latestTranslations,
             });
           } catch (error) {
-            console.log(error);
+            console.log(
+              'updateTranslation',
+              {
+                documentId,
+                collection,
+                dryRun,
+                global,
+                draft,
+                excludeLocales,
+              },
+              'error',
+              error
+            );
           }
         }
       }
@@ -250,7 +274,17 @@ export class payloadCrowdinSyncTranslationsApi {
       });
       return docTranslations;
     } catch (error) {
-      console.log(error);
+      console.log(
+        'getCurrentDocumentTranslation',
+        {
+          doc,
+          collection,
+          locale,
+          global,
+        },
+        'error',
+        error
+      );
       throw new Error(`${error}`);
     }
   }
@@ -420,7 +454,19 @@ export class payloadCrowdinSyncTranslationsApi {
         return JSON.parse(data);
       }
     } catch (error) {
-      console.log(error);
+      console.log(
+        'getTranslation',
+        {
+          documentId,
+          fieldName,
+          locale,
+          collection,
+          parentCrowdinArticleDirectoryId,
+          fields
+        },
+        'error',
+        error
+      );
     }
   }
 
