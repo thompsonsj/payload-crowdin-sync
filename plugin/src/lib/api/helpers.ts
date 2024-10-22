@@ -208,7 +208,6 @@ export async function updatePayloadTranslation({
       {
         articleDirectoryId,
         pluginOptions,
-        payload,
         draft,
         dryRun,
         excludeLocales,

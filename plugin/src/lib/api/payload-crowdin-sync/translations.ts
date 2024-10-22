@@ -460,7 +460,7 @@ export class payloadCrowdinSyncTranslationsApi {
           documentId,
           fieldName,
           locale,
-          collection,
+          collection: collection?.slug,
           parentCrowdinArticleDirectoryId,
           fields
         },
