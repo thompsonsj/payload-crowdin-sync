@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.9.1...source-v0.9.2) (2024-10-22)
+
+
+### Bug Fixes
+
+* **pluginfields:** error in sync translations single locale logic ([#209](https://github.com/thompsonsj/payload-crowdin-sync/issues/209)) ([ae55ce5](https://github.com/thompsonsj/payload-crowdin-sync/commit/ae55ce5aaa0ffe0b0a914e9d9444c293a3585545))
+
 ## [0.9.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.9.0...source-v0.9.1) (2024-10-22)
 
 
