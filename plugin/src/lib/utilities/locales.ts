@@ -8,8 +8,8 @@ export const getOtherLocales = ({
   localeMap: PluginOptions['localeMap']
 }) => {
   const excludeLocales = Object.keys(localeMap)
-  const thisLocaleIndex = locale && excludeLocales.indexOf(locale)
-  if (thisLocaleIndex) {
+  const thisLocaleIndex = locale ? excludeLocales.indexOf(locale) : -1
+  if (thisLocaleIndex !== -1) {
     excludeLocales.splice(thisLocaleIndex, 1)
   }
   return excludeLocales

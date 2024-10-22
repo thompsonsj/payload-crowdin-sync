@@ -26,6 +26,10 @@ describe('fn: getOtherLocales', () => {
       'fr_FR',
       ['da_DK', 'de_DE']
     ],
+    [
+      '',
+      ['da_DK', 'de_DE', 'fr_FR']
+    ],
   ]
   describe.each(fixtures)(`%s`, (string, result) => {
     it(`${string} is excluded in returned locales`, () => {
@@ -34,5 +38,5 @@ describe('fn: getOtherLocales', () => {
           localeMap
       })).toEqual(result)
     });
+  });
 });
-})
