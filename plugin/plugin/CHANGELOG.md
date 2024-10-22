@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.28.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.28.0...payload-crowdin-sync-v0.28.1) (2024-10-22)
+
+
+### Bug Fixes
+
+* **api:** more informative console log errors from try catch ([#206](https://github.com/thompsonsj/payload-crowdin-sync/issues/206)) ([03cf7b4](https://github.com/thompsonsj/payload-crowdin-sync/commit/03cf7b4f5c4b91aeec941a478e08a38d9c9542e4))
+
 ## [0.28.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.27.1...payload-crowdin-sync-v0.28.0) (2024-10-21)
 
 
