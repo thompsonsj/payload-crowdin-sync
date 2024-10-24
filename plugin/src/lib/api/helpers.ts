@@ -3,6 +3,30 @@ import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from
 import { payloadCrowdinSyncTranslationsApi } from "./payload-crowdin-sync/translations";
 import { PluginOptions, isCollectionOrGlobalConfigObject, isCollectionOrGlobalConfigSlug, isCrowdinArticleDirectory } from "../types";
 import { getRelationshipId } from "../utilities/payload";
+import { CollectionConfig, GlobalConfig, SanitizedCollectionConfig, SanitizedGlobalConfig } from "payload/types";
+
+export const getCollectionConfig = (
+  collection: string,
+  global: boolean,
+  payload: Payload,
+): CollectionConfig | GlobalConfig => {
+  let collectionConfig:
+    | SanitizedGlobalConfig
+    | SanitizedCollectionConfig
+    | undefined;
+  if (global) {
+    collectionConfig = payload.config.globals.find(
+      (col: GlobalConfig) => col.slug === collection
+    );
+  } else {
+    collectionConfig = payload.config.collections.find(
+      (col: CollectionConfig) => col.slug === collection
+    );
+  }
+  if (!collectionConfig)
+    throw new Error(`Collection ${collection} not found in payload config`);
+  return collectionConfig;
+}
 
 /**
  * get Crowdin Article Directory for a given documentId

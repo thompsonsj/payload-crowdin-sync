@@ -11,8 +11,6 @@ import {
   Field,
   GlobalConfig,
   RichTextField,
-  SanitizedCollectionConfig,
-  SanitizedGlobalConfig,
 } from "payload/types";
 import {
   getLocalizedFields,
@@ -29,7 +27,7 @@ import {
 } from '../../utilities/richTextConversion'
 
 import { Config, CrowdinFile } from "../../payload-types";
-import { getFileByDocumentID, getFileByParent, getFilesByDocumentID, getFilesByParent } from "../helpers";
+import { getCollectionConfig, getFileByDocumentID, getFileByParent, getFilesByDocumentID, getFilesByParent } from "../helpers";
 import { getLexicalBlockFields, getLexicalEditorConfig } from "../../utilities/lexical";
 import { getRelationshipId } from "../../utilities/payload";
 
@@ -211,22 +209,12 @@ export class payloadCrowdinSyncTranslationsApi {
     collection: string,
     global: boolean
   ): CollectionConfig | GlobalConfig {
-    let collectionConfig:
-      | SanitizedGlobalConfig
-      | SanitizedCollectionConfig
-      | undefined;
-    if (global) {
-      collectionConfig = this.payload.config.globals.find(
-        (col: GlobalConfig) => col.slug === collection
-      );
-    } else {
-      collectionConfig = this.payload.config.collections.find(
-        (col: CollectionConfig) => col.slug === collection
-      );
-    }
-    if (!collectionConfig)
-      throw new Error(`Collection ${collection} not found in payload config`);
-    return collectionConfig;
+    
+    return getCollectionConfig(
+      collection,
+      global,
+      this.payload,
+    );
   }
 
   async getCurrentDocumentTranslation({
