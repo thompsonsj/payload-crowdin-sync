@@ -2,10 +2,11 @@ import { Payload } from "payload";
 import { CrowdinArticleDirectory } from "../../../payload-types";
 import { Config } from "payload/config";
 import { isCrowdinArticleDirectory, PluginOptions } from "../../../types";
-import { Document, PayloadRequest } from 'payload/types';
+import { Collection, CollectionConfig, Document, PayloadRequest } from 'payload/types';
 import { toWords } from 'payload/dist/utilities/formatLabels';
 import crowdin, { Credentials, SourceFiles } from "@crowdin/crowdin-api-client";
 import { payloadCrowdinSyncDocumentFilesApi } from "./document";
+import { getCollectionConfig } from "../../helpers";
 
 interface IfindOrCreateCollectionDirectory {
   collectionSlug: keyof Config['collections'] | "globals";
@@ -120,6 +121,12 @@ export class filesApiByDocument {
 
       // Create article directory on Crowdin
       const name = this.global ? this.collectionSlug : this.document.id
+      const collectionConfig = this.global ? undefined : getCollectionConfig(
+        this.collectionSlug,
+        false,
+        this.req.payload
+      )
+      const useAsTitle = (collectionConfig as CollectionConfig)?.admin?.useAsTitle
       const crowdinDirectory = await this.sourceFilesApi.createDirectory(
         this.projectId,
         {
@@ -127,7 +134,7 @@ export class filesApiByDocument {
           name,
           title: this.global
             ? toWords(this.collectionSlug)
-            : this.document.title || this.document.name, // no tests for this Crowdin metadata, but makes it easier for translators
+            : useAsTitle && this.document[useAsTitle] || this.document.title || this.document.name, // no tests for this Crowdin metadata, but makes it easier for translators
         }
       );
 
