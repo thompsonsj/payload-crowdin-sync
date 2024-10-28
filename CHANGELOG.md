@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.9.2...source-v0.9.3) (2024-10-24)
+
+
+### Bug Fixes
+
+* **bydocument:** use useAsTitle for Crowdin friendly folder name ([#211](https://github.com/thompsonsj/payload-crowdin-sync/issues/211)) ([d67afbf](https://github.com/thompsonsj/payload-crowdin-sync/commit/d67afbfb0f2d1c3cd14c71150434f93df662736c))
+
 ## [0.9.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.9.1...source-v0.9.2) (2024-10-22)
 
 
