@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.10.0...source-v0.10.1) (2024-10-28)
+
+
+### Bug Fixes
+
+* **translations:** faulty logic to lookup lexical block files ([#215](https://github.com/thompsonsj/payload-crowdin-sync/issues/215)) ([d1c9206](https://github.com/thompsonsj/payload-crowdin-sync/commit/d1c92069b5ec838585278857cffb4152d1bbb1c9))
+
 ## [0.10.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.9.3...source-v0.10.0) (2024-10-28)
 
 
