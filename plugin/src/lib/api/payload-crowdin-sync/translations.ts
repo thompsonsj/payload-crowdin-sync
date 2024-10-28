@@ -28,7 +28,7 @@ import {
 } from '../../utilities/richTextConversion'
 
 import { Config, CrowdinFile } from "../../payload-types";
-import { getCollectionConfig, getFileByDocumentID, getFileByParent, getFilesByDocumentID, getFilesByParent } from "../helpers";
+import { getCollectionConfig, getFileByDocumentID, getFileByParent, getFiles, getFilesByDocumentID, getFilesByParent } from "../helpers";
 import { getLexicalBlockFields, getLexicalEditorConfig } from "../../utilities/lexical";
 import { getRelationshipId } from "../../utilities/payload";
 
@@ -358,7 +358,7 @@ export class payloadCrowdinSyncTranslationsApi {
   }
 
   async getHtmlFieldSlugsByArticleDirectory(parentCrowdinArticleDirectoryId?: string): Promise<string[]> {
-    const files = await getFilesByParent(`${parentCrowdinArticleDirectoryId}`, this.payload) as CrowdinFile[];
+    const files = await getFiles(`${parentCrowdinArticleDirectoryId}`, this.payload) as CrowdinFile[];
     const slugs = files
     .filter((file) => file.type === "html")
     .map((file) => `${file.field}`)
@@ -399,14 +399,29 @@ export class payloadCrowdinSyncTranslationsApi {
           const editorConfig = getLexicalEditorConfig(field)
           // isLexical?
           if (editorConfig) {
+            const dirResult = await this.payload.find({
+              collection: "crowdin-article-directories",
+              where: {
+                parent: {
+                  equals: getRelationshipId(file.crowdinArticleDirectory),
+                },
+                name: {
+                  equals: `lex.${fieldName}`,
+                }
+              },
+            });
+            const crowdinArticleDirectory = dirResult.docs[0]
+            const crowdinArticleDirectoryId = getRelationshipId(crowdinArticleDirectory as any)
+
             // get translations here and pass it to convertHtmlToLexical
             // easier than passing `payload` and `pluginOptions` to create a new instance of the class we are in right now - keep convertHtmlToLexical focussed.
             const blockConfig = getLexicalBlockFields(editorConfig)
 
-            const blockTranslations = blockConfig ? await this.getBlockTranslations({
+            const blockTranslations = blockConfig && crowdinArticleDirectoryId ? await this.getBlockTranslations({
               blockConfig,
               file,
-              locale
+              locale,
+              crowdinArticleDirectoryId,
             }) : null
 
             return convertHtmlToLexical(data, editorConfig, blockTranslations) || {
@@ -495,13 +510,15 @@ export class payloadCrowdinSyncTranslationsApi {
   private async getBlockTranslations({
     blockConfig,
     file,
-    locale
+    locale,
+    crowdinArticleDirectoryId,
   }: {
     blockConfig: {
       blocks: Block[]
     },
     file: CrowdinFile,
-    locale: string
+    locale: string,
+    crowdinArticleDirectoryId: string,
   }) {
     // link with plugin/src/lib/api/payload-crowdin-sync/files/document.ts - store as variable?
     const fieldName = `blocks`
@@ -522,11 +539,11 @@ export class payloadCrowdinSyncTranslationsApi {
         documentId: fieldName,
         fieldName: "blocks",
         locale: locale,
-        parentCrowdinArticleDirectoryId: getRelationshipId(file.crowdinArticleDirectory),
+        parentCrowdinArticleDirectoryId: crowdinArticleDirectoryId,
 
       })) || {};
     // add html fields
-    const localizedHtmlFields = await this.getHtmlFieldSlugsByArticleDirectory(getRelationshipId(file.crowdinArticleDirectory));
+    const localizedHtmlFields = await this.getHtmlFieldSlugsByArticleDirectory(crowdinArticleDirectoryId);
     const crowdinHtmlObject: CrowdinHtmlObject = {};
     for (const field of localizedHtmlFields) {
       // need to get the field definition here somehow?
@@ -535,7 +552,7 @@ export class payloadCrowdinSyncTranslationsApi {
         fieldName: field,
         locale: locale,
         fields,
-        parentCrowdinArticleDirectoryId: getRelationshipId(file.crowdinArticleDirectory),
+        parentCrowdinArticleDirectoryId: crowdinArticleDirectoryId,
       });
     }
 

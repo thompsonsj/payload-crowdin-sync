@@ -88,23 +88,12 @@ export async function getFileByParent(
   parentCrowdinArticleDirectoryId: string,
   payload: Payload
 ): Promise<any> {
-  const dirResult = await payload.find({
-    collection: "crowdin-article-directories",
-    where: {
-      parent: {
-        equals: parentCrowdinArticleDirectoryId,
-      },
-    },
-  });
-  const crowdinArticleDirectory = dirResult.docs[0]
-  const crowdinArticleDirectoryId = getRelationshipId(crowdinArticleDirectory as any)
-
   const result = await payload.find({
     collection: "crowdin-files",
     where: {
       field: { equals: name },
       crowdinArticleDirectory: {
-        equals: crowdinArticleDirectoryId,
+        equals: parentCrowdinArticleDirectoryId,
       },
     },
   });
