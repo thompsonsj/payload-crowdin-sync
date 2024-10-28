@@ -66,6 +66,25 @@ export async function getArticleDirectory(
     : undefined;
 }
 
+export async function getLexicalFieldArticleDirectory({
+  payload,
+  parent,
+  name,
+}: {
+  payload: Payload,
+  parent?: CrowdinArticleDirectory | null | string,
+  name: string,
+}) {
+  const dir = await getArticleDirectory(
+    /** 'document id' is the field name in dot notation for lexical blocks */
+    name,
+    payload,
+    false,
+    parent,
+  ) as any
+  return dir as CrowdinArticleDirectory
+}
+
 export async function getFile(
   name: string,
   crowdinArticleDirectoryId: string,
@@ -83,55 +102,10 @@ export async function getFile(
   return result.docs[0];
 }
 
-export async function getFileByParent(
-  name: string,
-  parentCrowdinArticleDirectoryId: string,
-  payload: Payload
-): Promise<any> {
-  const result = await payload.find({
-    collection: "crowdin-files",
-    where: {
-      field: { equals: name },
-      crowdinArticleDirectory: {
-        equals: parentCrowdinArticleDirectoryId,
-      },
-    },
-  });
-
-  return result.docs[0];
-}
-
 export async function getFiles(
   crowdinArticleDirectoryId: string,
   payload: Payload
-): Promise<any> {
-  const result = await payload.find({
-    collection: "crowdin-files",
-    limit: 10000,
-    where: {
-      crowdinArticleDirectory: {
-        equals: crowdinArticleDirectoryId,
-      },
-    },
-  });
-  return result.docs;
-}
-
-export async function getFilesByParent(
-  parentCrowdinArticleDirectoryId: string,
-  payload: Payload
 ): Promise<CrowdinFile[]> {
-  const dirResult = await payload.find({
-    collection: "crowdin-article-directories",
-    where: {
-      parent: {
-        equals: parentCrowdinArticleDirectoryId,
-      },
-    },
-  });
-  const crowdinArticleDirectory = dirResult.docs[0]
-  const crowdinArticleDirectoryId = getRelationshipId(crowdinArticleDirectory as any)
-
   const result = await payload.find({
     collection: "crowdin-files",
     limit: 10000,

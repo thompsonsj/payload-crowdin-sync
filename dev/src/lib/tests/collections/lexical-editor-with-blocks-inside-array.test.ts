@@ -13,7 +13,8 @@ import {
 } from '../../payload-types';
 import {
   getFilesByDocumentID,
-  getFilesByParent,
+  getFiles,
+  getLexicalFieldArticleDirectory,
 } from 'plugin/src/lib/api/helpers';
 import { getRelationshipId } from 'plugin/src/lib/utilities/payload';
 
@@ -752,8 +753,21 @@ describe('Lexical editor with multiple blocks', () => {
       },
     })) as any;
 
-    const files = await getFilesByParent(
-      `${getRelationshipId(doc.crowdinArticleDirectory)}`,
+    const arrayIds =
+      (doc.items || []).map((item) => item.id) || ([] as string[]);
+    const blockIds =
+      (doc.items || []).map(
+        (item) => (item.block || []).find((x) => x !== undefined)?.id
+      ) || ([] as string[]);
+
+    const lexicalFieldCrowdinArticleDirectory = await getLexicalFieldArticleDirectory({
+      payload,
+      parent: doc.crowdinArticleDirectory,
+      name: `lex.items.${arrayIds[1]}.block.${blockIds[1]}.basicBlockLexical.content`
+    })
+
+    const files = await getFiles(
+      `${getRelationshipId(lexicalFieldCrowdinArticleDirectory)}`,
       payload
     );
 
@@ -1025,9 +1039,14 @@ describe('Lexical editor with multiple blocks', () => {
       );
 
     const crowdinFiles = await getFilesByDocumentID(`${doc.id}`, payload);
-    const contentCrowdinFiles = await getFilesByParent(
-      `${getRelationshipId(updatedDoc.crowdinArticleDirectory)}`,
-      payload
+    const lexicalFieldCrowdinArticleDirectory = await getLexicalFieldArticleDirectory({
+      payload,
+      parent: updatedDoc.crowdinArticleDirectory,
+      name: `lex.items.${arrayIds[1]}.block.${blockIds[1]}.basicBlockLexical.content`
+    })
+    const contentCrowdinFiles = await getFiles(
+      `${getRelationshipId(lexicalFieldCrowdinArticleDirectory)}`,
+      payload 
     );
 
     // check file ids are always mapped in the same way

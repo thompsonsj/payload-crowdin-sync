@@ -28,7 +28,7 @@ import {
 } from '../../utilities/richTextConversion'
 
 import { Config, CrowdinFile } from "../../payload-types";
-import { getCollectionConfig, getFileByDocumentID, getFileByParent, getFiles, getFilesByDocumentID } from "../helpers";
+import { getCollectionConfig, getFile, getFileByDocumentID, getFiles, getFilesByDocumentID, getLexicalFieldArticleDirectory } from "../helpers";
 import { getLexicalBlockFields, getLexicalEditorConfig } from "../../utilities/lexical";
 import { getRelationshipId } from "../../utilities/payload";
 
@@ -373,7 +373,7 @@ export class payloadCrowdinSyncTranslationsApi {
    */
   // TODO refactor out fields override - replace `collection` with `fields`
   async getTranslation({ documentId, fieldName, locale, collection, crowdinArticleDirectoryId, fields }: IgetTranslation) {
-    const file = (typeof crowdinArticleDirectoryId === 'string' ? await getFileByParent(fieldName, crowdinArticleDirectoryId, this.payload) : await getFileByDocumentID(fieldName, `${documentId}`, this.payload)) as CrowdinFile;
+    const file = (typeof crowdinArticleDirectoryId === 'string' ? await getFile(fieldName, crowdinArticleDirectoryId, this.payload) : await getFileByDocumentID(fieldName, `${documentId}`, this.payload)) as CrowdinFile;
     // it is possible a file doesn't exist yet - e.g. an article with localized text fields that contains an empty html field.
     if (!file) {
       return;
@@ -400,18 +400,11 @@ export class payloadCrowdinSyncTranslationsApi {
           // isLexical?
           if (editorConfig) {
             // retrieve the article directory created for this lexical block
-            const dirResult = await this.payload.find({
-              collection: "crowdin-article-directories",
-              where: {
-                parent: {
-                  equals: getRelationshipId(file.crowdinArticleDirectory),
-                },
-                name: {
-                  equals: `lex.${fieldName}`,
-                }
-              },
-            });
-            const lexicalFieldCrowdinArticleDirectory = dirResult.docs[0]
+            const lexicalFieldCrowdinArticleDirectory = await getLexicalFieldArticleDirectory({
+              payload: this.payload,
+              parent: file.crowdinArticleDirectory,
+              name: `lex.${fieldName}`,
+            })
             const lexicalFieldCrowdinArticleDirectoryId = getRelationshipId(lexicalFieldCrowdinArticleDirectory as any)
 
             // get translations here and pass it to convertHtmlToLexical
