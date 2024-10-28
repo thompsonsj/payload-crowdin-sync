@@ -22,6 +22,7 @@ interface IupdateOrCreateFile {
   name: string;
   fileData: FileData;
   fileType: "html" | "json";
+  sourceBlocks?: unknown[]
 }
 
 export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesApi {
@@ -84,6 +85,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     name,
     fileData,
     fileType,
+    sourceBlocks,
   }: IupdateOrCreateFile) {
     const empty = isEmpty(fileData);
     // Check whether file exists on Crowdin
@@ -95,6 +97,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
           name,
           fileData,
           fileType,
+          sourceBlocks,
         });
       } else {
         updatedCrowdinFile = await this.updateFile({
@@ -102,6 +105,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
           name: name,
           fileData,
           fileType,
+          sourceBlocks,
         });
       }
     } else {
@@ -117,6 +121,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     name,
     fileData,
     fileType,
+    sourceBlocks,
   }: {crowdinFile: CrowdinFile} & IupdateOrCreateFile) {
     // Update file on Crowdin
     const updatedCrowdinFile = await this.crowdinUpdateFile({
@@ -136,7 +141,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
         ...(fileType === "json" && { fileData: { json: (fileData as {
           [k: string]: Partial<unknown>;
         }) }}),
-        ...(fileType === "html" && { fileData: { html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData) } }),
+        ...(fileType === "html" && { fileData: { html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData), ...(sourceBlocks && { sourceBlocks: JSON.stringify(sourceBlocks) }) } }),
       },
       req: this.req,
     });
@@ -146,6 +151,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     name,
     fileData,
     fileType,
+    sourceBlocks,
   }: IupdateOrCreateFile) {
     // Create file on Crowdin
     const originalId = this.articleDirectory.originalId
@@ -158,6 +164,9 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       });
       // Store result on Payload CMS
       if (crowdinFile) {
+        console.log({
+          ...(fileType === "html" && { fileData: { html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData)}, ...(sourceBlocks && { sourceBlocks }) })
+        })
         const payloadCrowdinFile = await this.req.payload.create({
           collection: "crowdin-files", // required
           data: {
@@ -179,7 +188,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
             ...(fileType === "json" && { fileData: { json: (fileData as {
               [k: string]: Partial<unknown>;
             }) } }),
-            ...(fileType === "html" && { fileData: { html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData) } }),
+            ...(fileType === "html" && { fileData: { html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData), ...(sourceBlocks && { sourceBlocks: JSON.stringify(sourceBlocks) })} }),
           },
           req: this.req,
         });
@@ -228,7 +237,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     collection: CollectionConfig | GlobalConfig;
   }) {
     // brittle check for Lexical value - improve this detection. Type check? Anything from Payload to indicate the type?
-    let html
+    let html, blockContent
     const isLexical = Object.prototype.hasOwnProperty.call(value, "root")
     if (isLexical) {
       const field = findField({
@@ -241,16 +250,11 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       if (editorConfig) {
         html = await convertLexicalToHtml(value, editorConfig)
         // no need to detect change - this has already been done on the field's JSON object
-        const blockContent = value && extractLexicalBlockContent(value.root)
-        if (blockContent && blockContent.length > 0) {
+        blockContent = value && extractLexicalBlockContent(value.root)
+        const blockConfig = editorConfig && getLexicalBlockFields(editorConfig)
+        if (blockContent && blockContent.length > 0 && blockConfig) {
           // directory name must be unique from file names - Crowdin API
           const folderName = `${this.pluginOptions.lexicalBlockFolderPrefix}${name}`
-          const blockConfig = getLexicalBlockFields(editorConfig)
-          
-          if (!blockConfig) {
-            return
-          }
-
           /**
            * Initialize Crowdin client sourceFilesApi
            */
@@ -332,6 +336,9 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       name: name,
       fileData: html,
       fileType: "html",
+      ...(!isEmpty(blockContent) && {
+        sourceBlocks: blockContent
+      }),
     });
   }
 

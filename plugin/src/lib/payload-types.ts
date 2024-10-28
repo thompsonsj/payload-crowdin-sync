@@ -176,6 +176,15 @@ export interface CrowdinFile {
       | boolean
       | null;
     html?: string | null;
+    sourceBlocks?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -382,6 +391,34 @@ export interface NestedFieldCollection {
         [k: string]: unknown;
       }[]
     | null;
+  items?:
+    | {
+        heading?: string | null;
+        block?:
+          | {
+              content?: {
+                root: {
+                  type: string;
+                  children: {
+                    type: string;
+                    version: number;
+                    [k: string]: unknown;
+                  }[];
+                  direction: ('ltr' | 'rtl') | null;
+                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                  indent: number;
+                  version: number;
+                };
+                [k: string]: unknown;
+              } | null;
+              id?: string | null;
+              blockName?: string | null;
+              blockType: 'basicBlockLexical';
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
   tabTwo: {
     tabTwoTitle?: string | null;
     tabTwoContent?:
@@ -575,4 +612,9 @@ export interface Statistic {
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
+}
+
+
+declare module 'payload' {
+  export interface GeneratedTypes extends Config {}
 }

@@ -182,6 +182,7 @@ describe('Lexical editor with multiple blocks', () => {
               fields: {
                 blockName: '',
                 blockType: 'highlight',
+                color: "yellow",
                 content: {
                   root: {
                     children: [
@@ -523,6 +524,7 @@ describe('Lexical editor with multiple blocks', () => {
                       fields: {
                         blockName: '',
                         blockType: 'highlight',
+                        color: "yellow",
                         content: {
                           root: {
                             children: [
@@ -707,7 +709,132 @@ describe('Lexical editor with multiple blocks', () => {
 
     expect(files[0].fileData).toEqual({
       html: `<p>If you add custom blocks, these will also be translated!</p><span data-block-id=${lexicalBlockIds[0]} data-block-type=highlight></span>`,
-    });
+      sourceBlocks: JSON.stringify([
+        {
+            "id": `${lexicalBlockIds[0]}`,
+            "blockName": "",
+            "blockType": "highlight",
+            "content": {
+                "root": {
+                    "children": [
+                        {
+                            "children": [
+                                {
+                                    "detail": 0,
+                                    "format": 0,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": "Note a key difference with regular blocks - all ",
+                                    "type": "text",
+                                    "version": 1
+                                },
+                                {
+                                    "detail": 0,
+                                    "format": 16,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": "text",
+                                    "type": "text",
+                                    "version": 1
+                                },
+                                {
+                                    "detail": 0,
+                                    "format": 0,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": ", ",
+                                    "type": "text",
+                                    "version": 1
+                                },
+                                {
+                                    "detail": 0,
+                                    "format": 16,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": "textarea",
+                                    "type": "text",
+                                    "version": 1
+                                },
+                                {
+                                    "detail": 0,
+                                    "format": 0,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": " and ",
+                                    "type": "text",
+                                    "version": 1
+                                },
+                                {
+                                    "detail": 0,
+                                    "format": 16,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": "richText",
+                                    "type": "text",
+                                    "version": 1
+                                },
+                                {
+                                    "detail": 0,
+                                    "format": 0,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": " fields will be sent to Crowdin regardless of whether or not they are ",
+                                    "type": "text",
+                                    "version": 1
+                                },
+                                {
+                                    "children": [
+                                        {
+                                            "detail": 0,
+                                            "format": 0,
+                                            "mode": "normal",
+                                            "style": "",
+                                            "text": "localized fields",
+                                            "type": "text",
+                                            "version": 1
+                                        }
+                                    ],
+                                    "direction": "ltr",
+                                    "format": "",
+                                    "indent": 0,
+                                    "type": "link",
+                                    "version": 2,
+                                    "fields": {
+                                        "linkType": "custom",
+                                        "newTab": false,
+                                        "url": "https://payloadcms.com/docs/configuration/localization#field-by-field-localization"
+                                    }
+                                },
+                                {
+                                    "detail": 0,
+                                    "format": 0,
+                                    "mode": "normal",
+                                    "style": "",
+                                    "text": ".",
+                                    "type": "text",
+                                    "version": 1
+                                }
+                            ],
+                            "direction": "ltr",
+                            "format": "",
+                            "indent": 0,
+                            "type": "paragraph",
+                            "version": 1
+                        }
+                    ],
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "root",
+                    "version": 1
+                }
+            },
+            "heading": {
+                "title": "Block configuration in Lexical fields"
+            },
+            "color": "yellow"
+        }
+    ])});
     expect(files[1].fileData).toMatchInlineSnapshot(`
       {
         "html": "<p>Lexical fields nested within complex layouts - such as this one (a <code>blocks</code> field in an <code>array</code> item within a <code>tab</code>), are supported.</p>",
