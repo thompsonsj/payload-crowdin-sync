@@ -938,8 +938,6 @@ describe('Lexical editor with multiple blocks', () => {
           targetLanguageId: 'fr',
         }
       )
-      // TODO: figure out why twice?
-      .twice()
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
@@ -953,8 +951,6 @@ describe('Lexical editor with multiple blocks', () => {
           pluginOptions.projectId
         }/translations/builds/${48313}/download`
       )
-      // TODO: figure out why twice?
-      .twice()
       .query({
         targetLanguageId: 'fr',
       })
@@ -978,8 +974,6 @@ describe('Lexical editor with multiple blocks', () => {
           targetLanguageId: 'fr',
         }
       )
-      // TODO: figure out why twice?
-      .twice()
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
@@ -993,8 +987,6 @@ describe('Lexical editor with multiple blocks', () => {
           pluginOptions.projectId
         }/translations/builds/${48314}/download`
       )
-      // TODO: figure out why twice?
-      .twice()
       .query({
         targetLanguageId: 'fr',
       })
