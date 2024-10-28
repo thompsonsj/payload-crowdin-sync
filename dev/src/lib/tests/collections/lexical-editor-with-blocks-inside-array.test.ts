@@ -1347,7 +1347,9 @@ describe('Lexical editor with multiple blocks', () => {
                     },
                     {
                       "fields": {
+                        "blockName": "",
                         "blockType": "highlight",
+                        "color": "yellow",
                         "content": {
                           "root": {
                             "children": [

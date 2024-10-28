@@ -164,9 +164,6 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       });
       // Store result on Payload CMS
       if (crowdinFile) {
-        console.log({
-          ...(fileType === "html" && { fileData: { html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData)}, ...(sourceBlocks && { sourceBlocks }) })
-        })
         const payloadCrowdinFile = await this.req.payload.create({
           collection: "crowdin-files", // required
           data: {
