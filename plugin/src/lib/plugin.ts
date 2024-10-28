@@ -100,6 +100,8 @@ export const crowdinSync =
       pluginCollectionAdmin: Joi.object(),
       tabbedUI: Joi.boolean(),
       lexicalBlockFolderPrefix: Joi.string(),
+      /** Prevent the plugin deleting Payload documents it has created in response to Crowdin API responses. */
+      disableSelfClean: Joi.boolean(),
     });
 
     const validate = schema.validate(pluginOptions);
