@@ -1184,10 +1184,12 @@ describe('Lexical editor with multiple blocks', () => {
             },
             {
               "fields": {
+                "blockName": "",
                 "blockType": "cta",
                 "href": "https://www.npmjs.com/package/payload-crowdin-sync",
                 "id": "65d67d2591c92e447e7472f7",
                 "text": "Téléchargez payload-crowdin-sync sur npm!",
+                "type": "primary",
               },
               "format": "",
               "type": "block",
@@ -1263,7 +1265,9 @@ describe('Lexical editor with multiple blocks', () => {
             },
             {
               "fields": {
+                "blockName": "",
                 "blockType": "highlight",
+                "color": "green",
                 "content": {
                   "root": {
                     "children": [
@@ -1305,8 +1309,10 @@ describe('Lexical editor with multiple blocks', () => {
             },
             {
               "fields": {
+                "blockName": "",
                 "blockType": "imageText",
                 "id": "65d67e2291c92e447e7472f9",
+                "image": "65d67e6a7fb7e9426b3f9f5f",
                 "title": "Tester une gamme de domaines",
               },
               "format": "",

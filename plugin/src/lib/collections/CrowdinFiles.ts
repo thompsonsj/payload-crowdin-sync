@@ -117,6 +117,13 @@ const CrowdinFiles: CollectionConfig = {
           type: "textarea",
           maxLength: 2000000,
         },
+        {
+          name: "sourceBlocks",
+          type: "json",
+          admin: {
+            description: "Copy Lexical field blocks as a translation source enabling a convenient method of merging block content on translation (i.e. merge non-translated fields like type=select)."
+          },
+        }
       ],
     },
   ],

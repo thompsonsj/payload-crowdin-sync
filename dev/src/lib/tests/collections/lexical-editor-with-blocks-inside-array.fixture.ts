@@ -249,7 +249,8 @@ export const fixture = {
                                       },
                                       "heading": {
                                           "title": "Block configuration in Lexical fields"
-                                      }
+                                      },
+                                      "color": "yellow",
                                   }
                               }
                           ],

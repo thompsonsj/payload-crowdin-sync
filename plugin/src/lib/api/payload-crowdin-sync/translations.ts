@@ -31,6 +31,7 @@ import { Config, CrowdinFile } from "../../payload-types";
 import { getCollectionConfig, getFile, getFileByDocumentID, getFiles, getFilesByDocumentID, getLexicalFieldArticleDirectory } from "../helpers";
 import { getLexicalBlockFields, getLexicalEditorConfig } from "../../utilities/lexical";
 import { getRelationshipId } from "../../utilities/payload";
+import { assign, isEmpty } from "lodash";
 
 interface IgetLatestDocumentTranslation {
   collection: string;
@@ -504,6 +505,7 @@ export class payloadCrowdinSyncTranslationsApi {
   private async getBlockTranslations({
     blockConfig,
     locale,
+    file,
     crowdinArticleDirectoryId,
   }: {
     blockConfig: {
@@ -555,6 +557,21 @@ export class payloadCrowdinSyncTranslationsApi {
       fields,
       isLocalized: (field) => !!(field),
     });
+
+    // merge non-localized fields back in
+    if (!isEmpty(file.fileData?.sourceBlocks)) {
+      const sourceBlocks = JSON.parse(`${file.fileData?.sourceBlocks}`) || []
+      const processed = (docTranslations['blocks'] || []).map((translatedBlock: {id: string}) => {
+        const sourceBlock = sourceBlocks.find((block: any) => block.id === translatedBlock.id)
+        if (sourceBlock) {
+          return assign(sourceBlock, translatedBlock)
+        }
+        return translatedBlock
+      })
+      return {
+        blocks: processed
+      }
+    }
 
     return docTranslations
   }

@@ -176,6 +176,15 @@ export interface CrowdinFile {
       | boolean
       | null;
     html?: string | null;
+    sourceBlocks?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   updatedAt: string;
   createdAt: string;
