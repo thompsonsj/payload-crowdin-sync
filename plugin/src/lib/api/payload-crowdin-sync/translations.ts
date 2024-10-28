@@ -28,7 +28,7 @@ import {
 } from '../../utilities/richTextConversion'
 
 import { Config, CrowdinFile } from "../../payload-types";
-import { getCollectionConfig, getFileByDocumentID, getFileByParent, getFilesByDocumentID, getFilesByParent } from "../helpers";
+import { getCollectionConfig, getFile, getFileByDocumentID, getFiles, getFilesByDocumentID, getLexicalFieldArticleDirectory } from "../helpers";
 import { getLexicalBlockFields, getLexicalEditorConfig } from "../../utilities/lexical";
 import { getRelationshipId } from "../../utilities/payload";
 
@@ -53,7 +53,7 @@ interface IgetTranslation {
   global?: boolean;
   collection?: CollectionConfig | GlobalConfig;
   /** Pass crowdinArticleDirectoryId to retrieve `crowdin-files` documents with a parent (i.e. Lexical field blocks) */
-  parentCrowdinArticleDirectoryId?: string;
+  crowdinArticleDirectoryId?: string;
   fields?: Field[]
 }
 
@@ -358,7 +358,7 @@ export class payloadCrowdinSyncTranslationsApi {
   }
 
   async getHtmlFieldSlugsByArticleDirectory(parentCrowdinArticleDirectoryId?: string): Promise<string[]> {
-    const files = await getFilesByParent(`${parentCrowdinArticleDirectoryId}`, this.payload) as CrowdinFile[];
+    const files = await getFiles(`${parentCrowdinArticleDirectoryId}`, this.payload) as CrowdinFile[];
     const slugs = files
     .filter((file) => file.type === "html")
     .map((file) => `${file.field}`)
@@ -372,8 +372,8 @@ export class payloadCrowdinSyncTranslationsApi {
    * * returns all json fields if fieldName is 'fields'
    */
   // TODO refactor out fields override - replace `collection` with `fields`
-  async getTranslation({ documentId, fieldName, locale, collection, parentCrowdinArticleDirectoryId, fields }: IgetTranslation) {
-    const file = (typeof parentCrowdinArticleDirectoryId === 'string' ? await getFileByParent(fieldName, parentCrowdinArticleDirectoryId, this.payload) : await getFileByDocumentID(fieldName, `${documentId}`, this.payload)) as CrowdinFile;
+  async getTranslation({ documentId, fieldName, locale, collection, crowdinArticleDirectoryId, fields }: IgetTranslation) {
+    const file = (typeof crowdinArticleDirectoryId === 'string' ? await getFile(fieldName, crowdinArticleDirectoryId, this.payload) : await getFileByDocumentID(fieldName, `${documentId}`, this.payload)) as CrowdinFile;
     // it is possible a file doesn't exist yet - e.g. an article with localized text fields that contains an empty html field.
     if (!file) {
       return;
@@ -394,19 +394,28 @@ export class payloadCrowdinSyncTranslationsApi {
             dotNotation: fieldName,
             fields: allFields,
             // do not filter out localized fields if lexical block fields
-            filterLocalizedFields:!(parentCrowdinArticleDirectoryId),
+            filterLocalizedFields:!(crowdinArticleDirectoryId),
           }) as RichTextField
           const editorConfig = getLexicalEditorConfig(field)
           // isLexical?
           if (editorConfig) {
+            // retrieve the article directory created for this lexical block
+            const lexicalFieldCrowdinArticleDirectory = await getLexicalFieldArticleDirectory({
+              payload: this.payload,
+              parent: file.crowdinArticleDirectory,
+              name: `lex.${fieldName}`,
+            })
+            const lexicalFieldCrowdinArticleDirectoryId = getRelationshipId(lexicalFieldCrowdinArticleDirectory as any)
+
             // get translations here and pass it to convertHtmlToLexical
             // easier than passing `payload` and `pluginOptions` to create a new instance of the class we are in right now - keep convertHtmlToLexical focussed.
             const blockConfig = getLexicalBlockFields(editorConfig)
 
-            const blockTranslations = blockConfig ? await this.getBlockTranslations({
+            const blockTranslations = blockConfig && lexicalFieldCrowdinArticleDirectoryId ? await this.getBlockTranslations({
               blockConfig,
               file,
-              locale
+              locale,
+              crowdinArticleDirectoryId: lexicalFieldCrowdinArticleDirectoryId,
             }) : null
 
             return convertHtmlToLexical(data, editorConfig, blockTranslations) || {
@@ -452,7 +461,7 @@ export class payloadCrowdinSyncTranslationsApi {
           fieldName,
           locale,
           collection: collection?.slug,
-          parentCrowdinArticleDirectoryId,
+          crowdinArticleDirectoryId,
           fields
         },
         'error',
@@ -494,14 +503,15 @@ export class payloadCrowdinSyncTranslationsApi {
 
   private async getBlockTranslations({
     blockConfig,
-    file,
-    locale
+    locale,
+    crowdinArticleDirectoryId,
   }: {
     blockConfig: {
       blocks: Block[]
     },
     file: CrowdinFile,
-    locale: string
+    locale: string,
+    crowdinArticleDirectoryId: string,
   }) {
     // link with plugin/src/lib/api/payload-crowdin-sync/files/document.ts - store as variable?
     const fieldName = `blocks`
@@ -522,11 +532,11 @@ export class payloadCrowdinSyncTranslationsApi {
         documentId: fieldName,
         fieldName: "blocks",
         locale: locale,
-        parentCrowdinArticleDirectoryId: getRelationshipId(file.crowdinArticleDirectory),
+        crowdinArticleDirectoryId,
 
       })) || {};
     // add html fields
-    const localizedHtmlFields = await this.getHtmlFieldSlugsByArticleDirectory(getRelationshipId(file.crowdinArticleDirectory));
+    const localizedHtmlFields = await this.getHtmlFieldSlugsByArticleDirectory(crowdinArticleDirectoryId);
     const crowdinHtmlObject: CrowdinHtmlObject = {};
     for (const field of localizedHtmlFields) {
       // need to get the field definition here somehow?
@@ -535,7 +545,7 @@ export class payloadCrowdinSyncTranslationsApi {
         fieldName: field,
         locale: locale,
         fields,
-        parentCrowdinArticleDirectoryId: getRelationshipId(file.crowdinArticleDirectory),
+        crowdinArticleDirectoryId,
       });
     }
 
