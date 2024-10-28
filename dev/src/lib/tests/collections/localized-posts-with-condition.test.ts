@@ -62,7 +62,7 @@ describe("Collection: Localized Posts With Conditon", () => {
       expect(Object.prototype.hasOwnProperty.call(result, 'crowdinArticleDirectory')).toBeFalsy();
     });
 
-    it("creates an article directory if the conditon is met", async () => {
+    it("creates an article directory if the condition is met", async () => {
       nock('https://api.crowdin.com')
         .post(
           `/api/v2/projects/${pluginOptions.projectId}/directories`

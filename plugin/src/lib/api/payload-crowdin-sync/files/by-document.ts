@@ -29,7 +29,7 @@ export class filesApiByDocument {
   directoryId?: number;
   document: Document
   articleDirectory: CrowdinArticleDirectory
-  collectionSlug: keyof Config['collections'] | "globals";
+  collectionSlug: keyof Config['collections'] | keyof Config['globals'];
   global: boolean;
   pluginOptions: PluginOptions;
   req: PayloadRequest;
@@ -44,7 +44,7 @@ export class filesApiByDocument {
     parent,
   }: {
     document: Document,
-    collectionSlug:  keyof Config['collections'] | "globals",
+    collectionSlug: keyof Config['collections'] | keyof Config['globals'],
     global: boolean,
     pluginOptions: PluginOptions,
     req: PayloadRequest,

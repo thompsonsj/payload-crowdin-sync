@@ -1,5 +1,6 @@
 import crowdin, {
   Credentials,
+  CrowdinError,
   Translations,
 } from "@crowdin/crowdin-api-client";
 import { Payload } from "payload";
@@ -73,6 +74,7 @@ export class payloadCrowdinSyncTranslationsApi {
   localeMap: PluginOptions["localeMap"];
   sourceLocale: PluginOptions["sourceLocale"];
   htmlToSlateConfig: PluginOptions["htmlToSlateConfig"];
+  disableSelfClean?: PluginOptions["disableSelfClean"]
 
   constructor(pluginOptions: PluginOptions, payload: Payload) {
     // credentials
@@ -88,6 +90,7 @@ export class payloadCrowdinSyncTranslationsApi {
     this.localeMap = pluginOptions.localeMap;
     this.sourceLocale = pluginOptions.sourceLocale;
     this.htmlToSlateConfig = pluginOptions.htmlToSlateConfig
+    this.disableSelfClean = pluginOptions.disableSelfClean
   }
 
   async updateTranslation({
@@ -376,13 +379,13 @@ export class payloadCrowdinSyncTranslationsApi {
       return;
     }
     try {
-      const response = await this.translationsApi.buildProjectFileTranslation(
-        this.projectId,
-        file.originalId as number,
-        {
-          targetLanguageId: this.localeMap[locale].crowdinId,
-        }
-      );
+      const response = await this.buildTranslationFile({
+        file,
+        locale
+      })
+      if (!response) {
+        return
+      }
       const data = await this.getFileDataFromUrl(response.data.url);
       if (file.type === "html") {
         const allFields = collection ? collection.fields : fields
@@ -455,6 +458,37 @@ export class payloadCrowdinSyncTranslationsApi {
         'error',
         error
       );
+    }
+  }
+
+  private async buildTranslationFile({
+    file,
+    locale
+  }: {
+    file: CrowdinFile,
+    locale: string
+  }) {
+    try {
+      const response = await this.translationsApi.buildProjectFileTranslation(
+        this.projectId,
+        file.originalId as number,
+        {
+          targetLanguageId: this.localeMap[locale].crowdinId,
+        }
+      );
+      return response
+    }
+    catch (error: unknown) {
+      if (this.disableSelfClean) {
+        return undefined
+      }
+      if (error instanceof CrowdinError && error.code === 404) {
+        await this.payload.delete({
+          id: file.id,
+          collection: "crowdin-files",
+        })
+      }
+      return undefined
     }
   }
 

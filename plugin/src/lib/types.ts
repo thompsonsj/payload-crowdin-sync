@@ -45,6 +45,7 @@ export interface PluginOptions {
   pluginCollectionAdmin?: CollectionConfig["admin"];
   tabbedUI?: boolean
   lexicalBlockFolderPrefix?: string
+  disableSelfClean?: boolean
 }
 
 export type FieldWithName = Field & { name: string };
