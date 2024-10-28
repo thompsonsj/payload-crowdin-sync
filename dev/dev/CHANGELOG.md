@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.28.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.27.5...dev-v0.28.0) (2024-10-28)
+
+
+### Features
+
+* **crowdinfiles:** delete document if Crowdin API returns 404 ([#213](https://github.com/thompsonsj/payload-crowdin-sync/issues/213)) ([3976a33](https://github.com/thompsonsj/payload-crowdin-sync/commit/3976a334e3438f04cd86a4b4f59a5545a22e2684))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.28.3 to 0.29.0
+
 ## [0.27.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.27.4...dev-v0.27.5) (2024-10-24)
 
 
