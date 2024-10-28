@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.29.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.29.1...payload-crowdin-sync-v0.29.2) (2024-10-28)
+
+
+### Bug Fixes
+
+* **translations:** shallow merge lexical block source fields ([#218](https://github.com/thompsonsj/payload-crowdin-sync/issues/218)) ([5161ec1](https://github.com/thompsonsj/payload-crowdin-sync/commit/5161ec18e60327ea120312a1ec2b1eb4dc259342))
+
 ## [0.29.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.29.0...payload-crowdin-sync-v0.29.1) (2024-10-28)
 
 
