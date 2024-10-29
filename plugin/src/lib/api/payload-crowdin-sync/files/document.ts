@@ -1,7 +1,7 @@
 import { PluginOptions } from '../../../index';
 import { payloadCrowdinSyncFilesApi } from ".";
 import { CrowdinArticleDirectory, CrowdinFile } from './../../../payload-types';
-import { CollectionConfig, Document, GlobalConfig, PayloadRequest, RichTextField } from 'payload/types';
+import { BlockField, CollectionConfig, Document, GlobalConfig, PayloadRequest, RichTextField } from 'payload/types';
 import { Config } from 'payload/config';
 
 import { isEmpty } from 'lodash';
@@ -234,7 +234,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     collection: CollectionConfig | GlobalConfig;
   }) {
     // brittle check for Lexical value - improve this detection. Type check? Anything from Payload to indicate the type?
-    let html, blockContent
+    let html, blockContent, blockConfig: BlockField | undefined
     const isLexical = Object.prototype.hasOwnProperty.call(value, "root")
     if (isLexical) {
       const field = findField({
@@ -248,7 +248,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
         html = await convertLexicalToHtml(value, editorConfig)
         // no need to detect change - this has already been done on the field's JSON object
         blockContent = value && extractLexicalBlockContent(value.root)
-        const blockConfig = editorConfig && getLexicalBlockFields(editorConfig)
+        blockConfig = editorConfig && getLexicalBlockFields(editorConfig)
         if (blockContent && blockContent.length > 0 && blockConfig) {
           // directory name must be unique from file names - Crowdin API
           const folderName = `${this.pluginOptions.lexicalBlockFolderPrefix}${name}`
@@ -316,7 +316,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
                   {
                     name: fieldName,
                     type: 'blocks',
-                    blocks: blockConfig.blocks,
+                    blocks: blockConfig ? blockConfig.blocks : [],
                   }
                 ],
               },

@@ -48,10 +48,13 @@ describe('Lexical editor with multiple blocks', () => {
         {
           "blockName": "",
           "blockType": "cta",
-          "href": "https://www.npmjs.com/package/payload-crowdin-sync",
           "id": "65d67d2591c92e447e7472f7",
-          "text": "Download payload-crowdin-sync on npm!",
-          "type": "primary",
+          "link": {
+            "href": "https://www.npmjs.com/package/payload-crowdin-sync",
+            "text": "Download payload-crowdin-sync on npm!",
+            "type": "external",
+          },
+          "select": "primary",
         },
         {
           "blockName": "",
@@ -172,10 +175,13 @@ describe('Lexical editor with multiple blocks', () => {
                 "fields": {
                   "blockName": "",
                   "blockType": "cta",
-                  "href": "https://www.npmjs.com/package/payload-crowdin-sync",
                   "id": "65d67d2591c92e447e7472f7",
-                  "text": "Download payload-crowdin-sync on npm!",
-                  "type": "primary",
+                  "link": {
+                    "href": "https://www.npmjs.com/package/payload-crowdin-sync",
+                    "text": "Download payload-crowdin-sync on npm!",
+                    "type": "external",
+                  },
+                  "select": "primary",
                 },
                 "format": "",
                 "type": "block",
@@ -448,10 +454,13 @@ describe('Lexical editor with multiple blocks', () => {
                 "fields": {
                   "blockName": "",
                   "blockType": "cta",
-                  "href": "https://www.npmjs.com/package/payload-crowdin-sync",
                   "id": "65d67d2591c92e447e7472f7",
-                  "text": "Download payload-crowdin-sync on npm!",
-                  "type": "primary",
+                  "link": {
+                    "href": "https://www.npmjs.com/package/payload-crowdin-sync",
+                    "text": "Download payload-crowdin-sync on npm!",
+                    "type": "external",
+                  },
+                  "select": "primary",
                 },
                 "format": "",
                 "type": "block",
@@ -1020,8 +1029,10 @@ describe('Lexical editor with multiple blocks', () => {
         blocks: {
           '65d67d2591c92e447e7472f7': {
             cta: {
-              text: 'Téléchargez payload-crowdin-sync sur npm!',
-              href: 'https://www.npmjs.com/package/payload-crowdin-sync',
+              link: {
+                text: 'Téléchargez payload-crowdin-sync sur npm!',
+                href: 'https://www.npmjs.com/package/payload-crowdin-sync',
+              },
             },
           },
           '65d67d8191c92e447e7472f8': {
@@ -1184,12 +1195,13 @@ describe('Lexical editor with multiple blocks', () => {
             },
             {
               "fields": {
-                "blockName": "",
                 "blockType": "cta",
-                "href": "https://www.npmjs.com/package/payload-crowdin-sync",
                 "id": "65d67d2591c92e447e7472f7",
-                "text": "Téléchargez payload-crowdin-sync sur npm!",
-                "type": "primary",
+                "link": {
+                  "href": "https://www.npmjs.com/package/payload-crowdin-sync",
+                  "text": "Téléchargez payload-crowdin-sync sur npm!",
+                  "type": "external",
+                },
               },
               "format": "",
               "type": "block",
@@ -1265,7 +1277,6 @@ describe('Lexical editor with multiple blocks', () => {
             },
             {
               "fields": {
-                "blockName": "",
                 "blockType": "highlight",
                 "color": "green",
                 "content": {
@@ -1309,7 +1320,6 @@ describe('Lexical editor with multiple blocks', () => {
             },
             {
               "fields": {
-                "blockName": "",
                 "blockType": "imageText",
                 "id": "65d67e2291c92e447e7472f9",
                 "image": "65d67e6a7fb7e9426b3f9f5f",

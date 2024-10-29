@@ -60,15 +60,29 @@ export const lexicalEditorWithBlocks: RichTextField = {
             imageAltText: "CTA",
             fields: [
               {
-                name: "text",
-                type: "text",
+                name: "link",
+                type: "group",
+                fields: [
+                  {
+                    name: "text",
+                    type: "text",
+                  },
+                  {
+                    name: "href",
+                    type: "text",
+                  },
+                  {
+                    name: "type",
+                    type: "select",
+                    options: [
+                      "internal",
+                      "external",
+                    ]
+                  }
+                ]
               },
               {
-                name: "href",
-                type: "text",
-              },
-              {
-                name: "type",
+                name: "style",
                 type: "select",
                 options: [
                   "primary",

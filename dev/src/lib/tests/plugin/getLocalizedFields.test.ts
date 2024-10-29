@@ -378,15 +378,29 @@ describe('payload-crowdin-sync: getLexicalBlockFields', () => {
           {
             "fields": [
               {
-                "name": "text",
-                "type": "text",
+                "fields": [
+                  {
+                    "name": "text",
+                    "type": "text",
+                  },
+                  {
+                    "name": "href",
+                    "type": "text",
+                  },
+                  {
+                    "name": "type",
+                    "options": [
+                      "internal",
+                      "external",
+                    ],
+                    "type": "select",
+                  },
+                ],
+                "name": "link",
+                "type": "group",
               },
               {
-                "name": "href",
-                "type": "text",
-              },
-              {
-                "name": "type",
+                "name": "style",
                 "options": [
                   "primary",
                   "secondary",
@@ -476,6 +490,8 @@ describe('payload-crowdin-sync: getLexicalBlockFields', () => {
             "slug": "imageText",
           },
         ],
+        "name": "blocks",
+        "type": "blocks",
       }
     `);
   });
@@ -1813,15 +1829,29 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                       {
                         "fields": [
                           {
-                            "name": "text",
-                            "type": "text",
+                            "fields": [
+                              {
+                                "name": "text",
+                                "type": "text",
+                              },
+                              {
+                                "name": "href",
+                                "type": "text",
+                              },
+                              {
+                                "name": "type",
+                                "options": [
+                                  "internal",
+                                  "external",
+                                ],
+                                "type": "select",
+                              },
+                            ],
+                            "name": "link",
+                            "type": "group",
                           },
                           {
-                            "name": "href",
-                            "type": "text",
-                          },
-                          {
-                            "name": "type",
+                            "name": "style",
                             "options": [
                               "primary",
                               "secondary",
@@ -4635,15 +4665,29 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                               {
                                 "fields": [
                                   {
-                                    "name": "text",
-                                    "type": "text",
+                                    "fields": [
+                                      {
+                                        "name": "text",
+                                        "type": "text",
+                                      },
+                                      {
+                                        "name": "href",
+                                        "type": "text",
+                                      },
+                                      {
+                                        "name": "type",
+                                        "options": [
+                                          "internal",
+                                          "external",
+                                        ],
+                                        "type": "select",
+                                      },
+                                    ],
+                                    "name": "link",
+                                    "type": "group",
                                   },
                                   {
-                                    "name": "href",
-                                    "type": "text",
-                                  },
-                                  {
-                                    "name": "type",
+                                    "name": "style",
                                     "options": [
                                       "primary",
                                       "secondary",
