@@ -1,5 +1,5 @@
 import { LexicalRichTextAdapter, SanitizedEditorConfig } from "@payloadcms/richtext-lexical";
-import { Block, BlockField, Field, RichTextField } from "payload/types";
+import { BlockField, RichTextField } from "payload/types";
 import { SerializedRootNode, SerializedLexicalNode } from "lexical"
 import { SerializedBlockNode } from "@payloadcms/richtext-lexical";
 

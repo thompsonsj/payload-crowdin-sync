@@ -7,7 +7,6 @@ import { Payload } from "payload";
 import { CrowdinHtmlObject, PluginOptions } from "../../types";
 import deepEqual from "deep-equal";
 import {
-  Block,
   BlockField,
   CollectionConfig,
   Field,
@@ -32,7 +31,7 @@ import { Config, CrowdinFile } from "../../payload-types";
 import { getCollectionConfig, getFile, getFileByDocumentID, getFiles, getFilesByDocumentID, getLexicalFieldArticleDirectory } from "../helpers";
 import { getLexicalBlockFields, getLexicalEditorConfig } from "../../utilities/lexical";
 import { getRelationshipId } from "../../utilities/payload";
-import { assign, isEmpty, merge } from "lodash";
+import { isEmpty, merge } from "lodash";
 
 interface IgetLatestDocumentTranslation {
   collection: string;

@@ -1,7 +1,7 @@
 import { PluginOptions } from '../../../index';
 import { payloadCrowdinSyncFilesApi } from ".";
 import { CrowdinArticleDirectory, CrowdinFile } from './../../../payload-types';
-import { Block, BlockField, CollectionConfig, Document, Field, GlobalConfig, PayloadRequest, RichTextField } from 'payload/types';
+import { BlockField, CollectionConfig, Document, GlobalConfig, PayloadRequest, RichTextField } from 'payload/types';
 import { Config } from 'payload/config';
 
 import { isEmpty } from 'lodash';
@@ -11,7 +11,7 @@ import {
   getFiles
 } from "../../helpers";
 import { Descendant } from "slate";
-import { buildCrowdinHtmlObject, buildCrowdinJsonObject, buildPayloadUpdateObject, findField, reLocalizeField } from '../../../utilities';
+import { buildCrowdinHtmlObject, buildCrowdinJsonObject, findField, reLocalizeField } from '../../../utilities';
 import { convertLexicalToHtml, convertSlateToHtml } from '../../../utilities/richTextConversion'
 import { extractLexicalBlockContent, getLexicalBlockFields, getLexicalEditorConfig } from '../../../utilities/lexical';
 import { filesApiByDocument } from './by-document';

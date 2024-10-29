@@ -442,7 +442,6 @@ export const buildPayloadUpdateObject = ({
     type: topLevel ? (!crowdinHtmlObject ? "json" : undefined) : undefined,
     isLocalized: topLevel ? isLocalized : (field) => !!(field)
   });
-  // console.log(crowdinJsonObject, filteredFields)
   filteredFields.forEach((field) => {
     if (!crowdinJsonObject[field.name]) {
       return;
