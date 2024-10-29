@@ -8,6 +8,7 @@ import { CrowdinHtmlObject, PluginOptions } from "../../types";
 import deepEqual from "deep-equal";
 import {
   Block,
+  BlockField,
   CollectionConfig,
   Field,
   GlobalConfig,
@@ -31,7 +32,7 @@ import { Config, CrowdinFile } from "../../payload-types";
 import { getCollectionConfig, getFile, getFileByDocumentID, getFiles, getFilesByDocumentID, getLexicalFieldArticleDirectory } from "../helpers";
 import { getLexicalBlockFields, getLexicalEditorConfig } from "../../utilities/lexical";
 import { getRelationshipId } from "../../utilities/payload";
-import { assign, isEmpty } from "lodash";
+import { assign, isEmpty, merge } from "lodash";
 
 interface IgetLatestDocumentTranslation {
   collection: string;
@@ -508,9 +509,7 @@ export class payloadCrowdinSyncTranslationsApi {
     file,
     crowdinArticleDirectoryId,
   }: {
-    blockConfig: {
-      blocks: Block[]
-    },
+    blockConfig: BlockField | undefined,
     file: CrowdinFile,
     locale: string,
     crowdinArticleDirectoryId: string,
@@ -519,12 +518,11 @@ export class payloadCrowdinSyncTranslationsApi {
     const fieldName = `blocks`
     // find a way to `getTranslation` or getPayloadTranslation` for the subfolder.
     // add ability to pass `fields` and `crowdinArticleDirectory` to `getTranslation`. That will do it.
+    if (!blockConfig) {
+      return
+    }
     const fields: Field[] = [
-      {
-        name: fieldName,
-        type: 'blocks',
-        blocks: blockConfig.blocks,
-      }
+      blockConfig,
     ]
     let docTranslations: { [key: string]: any } = {};
     // add json fields
@@ -561,16 +559,25 @@ export class payloadCrowdinSyncTranslationsApi {
     // merge non-localized fields back in
     if (!isEmpty(file.fileData?.sourceBlocks)) {
       const sourceBlocks = JSON.parse(`${file.fileData?.sourceBlocks}`) || []
-      const processed = (docTranslations['blocks'] || []).map((translatedBlock: {id: string}) => {
-        const sourceBlock = sourceBlocks.find((block: any) => block.id === translatedBlock.id)
-        if (sourceBlock) {
-          return assign(sourceBlock, translatedBlock)
-        }
-        return translatedBlock
+
+      // build a source translation crowdinJsonObject
+      const sourceCrowdinJsonObject = buildCrowdinJsonObject({
+        doc: {
+          blocks: sourceBlocks,
+        },
+        fields,
+        isLocalized: (field) => !!(field),
       })
-      return {
-        blocks: processed
-      }
+      // convert source translation crowdinJsonObject to payloadUpdateObject
+      // we are only interested in merging back json fields - otherwise html fields will deep merge creating hybrid rich text content containing both translations
+      // this is why a 'sourceCrowdinHtmlObject' is not built
+      const sourcePayloadUpdateObject = buildPayloadUpdateObject({
+        crowdinJsonObject: sourceCrowdinJsonObject,
+        fields,
+        isLocalized: (field) => !!(field),
+      })
+
+      return merge({}, sourcePayloadUpdateObject, docTranslations)
     }
 
     return docTranslations

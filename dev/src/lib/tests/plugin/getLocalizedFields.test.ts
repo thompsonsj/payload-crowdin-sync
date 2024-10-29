@@ -476,6 +476,8 @@ describe('payload-crowdin-sync: getLexicalBlockFields', () => {
             "slug": "imageText",
           },
         ],
+        "name": "blocks",
+        "type": "blocks",
       }
     `);
   });
