@@ -33,9 +33,12 @@ export const fixture = {
                   "id": "65d67d2591c92e447e7472f7",
                   "blockName": "",
                   "blockType": "cta",
-                  "text": "Download payload-crowdin-sync on npm!",
-                  "href": "https://www.npmjs.com/package/payload-crowdin-sync",
-                  "type": "primary"
+                  "link": {
+                    "text": "Download payload-crowdin-sync on npm!",
+                    "href": "https://www.npmjs.com/package/payload-crowdin-sync",
+                    "type": "external",
+                  },
+                  "select": "primary"
               }
           },
           {
