@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.29.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.28.2...dev-v0.29.0) (2024-10-29)
+
+
+### Features
+
+* **plugin:** deep merge source lexical block values into translation ([#221](https://github.com/thompsonsj/payload-crowdin-sync/issues/221)) ([8354f56](https://github.com/thompsonsj/payload-crowdin-sync/commit/8354f56e394ad69df4b4fae5cca845dbf2800ccd))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.29.2 to 0.30.0
+
 ## [0.28.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.28.1...dev-v0.28.2) (2024-10-28)
 
 
