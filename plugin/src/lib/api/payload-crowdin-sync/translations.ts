@@ -75,7 +75,8 @@ export class payloadCrowdinSyncTranslationsApi {
   localeMap: PluginOptions["localeMap"];
   sourceLocale: PluginOptions["sourceLocale"];
   htmlToSlateConfig: PluginOptions["htmlToSlateConfig"];
-  disableSelfClean?: PluginOptions["disableSelfClean"]
+  lexicalBlockFolderPrefix: PluginOptions["lexicalBlockFolderPrefix"];
+  disableSelfClean?: PluginOptions["disableSelfClean"];
 
   constructor(pluginOptions: PluginOptions, payload: Payload) {
     // credentials
@@ -92,6 +93,7 @@ export class payloadCrowdinSyncTranslationsApi {
     this.sourceLocale = pluginOptions.sourceLocale;
     this.htmlToSlateConfig = pluginOptions.htmlToSlateConfig
     this.disableSelfClean = pluginOptions.disableSelfClean
+    this.lexicalBlockFolderPrefix = pluginOptions.lexicalBlockFolderPrefix || ``
   }
 
   async updateTranslation({
@@ -404,7 +406,7 @@ export class payloadCrowdinSyncTranslationsApi {
             const lexicalFieldCrowdinArticleDirectory = await getLexicalFieldArticleDirectory({
               payload: this.payload,
               parent: file.crowdinArticleDirectory,
-              name: `lex.${fieldName}`,
+              name: `${this.lexicalBlockFolderPrefix}${fieldName}`,
             })
             const lexicalFieldCrowdinArticleDirectoryId = getRelationshipId(lexicalFieldCrowdinArticleDirectory as any)
 
