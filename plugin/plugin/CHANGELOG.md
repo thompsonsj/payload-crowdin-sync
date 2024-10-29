@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.30.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.30.0...payload-crowdin-sync-v0.30.1) (2024-10-29)
+
+
+### Bug Fixes
+
+* **translations:** use lexical block folder prefix from config ([#223](https://github.com/thompsonsj/payload-crowdin-sync/issues/223)) ([09e0b07](https://github.com/thompsonsj/payload-crowdin-sync/commit/09e0b0740c9b3f45c62d572f10d424c9ec7c7c3c))
+
 ## [0.30.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.29.2...payload-crowdin-sync-v0.30.0) (2024-10-29)
 
 
