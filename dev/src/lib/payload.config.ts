@@ -40,7 +40,10 @@ export default buildConfig({
   editor: slateEditor({}),
   db: mongooseAdapter({
     url: process.env['MONGODB_URI'] || ``,
-    transactionOptions: false,
+    transactionOptions: {
+      maxTimeMS: 3000,
+      maxCommitTimeMS: 3000,
+    },
   }),
   serverURL: process.env['PAYLOAD_PUBLIC_SERVER_URL'] || "http://localhost:3000",
   admin: {

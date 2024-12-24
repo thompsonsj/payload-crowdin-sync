@@ -21,9 +21,16 @@ import { getRelationshipId } from 'plugin/src/lib/utilities/payload';
 const pluginOptions = pluginConfig();
 const mockClient = mockCrowdinClient(pluginOptions);
 
+function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 describe('Lexical editor with multiple blocks', () => {
   beforeAll(async () => {
     await initPayloadTest({});
+   
   });
 
   afterEach((done) => {
@@ -56,6 +63,7 @@ describe('Lexical editor with multiple blocks', () => {
       .times(5)
       .reply(200, mockClient.createFile({}));
 
+      await sleep(1000);
     const doc: NestedFieldCollectionType = (await payload.create({
       collection: 'nested-field-collection',
       data: fixture,
