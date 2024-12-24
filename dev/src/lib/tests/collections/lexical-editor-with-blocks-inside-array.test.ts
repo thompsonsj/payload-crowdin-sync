@@ -30,7 +30,7 @@ function sleep(ms: number) {
 describe('Lexical editor with multiple blocks', () => {
   beforeAll(async () => {
     await initPayloadTest({});
-   
+    // await payload.db.connection.db.admin().command({ setParameter: 1, maxTransactionLockRequestTimeoutMillis: 3000});
   });
 
   afterEach((done) => {
@@ -63,7 +63,6 @@ describe('Lexical editor with multiple blocks', () => {
       .times(5)
       .reply(200, mockClient.createFile({}));
 
-      await sleep(1000);
     const doc: NestedFieldCollectionType = (await payload.create({
       collection: 'nested-field-collection',
       data: fixture,

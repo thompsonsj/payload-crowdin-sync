@@ -670,14 +670,14 @@ describe('Lexical editor with multiple blocks', () => {
       },
     })) as any;
     const lexicalBlocksArticleDirectory: CrowdinArticleDirectory =
-      (await getArticleDirectory(
-        `${pluginOptions.lexicalBlockFolderPrefix}content`,
+      (await getArticleDirectory({
+        documentId: `${pluginOptions.lexicalBlockFolderPrefix}content`,
         payload,
-        false,
-        policy.crowdinArticleDirectory
-      )) as any;
+        allowEmpty: false,
+        parent: policy.crowdinArticleDirectory
+    })) as any;
     expect(lexicalBlocksArticleDirectory).toBeDefined();
-    /** Important: ensure an article directory was not queried/returned without a parent */
+    // Important: ensure an article directory was not queried/returned without a parent
     expect(lexicalBlocksArticleDirectory?.parent).toBeDefined();
   });
 

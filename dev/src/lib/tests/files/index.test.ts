@@ -452,10 +452,10 @@ describe(`Crowdin file create, update and delete`, () => {
         collection: "localized-posts",
         id: `${post.id}`,
       });
-      const crowdinPayloadArticleDirectory = await getArticleDirectory(
-        `${post.id}`,
+      const crowdinPayloadArticleDirectory = await getArticleDirectory({
+        documentId: `${post.id}`,
         payload
-      );
+      });
       expect(crowdinPayloadArticleDirectory).toBeUndefined();
     });
   });

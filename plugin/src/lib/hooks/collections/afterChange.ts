@@ -201,7 +201,7 @@ const performAfterChange = async ({
       doc: previousDoc,
       fields: localizedFields,
     });
-    await Promise.all(Object.keys(currentCrowdinHtmlData).map(async (name) => {
+    await Promise.allSettled(Object.keys(currentCrowdinHtmlData).map(async (name) => {
       const currentValue = currentCrowdinHtmlData[name];
       const prevValue = prevCrowdinHtmlData[name];
       if (
