@@ -4,7 +4,6 @@ import nock from 'nock';
 import { mockCrowdinClient } from 'plugin/src/lib/api/mock/crowdin-api-responses';
 import { pluginConfig } from '../helpers/plugin-config';
 import { getFilesByDocumentID, payloadCrowdinSyncTranslationsApi } from 'payload-crowdin-sync';
-// import { beginTransaction, commitTransaction } from '../helpers/transactions'
 
 const pluginOptions = pluginConfig();
 const mockClient = mockCrowdinClient(pluginOptions);
@@ -68,54 +67,39 @@ describe('Lexical editor with multiple blocks', () => {
       }
     )
 
-    // const req = await beginTransaction(payload)
-    
-    /** 
-    try {
-     */
-      const post = await payload.create({
-        collection: "localized-posts-with-condition",
-        data: {
-          title: "Test post",
-          translateWithCrowdin: true,
-        },
-      });
+    const post = await payload.create({
+      collection: "localized-posts-with-condition",
+      data: {
+        title: "Test post",
+        translateWithCrowdin: true,
+      },
+    });
 
-      const crowdinFiles = await getFilesByDocumentID({
-        documentId: `${post.id}`,
-        payload,
-      });
+    const crowdinFiles = await getFilesByDocumentID({
+      documentId: `${post.id}`,
+      payload,
+    });
 
-      expect(crowdinFiles.length).toEqual(1)
+    expect(crowdinFiles.length).toEqual(1)
 
-      const translationsApi = new payloadCrowdinSyncTranslationsApi(
-        pluginOptions,
-        payload,
-        // req,
-      );
+    const translationsApi = new payloadCrowdinSyncTranslationsApi(
+      pluginOptions,
+      payload,
+      // req,
+    );
 
-      await translationsApi.updateTranslation({
-        documentId: `${post.id}`,
-        collection: 'localized-posts-with-condition',
-        dryRun: false,
-        excludeLocales: ['de_DE'],
-      });
+    await translationsApi.updateTranslation({
+      documentId: `${post.id}`,
+      collection: 'localized-posts-with-condition',
+      dryRun: false,
+      excludeLocales: ['de_DE'],
+    });
 
-      // await commitTransaction(payload, req)
+    const refreshedCrowdinFiles = await getFilesByDocumentID({
+      documentId: `${post.id}`,
+      payload,
+    });
 
-      const refreshedCrowdinFiles = await getFilesByDocumentID({
-        documentId: `${post.id}`,
-        payload,
-      });
-
-      expect(refreshedCrowdinFiles.length).toEqual(0)
-      /**
-      console.log('all done')
-      if (req.transactionID && typeof payload?.db?.commitTransaction === 'function') await payload.db.commitTransaction(req.transactionID);
-    } catch (e) {
-      console.error('Oh no, something went wrong!');
-      if (req.transactionID && typeof payload?.db?.rollbackTransaction === 'function') await payload.db.rollbackTransaction(req.transactionID);
-    }
-    */
+    expect(refreshedCrowdinFiles.length).toEqual(0)
   });
 });

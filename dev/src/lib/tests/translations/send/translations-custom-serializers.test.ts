@@ -4,7 +4,6 @@ import { payloadHtmlToSlateConfig, payloadCrowdinSyncTranslationsApi } from "pay
 import nock from "nock";
 import { mockCrowdinClient } from "plugin/src/lib/api/mock/crowdin-api-responses";
 import { pluginConfig } from "../../helpers/plugin-config"
-import { beginTransaction, commitTransaction } from '../../helpers/transactions'
 
 /**
  * Test translations
@@ -222,18 +221,15 @@ describe("Translations", () => {
           ],
         },
       });
-      // const req = await beginTransaction(payload)
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
         payload,
-        // req,
       );
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: "localized-posts",
         dryRun: false,
       });
-      // await commitTransaction(payload, req)
       // retrieve translated post from Payload
       const result = await payload.findByID({
         collection: "localized-posts",
