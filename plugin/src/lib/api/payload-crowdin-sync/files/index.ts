@@ -5,7 +5,7 @@ import crowdin, {
 } from "@crowdin/crowdin-api-client";
 import { PluginOptions } from "../../../types";
 import {
-  getArticleDirectoryWithReq,
+  getArticleDirectory,
   getFileByDocumentID,
   getFilesByDocumentID,
 } from "../../helpers";
@@ -102,8 +102,9 @@ export class payloadCrowdinSyncFilesApi {
   }
 
   async getArticleDirectory(documentId: string): Promise<CrowdinArticleDirectory | undefined> {
-    const result = await getArticleDirectoryWithReq({
+    const result = await getArticleDirectory({
       documentId,
+      payload: this.req.payload,
       req: this.req
     });
     return result as CrowdinArticleDirectory | undefined;
@@ -133,7 +134,7 @@ export class payloadCrowdinSyncFilesApi {
   }
 
   async getFilesByDocumentID(documentId: string) {
-    const result = await getFilesByDocumentID(documentId, this.req.payload);
+    const result = await getFilesByDocumentID({documentId, payload: this.req.payload});
     return result;
   }
 }

@@ -212,7 +212,7 @@ describe("Collections", () => {
         collection: "localized-posts",
         data: { title: "Test post" },
       });
-      const crowdinFiles = await getFilesByDocumentID(`${post.id}`, payload as any);
+      const crowdinFiles = await getFilesByDocumentID({documentId:`${post.id}`, payload});
       expect(crowdinFiles.length).toEqual(1);
       const file = crowdinFiles.find((doc: CrowdinFile) => doc.field === "fields");
       expect(file).not.toEqual(undefined);
@@ -229,7 +229,7 @@ describe("Collections", () => {
         collection: "localized-posts",
         data: { title: "" },
       });
-      const crowdinFiles = await getFilesByDocumentID(`${post.id}`, payload as any);
+      const crowdinFiles = await getFilesByDocumentID({documentId: `${post.id}`, payload});
       expect(crowdinFiles.length).toEqual(0);
     });
 
@@ -267,7 +267,7 @@ describe("Collections", () => {
           ],
         },
       });
-      const crowdinFiles = await getFilesByDocumentID(`${post.id}`, payload);
+      const crowdinFiles = await getFilesByDocumentID({documentId:`${post.id}`, payload});
       expect(crowdinFiles.length).toEqual(2);
       const fields = crowdinFiles.find((doc: CrowdinFile) => doc.field === "fields");
       const content = crowdinFiles.find((doc: CrowdinFile) => doc.field === "content");

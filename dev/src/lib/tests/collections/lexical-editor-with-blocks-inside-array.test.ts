@@ -710,7 +710,7 @@ describe('Lexical editor with multiple blocks', () => {
         )
       : ['lexical-block-id-not-found'];
 
-    const files = await getFilesByDocumentID(`${doc.id}`, payload);
+    const files = await getFilesByDocumentID({documentId: `${doc.id}`, payload});
 
     expect(files.length).toEqual(3);
 
@@ -1172,7 +1172,7 @@ describe('Lexical editor with multiple blocks', () => {
         `<p>Si vous ajoutez des blocs personnalisés, ceux-ci seront également traduits !</p><span data-block-id=${lexicalBlockIds[0]} data-block-type=highlight></span>`
       );
 
-    const crowdinFiles = await getFilesByDocumentID(`${doc.id}`, payload);
+    const crowdinFiles = await getFilesByDocumentID({documentId: `${doc.id}`, payload});
     const lexicalFieldCrowdinArticleDirectory = await getLexicalFieldArticleDirectory({
       payload,
       parent: updatedDoc.crowdinArticleDirectory,

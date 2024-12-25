@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "release": "nx build plugin && cd dist/plugin && npm publish",
-    "test": "nx run-many --all --target=test"
+    "test": "nx run-many --all --target=test --runInBand"
   },
   "private": true,
   "dependencies": {
