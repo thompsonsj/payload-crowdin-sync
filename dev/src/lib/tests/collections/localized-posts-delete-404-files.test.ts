@@ -4,7 +4,7 @@ import nock from 'nock';
 import { mockCrowdinClient } from 'plugin/src/lib/api/mock/crowdin-api-responses';
 import { pluginConfig } from '../helpers/plugin-config';
 import { getFilesByDocumentID, payloadCrowdinSyncTranslationsApi } from 'payload-crowdin-sync';
-import { beginTransaction, commitTransaction } from '../helpers/transactions'
+// import { beginTransaction, commitTransaction } from '../helpers/transactions'
 
 const pluginOptions = pluginConfig();
 const mockClient = mockCrowdinClient(pluginOptions);
@@ -68,8 +68,7 @@ describe('Lexical editor with multiple blocks', () => {
       }
     )
 
-    const req = await beginTransaction(payload)
-    console.log('req', req)
+    // const req = await beginTransaction(payload)
     
     /** 
     try {
@@ -92,7 +91,7 @@ describe('Lexical editor with multiple blocks', () => {
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
         payload,
-        req,
+        // req,
       );
 
       await translationsApi.updateTranslation({
@@ -102,7 +101,7 @@ describe('Lexical editor with multiple blocks', () => {
         excludeLocales: ['de_DE'],
       });
 
-      await commitTransaction(payload, req)
+      // await commitTransaction(payload, req)
 
       const refreshedCrowdinFiles = await getFilesByDocumentID({
         documentId: `${post.id}`,
