@@ -86,12 +86,12 @@ describe('Lexical editor with multiple blocks', () => {
 
       expect(crowdinFiles.length).toEqual(1)
 
-      const req = await beginTransaction(payload)
+      // const req = await beginTransaction(payload)
 
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
         payload,
-        req,
+        // req,
       );
 
       await translationsApi.updateTranslation({
@@ -101,7 +101,7 @@ describe('Lexical editor with multiple blocks', () => {
         excludeLocales: ['de_DE'],
       });
 
-      await commitTransaction(payload, req)
+      // await commitTransaction(payload, req)
 
       const refreshedCrowdinFiles = await getFilesByDocumentID({
         documentId: `${post.id}`,

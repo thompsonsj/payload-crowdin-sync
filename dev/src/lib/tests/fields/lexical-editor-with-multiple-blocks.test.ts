@@ -137,17 +137,17 @@ describe('Lexical editor with multiple blocks', () => {
       .times(4)
       .reply(200, mockClient.createFile({}));
 
-    const req = await beginTransaction(payload)
+    // const req = await beginTransaction(payload)
     const policy = await payload.create({
       collection: 'policies',
       data: {
         title: 'Test policy',
         content: fixture,
       },
-      req,
+      // req,
     });
-    await commitTransaction(payload, req)
-    
+    // await commitTransaction(payload, req)
+
     expect(
       utilities.buildCrowdinHtmlObject({
         doc: policy,
