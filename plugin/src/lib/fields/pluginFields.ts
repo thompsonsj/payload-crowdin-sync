@@ -75,6 +75,7 @@ export const pluginCollectionOrGlobalFields = ({
               draft: context['draft'],
               excludeLocales: context['excludeLocales'],
               dryRun: false,
+              req,
             })
         }],
       },
@@ -115,6 +116,7 @@ export const pluginCollectionOrGlobalFields = ({
               payload: req.payload,
               draft: context['draft'],
               dryRun: false,
+              req,
             })
         }],
       },

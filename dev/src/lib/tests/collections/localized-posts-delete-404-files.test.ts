@@ -4,6 +4,7 @@ import nock from 'nock';
 import { mockCrowdinClient } from 'plugin/src/lib/api/mock/crowdin-api-responses';
 import { pluginConfig } from '../helpers/plugin-config';
 import { getFilesByDocumentID, payloadCrowdinSyncTranslationsApi } from 'payload-crowdin-sync';
+import { beginTransaction, commitTransaction, rollbackTransaction } from '../helpers/transactions'
 
 const pluginOptions = pluginConfig();
 const mockClient = mockCrowdinClient(pluginOptions);
@@ -75,23 +76,37 @@ describe('Lexical editor with multiple blocks', () => {
       },
     });
 
-    const crowdinFiles = await getFilesByDocumentID(`${post.id}`, payload);
+    const crowdinFiles = await getFilesByDocumentID({
+      documentId: `${post.id}`,
+      payload,
+    });
 
     expect(crowdinFiles.length).toEqual(1)
 
-    const translationsApi = new payloadCrowdinSyncTranslationsApi(
-      pluginOptions,
-      payload
-    );
+    const req = await beginTransaction(payload)
+    try {
+      const translationsApi = new payloadCrowdinSyncTranslationsApi(
+        pluginOptions,
+        payload,
+        req,
+      );
 
-    await translationsApi.updateTranslation({
+      await translationsApi.updateTranslation({
+        documentId: `${post.id}`,
+        collection: 'localized-posts-with-condition',
+        dryRun: false,
+        excludeLocales: ['de_DE'],
+      });
+      await commitTransaction(payload, req)
+    } catch (e) {
+      console.error('Oh no, something went wrong!');
+      await rollbackTransaction(payload, req)
+    }
+
+    const refreshedCrowdinFiles = await getFilesByDocumentID({
       documentId: `${post.id}`,
-      collection: 'localized-posts-with-condition',
-      dryRun: false,
-      excludeLocales: ['de_DE'],
+      payload,
     });
-
-    const refreshedCrowdinFiles = await getFilesByDocumentID(`${post.id}`, payload);
 
     expect(refreshedCrowdinFiles.length).toEqual(0)
   });

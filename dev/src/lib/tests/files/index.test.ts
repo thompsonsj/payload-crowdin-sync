@@ -145,7 +145,10 @@ describe(`Crowdin file create, update and delete`, () => {
         },
       });
 
-      const crowdinFiles = await getFilesByDocumentID(`${article.id}`, payload);
+      const crowdinFiles = await getFilesByDocumentID({
+        documentId: `${article.id}`,
+        payload
+      });
       expect(crowdinFiles.length).toEqual(0);
     });
 
@@ -184,7 +187,9 @@ describe(`Crowdin file create, update and delete`, () => {
           tabTwo: {},
         },
       }).then(async (article) => {
-        const crowdinFiles = await getFilesByDocumentID(`${article.id}`, payload);
+        const crowdinFiles = await getFilesByDocumentID({
+          documentId: `${article.id}`, payload
+        });
         expect(crowdinFiles.length).toEqual(2);
         expect(
           crowdinFiles.find((file) => file.name === "richTextField.html")
@@ -248,7 +253,10 @@ describe(`Crowdin file create, update and delete`, () => {
         },
       });
       const ids = article["arrayField"] instanceof Array && article["arrayField"].map((item) => item.id) || [] as string[];
-      const crowdinFiles = await getFilesByDocumentID(`${article.id}`, payload);
+      const crowdinFiles = await getFilesByDocumentID({
+        documentId: `${article.id}`,
+        payload
+      });
       expect(crowdinFiles.length).toEqual(3);
       expect(
         crowdinFiles.find(
@@ -337,7 +345,10 @@ describe(`Crowdin file create, update and delete`, () => {
       const blockIds = article["layout"] instanceof Array ? article["layout"].map((item) => item.id).filter(isDefined) : [];
       const blockTypes = article["layout"] instanceof Array && article["layout"].map((item) => item.blockType) || [] as string[];
       const arrayIds = article["layout"] instanceof Array && article["layout"].length > 0 && (article["layout"][1] as any).messages.map((item: any) => item.id);
-      const crowdinFiles = await getFilesByDocumentID(`${article.id}`, payload);
+      const crowdinFiles = await getFilesByDocumentID({
+        documentId: `${article.id}`,
+        payload
+      });
       expect(crowdinFiles.length).toEqual(4);
       const jsonFile = crowdinFiles.find((file) => file.name === "fields.json");
       expect(
@@ -411,7 +422,10 @@ describe(`Crowdin file create, update and delete`, () => {
         collection: "localized-posts",
         id: `${post.id}`,
       });
-      const crowdinFiles = await getFilesByDocumentID(`${post.id}`, payload);
+      const crowdinFiles = await getFilesByDocumentID({
+        documentId: `${post.id}`,
+        payload
+      });
       expect(crowdinFiles.length).toEqual(0);
     });
 
@@ -452,10 +466,10 @@ describe(`Crowdin file create, update and delete`, () => {
         collection: "localized-posts",
         id: `${post.id}`,
       });
-      const crowdinPayloadArticleDirectory = await getArticleDirectory(
-        `${post.id}`,
+      const crowdinPayloadArticleDirectory = await getArticleDirectory({
+        documentId: `${post.id}`,
         payload
-      );
+      });
       expect(crowdinPayloadArticleDirectory).toBeUndefined();
     });
   });

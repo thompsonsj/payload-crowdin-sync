@@ -223,7 +223,7 @@ describe("Translations", () => {
       });
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
-        payload
+        payload,
       );
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,

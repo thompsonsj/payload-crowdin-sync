@@ -1,8 +1,7 @@
-import { Payload } from "payload";
 import { CrowdinArticleDirectory } from "../../../payload-types";
 import { Config } from "payload/config";
 import { isCrowdinArticleDirectory, PluginOptions } from "../../../types";
-import { Collection, CollectionConfig, Document, PayloadRequest } from 'payload/types';
+import { CollectionConfig, Document, PayloadRequest } from 'payload/types';
 import { toWords } from 'payload/dist/utilities/formatLabels';
 import crowdin, { Credentials, SourceFiles } from "@crowdin/crowdin-api-client";
 import { payloadCrowdinSyncDocumentFilesApi } from "./document";
@@ -96,7 +95,6 @@ export class filesApiByDocument {
 
   async findOrCreateArticleDirectory(): Promise<CrowdinArticleDirectory> {
     let crowdinPayloadArticleDirectory;
-
     if (this.document.crowdinArticleDirectory) {
       // Update not possible. Article name needs to be updated manually on Crowdin.
       // The name of the directory is Crowdin specific helper text to give

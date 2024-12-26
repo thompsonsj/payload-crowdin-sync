@@ -3,7 +3,7 @@ import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from
 import { payloadCrowdinSyncTranslationsApi } from "./payload-crowdin-sync/translations";
 import { PluginOptions, isCollectionOrGlobalConfigObject, isCollectionOrGlobalConfigSlug, isCrowdinArticleDirectory } from "../types";
 import { getRelationshipId } from "../utilities/payload";
-import { CollectionConfig, GlobalConfig, SanitizedCollectionConfig, SanitizedGlobalConfig } from "payload/types";
+import { CollectionConfig, GlobalConfig, PayloadRequest, SanitizedCollectionConfig, SanitizedGlobalConfig } from "payload/types";
 
 export const getCollectionConfig = (
   collection: string,
@@ -36,10 +36,19 @@ export const getCollectionConfig = (
  * a document id.
  */
 export async function getArticleDirectory(
-  documentId: string,
-  payload: Payload,
-  allowEmpty?: boolean,
-  parent?: CrowdinArticleDirectory | null | string,
+  {
+    documentId,
+    payload,
+    allowEmpty,
+    parent,
+    req,
+  }: {
+    documentId: string,
+    payload: Payload,
+    allowEmpty?: boolean,
+    parent?: CrowdinArticleDirectory | null | string,
+    req?: PayloadRequest,
+  }
 ) {
   const crowdinPayloadArticleDirectory = await payload.find({
     collection: "crowdin-article-directories",
@@ -53,6 +62,7 @@ export async function getArticleDirectory(
         }
       })
     },
+    req,
   });
   if (crowdinPayloadArticleDirectory.totalDocs === 0 && allowEmpty) {
     // a thrown error won't be reported in an api call, so console.log it as well.
@@ -70,25 +80,29 @@ export async function getLexicalFieldArticleDirectory({
   payload,
   parent,
   name,
+  req,
 }: {
   payload: Payload,
   parent?: CrowdinArticleDirectory | null | string,
   name: string,
+  req?: PayloadRequest,
 }) {
-  const dir = await getArticleDirectory(
+  const dir = await getArticleDirectory({
     /** 'document id' is the field name in dot notation for lexical blocks */
-    name,
+    documentId: name,
     payload,
-    false,
+    allowEmpty: false,
     parent,
-  ) as any
+    req,
+  }) as any
   return dir as CrowdinArticleDirectory
 }
 
 export async function getFile(
   name: string,
   crowdinArticleDirectoryId: string,
-  payload: Payload
+  payload: Payload,
+  req?: PayloadRequest
 ): Promise<any> {
   const result = await payload.find({
     collection: "crowdin-files",
@@ -98,13 +112,15 @@ export async function getFile(
         equals: crowdinArticleDirectoryId,
       },
     },
+    req,
   });
   return result.docs[0];
 }
 
 export async function getFiles(
   crowdinArticleDirectoryId: string,
-  payload: Payload
+  payload: Payload,
+  req?: PayloadRequest
 ): Promise<CrowdinFile[]> {
   const result = await payload.find({
     collection: "crowdin-files",
@@ -114,6 +130,7 @@ export async function getFiles(
         equals: crowdinArticleDirectoryId,
       },
     },
+    req,
   });
   return result.docs as any;
 }
@@ -121,23 +138,38 @@ export async function getFiles(
 export async function getFileByDocumentID(
   name: string,
   documentId: string,
-  payload: Payload
+  payload: Payload,
+  req?: PayloadRequest,
 ): Promise<CrowdinFile> {
-  const articleDirectory = await getArticleDirectory(documentId, payload);
-  return getFile(name, `${articleDirectory?.id}`, payload);
+  const articleDirectory = await getArticleDirectory({
+    documentId, payload, req,
+  });
+  return getFile(name, `${articleDirectory?.id}`, payload, req);
 }
 
-export async function getFilesByDocumentID(
+export async function getFilesByDocumentID({
+  documentId,
+  payload,
+  parent,
+  req,
+} : {
   documentId: string,
   payload: Payload,
   parent?: CrowdinArticleDirectory,
-): Promise<CrowdinFile[]> {
-  const articleDirectory = await getArticleDirectory(`${documentId}`, payload, false, parent);
+  req?: PayloadRequest
+}): Promise<CrowdinFile[]> {
+  const articleDirectory = await getArticleDirectory({
+    documentId: `${documentId}`,
+    payload,
+    allowEmpty: false,
+    parent,
+    req,
+  });
   if (!articleDirectory) {
     // tests call this function to make sure files are deleted
     return [];
   }
-  const files = await getFiles(`${articleDirectory.id}`, payload);
+  const files = await getFiles(`${articleDirectory.id}`, payload, req);
   return files;
 }
 
@@ -151,6 +183,7 @@ interface IupdatePayloadTranslation {
   dryRun?: boolean
   /** override article directory exclude locales */
   excludeLocales?: string[]
+  req?: PayloadRequest
 }
 
 export async function updatePayloadTranslation({
@@ -160,11 +193,13 @@ export async function updatePayloadTranslation({
   draft,
   dryRun,
   excludeLocales,
+  req,
 }: IupdatePayloadTranslation) {
   // get article directory
   const articleDirectory = await payload.findByID({
     id: articleDirectoryId,
     collection: "crowdin-article-directories",
+    req,
   });
   // is this a global or a collection?
   const global =
@@ -172,7 +207,8 @@ export async function updatePayloadTranslation({
   // get an instance of our translations api
   const translationsApi = new payloadCrowdinSyncTranslationsApi(
     pluginOptions,
-    payload
+    payload,
+    req,
   );
   try {
     const translations = await translationsApi.updateTranslation({

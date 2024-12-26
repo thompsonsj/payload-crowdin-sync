@@ -631,7 +631,7 @@ describe('Lexical editor with blocks', () => {
         title: 'Test policy',
       },
     });
-    const crowdinFiles = await getFilesByDocumentID(`${policy.id}`, payload);
+    const crowdinFiles = await getFilesByDocumentID({documentId:`${policy.id}`, payload});
     const contentHtmlFile = crowdinFiles.find(
       (file) => file.field === 'content'
     );
@@ -675,7 +675,7 @@ describe('Lexical editor with blocks', () => {
       : [];
     const ids = arrayField.map((item) => item.id) || ([] as string[]);
 
-    const crowdinFiles = await getFilesByDocumentID(`${policy.id}`, payload);
+    const crowdinFiles = await getFilesByDocumentID({documentId:`${policy.id}`, payload});
     expect(crowdinFiles.length).toEqual(3);
 
     const htmlFileOne = crowdinFiles.find(
@@ -691,16 +691,16 @@ describe('Lexical editor with blocks', () => {
       crowdinFiles.find((file) => file.name === 'fields.json')
     ).toBeDefined();
 
-    const fileOneCrowdinFiles = await getFilesByDocumentID(
-      `${pluginOptions.lexicalBlockFolderPrefix}group.array.${ids[0]}.content`,
+    const fileOneCrowdinFiles = await getFilesByDocumentID({
+      documentId: `${pluginOptions.lexicalBlockFolderPrefix}group.array.${ids[0]}.content`,
       payload,
-      policy.crowdinArticleDirectory as CrowdinArticleDirectory
-    );
-    const fileTwoCrowdinFiles = await getFilesByDocumentID(
-      `${pluginOptions.lexicalBlockFolderPrefix}group.array.${ids[1]}.content`,
+      parent: policy.crowdinArticleDirectory as CrowdinArticleDirectory
+    });
+    const fileTwoCrowdinFiles = await getFilesByDocumentID({
+      documentId: `${pluginOptions.lexicalBlockFolderPrefix}group.array.${ids[1]}.content`,
       payload,
-      policy.crowdinArticleDirectory as CrowdinArticleDirectory
-    );
+      parent: policy.crowdinArticleDirectory as CrowdinArticleDirectory
+    });
     expect(fileOneCrowdinFiles.length).toEqual(2);
     expect(fileTwoCrowdinFiles.length).toEqual(2);
 

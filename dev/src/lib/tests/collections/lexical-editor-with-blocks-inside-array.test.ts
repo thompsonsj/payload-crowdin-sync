@@ -21,9 +21,16 @@ import { getRelationshipId } from 'plugin/src/lib/utilities/payload';
 const pluginOptions = pluginConfig();
 const mockClient = mockCrowdinClient(pluginOptions);
 
+function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 describe('Lexical editor with multiple blocks', () => {
   beforeAll(async () => {
     await initPayloadTest({});
+    // await payload.db.connection.db.admin().command({ setParameter: 1, maxTransactionLockRequestTimeoutMillis: 3000});
   });
 
   afterEach((done) => {
@@ -703,7 +710,7 @@ describe('Lexical editor with multiple blocks', () => {
         )
       : ['lexical-block-id-not-found'];
 
-    const files = await getFilesByDocumentID(`${doc.id}`, payload);
+    const files = await getFilesByDocumentID({documentId: `${doc.id}`, payload});
 
     expect(files.length).toEqual(3);
 
@@ -1165,7 +1172,7 @@ describe('Lexical editor with multiple blocks', () => {
         `<p>Si vous ajoutez des blocs personnalisés, ceux-ci seront également traduits !</p><span data-block-id=${lexicalBlockIds[0]} data-block-type=highlight></span>`
       );
 
-    const crowdinFiles = await getFilesByDocumentID(`${doc.id}`, payload);
+    const crowdinFiles = await getFilesByDocumentID({documentId: `${doc.id}`, payload});
     const lexicalFieldCrowdinArticleDirectory = await getLexicalFieldArticleDirectory({
       payload,
       parent: updatedDoc.crowdinArticleDirectory,

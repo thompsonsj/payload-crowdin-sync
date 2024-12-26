@@ -24,7 +24,7 @@
       "options": {
         "jestConfig": "dev/jest.config.ts",
         "forceExit": true,
-        "detectOpenHandles": true,
+        "detectOpenHandles": true
       }
     }
   },

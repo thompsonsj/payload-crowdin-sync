@@ -169,10 +169,10 @@ describe("Files - custom serializer", () => {
           ],
         },
       });
-      const crowdinFiles = await getFilesByDocumentID(
-        `${post.id}`,
+      const crowdinFiles = await getFilesByDocumentID({
+        documentId: `${post.id}`,
         payload 
-      );
+      });
       const content = crowdinFiles.find((file: CrowdinFile) => file.field === "content");
       expect(content).toBeTruthy();
       expect(content?.fileData).toMatchInlineSnapshot(`

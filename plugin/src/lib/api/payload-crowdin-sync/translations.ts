@@ -11,6 +11,7 @@ import {
   CollectionConfig,
   Field,
   GlobalConfig,
+  PayloadRequest,
   RichTextField,
 } from "payload/types";
 import {
@@ -72,13 +73,14 @@ export class payloadCrowdinSyncTranslationsApi {
   projectId: number;
   directoryId?: number;
   payload: Payload;
+  req?: PayloadRequest;
   localeMap: PluginOptions["localeMap"];
   sourceLocale: PluginOptions["sourceLocale"];
   htmlToSlateConfig: PluginOptions["htmlToSlateConfig"];
   lexicalBlockFolderPrefix: PluginOptions["lexicalBlockFolderPrefix"];
   disableSelfClean?: PluginOptions["disableSelfClean"];
 
-  constructor(pluginOptions: PluginOptions, payload: Payload) {
+  constructor(pluginOptions: PluginOptions, payload: Payload, req?: PayloadRequest) {
     // credentials
     const credentials: Credentials = {
       token: pluginOptions.token,
@@ -89,6 +91,7 @@ export class payloadCrowdinSyncTranslationsApi {
     this.directoryId = pluginOptions.directoryId;
     this.translationsApi = translationsApi;
     this.payload = payload;
+    this.req = req;
     this.localeMap = pluginOptions.localeMap;
     this.sourceLocale = pluginOptions.sourceLocale;
     this.htmlToSlateConfig = pluginOptions.htmlToSlateConfig
@@ -116,12 +119,14 @@ export class payloadCrowdinSyncTranslationsApi {
       doc = await this.payload.findGlobal({
         slug: collection as keyof Config["globals"],
         locale: this.sourceLocale,
+        req: this.req,
       });
     } else {
       doc = await this.payload.findByID({
         collection: collection as keyof Config["collections"],
         id: documentId,
         locale: this.sourceLocale,
+        req: this.req,
       });
     }
     const report: { [key: string]: any } = {};
@@ -162,6 +167,7 @@ export class payloadCrowdinSyncTranslationsApi {
                 // see https://github.com/thompsonsj/payload-crowdin-sync/pull/13/files#r1209271660
                 crowdinArticleDirectory: ((doc as any)["crowdinArticleDirectory"]).id,
               },
+              req: this.req,
             });
           } catch (error) {
             console.log(
@@ -186,6 +192,7 @@ export class payloadCrowdinSyncTranslationsApi {
               id: documentId,
               draft,
               data: report[locale].latestTranslations,
+              req: this.req,
             });
           } catch (error) {
             console.log(
@@ -235,12 +242,14 @@ export class payloadCrowdinSyncTranslationsApi {
       document = await this.payload.findGlobal({
         slug: collection as keyof Config["globals"],
         locale: locale,
+        req: this.req,
       });
     } else {
       document = await this.payload.findByID({
         collection: collection as keyof Config["collections"],
         id: doc.id,
         locale: locale,
+        req: this.req,
       });
     }
 
@@ -353,7 +362,7 @@ export class payloadCrowdinSyncTranslationsApi {
   }
 
   async getHtmlFieldSlugs(documentId: string): Promise<string[]> {
-    const files = await getFilesByDocumentID(documentId, this.payload);
+    const files = await getFilesByDocumentID({documentId, payload: this.payload, req: this.req});
     const slugs = files
     .filter((file) => file.type === "html")
     .map((file) => `${file.field}`)
@@ -361,7 +370,7 @@ export class payloadCrowdinSyncTranslationsApi {
   }
 
   async getHtmlFieldSlugsByArticleDirectory(parentCrowdinArticleDirectoryId?: string): Promise<string[]> {
-    const files = await getFiles(`${parentCrowdinArticleDirectoryId}`, this.payload) as CrowdinFile[];
+    const files = await getFiles(`${parentCrowdinArticleDirectoryId}`, this.payload, this.req) as CrowdinFile[];
     const slugs = files
     .filter((file) => file.type === "html")
     .map((file) => `${file.field}`)
@@ -376,7 +385,7 @@ export class payloadCrowdinSyncTranslationsApi {
    */
   // TODO refactor out fields override - replace `collection` with `fields`
   async getTranslation({ documentId, fieldName, locale, collection, crowdinArticleDirectoryId, fields }: IgetTranslation) {
-    const file = (typeof crowdinArticleDirectoryId === 'string' ? await getFile(fieldName, crowdinArticleDirectoryId, this.payload) : await getFileByDocumentID(fieldName, `${documentId}`, this.payload)) as CrowdinFile;
+    const file = (typeof crowdinArticleDirectoryId === 'string' ? await getFile(fieldName, crowdinArticleDirectoryId, this.payload) : await getFileByDocumentID(fieldName, `${documentId}`, this.payload, this.req)) as CrowdinFile;
     // it is possible a file doesn't exist yet - e.g. an article with localized text fields that contains an empty html field.
     if (!file) {
       return;
@@ -407,6 +416,7 @@ export class payloadCrowdinSyncTranslationsApi {
               payload: this.payload,
               parent: file.crowdinArticleDirectory,
               name: `${this.lexicalBlockFolderPrefix}${fieldName}`,
+              req: this.req,
             })
             const lexicalFieldCrowdinArticleDirectoryId = getRelationshipId(lexicalFieldCrowdinArticleDirectory as any)
 
@@ -498,6 +508,7 @@ export class payloadCrowdinSyncTranslationsApi {
         await this.payload.delete({
           id: file.id,
           collection: "crowdin-files",
+          req: this.req,
         })
       }
       return undefined
@@ -534,7 +545,6 @@ export class payloadCrowdinSyncTranslationsApi {
         fieldName: "blocks",
         locale: locale,
         crowdinArticleDirectoryId,
-
       })) || {};
     // add html fields
     const localizedHtmlFields = await this.getHtmlFieldSlugsByArticleDirectory(crowdinArticleDirectoryId);
