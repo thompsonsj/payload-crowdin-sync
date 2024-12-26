@@ -14,7 +14,6 @@ import { extractLexicalBlockContent } from 'plugin/src/lib/utilities/lexical';
 import { mockCrowdinClient } from 'plugin/src/lib/api/mock/crowdin-api-responses';
 import { pluginConfig } from '../helpers/plugin-config';
 import { CrowdinArticleDirectory, Policy } from '../../payload-types';
-import { beginTransaction, commitTransaction } from '../helpers/transactions'
 
 const pluginOptions = pluginConfig();
 const mockClient = mockCrowdinClient(pluginOptions);
@@ -137,16 +136,13 @@ describe('Lexical editor with multiple blocks', () => {
       .times(4)
       .reply(200, mockClient.createFile({}));
 
-    // const req = await beginTransaction(payload)
     const policy = await payload.create({
       collection: 'policies',
       data: {
         title: 'Test policy',
         content: fixture,
       },
-      // req,
     });
-    // await commitTransaction(payload, req)
 
     expect(
       utilities.buildCrowdinHtmlObject({
