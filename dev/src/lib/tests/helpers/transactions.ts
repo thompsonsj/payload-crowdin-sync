@@ -15,3 +15,7 @@ export const beginTransaction = async (payload: Payload) => {
 export const commitTransaction = async (payload: Payload, req: PayloadRequest) => {
   if (req.transactionID && typeof payload?.db?.commitTransaction === 'function') await payload.db.commitTransaction(req.transactionID);
 }
+
+export const rollbackTransaction = async (payload: Payload, req: PayloadRequest) => {
+  if (req.transactionID && typeof payload?.db?.rollbackTransaction === 'function') await payload.db.rollbackTransaction(req.transactionID);
+}
