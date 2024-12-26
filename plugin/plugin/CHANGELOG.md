@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.31.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.30.1...payload-crowdin-sync-v0.31.0) (2024-12-26)
+
+
+### Features
+
+* add transaction support ([#225](https://github.com/thompsonsj/payload-crowdin-sync/issues/225)) ([e01c885](https://github.com/thompsonsj/payload-crowdin-sync/commit/e01c8857a782a6d7e9c509f2997393cee593c930))
+
 ## [0.30.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.30.0...payload-crowdin-sync-v0.30.1) (2024-10-29)
 
 
