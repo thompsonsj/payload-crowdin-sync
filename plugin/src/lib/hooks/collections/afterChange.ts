@@ -9,6 +9,8 @@ import type {
   GlobalAfterChangeHook,
   PayloadRequest,
   RichTextField,
+  CollectionSlug,
+  GlobalSlug,
 } from "payload";
 import { Descendant } from "slate";
 import {isCrowdinArticleDirectory, PluginOptions } from "../../types";
@@ -168,7 +170,7 @@ export class payloadCrowdinSyncFilesApi {
 
 
 interface IfindOrCreateCollectionDirectory {
-  collectionSlug: keyof Config['collections'] | "globals";
+  collectionSlug: CollectionSlug | "globals";
 }
 
 /**
@@ -188,7 +190,7 @@ export class filesApiByDocument {
   directoryId?: number;
   document: Document
   articleDirectory: CrowdinArticleDirectory
-  collectionSlug: keyof Config['collections'] | keyof Config['globals'];
+  collectionSlug: CollectionSlug | GlobalSlug;
   global: boolean;
   pluginOptions: PluginOptions;
   req: PayloadRequest;
@@ -203,7 +205,7 @@ export class filesApiByDocument {
     parent,
   }: {
     document: Document,
-    collectionSlug: keyof Config['collections'] | keyof Config['globals'],
+    collectionSlug: CollectionSlug | GlobalSlug,
     global: boolean,
     pluginOptions: PluginOptions,
     req: PayloadRequest,
@@ -324,7 +326,7 @@ export class filesApiByDocument {
       if (!this.parent) {
         if (this.global) {
           await this.req.payload.updateGlobal({
-            slug: this.collectionSlug as keyof Config["globals"],
+            slug: this.collectionSlug as GlobalSlug,
             data: {
               crowdinArticleDirectory,
             } as never,
@@ -332,7 +334,7 @@ export class filesApiByDocument {
           });
         } else {
           await this.req.payload.update({
-            collection: this.collectionSlug as keyof Config["collections"],
+            collection: this.collectionSlug as CollectionSlug,
             id: this.document.id,
             data: {
               crowdinArticleDirectory,
@@ -415,7 +417,7 @@ interface IupdateOrCreateFile {
 class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesApi {
   document: Document
   articleDirectory: CrowdinArticleDirectory
-  collectionSlug: keyof Config['collections'] | "globals";
+  collectionSlug: CollectionSlug | "globals";
   global?: boolean;
 
   constructor({
@@ -426,7 +428,7 @@ class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesApi {
   }: {
     document: Document,
     articleDirectory: CrowdinArticleDirectory,
-    collectionSlug:  keyof Config['collections'] | "globals",
+    collectionSlug:  CollectionSlug | "globals",
     global: boolean,
   }, pluginOptions: PluginOptions, req: PayloadRequest) {
     super(pluginOptions, req);
@@ -690,7 +692,7 @@ class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesApi {
           // Friendly name for directory
           title: name,
         },
-        collectionSlug: collection.slug as keyof Config['collections'] | keyof Config['globals'],
+        collectionSlug: collection.slug as CollectionSlug | GlobalSlug,
         global: false,
         pluginOptions: this.pluginOptions,
         req,
@@ -911,7 +913,7 @@ const performAfterChange = async ({
   const apiByDocument = new filesApiByDocument(
     {
       document: doc,
-      collectionSlug: sanitizedCollection.slug as keyof Config['collections'] | keyof Config['globals'],
+      collectionSlug: sanitizedCollection.slug as CollectionSlug | GlobalSlug,
       global,
       pluginOptions,
       req: req

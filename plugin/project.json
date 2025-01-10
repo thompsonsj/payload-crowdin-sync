@@ -10,7 +10,7 @@
       "options": {
         "outputPath": "dist/plugin",
         "main": "plugin/src/index.ts",
-        "tsConfig": "plugin/tsconfig.lib.json",
+        "tsConfig": "plugin/tsconfig.json",
         "assets": ["plugin/*.md"],
         "updateBuildableProjectDepsInPackageJson": true
       }
