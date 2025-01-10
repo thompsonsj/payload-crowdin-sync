@@ -1,4 +1,4 @@
-import { Block, Field } from "payload/types";
+import type { Block, Field } from "payload";
 import { basicLocalizedFields } from "./basic-localized-fields.fixture";
 import dot from "dot-object";
 

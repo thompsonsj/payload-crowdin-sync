@@ -1,4 +1,4 @@
-import { CollectionConfig, Field } from "payload/types";
+import type { Field } from "payload";
 import { buildCrowdinJsonObject, getLocalizedFields } from "../..";
 import { FieldWithName } from "../../../types";
 

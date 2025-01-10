@@ -1,6 +1,5 @@
-import { Block, Field } from "payload/types";
+import type { Block, Field } from "payload";
 import {
-  buildCrowdinJsonObject,
   buildPayloadUpdateObject,
   getLocalizedFields,
 } from "../..";

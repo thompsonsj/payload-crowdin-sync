@@ -1,0 +1,119 @@
+import nock from 'nock';
+import { mockCrowdinClient } from 'payload-crowdin-sync';
+import { pluginConfig } from '../helpers/plugin-config';
+import { getFilesByDocumentID, payloadCrowdinSyncTranslationsApi } from 'payload-crowdin-sync';
+import { beginTransaction, commitTransaction, rollbackTransaction } from '../helpers/transactions'
+
+import { initPayloadInt } from '../helpers/initPayloadInt'
+import type { Payload } from 'payload'
+
+let payload: Payload
+
+const pluginOptions = pluginConfig();
+const mockClient = mockCrowdinClient(pluginOptions);
+
+describe('Lexical editor with multiple blocks', () => {
+  beforeAll(async () => {
+    const initialized = await initPayloadInt()
+    ;({ payload } = initialized as {
+      payload: Payload
+    })
+  });
+
+  afterEach((done) => {
+    if (!nock.isDone()) {
+      throw new Error(
+        `Not all nock interceptors were used: ${JSON.stringify(
+          nock.pendingMocks()
+        )}`
+      );
+    }
+    nock.cleanAll();
+    done();
+  });
+
+  afterAll(async () => {
+    if (typeof payload.db.destroy === 'function') {
+      await payload.db.destroy()
+    }
+  });
+
+  it('removes CrowdinFile Payload documents if the Crowdin API responds with a 404', async () => {
+    nock('https://api.crowdin.com')
+    .post(
+      `/api/v2/projects/${pluginOptions.projectId}/directories`
+    )
+    .twice()
+    .reply(200, mockClient.createDirectory({}))
+    .post(
+      `/api/v2/storages`
+    )
+    .reply(200, mockClient.addStorage())
+    .post(
+      `/api/v2/projects/${pluginOptions.projectId}/files`
+    )
+    .reply(
+      200,
+      mockClient.createFile({
+        fileId: 94100,
+      })
+    )
+    // translation
+    .post(
+      `/api/v2/projects/${
+        pluginOptions.projectId
+      }/translations/builds/files/${94100}`,
+      {
+        targetLanguageId: 'fr',
+      }
+    )
+    .reply(
+      404,
+      {
+        code: 404,
+      }
+    )
+    
+    const post = await payload.create({
+      collection: "localized-posts-with-condition",
+      data: {
+        title: "Test post",
+        translateWithCrowdin: true,
+      },
+    });
+
+    const crowdinFiles = await getFilesByDocumentID({
+      documentId: `${post.id}`,
+      payload,
+    });
+
+    expect(crowdinFiles.length).toEqual(1)
+
+    const req = await beginTransaction(payload)
+    try {
+      const translationsApi = new payloadCrowdinSyncTranslationsApi(
+        pluginOptions,
+        payload,
+        req,
+      );
+
+      await translationsApi.updateTranslation({
+        documentId: `${post.id}`,
+        collection: 'localized-posts-with-condition',
+        dryRun: false,
+        excludeLocales: ['de_DE'],
+      });
+      await commitTransaction(payload, req)
+    } catch (e) {
+      console.error('Oh no, something went wrong!');
+      await rollbackTransaction(payload, req)
+    }
+
+    const refreshedCrowdinFiles = await getFilesByDocumentID({
+      documentId: `${post.id}`,
+      payload,
+    });
+
+    expect(refreshedCrowdinFiles.length).toEqual(0)
+  });
+});

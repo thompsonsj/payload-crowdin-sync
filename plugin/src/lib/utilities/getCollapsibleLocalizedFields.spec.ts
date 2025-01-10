@@ -1,4 +1,4 @@
-import { GlobalConfig } from "payload/types";
+import type { GlobalConfig } from "payload";
 import { getCollapsibleLocalizedFields } from ".";
 
 describe("fn: getCollapsibleLocalizedFields", () => {

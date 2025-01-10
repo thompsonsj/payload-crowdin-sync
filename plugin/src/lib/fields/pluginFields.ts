@@ -1,7 +1,7 @@
-import type { Field, TabsField } from "payload/types";
+import type { Field, TabsField } from "payload";
 import { updatePayloadTranslation } from "../api/helpers";
 import { PluginOptions } from "../types";
-import { DocumentCustomUIField } from "./documentUI";
+// import { DocumentCustomUIField } from "./documentUI";
 import { getOtherLocales } from "../utilities/locales";
 
 interface Args {
@@ -25,15 +25,17 @@ export const pluginCollectionOrGlobalFields = ({
   pluginOptions,
 }: Args): Field[] => {
   const pluginFields: Field[] = [
+    /**
     {
       name: 'lastCrowdinSync',
       type: 'ui',
       admin: {
         components: {
-          Field: DocumentCustomUIField,
+          Field: '',
         }
       }
     },
+    */
     {
       name: 'syncTranslations',
       type: 'checkbox',

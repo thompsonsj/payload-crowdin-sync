@@ -1,4 +1,4 @@
-import { Endpoint } from "payload/config";
+import type { Endpoint } from "payload";
 import { PluginOptions } from "../../types";
 import { payloadCrowdinSyncTranslationsApi } from "../../api/payload-crowdin-sync/translations";
 import { getLocalizedFields } from "../../utilities";
@@ -12,9 +12,9 @@ export const getReviewFieldsEndpoint = ({
 }): Endpoint => ({
   path: `/:id/fields`,
   method: "get",
-  handler: async (req, res, next) => {
+  handler: async (req) => {
     const articleDirectory = await req.payload.findByID({
-      id: req.params["id"],
+      id: typeof req.routeParams?.["id"] === 'string' ? req.routeParams?.["id"] : ``,
       collection: "crowdin-article-directories",
     });
     const global =
@@ -29,9 +29,9 @@ export const getReviewFieldsEndpoint = ({
         fields: collectionConfig.fields,
         localizedFields: getLocalizedFields({ fields: collectionConfig.fields })
       }
-      res.status(200).send(response);
+      return Response.json(response);
     } catch (error) {
-      res.status(400).send(error);
+      return Response.error()
     }
   },
 });

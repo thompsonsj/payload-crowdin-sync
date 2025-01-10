@@ -6,14 +6,14 @@ import crowdin, {
 import { Payload } from "payload";
 import { CrowdinHtmlObject, PluginOptions } from "../../types";
 import deepEqual from "deep-equal";
-import {
-  BlockField,
+import type {
+  BlocksField as BlockField,
   CollectionConfig,
   Field,
   GlobalConfig,
   PayloadRequest,
   RichTextField,
-} from "payload/types";
+} from "payload";
 import {
   getLocalizedFields,
   getFieldSlugs,
@@ -32,7 +32,8 @@ import { Config, CrowdinFile } from "../../payload-types";
 import { getCollectionConfig, getFile, getFileByDocumentID, getFiles, getFilesByDocumentID, getLexicalFieldArticleDirectory } from "../helpers";
 import { getLexicalBlockFields, getLexicalEditorConfig } from "../../utilities/lexical";
 import { getRelationshipId } from "../../utilities/payload";
-import { isEmpty, merge } from "lodash";
+import { merge } from "es-toolkit";
+import { isEmpty } from 'es-toolkit/compat';
 
 interface IgetLatestDocumentTranslation {
   collection: string;
@@ -588,7 +589,7 @@ export class payloadCrowdinSyncTranslationsApi {
         isLocalized: (field) => !!(field),
       })
 
-      return merge({}, sourcePayloadUpdateObject, docTranslations)
+      return merge(sourcePayloadUpdateObject, docTranslations)
     }
 
     return docTranslations

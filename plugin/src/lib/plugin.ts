@@ -1,5 +1,4 @@
-import type { Config } from "payload/config";
-import type { CollectionConfig, GlobalConfig } from "payload/types";
+import type { CollectionConfig, Config, GlobalConfig } from "payload";
 import { isCollectionOrGlobalConfigObject, type PluginOptions } from "./types";
 import {
   getAfterChangeHook,

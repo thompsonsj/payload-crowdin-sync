@@ -1,9 +1,7 @@
-import { Block, CollectionConfig, GlobalConfig } from "payload/types";
+import { Block, GlobalConfig } from "payload";
 import {
-  getLocalizedFields,
   fieldChanged,
   containsLocalizedFields,
-  getFieldSlugs,
 } from ".";
 import deepEqual from "deep-equal";
 

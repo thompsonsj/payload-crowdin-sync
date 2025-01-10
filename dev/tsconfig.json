@@ -1,24 +1,45 @@
 {
-  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2022"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
     "strict": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
+    "noEmit": true,
     "esModuleInterop": true,
-    "jsx": "react",
-  },
-  "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.lib.json"
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@payload-config": [
+        "./src/payload.config.ts"
+      ],
+      "payload-crowdin-sync": ["./../plugin/src/index.ts"]
     },
-    {
-      "path": "./tsconfig.spec.json"
-    }
+    "target": "ES2022",
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
   ],
+  "exclude": [
+    "node_modules"
+  ]
 }
