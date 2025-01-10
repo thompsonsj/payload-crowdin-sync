@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.31.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.31.0...payload-crowdin-sync-v0.31.1) (2025-01-10)
+
+
+### Bug Fixes
+
+* **projectjson:** build plugin ([#228](https://github.com/thompsonsj/payload-crowdin-sync/issues/228)) ([6bea3ae](https://github.com/thompsonsj/payload-crowdin-sync/commit/6bea3ae789616e82b22e13ffba349066aa7acad3))
+
 ## [0.31.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.30.1...payload-crowdin-sync-v0.31.0) (2025-01-10)
 
 
