@@ -20,6 +20,10 @@
   },
   "peerDependencies": {
     "payload": "^3",
+    "@payloadcms/db-mongodb": "^3",
+    "@payloadcms/richtext-lexical": "^3",
+    "@payloadcms/richtext-slate": "^3",
+    "@payloadcms/ui": "^3",
     "react": "^19.0.0"
   },
   "type": "module"
