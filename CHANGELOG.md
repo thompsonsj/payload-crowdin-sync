@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.12.2...source-v0.12.3) (2025-01-10)
+
+
+### Bug Fixes
+
+* **package.json:** upgrade dependencies ([#233](https://github.com/thompsonsj/payload-crowdin-sync/issues/233)) ([d697acc](https://github.com/thompsonsj/payload-crowdin-sync/commit/d697acc0b4df28b39d3175c1afda157e6513bbc2))
+
 ## [0.12.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.12.1...source-v0.12.2) (2025-01-10)
 
 
