@@ -20,6 +20,7 @@ import {
   isLexical,
 } from "./utilities/lexical"
 import { mockCrowdinClient } from "./api/mock/crowdin-api-responses";
+import { getRelationshipId } from './utilities/payload'
 
 export {
   getFiles,
@@ -40,4 +41,5 @@ export {
   mockCrowdinClient,
   extractLexicalBlockContent,
   getLexicalFieldArticleDirectory,
+  getRelationshipId,
 };
