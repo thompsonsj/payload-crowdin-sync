@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.31.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.31.1...payload-crowdin-sync-v0.31.2) (2025-01-10)
+
+
+### Bug Fixes
+
+* **package.json:** payload dependencies as peer ([#230](https://github.com/thompsonsj/payload-crowdin-sync/issues/230)) ([1b43816](https://github.com/thompsonsj/payload-crowdin-sync/commit/1b438168d369e7f357d3d0a33049072f0cbef6f1))
+
 ## [0.31.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.31.0...payload-crowdin-sync-v0.31.1) (2025-01-10)
 
 
