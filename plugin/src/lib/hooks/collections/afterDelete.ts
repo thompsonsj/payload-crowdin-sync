@@ -1,7 +1,6 @@
 import type {
   BlocksField as BlockField,
   CollectionConfig,
-  Config,
   Document,
   GlobalConfig,
   PayloadRequest,
@@ -25,7 +24,7 @@ import {
 
 import { CrowdinArticleDirectory, CrowdinFile } from "./../../payload-types";
 import { toWords } from 'payload';
-import crowdin, { Credentials, SourceFiles, UploadStorage, } from "@crowdin/crowdin-api-client";
+import { Credentials, SourceFiles, UploadStorage, } from "@crowdin/crowdin-api-client";
 
 import { getCollectionConfig, getArticleDirectory,
   getFileByDocumentID,
@@ -35,6 +34,9 @@ import { isEmpty } from 'es-toolkit/compat';
 
 import { convertLexicalToHtml, convertSlateToHtml } from '../../utilities/richTextConversion'
 import { extractLexicalBlockContent, getLexicalBlockFields, getLexicalEditorConfig } from '../../utilities/lexical';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const crowdin = require('@crowdin/crowdin-api-client');
 
 interface IcreateOrUpdateFile {
   name: string;
@@ -63,7 +65,7 @@ export class payloadCrowdinSyncFilesApi {
     const credentials: Credentials = {
       token: pluginOptions.token,
     };
-    const { sourceFilesApi, uploadStorageApi } = new crowdin(credentials);
+    const { sourceFilesApi, uploadStorageApi } = new crowdin.default(credentials);
     this.projectId = pluginOptions.projectId;
     this.directoryId = pluginOptions.directoryId;
     this.sourceFilesApi = sourceFilesApi;
@@ -211,7 +213,7 @@ export class filesApiByDocument {
       token: pluginOptions.token,
       organization: pluginOptions.organization,
     };
-    const { sourceFilesApi } = new crowdin(credentials);
+    const { sourceFilesApi } = new crowdin.default(credentials);
     this.projectId = pluginOptions.projectId;
     this.directoryId = pluginOptions.directoryId;
     this.sourceFilesApi = sourceFilesApi;
