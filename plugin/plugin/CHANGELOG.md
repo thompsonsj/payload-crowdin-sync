@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.31.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.31.2...payload-crowdin-sync-v0.31.3) (2025-01-10)
+
+
+### Bug Fixes
+
+* **crowdin:** move from import to require ([#235](https://github.com/thompsonsj/payload-crowdin-sync/issues/235)) ([33f5cf9](https://github.com/thompsonsj/payload-crowdin-sync/commit/33f5cf9c40feb6544cd94076f6f07d4554e747c5))
+
 ## [0.31.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.31.1...payload-crowdin-sync-v0.31.2) (2025-01-10)
 
 
