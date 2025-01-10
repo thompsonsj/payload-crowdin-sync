@@ -1,6 +1,6 @@
 import BookDemo from './tests/inline-snapshots/collections/BookDemo';
 import { findField } from '.';
-import { Block, Field } from 'payload/types';
+import type { Block, Field } from 'payload';
 
 describe('fn: findField', () => {
   it('finds a top-level field', () => {
@@ -27,13 +27,7 @@ describe('fn: findField', () => {
       })
     ).toMatchInlineSnapshot(`
       {
-        "editor": {
-          "CellComponent": [Function],
-          "FieldComponent": [Function],
-          "outputSchema": [Function],
-          "populationPromise": [Function],
-          "validate": [Function],
-        },
+        "editor": [Function],
         "name": "title",
         "type": "richText",
       }

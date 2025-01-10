@@ -1,5 +1,4 @@
-import { slateEditor } from '@payloadcms/richtext-slate';
-import { Block, CollectionConfig, Field, GlobalConfig } from 'payload/types';
+import type { Field} from 'payload';
 import { getLocalizedFields } from '.';
 import { reLocalizeField } from '.';
 

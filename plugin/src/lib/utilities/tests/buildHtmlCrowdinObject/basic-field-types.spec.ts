@@ -1,6 +1,6 @@
 import { slateEditor } from "@payloadcms/richtext-slate";
-import { CollectionConfig, Field, GlobalConfig } from "payload/types";
-import { buildCrowdinHtmlObject, getLocalizedFields } from "../..";
+import type { Field } from "payload";
+import { buildCrowdinHtmlObject } from "../..";
 
 describe("fn: buildCrowdinHtmlObject", () => {
   it("does not include undefined localized fields", () => {

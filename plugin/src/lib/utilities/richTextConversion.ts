@@ -6,25 +6,26 @@ import {
   payloadHtmlToSlateConfig,
   type HtmlToSlateConfig,
 } from "@slate-serializers/html"
-import type { Descendant } from "slate";
 
-import type { SerializedEditorState } from 'lexical'
 import {
-  BlockNode,
+  ServerBlockNode as BlockNode,
   HTMLConverter,
-  type SanitizedEditorConfig,
+  type SanitizedServerEditorConfig as SanitizedEditorConfig,
   convertLexicalToHTML,
   consolidateHTMLConverters,
 } from '@payloadcms/richtext-lexical'
 
 import {
-  cloneDeep,
   convertSlateToLexical,
   defaultSlateConverters,
-} from '@payloadcms/richtext-lexical'
+} from '@payloadcms/richtext-lexical/migrate'
 
 import { getAttributeValue } from 'domutils'
 import { SlateBlockConverter } from "./lexical/slateBlockConverter";
+import { cloneDeep } from "es-toolkit";
+
+import type { Descendant } from "slate";
+import type { SerializedEditorState } from 'lexical'
 
 const BlockHTMLConverter: HTMLConverter<any> = {
   converter: async ({ node }) => {

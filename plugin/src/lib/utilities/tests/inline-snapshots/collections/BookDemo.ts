@@ -1,4 +1,4 @@
-import { GlobalConfig } from "payload/types";
+import type { GlobalConfig } from "payload";
 import { heroField } from "./shared/heroField";
 import { collapsibleFields as cf } from "./shared/collapsibleFields";
 

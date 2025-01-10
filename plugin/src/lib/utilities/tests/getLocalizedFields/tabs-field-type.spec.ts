@@ -1,4 +1,4 @@
-import { Field } from "payload/types";
+import type { Field } from "payload";
 import { getLocalizedFields } from "../..";
 import { basicLocalizedFields } from "../fixtures/basic-localized-fields.fixture";
 

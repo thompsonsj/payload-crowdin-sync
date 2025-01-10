@@ -2,6 +2,7 @@
   "name": "@payload-crowdin-sync-nx/source",
   "version": "0.11.1",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "release": "nx build plugin && cd dist/plugin && npm publish",
     "test": "nx run-many --all --target=test --runInBand"
@@ -9,21 +10,27 @@
   "private": true,
   "dependencies": {
     "@crowdin/crowdin-api-client": "^1.35.0",
-    "@payloadcms/bundler-webpack": "^1.0.7",
-    "@payloadcms/db-mongodb": "^1.7.3",
-    "@payloadcms/richtext-lexical": "^0.11.4",
-    "@payloadcms/richtext-slate": "^1.5.2",
+    "@payloadcms/db-mongodb": "3.15.1",
+    "@payloadcms/richtext-lexical": "3.15.1",
+    "@payloadcms/richtext-slate": "3.15.1",
+    "@payloadcms/ui": "^3.15.1",
     "@slate-serializers/html": "^2.2.1",
     "@swc/helpers": "0.5.12",
     "@types/dot-object": "^2.1.6",
+    "cross-env": "^7.0.3",
     "deep-equal": "^2.2.3",
     "dot-object": "^2.1.5",
     "dotenv": "^16.4.5",
+    "es-toolkit": "^1.31.0",
     "express": "^4.19.2",
+    "graphql": "^16.8.1",
+    "import-meta-resolve": "^4.1.0",
     "joi": "^17.13.3",
-    "lodash": "^4.17.21",
-    "payload": "^2.30.3",
-    "react": "^18.3.1",
+    "next": "15.1.0",
+    "payload": "3.15.1",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "sharp": "0.32.6",
     "tslib": "^2.6.3"
   },
   "devDependencies": {
@@ -33,6 +40,7 @@
     "@babel/preset-typescript": "^7.23.3",
     "@commitlint/cli": "^18.6.1",
     "@commitlint/config-conventional": "^18.6.2",
+    "@eslint/eslintrc": "^3.2.0",
     "@nx/eslint": "19.5.2",
     "@nx/eslint-plugin": "19.5.2",
     "@nx/jest": "19.5.2",
@@ -46,7 +54,9 @@
     "@types/deep-equal": "^1.0.4",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
-    "@types/node": "20.14.12",
+    "@types/node": "^22.10.5",
+    "@types/react": "19.0.1",
+    "@types/react-dom": "19.0.1",
     "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "7.17.0",
     "@typescript-eslint/parser": "7.17.0",
@@ -55,6 +65,7 @@
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "eslint": "8.57.0",
+    "eslint-config-next": "15.1.0",
     "eslint-config-prettier": "^9.1.0",
     "get-port": "^7.1.0",
     "isomorphic-fetch": "^3.0.0",
@@ -62,20 +73,24 @@
     "jest-environment-node": "^29.7.0",
     "mongodb-memory-server": "^9.1.6",
     "nock": "13.5.5",
+    "nodemailer": "^6.9.16",
     "nodemon": "^3.1.7",
     "nx": "19.5.2",
-    "prettier": "^3.3.3",
+    "prettier": "^3.4.2",
     "prettier-2": "npm:prettier@^2",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "5.5.4",
+    "typescript": "5.7.2",
     "verdaccio": "^5.31.1"
   },
   "nx": {
     "includedScripts": []
   },
+  "engines": {
+    "node": "^18.20.2 || >=20.9.0"
+  },
   "volta": {
-    "node": "17.9.1"
+    "node": "23.5.0"
   }
 }

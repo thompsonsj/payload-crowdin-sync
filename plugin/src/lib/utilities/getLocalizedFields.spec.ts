@@ -1,5 +1,5 @@
 import { slateEditor } from '@payloadcms/richtext-slate';
-import { Block, CollectionConfig, Field, GlobalConfig } from 'payload/types';
+import type { Block, CollectionConfig, Field, GlobalConfig } from 'payload';
 import { getLocalizedFields } from '.';
 
 describe('fn: getLocalizedFields', () => {
@@ -1317,13 +1317,7 @@ describe('fn: getLocalizedFields', () => {
             "fields": [
               {
                 "access": {},
-                "editor": {
-                  "CellComponent": [Function],
-                  "FieldComponent": [Function],
-                  "outputSchema": [Function],
-                  "populationPromise": [Function],
-                  "validate": [Function],
-                },
+                "editor": [Function],
                 "hooks": {},
                 "label": "Title",
                 "name": "title",
@@ -1331,13 +1325,7 @@ describe('fn: getLocalizedFields', () => {
               },
               {
                 "access": {},
-                "editor": {
-                  "CellComponent": [Function],
-                  "FieldComponent": [Function],
-                  "outputSchema": [Function],
-                  "populationPromise": [Function],
-                  "validate": [Function],
-                },
+                "editor": [Function],
                 "hooks": {},
                 "label": "Text",
                 "name": "text",

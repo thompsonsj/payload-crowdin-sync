@@ -1,14 +1,15 @@
-import {
+import type {
   Block,
   CollapsibleField,
   CollectionConfig,
   Field,
   GlobalConfig,
-} from "payload/types";
+} from "payload";
 import deepEqual from "deep-equal";
 import { FieldWithName, type CrowdinHtmlObject } from "../types";
 
-import { get, isEmpty, map, merge, omitBy } from "lodash";
+import {  merge, omitBy } from "es-toolkit";
+import { get, isEmpty, map } from 'es-toolkit/compat'
 import dot from "dot-object";
 
 const localizedFieldTypes = ["richText", "text", "textarea"];
@@ -635,7 +636,7 @@ export const buildCrowdinHtmlObject = ({
       });
       response = {
         ...response,
-        ...merge({}, ...arrayValues),
+        ...merge({}, Object.assign({}, ...arrayValues)),
       };
     } else if (field.type === "blocks") {
       const arrayValues = doc[field.name].map((item: any, index: number) => {
@@ -659,7 +660,7 @@ export const buildCrowdinHtmlObject = ({
       });
       response = {
         ...response,
-        ...merge({}, ...arrayValues),
+        ...merge({}, Object.assign({}, ...arrayValues)),
       };
     } else {
       response[name] = doc[field.name]

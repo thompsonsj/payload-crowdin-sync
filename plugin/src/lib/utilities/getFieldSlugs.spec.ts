@@ -1,4 +1,4 @@
-import { CollectionConfig, GlobalConfig } from "payload/types";
+import type { CollectionConfig, GlobalConfig } from "payload";
 import { getLocalizedFields, getFieldSlugs } from ".";
 
 describe("Function: getFieldSlugs", () => {

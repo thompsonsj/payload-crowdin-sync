@@ -1,5 +1,5 @@
-import { CollectionConfig, Field, GlobalConfig } from "payload/types";
-import { containsLocalizedFields, getLocalizedFields } from ".";
+import type { CollectionConfig, Field } from "payload";
+import { containsLocalizedFields } from ".";
 
 describe("fn: containsLocalizedFields: true tests", () => {
   describe("basic field type tests", () => {

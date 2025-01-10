@@ -22,7 +22,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "dev/jest.config.ts",
+        "jestConfig": "dev/src/tests/jest.config.js",
         "forceExit": true,
         "detectOpenHandles": true
       }

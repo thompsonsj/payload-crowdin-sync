@@ -2,8 +2,7 @@ import { Payload } from "payload";
 import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from "../payload-types";
 import { payloadCrowdinSyncTranslationsApi } from "./payload-crowdin-sync/translations";
 import { PluginOptions, isCollectionOrGlobalConfigObject, isCollectionOrGlobalConfigSlug, isCrowdinArticleDirectory } from "../types";
-import { getRelationshipId } from "../utilities/payload";
-import { CollectionConfig, GlobalConfig, PayloadRequest, SanitizedCollectionConfig, SanitizedGlobalConfig } from "payload/types";
+import type { CollectionConfig, GlobalConfig, PayloadRequest, SanitizedCollectionConfig, SanitizedGlobalConfig } from "payload";
 
 export const getCollectionConfig = (
   collection: string,

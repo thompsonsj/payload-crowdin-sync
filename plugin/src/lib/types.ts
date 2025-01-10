@@ -1,4 +1,4 @@
-import { CollectionConfig, Field, RichTextField } from "payload/types";
+import type { CollectionConfig, Field } from "payload";
 import { type SlateToHtmlConfig, type HtmlToSlateConfig } from '@slate-serializers/html'
 import { CrowdinArticleDirectory, CrowdinCollectionDirectory } from "./payload-types";
 

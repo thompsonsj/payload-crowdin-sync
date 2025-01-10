@@ -1,6 +1,5 @@
-import { CollectionConfig, Field } from "payload/types";
+import type { CollectionConfig, Field } from "payload";
 import { buildCrowdinJsonObject, getLocalizedFields } from "../..";
-import { FieldWithName } from "../../../types";
 
 describe("fn: buildCrowdinJsonObject: group nested in array", () => {
   const doc = {
