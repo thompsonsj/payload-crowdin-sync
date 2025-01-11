@@ -31,6 +31,10 @@ import {
 
 import { CrowdinArticleDirectory, CrowdinFile } from "./../../payload-types";
 import { toWords } from 'payload';
+
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const crowdin = require('@crowdin/crowdin-api-client');
 import { Credentials, SourceFiles, UploadStorage } from "@crowdin/crowdin-api-client";

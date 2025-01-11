@@ -35,6 +35,9 @@ import { getRelationshipId } from "../../utilities/payload";
 import { merge } from "es-toolkit";
 import { isEmpty } from 'es-toolkit/compat';
 
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const crowdin = require('@crowdin/crowdin-api-client');
 
