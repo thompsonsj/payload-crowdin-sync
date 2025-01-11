@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.12.4...source-v0.12.5) (2025-01-11)
+
+
+### Bug Fixes
+
+* **crowdinclient:** esm require ([#238](https://github.com/thompsonsj/payload-crowdin-sync/issues/238)) ([13fbf5b](https://github.com/thompsonsj/payload-crowdin-sync/commit/13fbf5b61c10fa6f62b25cd55933ad6af3c7b38c))
+
 ## [0.12.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.12.3...source-v0.12.4) (2025-01-10)
 
 
