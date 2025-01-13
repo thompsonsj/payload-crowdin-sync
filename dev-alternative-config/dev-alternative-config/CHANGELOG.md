@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.1.19...dev-alternative-config-v0.2.0) (2025-01-13)
+
+
+### Features
+
+* add transaction support ([#225](https://github.com/thompsonsj/payload-crowdin-sync/issues/225)) ([e01c885](https://github.com/thompsonsj/payload-crowdin-sync/commit/e01c8857a782a6d7e9c509f2997393cee593c930))
+* upgrade to Payload 3 ([#227](https://github.com/thompsonsj/payload-crowdin-sync/issues/227)) ([9066689](https://github.com/thompsonsj/payload-crowdin-sync/commit/9066689d992d9d65dd3e3cc0d62bebb2a023dc10))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.31.4 to 0.31.5
+
 ## [0.1.19](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.1.18...dev-alternative-config-v0.1.19) (2024-10-29)
 
 
