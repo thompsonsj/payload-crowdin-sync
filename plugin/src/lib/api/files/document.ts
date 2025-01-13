@@ -255,7 +255,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     collection: CollectionConfig | GlobalConfig;
   }) {
     // brittle check for Lexical value - improve this detection. Type check? Anything from Payload to indicate the type?
-    let html, blockContent, blockConfig: BlockField | undefined
+    let blockContent, blockConfig: BlockField | undefined
     const isLexical = Object.prototype.hasOwnProperty.call(value, "root")
     
     if (isLexical) {
@@ -268,7 +268,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       const editorConfig = getLexicalEditorConfig(field)
 
       if (editorConfig) {
-        html = await convertLexicalToHtml(value, editorConfig)
+        const html = await convertLexicalToHtml(value, editorConfig)
         // no need to detect change - this has already been done on the field's JSON object
         blockContent = value && extractLexicalBlockContent(value.root)
         blockConfig = editorConfig && getLexicalBlockFields(editorConfig)
@@ -281,21 +281,30 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
             req: this.req,
           })
         }
+        await this.createOrUpdateFile({
+          name: name,
+          fileData: html,
+          fileType: "html",
+          ...(!isEmpty(blockContent) && {
+            sourceBlocks: blockContent
+          }),
+        });
       } else {
-        html = "<span>lexical configuration not found</span>"
+        const html = "<span>lexical configuration not found</span>"
+        await this.createOrUpdateFile({
+          name: name,
+          fileData: html,
+          fileType: "html",
+        });
       }
     } else {
-      html = convertSlateToHtml(value, this.pluginOptions.slateToHtmlConfig)
+      const html = convertSlateToHtml(value, this.pluginOptions.slateToHtmlConfig)
+      await this.createOrUpdateFile({
+        name: name,
+        fileData: html,
+        fileType: "html",
+      });
     }
-
-    await this.createOrUpdateFile({
-      name: name,
-      fileData: html,
-      fileType: "html",
-      ...(!isEmpty(blockContent) && {
-        sourceBlocks: blockContent
-      }),
-    });
   }
 
   async createLexicalBlocks({
