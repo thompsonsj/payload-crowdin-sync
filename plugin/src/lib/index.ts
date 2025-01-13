@@ -11,7 +11,7 @@ import {
   getLexicalFieldArticleDirectory,
 } from "./api/helpers"
 // translations api
-import { payloadCrowdinSyncTranslationsApi } from "./api/payload-crowdin-sync/translations";
+import { payloadCrowdinSyncTranslationsApi } from "./api/translations";
 import { getLocalizedFields } from "./utilities";
 import {
   extractLexicalBlockContent,

@@ -4,7 +4,7 @@ import {
   Translations,
 } from "@crowdin/crowdin-api-client";
 import { Payload } from "payload";
-import { CrowdinHtmlObject, PluginOptions } from "../../types";
+import { CrowdinHtmlObject, PluginOptions } from "../types";
 import deepEqual from "deep-equal";
 import type {
   BlocksField as BlockField,
@@ -22,16 +22,16 @@ import {
   buildPayloadUpdateObject,
   getLocalizedRequiredFields,
   findField,
-} from "../../utilities";
+} from "../utilities";
 import {
   convertHtmlToLexical,
   convertHtmlToSlate
-} from '../../utilities/richTextConversion'
+} from '../utilities/richTextConversion'
 
-import { Config, CrowdinFile } from "../../payload-types";
-import { getCollectionConfig, getFile, getFileByDocumentID, getFiles, getFilesByDocumentID, getLexicalFieldArticleDirectory } from "../helpers";
-import { getLexicalBlockFields, getLexicalEditorConfig } from "../../utilities/lexical";
-import { getRelationshipId } from "../../utilities/payload";
+import { Config, CrowdinFile } from "../payload-types";
+import { getCollectionConfig, getFile, getFileByDocumentID, getFiles, getFilesByDocumentID, getLexicalFieldArticleDirectory } from "./helpers";
+import { getLexicalBlockFields, getLexicalEditorConfig } from "../utilities/lexical";
+import { getRelationshipId } from "../utilities/payload";
 import { merge } from "es-toolkit";
 import { isEmpty } from 'es-toolkit/compat';
 
@@ -533,7 +533,7 @@ export class payloadCrowdinSyncTranslationsApi {
     locale: string,
     crowdinArticleDirectoryId: string,
   }) {
-    // link with plugin/src/lib/api/payload-crowdin-sync/files/document.ts - store as variable?
+    // link with plugin/src/lib/api/files/document.ts - store as variable?
     const fieldName = `blocks`
     // find a way to `getTranslation` or getPayloadTranslation` for the subfolder.
     // add ability to pass `fields` and `crowdinArticleDirectory` to `getTranslation`. That will do it.
