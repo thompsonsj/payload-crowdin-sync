@@ -1,6 +1,6 @@
 import { Payload } from "payload";
 import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from "../payload-types";
-import { payloadCrowdinSyncTranslationsApi } from "./payload-crowdin-sync/translations";
+import { payloadCrowdinSyncTranslationsApi } from "./translations";
 import { PluginOptions, isCollectionOrGlobalConfigObject, isCollectionOrGlobalConfigSlug, isCrowdinArticleDirectory } from "../types";
 import type { CollectionConfig, GlobalConfig, PayloadRequest, SanitizedCollectionConfig, SanitizedGlobalConfig } from "payload";
 

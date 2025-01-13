@@ -17,7 +17,7 @@ import {
 import deepEqual from "deep-equal";
 import { getLocalizedFields } from "../../utilities";
 import { isCrowdinActive } from "../../api/helpers";
-import { filesApiByDocument } from "../../api/payload-crowdin-sync/files/by-document-copy";
+import { filesApiByDocument } from "../../api/files/by-document-copy";
 
 /**
  * Update Crowdin collections and make updates in Crowdin

@@ -1,6 +1,6 @@
 import type { Endpoint } from "payload";
 import { PluginOptions } from "../../types";
-import { payloadCrowdinSyncTranslationsApi } from "../../api/payload-crowdin-sync/translations";
+import { payloadCrowdinSyncTranslationsApi } from "../../api/translations";
 import { getLocalizedFields } from "../../utilities";
 
 import { CrowdinCollectionDirectory } from "../../payload-types";
