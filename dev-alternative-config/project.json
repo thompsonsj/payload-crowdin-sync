@@ -1,0 +1,32 @@
+{
+  "name": "dev-alternative-config",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "dev-alternative-config/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/dev-alternative-config",
+        "main": "dev-alternative-config/src/index.ts",
+        "tsConfig": "dev-alternative-config/tsconfig.lib.json",
+        "assets": ["dev-alternative-config/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "dev-alternative-config/src/tests/jest.config.js",
+        "forceExit": true,
+        "detectOpenHandles": true
+      }
+    }
+  },
+  "tags": []
+}
