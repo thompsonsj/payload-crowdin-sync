@@ -111,6 +111,21 @@ export const lexicalEditorWithBlocks: RichTextField = {
                 relationTo: "media",
               }
             ],
+          },
+          {
+            slug: "cookieTable",
+            fields: [
+              {
+                name: "cookieCategoryId",
+                type: "select",
+                options: [
+                  'strictlyNecessary',
+                  'functional',
+                  'performance',
+                  'tracking',
+                ]
+              }
+            ],
           }
         ],
       })
