@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.7](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.12.6...source-v0.12.7) (2025-01-13)
+
+
+### Bug Fixes
+
+* **document:** reorganise createOrUpdateHtmlFile ([#246](https://github.com/thompsonsj/payload-crowdin-sync/issues/246)) ([b9c08ca](https://github.com/thompsonsj/payload-crowdin-sync/commit/b9c08ca4b9ad357c3659ff7d1c27823cb387ab19))
+
 ## [0.12.6](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.12.5...source-v0.12.6) (2025-01-13)
 
 
