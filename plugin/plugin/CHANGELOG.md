@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.31.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.31.4...payload-crowdin-sync-v0.31.5) (2025-01-13)
+
+
+### Bug Fixes
+
+* **document:** verbose environment variable ([#245](https://github.com/thompsonsj/payload-crowdin-sync/issues/245)) ([1168fb4](https://github.com/thompsonsj/payload-crowdin-sync/commit/1168fb427a8461ed39a29ba6067596ccccf21754))
+
 ## [0.31.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.31.3...payload-crowdin-sync-v0.31.4) (2025-01-11)
 
 
