@@ -945,7 +945,6 @@ describe('Lexical editor with multiple blocks', () => {
     `);
   });
 
-  /**
   it('updates the Payload document with a translation from Crowdin', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -1321,6 +1320,8 @@ describe('Lexical editor with multiple blocks', () => {
                       "direction": "ltr",
                       "format": "",
                       "indent": 0,
+                      "textFormat": 0,
+                      "textStyle": "",
                       "type": "paragraph",
                       "version": 1,
                     },
@@ -1360,6 +1361,8 @@ describe('Lexical editor with multiple blocks', () => {
                       "direction": "ltr",
                       "format": "",
                       "indent": 0,
+                      "textFormat": 0,
+                      "textStyle": "",
                       "type": "paragraph",
                       "version": 1,
                     },
@@ -1472,6 +1475,8 @@ describe('Lexical editor with multiple blocks', () => {
                                 "direction": "ltr",
                                 "format": "",
                                 "indent": 0,
+                                "textFormat": 0,
+                                "textStyle": "",
                                 "type": "paragraph",
                                 "version": 1,
                               },
@@ -1509,5 +1514,4 @@ describe('Lexical editor with multiple blocks', () => {
       ]
     );
   });
-   */
 });
