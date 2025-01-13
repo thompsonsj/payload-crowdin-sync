@@ -122,6 +122,15 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     fileType,
     sourceBlocks,
   }: {crowdinFile: CrowdinFile} & IupdateOrCreateFile) {
+    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+      console.log('updateFile', {
+        crowdinFile,
+        name,
+        fileData,
+        fileType,
+        sourceBlocks,
+      })
+    }
     // Update file on Crowdin
     const updatedCrowdinFile = await this.crowdinUpdateFile({
       fileId: crowdinFile.originalId as number,
@@ -152,6 +161,14 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     fileType,
     sourceBlocks,
   }: IupdateOrCreateFile) {
+    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+      console.log('createFile', {
+        name,
+        fileData,
+        fileType,
+        sourceBlocks,
+      })
+    }
     // Create file on Crowdin
     const originalId = this.articleDirectory.originalId
     if (originalId) {
@@ -195,6 +212,11 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
   }
 
   async deleteFile(crowdinFile: CrowdinFile) {
+    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+      console.log('deleteFile', {
+        crowdinFile,
+      })
+    }
     await this.sourceFilesApi.deleteFile(
       this.projectId,
       crowdinFile.originalId as number
