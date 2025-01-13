@@ -9,8 +9,10 @@ import deepEqual from "deep-equal";
 import type {
   BlocksField as BlockField,
   CollectionConfig,
+  CollectionSlug,
   Field,
   GlobalConfig,
+  GlobalSlug,
   PayloadRequest,
   RichTextField,
 } from "payload";
@@ -124,13 +126,13 @@ export class payloadCrowdinSyncTranslationsApi {
     let doc;
     if (global) {
       doc = await this.payload.findGlobal({
-        slug: collection as keyof Config["globals"],
+        slug: collection as GlobalSlug,
         locale: this.sourceLocale,
         req: this.req,
       });
     } else {
       doc = await this.payload.findByID({
-        collection: collection as keyof Config["collections"],
+        collection: collection as CollectionSlug,
         id: documentId,
         locale: this.sourceLocale,
         req: this.req,

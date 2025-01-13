@@ -77,6 +77,22 @@ describe("Translations", () => {
         .reply(200, mockClient.buildProjectFileTranslation({
           url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=de`
         }))
+        // /api/v2/projects/323731/translations/builds/344/download
+        // https://api.crowdin.com/api/v2/projects/323731/translations/builds/344/download?targetLanguageId=de
+        //  Not all nock interceptors were used: ["GET https://api.crowdin.com:443/api/v2/projects/323731/translations/builds/344/download"]
+        // fixed by using nock@beta that introduces experimental support for fetch (used in getFileDataFromUrl in our translations API)
+        // example nock response from fetch:
+        // Response {
+        //  status: 200,
+        //  statusText: 'OK',
+        //  headers: Headers { 'Content-Type': 'application/json' },
+        //  body: ReadableStream { locked: false, state: 'readable', supportsBYOB: false },
+        //  bodyUsed: false,
+        //  ok: true,
+        //  redirected: false,
+        //  type: 'default',
+        //  url: 'https://api.crowdin.com/api/v2/projects/323731/translations/builds/344/download?targetLanguageId=de'
+        //}
         .get(
           `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
         )
@@ -86,7 +102,7 @@ describe("Translations", () => {
         .reply(200, {
           title: "Testbeitrag",
         })
-
+        
       const post = await payload.create({
         collection: "localized-posts",
         data: { title: "Test post" },
@@ -1101,12 +1117,6 @@ describe("Translations", () => {
         collection: slug,
         data,
       });
-      /**
-      const result = await payload.findByID({
-        collection: slug,
-        id: `${post.id}`,
-      });
-      */
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
         payload

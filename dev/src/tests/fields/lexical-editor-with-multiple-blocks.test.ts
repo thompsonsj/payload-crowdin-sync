@@ -800,7 +800,6 @@ describe('Lexical editor with multiple blocks', () => {
     )
   })
 
-  /**
   it('updates a Payload article with a rich text field that uses the Lexical editor with multiple blocks with a translation received from Crowdin', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -815,7 +814,7 @@ describe('Lexical editor with multiple blocks', () => {
         200,
         mockClient.createFile({
           fileId: 56641,
-        })
+        }),
       )
       // file 2 creation
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
@@ -823,7 +822,7 @@ describe('Lexical editor with multiple blocks', () => {
         200,
         mockClient.createFile({
           fileId: 56642,
-        })
+        }),
       )
       // file 3 creation
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
@@ -831,7 +830,7 @@ describe('Lexical editor with multiple blocks', () => {
         200,
         mockClient.createFile({
           fileId: 56643,
-        })
+        }),
       )
       // file 4 creation
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
@@ -839,82 +838,55 @@ describe('Lexical editor with multiple blocks', () => {
         200,
         mockClient.createFile({
           fileId: 56644,
-        })
+        }),
       )
       // de - file 1 get translation
-      .post(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/files/${56641}`,
-        {
-          targetLanguageId: 'de',
-        }
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${56641}`, {
+        targetLanguageId: 'de',
+      })
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
           url: `https://api.crowdin.com/api/v2/projects/${
             pluginOptions.projectId
           }/translations/builds/${56641}/download?targetLanguageId=de`,
-        })
+        }),
       )
-      .get(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/${56641}/download`
-      )
+      .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56641}/download`)
       .query({
         targetLanguageId: 'de',
       })
       .reply(200, {})
       // de - file 4 get translation
-      .post(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/files/${56644}`,
-        {
-          targetLanguageId: 'de',
-        }
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${56644}`, {
+        targetLanguageId: 'de',
+      })
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
           url: `https://api.crowdin.com/api/v2/projects/${
             pluginOptions.projectId
           }/translations/builds/${56644}/download?targetLanguageId=de`,
-        })
+        }),
       )
-      .get(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/${56644}/download`
-      )
+      .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56644}/download`)
       .query({
         targetLanguageId: 'de',
       })
       .reply(200, {})
       // de - file 2 get translation
-      .post(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/files/${56642}`,
-        {
-          targetLanguageId: 'de',
-        }
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${56642}`, {
+        targetLanguageId: 'de',
+      })
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
           url: `https://api.crowdin.com/api/v2/projects/${
             pluginOptions.projectId
           }/translations/builds/${56642}/download?targetLanguageId=de`,
-        })
+        }),
       )
-      .get(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/${56642}/download`
-      )
+      .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56642}/download`)
       .query({
         targetLanguageId: 'de',
       })
@@ -942,82 +914,55 @@ describe('Lexical editor with multiple blocks', () => {
         },
       })
       // de - file 3 get translation
-      .post(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/files/${56643}`,
-        {
-          targetLanguageId: 'de',
-        }
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${56643}`, {
+        targetLanguageId: 'de',
+      })
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
           url: `https://api.crowdin.com/api/v2/projects/${
             pluginOptions.projectId
           }/translations/builds/${56643}/download?targetLanguageId=de`,
-        })
+        }),
       )
-      .get(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/${56643}/download`
-      )
+      .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56643}/download`)
       .query({
         targetLanguageId: 'de',
       })
       .reply(
         200,
-        '<p>Das Plugin analysiert Ihre Blockkonfiguration für den Lexical-Rich-Text-Editor. Es extrahiert alle Blockwerte aus dem Rich-Text-Feld und behandelt diese Konfigurations-/Datenkombination dann als reguläres „Blocks“-Feld.</p<p>>Im HTML werden Markierungen platziert und dieser Inhalt wird bei der Übersetzung an der richtigen Stelle wiederhergestellt.</p>'
+        '<p>Das Plugin analysiert Ihre Blockkonfiguration für den Lexical-Rich-Text-Editor. Es extrahiert alle Blockwerte aus dem Rich-Text-Feld und behandelt diese Konfigurations-/Datenkombination dann als reguläres „Blocks“-Feld.</p<p>>Im HTML werden Markierungen platziert und dieser Inhalt wird bei der Übersetzung an der richtigen Stelle wiederhergestellt.</p>',
       )
       // fr - file 1 get translation
-      .post(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/files/${56641}`,
-        {
-          targetLanguageId: 'fr',
-        }
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${56641}`, {
+        targetLanguageId: 'fr',
+      })
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
           url: `https://api.crowdin.com/api/v2/projects/${
             pluginOptions.projectId
           }/translations/builds/${56641}/download?targetLanguageId=fr`,
-        })
+        }),
       )
-      .get(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/${56641}/download`
-      )
+      .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56641}/download`)
       .query({
         targetLanguageId: 'fr',
       })
       .reply(200, {})
       // fr - file 2 get translation
-      .post(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/files/${56642}`,
-        {
-          targetLanguageId: 'fr',
-        }
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${56642}`, {
+        targetLanguageId: 'fr',
+      })
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
           url: `https://api.crowdin.com/api/v2/projects/${
             pluginOptions.projectId
           }/translations/builds/${56642}/download?targetLanguageId=fr`,
-        })
+        }),
       )
-      .get(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/${56642}/download`
-      )
+      .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56642}/download`)
       .query({
         targetLanguageId: 'fr',
       })
@@ -1035,8 +980,7 @@ describe('Lexical editor with multiple blocks', () => {
             highlight: {
               heading: {
                 title: 'Les blocs sont extraits dans leurs propres champs',
-                preTitle:
-                  "Comment le plugin gère les blocs dans l'éditeur lexical",
+                preTitle: "Comment le plugin gère les blocs dans l'éditeur lexical",
               },
             },
           },
@@ -1049,65 +993,47 @@ describe('Lexical editor with multiple blocks', () => {
       })
       // fr - file 3 get translation
 
-      .post(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/files/${56643}`,
-        {
-          targetLanguageId: 'fr',
-        }
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${56643}`, {
+        targetLanguageId: 'fr',
+      })
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
           url: `https://api.crowdin.com/api/v2/projects/${
             pluginOptions.projectId
           }/translations/builds/${56643}/download?targetLanguageId=fr`,
-        })
+        }),
       )
-      .get(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/${56643}/download`
-      )
+      .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56643}/download`)
       .query({
         targetLanguageId: 'fr',
       })
       .reply(
         200,
-        "<p>Le plugin analyse la configuration de votre bloc pour l'éditeur de texte enrichi lexical. Il extrait toutes les valeurs de bloc du champ de texte enrichi, puis traite cette combinaison configuration/données comme un champ « blocs » normal.</p<p>>Les marqueurs sont placés dans le code HTML et ce contenu est restauré au bon endroit lors de la traduction.</p>"
+        "<p>Le plugin analyse la configuration de votre bloc pour l'éditeur de texte enrichi lexical. Il extrait toutes les valeurs de bloc du champ de texte enrichi, puis traite cette combinaison configuration/données comme un champ « blocs » normal.</p<p>>Les marqueurs sont placés dans le code HTML et ce contenu est restauré au bon endroit lors de la traduction.</p>",
       )
 
       // fr - file 4 get translation
-      .post(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/files/${56644}`,
-        {
-          targetLanguageId: 'fr',
-        }
-      )
+      .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${56644}`, {
+        targetLanguageId: 'fr',
+      })
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
           url: `https://api.crowdin.com/api/v2/projects/${
             pluginOptions.projectId
           }/translations/builds/${56644}/download?targetLanguageId=fr`,
-        })
+        }),
       )
-      .get(
-        `/api/v2/projects/${
-          pluginOptions.projectId
-        }/translations/builds/${56644}/download`
-      )
+      .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56644}/download`)
       .query({
         targetLanguageId: 'fr',
       })
       .reply(
         200,
         `<p>Exemple de contenu pour un champ de texte enrichi lexical avec plusieurs blocs.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>Une liste à puces entre certains blocs composée de:</p><ul class="bullet"><li value=1>un élément de liste à puces ; et</li><li value=2>
-      un autre!</li></ul><span data-block-id=65d67d8191c92e447e7472f8 data-block-type=highlight></span><span data-block-id=65d67e2291c92e447e7472f9 data-block-type=imageText></span><ul class="bullet"><li value=1></li></ul>`
-      );
+      un autre!</li></ul><span data-block-id=65d67d8191c92e447e7472f8 data-block-type=highlight></span><span data-block-id=65d67e2291c92e447e7472f9 data-block-type=imageText></span><ul class="bullet"><li value=1></li></ul>`,
+      )
 
     const policy = await payload.create({
       collection: 'policies',
@@ -1115,23 +1041,23 @@ describe('Lexical editor with multiple blocks', () => {
         title: 'Test policy',
         content: fixture,
       },
-    });
-    const crowdinFiles = await getFilesByDocumentID({documentId: `${policy.id}`, payload});
+    })
+    const crowdinFiles = await getFilesByDocumentID({ documentId: `${policy.id}`, payload })
     const contentCrowdinFiles = await getFilesByDocumentID({
       documentId: `${pluginOptions.lexicalBlockFolderPrefix}content`,
       payload,
-      parent: policy['crowdinArticleDirectory'] as CrowdinArticleDirectory
-    });
+      parent: policy['crowdinArticleDirectory'] as CrowdinArticleDirectory,
+    })
 
     // check file ids are always mapped in the same way
     const fileIds = crowdinFiles.map((file) => ({
       fileId: file.originalId,
       field: file.field,
-    }));
+    }))
     const contentFileIds = contentCrowdinFiles.map((file) => ({
       fileId: file.originalId,
       field: file.field,
-    }));
+    }))
     expect(fileIds).toEqual([
       {
         field: 'content',
@@ -1141,7 +1067,7 @@ describe('Lexical editor with multiple blocks', () => {
         field: 'fields',
         fileId: 56641,
       },
-    ]);
+    ])
     expect(contentFileIds).toEqual([
       {
         field: `blocks.65d67d8191c92e447e7472f8.highlight.content`,
@@ -1151,22 +1077,19 @@ describe('Lexical editor with multiple blocks', () => {
         field: 'blocks',
         fileId: 56642,
       },
-    ]);
-    const translationsApi = new payloadCrowdinSyncTranslationsApi(
-      pluginOptions,
-      payload
-    );
+    ])
+    const translationsApi = new payloadCrowdinSyncTranslationsApi(pluginOptions, payload)
     await translationsApi.updateTranslation({
       documentId: `${policy.id}`,
       collection: 'policies',
       dryRun: false,
-    });
+    })
     // retrieve translated post from Payload
     const result = await payload.findByID({
       collection: 'policies',
       id: `${policy.id}`,
       locale: 'fr_FR',
-    });
+    })
     expect(result['content']).toMatchInlineSnapshot(`
       {
         "root": {
@@ -1186,6 +1109,8 @@ describe('Lexical editor with multiple blocks', () => {
               "direction": "ltr",
               "format": "",
               "indent": 0,
+              "textFormat": 0,
+              "textStyle": "",
               "type": "paragraph",
               "version": 1,
             },
@@ -1218,6 +1143,8 @@ describe('Lexical editor with multiple blocks', () => {
               "direction": "ltr",
               "format": "",
               "indent": 0,
+              "textFormat": 0,
+              "textStyle": "",
               "type": "paragraph",
               "version": 1,
             },
@@ -1293,6 +1220,8 @@ describe('Lexical editor with multiple blocks', () => {
                         "direction": "ltr",
                         "format": "",
                         "indent": 0,
+                        "textFormat": 0,
+                        "textStyle": "",
                         "type": "paragraph",
                         "version": 1,
                       },
@@ -1364,7 +1293,6 @@ describe('Lexical editor with multiple blocks', () => {
           "version": 1,
         },
       }
-    `);
-  });
-  */
+    `)
+  })
 })
