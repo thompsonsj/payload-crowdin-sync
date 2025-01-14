@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.12.8...source-v0.13.0) (2025-01-14)
+
+
+### Features
+
+* **tasks:** option to sync translations as jobs ([#251](https://github.com/thompsonsj/payload-crowdin-sync/issues/251)) ([b962ffe](https://github.com/thompsonsj/payload-crowdin-sync/commit/b962ffee2c2e4389e9cc7016ce4785d2d4a09f20))
+
 ## [0.12.8](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.12.7...source-v0.12.8) (2025-01-14)
 
 
