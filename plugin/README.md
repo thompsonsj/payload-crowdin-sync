@@ -302,6 +302,9 @@ When in a locale other than the source locale:
 
 <img width="766" alt="Screenshot 2024-02-06 at 22 08 48" src="https://github.com/thompsonsj/payload-crowdin-sync/assets/44806974/2aa9c493-7792-422f-bf8d-a91c23893682">
 
+Set a `PAYLOAD_CROWDIN_SYNC_USE_JOBS` environment variable to a non-empty value (e.g. `true`) to add translation sync operations as jobs. This is a useful way to prevent hooks from running slowly. You'll need to execute the job queue seperately. See [
+Queues | Docs | Payload CMS](https://payloadcms.com/docs/jobs-queue/queues).
+
 #### Endpoints
 
 API endpoints are added to the `crowdin-article-directories` collection.

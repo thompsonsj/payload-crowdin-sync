@@ -69,16 +69,29 @@ export const pluginCollectionOrGlobalFields = ({
         }],
         afterChange: [async ({ context, req }) => {
           // type check context, if valid we can safely assume translation updates are desired
-          if (typeof context['articleDirectoryId'] === 'string' && typeof context['draft'] === 'boolean' && Array.isArray(context['excludeLocales']) && typeof context["syncTranslations"] === 'boolean')
-            await updatePayloadTranslation({
-              articleDirectoryId: context['articleDirectoryId'],
-              pluginOptions,
-              payload: req.payload,
-              draft: context['draft'],
-              excludeLocales: context['excludeLocales'],
-              dryRun: false,
-              req,
-            })
+          if (typeof context['articleDirectoryId'] === 'string' && typeof context['draft'] === 'boolean' && Array.isArray(context['excludeLocales']) && typeof context["syncTranslations"] === 'boolean') {
+            if (process.env.PAYLOAD_CROWDIN_SYNC_USE_JOBS) {
+              await req.payload.jobs.queue({
+                task: 'crowdinSyncTranslations',
+                input: {
+                  articleDirectoryId: context['articleDirectoryId'],
+                  draft: context['draft'],
+                  excludeLocales: context['excludeLocales'],
+                  dryRun: false,
+                },
+              })
+            } else {
+              await updatePayloadTranslation({
+                articleDirectoryId: context['articleDirectoryId'],
+                pluginOptions,
+                payload: req.payload,
+                draft: context['draft'],
+                excludeLocales: context['excludeLocales'],
+                dryRun: false,
+                req,
+              })
+            }
+          }
         }],
       },
     },
@@ -111,15 +124,35 @@ export const pluginCollectionOrGlobalFields = ({
         }],
         afterChange: [async ({ context, req }) => {
           // type check context, if valid we can safely assume translation updates are desired
-          if (typeof context['articleDirectoryId'] === 'string' && typeof context['draft'] === 'boolean' && typeof context["syncAllTranslations"] === 'boolean')
-            await updatePayloadTranslation({
-              articleDirectoryId: context['articleDirectoryId'],
-              pluginOptions,
-              payload: req.payload,
-              draft: context['draft'],
-              dryRun: false,
-              req,
-            })
+          if (typeof context['articleDirectoryId'] === 'string' && typeof context['draft'] === 'boolean' && typeof context["syncAllTranslations"] === 'boolean') {
+            if (process.env.PAYLOAD_CROWDIN_SYNC_USE_JOBS) {
+              // create seperate tasks
+              for (const locale of Object.keys(pluginOptions.localeMap)) {
+                const excludeLocales = getOtherLocales({
+                  locale,
+                  localeMap: pluginOptions.localeMap
+                })
+                await req.payload.jobs.queue({
+                  task: 'crowdinSyncTranslations',
+                  input: {
+                    articleDirectoryId: context['articleDirectoryId'],
+                    excludeLocales,
+                    draft: context['draft'],
+                    dryRun: false,
+                  },
+                })
+              }
+            } else {
+              await updatePayloadTranslation({
+                articleDirectoryId: context['articleDirectoryId'],
+                pluginOptions,
+                payload: req.payload,
+                draft: context['draft'],
+                dryRun: false,
+                req,
+              })
+            }
+          }
         }],
       },
     },
