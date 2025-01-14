@@ -14,6 +14,7 @@ import { getReviewTranslationEndpoint } from "./endpoints/globals/reviewTranslat
 import { getReviewFieldsEndpoint } from "./endpoints/globals/reviewFields";
 import Joi from "joi";
 import { crowdinArticleDirectoryFields } from "./fields/crowdinArticleDirectoryFields";
+import { syncTranslations } from "./tasks/sync-translation";
 
 /**
  * This plugin extends all collections that contain localized fields
@@ -119,6 +120,13 @@ export const crowdinSync =
       ...config,
       admin: {
         ...(config.admin || {}),
+      },
+      jobs: {
+        ...config.jobs,
+        tasks: [
+          ...config.jobs?.tasks,
+          syncTranslations({ pluginOptions }),
+        ]
       },
       collections: [
         ...(config.collections || [])

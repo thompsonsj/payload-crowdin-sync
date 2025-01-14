@@ -328,6 +328,9 @@ export class payloadCrowdinSyncTranslationsApi {
         fieldName: "fields",
         locale: locale,
       })) || {};
+    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+      console.log('getLatestDocumentTranslation: crowdinJsonObject', crowdinJsonObject)
+    }
     // add html fields
     const localizedHtmlFields = await this.getHtmlFieldSlugs(
       global ? collectionConfig.slug : doc.id
@@ -342,7 +345,9 @@ export class payloadCrowdinSyncTranslationsApi {
         collection: collectionConfig,
       });
     }
-
+    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+      console.log('getLatestDocumentTranslation: crowdinHtmlObject', JSON.stringify(crowdinHtmlObject))
+    }
     docTranslations = buildPayloadUpdateObject({
       crowdinJsonObject,
       crowdinHtmlObject,
