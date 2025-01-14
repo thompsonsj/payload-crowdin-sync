@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.8](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.12.7...source-v0.12.8) (2025-01-14)
+
+
+### Bug Fixes
+
+* **package.json:** add lexical as peerDependency ([#249](https://github.com/thompsonsj/payload-crowdin-sync/issues/249)) ([3846483](https://github.com/thompsonsj/payload-crowdin-sync/commit/3846483c0e0eda8bd9d5d33e7baef184758f2608))
+
 ## [0.12.7](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.12.6...source-v0.12.7) (2025-01-13)
 
 
