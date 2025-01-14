@@ -124,7 +124,7 @@ export const crowdinSync =
       jobs: {
         ...config.jobs,
         tasks: [
-          ...config.jobs?.tasks,
+          ...config.jobs?.tasks || [],
           syncTranslations({ pluginOptions }),
         ]
       },
