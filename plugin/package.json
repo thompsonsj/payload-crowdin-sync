@@ -24,7 +24,8 @@
     "@payloadcms/richtext-lexical": "^3",
     "@payloadcms/richtext-slate": "^3",
     "@payloadcms/ui": "^3",
-    "react": "^19.0.0"
+    "react": "^19.0.0",
+    "lexical": "0.x"
   },
   "type": "module"
 }
