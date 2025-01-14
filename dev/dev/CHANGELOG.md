@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.30.7](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.30.6...dev-v0.30.7) (2025-01-14)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.31.6 to 0.31.7
+
 ## [0.30.6](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.30.5...dev-v0.30.6) (2025-01-13)
 
 
