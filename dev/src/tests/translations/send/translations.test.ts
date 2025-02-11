@@ -918,13 +918,13 @@ describe("Translations", () => {
       // we need the ids created by Payload to update the blocks
       const blockIds = (post["layout"] instanceof Array ? post["layout"].map((block) => block.id) : []) as string[];
       const responseDeOne =
-        "<p>Rich-Text-Inhalt im Blocklayout bei Index 0.</p>";
+        "<p>Rich-Text-Inhalt im Blocklayout bei Index 0 oder 1.</p>";
       const responseDeTwo =
-        "<p>Rich-Text-Inhalt im Blocklayout bei Index 1.</p>";
+        "<p>Rich-Text-Inhalt im Blocklayout bei Index 0 oder 1.</p>";
       const responseFrOne =
-        "<p>Contenu de texte enrichi dans la disposition des blocs à l'index 0.</p>";
+        "<p>Contenu de texte enrichi dans la disposition des blocs à l'index 0 oú 1.</p>";
       const responseFrTwo =
-        "<p>Contenu de texte enrichi dans la disposition des blocs à l'index 1.</p>";
+        "<p>Contenu de texte enrichi dans la disposition des blocs à l'index 0 oú 1.</p>";
       const translationsApi = new payloadCrowdinSyncTranslationsApi(
         pluginOptions,
         payload
@@ -1012,7 +1012,7 @@ describe("Translations", () => {
             {
               children: [
                 {
-                  text: "Rich-Text-Inhalt im Blocklayout bei Index 0.",
+                  text: "Rich-Text-Inhalt im Blocklayout bei Index 0 oder 1.",
                 },
               ],
               type: "p",
@@ -1026,7 +1026,7 @@ describe("Translations", () => {
             {
               children: [
                 {
-                  text: "Rich-Text-Inhalt im Blocklayout bei Index 1.",
+                  text: "Rich-Text-Inhalt im Blocklayout bei Index 0 oder 1.",
                 },
               ],
               type: "p",
@@ -1048,7 +1048,7 @@ describe("Translations", () => {
             {
               children: [
                 {
-                  text: "Contenu de texte enrichi dans la disposition des blocs à l'index 0.",
+                  text: "Contenu de texte enrichi dans la disposition des blocs à l'index 0 oú 1.",
                 },
               ],
               type: "p",
@@ -1062,7 +1062,7 @@ describe("Translations", () => {
             {
               children: [
                 {
-                  text: "Contenu de texte enrichi dans la disposition des blocs à l'index 1.",
+                  text: "Contenu de texte enrichi dans la disposition des blocs à l'index 0 oú 1.",
                 },
               ],
               type: "p",
