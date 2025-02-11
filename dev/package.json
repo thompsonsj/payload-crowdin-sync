@@ -1,6 +1,6 @@
 {
   "name": "@payload-crowdin-sync/dev",
-  "version": "0.30.8",
+  "version": "0.31.0",
   "description": "A blank template to get started with Payload 3.0",
   "license": "MIT",
   "type": "module",
@@ -15,7 +15,7 @@
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {
-    "payload-crowdin-sync": "0.32.0",
+    "payload-crowdin-sync": "0.33.0",
     "tslib": "^2.3.0"
   }
 }
