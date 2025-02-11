@@ -24,6 +24,7 @@ export interface Config {
     'crowdin-files': CrowdinFile;
     'crowdin-collection-directories': CrowdinCollectionDirectory;
     'crowdin-article-directories': CrowdinArticleDirectory;
+    'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -43,6 +44,7 @@ export interface Config {
     'crowdin-files': CrowdinFilesSelect<false> | CrowdinFilesSelect<true>;
     'crowdin-collection-directories': CrowdinCollectionDirectoriesSelect<false> | CrowdinCollectionDirectoriesSelect<true>;
     'crowdin-article-directories': CrowdinArticleDirectoriesSelect<false> | CrowdinArticleDirectoriesSelect<true>;
+    'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -51,11 +53,13 @@ export interface Config {
     defaultIDType: string;
   };
   globals: {
+    home: Home;
     'localized-nav': LocalizedNav;
     nav: Nav;
     statistics: Statistic;
   };
   globalsSelect: {
+    home: HomeSelect<false> | HomeSelect<true>;
     'localized-nav': LocalizedNavSelect<false> | LocalizedNavSelect<true>;
     nav: NavSelect<false> | NavSelect<true>;
     statistics: StatisticsSelect<false> | StatisticsSelect<true>;
@@ -65,7 +69,13 @@ export interface Config {
     collection: 'users';
   };
   jobs: {
-    tasks: unknown;
+    tasks: {
+      crowdinSyncTranslations: TaskCrowdinSyncTranslations;
+      inline: {
+        input: unknown;
+        output: unknown;
+      };
+    };
     workflows: unknown;
   };
 }
@@ -628,6 +638,98 @@ export interface LocalizedPostsWithCondition {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs".
+ */
+export interface PayloadJob {
+  id: string;
+  /**
+   * Input data provided to the job
+   */
+  input?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  taskStatus?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  completedAt?: string | null;
+  totalTried?: number | null;
+  /**
+   * If hasError is true this job will not be retried
+   */
+  hasError?: boolean | null;
+  /**
+   * If hasError is true, this is the error that caused it
+   */
+  error?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Task execution log
+   */
+  log?:
+    | {
+        executedAt: string;
+        completedAt: string;
+        taskSlug: 'inline' | 'crowdinSyncTranslations';
+        taskID: string;
+        input?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        output?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        state: 'failed' | 'succeeded';
+        error?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  taskSlug?: ('inline' | 'crowdinSyncTranslations') | null;
+  queue?: string | null;
+  waitUntil?: string | null;
+  processing?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -684,6 +786,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'crowdin-article-directories';
         value: string | CrowdinArticleDirectory;
+      } | null)
+    | ({
+        relationTo: 'payload-jobs';
+        value: string | PayloadJob;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1091,6 +1197,37 @@ export interface CrowdinArticleDirectoriesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs_select".
+ */
+export interface PayloadJobsSelect<T extends boolean = true> {
+  input?: T;
+  taskStatus?: T;
+  completedAt?: T;
+  totalTried?: T;
+  hasError?: T;
+  error?: T;
+  log?:
+    | T
+    | {
+        executedAt?: T;
+        completedAt?: T;
+        taskSlug?: T;
+        taskID?: T;
+        input?: T;
+        output?: T;
+        state?: T;
+        error?: T;
+        id?: T;
+      };
+  taskSlug?: T;
+  queue?: T;
+  waitUntil?: T;
+  processing?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents_select".
  */
 export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
@@ -1120,6 +1257,40 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home".
+ */
+export interface Home {
+  id: string;
+  parentGroup?: {
+    preTitle?: string | null;
+    title?: string | null;
+    subGroupOne?: {
+      title?: string | null;
+      text?: string | null;
+      ctaText?: string | null;
+      image?: (string | null) | Media;
+    };
+    subGroupTwo?: {
+      title?: string | null;
+      text?: string | null;
+      ctaText?: string | null;
+      image?: (string | null) | Media;
+    };
+  };
+  /**
+   * Sync translations for this locale from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
+   */
+  syncTranslations?: boolean | null;
+  /**
+   * Sync all translations from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
+   */
+  syncAllTranslations?: boolean | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  updatedAt?: string | null;
+  createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1188,6 +1359,40 @@ export interface Statistic {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home_select".
+ */
+export interface HomeSelect<T extends boolean = true> {
+  parentGroup?:
+    | T
+    | {
+        preTitle?: T;
+        title?: T;
+        subGroupOne?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              ctaText?: T;
+              image?: T;
+            };
+        subGroupTwo?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              ctaText?: T;
+              image?: T;
+            };
+      };
+  syncTranslations?: T;
+  syncAllTranslations?: T;
+  crowdinArticleDirectory?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "localized-nav_select".
  */
 export interface LocalizedNavSelect<T extends boolean = true> {
@@ -1243,6 +1448,29 @@ export interface StatisticsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskCrowdinSyncTranslations".
+ */
+export interface TaskCrowdinSyncTranslations {
+  input: {
+    articleDirectoryId: string;
+    draft?: boolean | null;
+    excludeLocales?: ('de_DE' | 'fr_FR')[] | null;
+    dryRun?: boolean | null;
+  };
+  output: {
+    result?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

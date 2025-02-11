@@ -30,6 +30,7 @@ import Users from "./../../collections/Users";
 
 import { crowdinSync } from "payload-crowdin-sync";
 import { slateEditor } from '@payloadcms/richtext-slate'
+import { Home } from './../../globals/Home'
 
 const localeMap = {
   de_DE: {
@@ -53,50 +54,56 @@ const config = buildConfig({
   plugins: [
   crowdinSync({
     projectId: parseInt(process.env['CROWDIN_PROJECT_ID'] || ``) || 323731,
-  directoryId: parseInt(process.env['CROWDIN_DIRECTORY_ID'] || ``) || 1169,
-  token: process.env['NODE_ENV'] === 'test' ? `fake-token` : process.env['CROWDIN_TOKEN'] || ``, // CrowdIn API is mocked but we need a token to pass schema validation
-  organization: process.env['CROWDIN_ORGANIZATION'] || ``,
-  localeMap,
-  sourceLocale: "en",
-  tabbedUI: true,
+    directoryId: parseInt(process.env['CROWDIN_DIRECTORY_ID'] || ``) || 1169,
+    token: process.env['NODE_ENV'] === 'test' ? `fake-token` : process.env['CROWDIN_TOKEN'] || ``, // CrowdIn API is mocked but we need a token to pass schema validation
+    organization: process.env['CROWDIN_ORGANIZATION'] || ``,
+    localeMap,
+    sourceLocale: "en",
+    tabbedUI: true,
+    collections: [
+      "categories",
+      'multi-rich-text',
+      'localized-posts',
+      'nested-field-collection',
+      'policies',
+      'posts',
+      {
+        slug: 'localized-posts-with-condition',
+        condition: ({ doc }) => doc.translateWithCrowdin,
+      },
+      'tags',
+      'users',
+    ]
+    }),
+  ],
   collections: [
-    "categories",
-    'multi-rich-text',
-    'localized-posts',
-    'nested-field-collection',
-    'policies',
-    'posts',
-    {
-      slug: 'localized-posts-with-condition',
-      condition: ({ doc }) => doc.translateWithCrowdin,
-    },
-    'tags',
-    'users',
-  ]
-  }),
-],
-collections: [
-  Categories,
-  MultiRichText,
-  LocalizedPosts,
-  Media,
-  NestedFieldCollection,
-  Policies,
-  Posts,
-  LocalizedPostsWithCondition,
-  Tags,
-  Users,
-],
-globals: [
-  LocalizedNav,
-  Nav,
-  Statistics,
-],
-localization: {
-  locales: ["en", ...Object.keys(localeMap)],
-  defaultLocale: "en",
-  fallback: true,
-},
+    Categories,
+    MultiRichText,
+    LocalizedPosts,
+    Media,
+    NestedFieldCollection,
+    Policies,
+    Posts,
+    LocalizedPostsWithCondition,
+    Tags,
+    Users,
+  ],
+  globals: [
+    Home,
+    LocalizedNav,
+    Nav,
+    Statistics,
+  ],
+  localization: {
+    locales: ["en", ...Object.keys(localeMap)],
+    defaultLocale: "en",
+    fallback: true,
+  },
+  /**
+  compatibility: {
+    allowLocalizedWithinLocalized: true,
+  },
+  */
   editor: slateEditor({}),
   secret: process.env['PAYLOAD_SECRET'] || '',
   typescript: {

@@ -5,6 +5,7 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
+import { Home } from "./globals/Home"
 import { LocalizedNav } from "./globals/LocalizedNav";
 import Nav from "./globals/Nav";
 import Statistics from "./globals/Statistics";
@@ -79,6 +80,7 @@ collections: [
   Users,
 ],
 globals: [
+  Home,
   LocalizedNav,
   Nav,
   Statistics,
