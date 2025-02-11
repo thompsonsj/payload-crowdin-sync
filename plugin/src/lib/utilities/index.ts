@@ -115,12 +115,11 @@ export const getLocalizedFields = ({
     // exclude group, array and block fields with no localized fields
     // TODO: find a better way to do this - block, array and group logic is duplicated, and this filter needs to be compatible with field extraction logic later in this function
     .filter((field) => {
-      const localizedParent = hasLocalizedProp(field);
       if (field.type === "group" || field.type === "array") {
         return containsLocalizedFields({
           fields: field.fields,
           type,
-          localizedParent,
+          localizedParent: localizedParent || hasLocalizedProp(field),
           isLocalized,
         });
       }
@@ -129,7 +128,7 @@ export const getLocalizedFields = ({
           containsLocalizedFields({
             fields: block.fields,
             type,
-            localizedParent,
+            localizedParent: localizedParent || hasLocalizedProp(field),
             isLocalized,
           })
         );
@@ -138,14 +137,13 @@ export const getLocalizedFields = ({
     })
     // recursion for group, array and blocks field
     .map((field) => {
-      const localizedParent = hasLocalizedProp(field);
       if (field.type === "group" || field.type === "array") {
         return {
           ...field,
           fields: getLocalizedFields({
             fields: field.fields,
             type,
-            localizedParent,
+            localizedParent: localizedParent || hasLocalizedProp(field),
             isLocalized,
           }),
         };
@@ -157,7 +155,7 @@ export const getLocalizedFields = ({
               containsLocalizedFields({
                 fields: block.fields,
                 type,
-                localizedParent,
+                localizedParent: localizedParent || hasLocalizedProp(field),
                 isLocalized,
               })
             ) {
@@ -166,7 +164,7 @@ export const getLocalizedFields = ({
                 fields: getLocalizedFields({
                   fields: block.fields,
                   type,
-                  localizedParent,
+                  localizedParent: localizedParent || hasLocalizedProp(field),
                   isLocalized,
                 }),
               };

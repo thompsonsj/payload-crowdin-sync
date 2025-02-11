@@ -120,6 +120,16 @@ describe('global: Home', () => {
         {
           "parentGroup": {
             "preTitle": "Parent group preTitle",
+            "subGroupOne": {
+              "ctaText": "SubGroupOne ctaText",
+              "text": "SubGroupOne text",
+              "title": "SubGroupOne title",
+            },
+            "subGroupTwo": {
+              "ctaText": "SubGroupTwo ctaText",
+              "text": "SubGroupTwo text",
+              "title": "SubGroupTwo title",
+            },
             "title": "Parent group title",
           },
         }
