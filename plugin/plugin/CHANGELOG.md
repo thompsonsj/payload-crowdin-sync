@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.34.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.33.0...payload-crowdin-sync-v0.34.0) (2025-03-13)
+
+
+### Features
+
+* **getlocalizedfields:** exclude based on custom prop ([#261](https://github.com/thompsonsj/payload-crowdin-sync/issues/261)) ([6c3263c](https://github.com/thompsonsj/payload-crowdin-sync/commit/6c3263cb8f47432f09be384fd1c1d827c87c829b))
+
+
+### Bug Fixes
+
+* **tsconfig:** add declarationMap for typescript support ([#254](https://github.com/thompsonsj/payload-crowdin-sync/issues/254)) ([26e01e1](https://github.com/thompsonsj/payload-crowdin-sync/commit/26e01e18b3c21e0d1188efa0800672b081c0e5d1))
+
 ## [0.33.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.32.0...payload-crowdin-sync-v0.33.0) (2025-03-13)
 
 
