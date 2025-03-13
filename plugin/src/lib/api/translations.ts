@@ -202,6 +202,7 @@ export class payloadCrowdinSyncTranslationsApi {
               draft,
               data: report[locale].latestTranslations,
               req: this.req,
+              overrideLock: true,
             });
           } catch (error) {
             console.log(
@@ -231,7 +232,7 @@ export class payloadCrowdinSyncTranslationsApi {
     collection: string,
     global: boolean
   ): CollectionConfig | GlobalConfig {
-    
+
     return getCollectionConfig(
       collection,
       global,
