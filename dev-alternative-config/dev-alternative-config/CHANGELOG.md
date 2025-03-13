@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.6](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.2.5...dev-alternative-config-v0.2.6) (2025-03-13)
+
+
+### Bug Fixes
+
+* **translations:** sync all translations infinite loop ([#263](https://github.com/thompsonsj/payload-crowdin-sync/issues/263)) ([e45e859](https://github.com/thompsonsj/payload-crowdin-sync/commit/e45e859cc51ce86cd5c686ace27187a83a0935f2))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.34.0 to 0.34.1
+
 ## [0.2.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.2.4...dev-alternative-config-v0.2.5) (2025-03-13)
 
 
