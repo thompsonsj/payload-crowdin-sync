@@ -1,19 +1,5 @@
 # Changelog
 
-## [0.31.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.30.8...dev-v0.31.0) (2025-02-11)
-
-
-### Features
-
-* **utilities:** support deep nested localized fields ([#257](https://github.com/thompsonsj/payload-crowdin-sync/issues/257)) ([1a6aca2](https://github.com/thompsonsj/payload-crowdin-sync/commit/1a6aca2ea050a28a38fd8e0027493bec209db3c6))
-
-
-### Dependencies
-
-* The following workspace dependencies were updated
-  * dependencies
-    * payload-crowdin-sync bumped from 0.32.0 to 0.33.0
-
 ## [0.30.8](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.30.7...dev-v0.30.8) (2025-01-14)
 
 
