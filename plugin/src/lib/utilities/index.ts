@@ -279,7 +279,7 @@ export const isLocalizedField = (
 ) =>
   (hasLocalizedProp(field) || addLocalizedProp) &&
   localizedFieldTypes.includes(field.type) &&
-  !excludeBasedOnDescription(field) &&
+  !excludeBasedOnConfig(field) &&
   (field as FieldWithName).name !== "id";
 
 /**
@@ -291,12 +291,16 @@ export const isLocalizedField = (
 export const reLocalizeField = (
   field: Field,
 ) => localizedFieldTypes.includes(field.type) &&
-  !excludeBasedOnDescription(field) &&
+  !excludeBasedOnConfig(field) &&
   (field as FieldWithName).name !== "id";
 
-const excludeBasedOnDescription = (field: Field) => {
+const excludeBasedOnConfig = (field: Field) => {
   const description = `${get(field, "admin.description", "")}`;
   if (description.includes("Not sent to Crowdin. Localize in the CMS.")) {
+    return true;
+  }
+  const custom = get(field, "custom.crowdinSync.disable", false);
+  if (custom) {
     return true;
   }
   return false;
