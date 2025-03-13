@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.15.0...source-v0.15.1) (2025-03-13)
+
+
+### Bug Fixes
+
+* **translations:** sync all translations infinite loop ([#263](https://github.com/thompsonsj/payload-crowdin-sync/issues/263)) ([e45e859](https://github.com/thompsonsj/payload-crowdin-sync/commit/e45e859cc51ce86cd5c686ace27187a83a0935f2))
+
 ## [0.15.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.14.0...source-v0.15.0) (2025-03-13)
 
 
