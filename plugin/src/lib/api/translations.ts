@@ -178,6 +178,10 @@ export class payloadCrowdinSyncTranslationsApi {
                 crowdinArticleDirectory: ((doc as any)["crowdinArticleDirectory"]).id,
               },
               req: this.req,
+              context: {
+                // set a flag to prevent from running again
+                triggerAfterChange: false,
+              },
             });
           } catch (error) {
             console.log(
@@ -204,6 +208,10 @@ export class payloadCrowdinSyncTranslationsApi {
               data: report[locale].latestTranslations,
               req: this.req,
               overrideLock: true,
+              context: {
+                // set a flag to prevent from running again
+                triggerAfterChange: false,
+              },
             });
           } catch (error) {
             console.log(
