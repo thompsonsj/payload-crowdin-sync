@@ -110,6 +110,10 @@ export const pluginCollectionOrGlobalFields = ({
       },
       hooks: {
         beforeChange: [async ({ context, siblingData }) => {
+          // return if flag was previously set
+          if (context.triggerAfterChange === false) {
+            return
+          }
           if (siblingData["syncAllTranslations"] && siblingData["crowdinArticleDirectory"]) {
             // is this a draft?
             const draft = Boolean(siblingData["_status"] && siblingData["_status"] !== 'published')
@@ -123,6 +127,10 @@ export const pluginCollectionOrGlobalFields = ({
           siblingData["syncAllTranslations"] = undefined;
         }],
         afterChange: [async ({ context, req }) => {
+          // return if flag was previously set
+          if (context.triggerAfterChange === false) {
+            return
+          }
           // type check context, if valid we can safely assume translation updates are desired
           if (typeof context['articleDirectoryId'] === 'string' && typeof context['draft'] === 'boolean' && typeof context["syncAllTranslations"] === 'boolean') {
             if (process.env.PAYLOAD_CROWDIN_SYNC_USE_JOBS) {
@@ -143,6 +151,14 @@ export const pluginCollectionOrGlobalFields = ({
                 })
               }
             } else {
+              if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+                console.log('updatePayloadTranslation', {
+                  updated: 'yes',
+                  articleDirectoryId: context['articleDirectoryId'],
+                  draft: context['draft'],
+                  dryRun: false,
+                })
+              }
               await updatePayloadTranslation({
                 articleDirectoryId: context['articleDirectoryId'],
                 pluginOptions,

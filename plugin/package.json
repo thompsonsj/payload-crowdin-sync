@@ -18,6 +18,7 @@
   "dependencies": {
     "tslib": "^2.3.0"
   },
+  "main": "./src/index.ts", 
   "peerDependencies": {
     "payload": "^3",
     "@payloadcms/db-mongodb": "^3",
@@ -27,5 +28,11 @@
     "react": "^19.0.0",
     "lexical": "0.x"
   },
-  "type": "module"
+  "type": "module",
+  "engines": {
+    "node": "^18.20.2 || >=20.9.0"
+  },
+  "volta": {
+    "node": "23.5.0"
+  }
 }
