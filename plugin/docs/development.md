@@ -22,7 +22,8 @@
 
 ## Building
 
-Run `nx build plugin` to build the library.
+- Run `nx build plugin` to build the plugin to `dist/plugin`.
+- Run `nx build project --watch` to build the plugin when files change.
 
 ## Tests
 

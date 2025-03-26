@@ -40,6 +40,33 @@ describe('fn: getLocalizedFields', () => {
       ]);
     });
 
+    it('excludes a localized text field based on the custom field property', () => {
+      const fields: Field[] = [
+        {
+          name: 'textLocalizedField',
+          type: 'text',
+          localized: true,
+        },
+        {
+          name: 'textLocalizedFieldWithExcludeCustomProperty',
+          type: 'text',
+          localized: true,
+          custom: {
+            crowdinSync: {
+              disable: true,
+            }
+          }
+        },
+      ];
+      expect(getLocalizedFields({ fields })).toEqual([
+        {
+          name: 'textLocalizedField',
+          type: 'text',
+          localized: true,
+        },
+      ]);
+    });
+
     it('includes a richText field', () => {
       const fields: Field[] = [
         {

@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.34.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.34.0...payload-crowdin-sync-v0.34.1) (2025-03-13)
+
+
+### Bug Fixes
+
+* **translations:** sync all translations infinite loop ([#263](https://github.com/thompsonsj/payload-crowdin-sync/issues/263)) ([e45e859](https://github.com/thompsonsj/payload-crowdin-sync/commit/e45e859cc51ce86cd5c686ace27187a83a0935f2))
+
+## [0.34.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.33.0...payload-crowdin-sync-v0.34.0) (2025-03-13)
+
+
+### Features
+
+* **getlocalizedfields:** exclude based on custom prop ([#261](https://github.com/thompsonsj/payload-crowdin-sync/issues/261)) ([6c3263c](https://github.com/thompsonsj/payload-crowdin-sync/commit/6c3263cb8f47432f09be384fd1c1d827c87c829b))
+
+
+### Bug Fixes
+
+* **tsconfig:** add declarationMap for typescript support ([#254](https://github.com/thompsonsj/payload-crowdin-sync/issues/254)) ([26e01e1](https://github.com/thompsonsj/payload-crowdin-sync/commit/26e01e18b3c21e0d1188efa0800672b081c0e5d1))
+
+## [0.33.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.32.0...payload-crowdin-sync-v0.33.0) (2025-03-13)
+
+
+### Features
+
+* **utilities:** support deep nested localized fields ([#257](https://github.com/thompsonsj/payload-crowdin-sync/issues/257)) ([1a6aca2](https://github.com/thompsonsj/payload-crowdin-sync/commit/1a6aca2ea050a28a38fd8e0027493bec209db3c6))
+
+
+### Bug Fixes
+
+* **tsconfig:** add declarationMap for typescript support ([#254](https://github.com/thompsonsj/payload-crowdin-sync/issues/254)) ([26e01e1](https://github.com/thompsonsj/payload-crowdin-sync/commit/26e01e18b3c21e0d1188efa0800672b081c0e5d1))
+
 ## [0.32.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.31.7...payload-crowdin-sync-v0.32.0) (2025-01-14)
 
 

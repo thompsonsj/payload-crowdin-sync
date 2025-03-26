@@ -286,6 +286,32 @@ On save draft or publish, content from [localized fields](https://payloadcms.com
 
 <img width="1000" alt="Screenshot 2024-02-06 at 22 02 38" src="https://github.com/thompsonsj/payload-crowdin-sync/assets/44806974/2c31050d-fee4-4275-bca2-7e4b48743999">
 
+#### Exclude fields
+
+In some cases, you may wish to localize fields but prevent them being synced to Crowdin. e.g. a slug field that autogenerates based on title.
+
+There are two ways to indicate to the plugin that a field should be ignored. In your field config:
+
+- add `{ custom: { crowdinSync: { disable: true } }}` (preferred); or
+- include the string `Not sent to Crowdin. Localize in the CMS.` in `admin.description` (may be removed in a future version).
+
+Example:
+
+```ts
+import type { Field } from 'payload';
+
+const field: Field = {
+  name: 'textLocalizedField',
+  type: 'text',
+  localized: true,
+  custom: {
+    crowdinSync: {
+      disable: true,
+    }
+  }
+}
+```
+
 ### Download translations
 
 To load translations into Payload CMS, use either: 

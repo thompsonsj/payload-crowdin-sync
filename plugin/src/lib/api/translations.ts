@@ -139,11 +139,12 @@ export class payloadCrowdinSyncTranslationsApi {
       });
     }
     const report: { [key: string]: any } = {};
+    let index = 1;
     for (const locale of Object.keys(this.localeMap)) {
-      if (excludeLocales.includes(locale)) {
-        continue;
+      if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+        console.log(`updateTranslation loop ${index++} of ${Object.keys(this.localeMap).length} for ${documentId} in ${collection} for ${locale}`)
       }
-      report[locale] = {};
+      if (!excludeLocales.includes(locale)) {report[locale] = {};
       report[locale].draft = draft,
       report[locale].currentTranslations =
         await this.getCurrentDocumentTranslation({
@@ -217,7 +218,7 @@ export class payloadCrowdinSyncTranslationsApi {
               },
               'error',
               error
-            );
+            );}
           }
         }
       }
