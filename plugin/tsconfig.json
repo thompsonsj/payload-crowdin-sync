@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ESNext", // oder "ES2022", "ES2021", "ES2020"
+    "target": "ESNext",
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
