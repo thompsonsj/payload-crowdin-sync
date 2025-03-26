@@ -151,14 +151,6 @@ export const pluginCollectionOrGlobalFields = ({
                 })
               }
             } else {
-              if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
-                console.log('updatePayloadTranslation', {
-                  updated: 'yes',
-                  articleDirectoryId: context['articleDirectoryId'],
-                  draft: context['draft'],
-                  dryRun: false,
-                })
-              }
               await updatePayloadTranslation({
                 articleDirectoryId: context['articleDirectoryId'],
                 pluginOptions,
