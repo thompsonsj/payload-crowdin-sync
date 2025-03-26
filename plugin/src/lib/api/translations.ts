@@ -144,82 +144,81 @@ export class payloadCrowdinSyncTranslationsApi {
       if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
         console.log(`updateTranslation loop ${index++} of ${Object.keys(this.localeMap).length} for ${documentId} in ${collection} for ${locale}`)
       }
-      if (!excludeLocales.includes(locale)) {
-        report[locale] = {};
-        report[locale].draft = draft,
-        report[locale].currentTranslations =
-          await this.getCurrentDocumentTranslation({
-            doc: doc,
-            collection: collection,
-            locale: locale,
-            global,
-          });
-        report[locale].latestTranslations =
-          await this.getLatestDocumentTranslation({
-            collection: collection,
-            doc: doc,
-            locale: locale,
-            global,
-          });
-        report[locale].changed = !deepEqual(
-          report[locale].currentTranslations,
-          report[locale].latestTranslations
-        );
-        if (report[locale].changed && !dryRun) {
-          if (global) {
-            try {
-              await this.payload.updateGlobal({
-                slug: collection as keyof Config["globals"],
-                locale: locale,
+      if (!excludeLocales.includes(locale)) {report[locale] = {};
+      report[locale].draft = draft,
+      report[locale].currentTranslations =
+        await this.getCurrentDocumentTranslation({
+          doc: doc,
+          collection: collection,
+          locale: locale,
+          global,
+        });
+      report[locale].latestTranslations =
+        await this.getLatestDocumentTranslation({
+          collection: collection,
+          doc: doc,
+          locale: locale,
+          global,
+        });
+      report[locale].changed = !deepEqual(
+        report[locale].currentTranslations,
+        report[locale].latestTranslations
+      );
+      if (report[locale].changed && !dryRun) {
+        if (global) {
+          try {
+            await this.payload.updateGlobal({
+              slug: collection as keyof Config["globals"],
+              locale: locale,
+              draft,
+              data: {
+                ...report[locale].latestTranslations,
+                // error on update without the following line.
+                // see https://github.com/thompsonsj/payload-crowdin-sync/pull/13/files#r1209271660
+                crowdinArticleDirectory: ((doc as any)["crowdinArticleDirectory"]).id,
+              },
+              req: this.req,
+            });
+          } catch (error) {
+            console.log(
+              'updateTranslation',
+              {
+                documentId,
+                collection,
+                dryRun,
+                global,
                 draft,
-                data: {
-                  ...report[locale].latestTranslations,
-                  // error on update without the following line.
-                  // see https://github.com/thompsonsj/payload-crowdin-sync/pull/13/files#r1209271660
-                  crowdinArticleDirectory: ((doc as any)["crowdinArticleDirectory"]).id,
-                },
-                req: this.req,
-              });
-            } catch (error) {
-              console.log(
-                'updateTranslation',
-                {
-                  documentId,
-                  collection,
-                  dryRun,
-                  global,
-                  draft,
-                  excludeLocales,
-                },
-                'error',
-                error
-              );
-            }
-          } else {
-            try {
-              await this.payload.update({
-                collection: collection  as keyof Config["collections"],
-                locale: locale,
-                id: documentId,
+                excludeLocales,
+              },
+              'error',
+              error
+            );
+          }
+        } else {
+          try {
+            await this.payload.update({
+              collection: collection  as keyof Config["collections"],
+              locale: locale,
+              id: documentId,
+              draft,
+              data: report[locale].latestTranslations,
+              req: this.req,
+              overrideLock: true,
+            });
+          } catch (error) {
+            console.log(
+              'updateTranslation',
+              {
+                documentId,
+                collection,
+                dryRun,
+                global,
                 draft,
-                data: report[locale].latestTranslations,
-                req: this.req,
-              });
-            } catch (error) {
-              console.log(
-                'updateTranslation',
-                {
-                  documentId,
-                  collection,
-                  dryRun,
-                  global,
-                  draft,
-                  excludeLocales,
-                },
-                'error',
-                error
-              );
-            }
+                excludeLocales,
+              },
+              'error',
+              error
+            );}
           }
         }
       }
@@ -234,7 +233,7 @@ export class payloadCrowdinSyncTranslationsApi {
     collection: string,
     global: boolean
   ): CollectionConfig | GlobalConfig {
-    
+
     return getCollectionConfig(
       collection,
       global,

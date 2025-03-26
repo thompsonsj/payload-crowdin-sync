@@ -34,7 +34,7 @@ interface IupdateCrowdinFile extends IcreateOrUpdateFile {
 }
 
 export class payloadCrowdinSyncFilesApi {
-  sourceFilesApi: SourceFiles; 
+  sourceFilesApi: SourceFiles;
   uploadStorageApi: UploadStorage;
   projectId: number;
   directoryId?: number;
@@ -46,6 +46,9 @@ export class payloadCrowdinSyncFilesApi {
     const credentials: Credentials = {
       token: pluginOptions.token,
     };
+    if (pluginOptions.organization) {
+      credentials.organization = pluginOptions.organization;
+    }
     const { sourceFilesApi, uploadStorageApi } = new crowdin.default(credentials);
     this.projectId = pluginOptions.projectId;
     this.directoryId = pluginOptions.directoryId;
