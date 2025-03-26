@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.34.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.34.1...payload-crowdin-sync-v0.34.2) (2025-03-26)
+
+
+### Bug Fixes
+
+* **translations:** organization parameter credentials ([#268](https://github.com/thompsonsj/payload-crowdin-sync/issues/268)) ([4558795](https://github.com/thompsonsj/payload-crowdin-sync/commit/455879598f927d0e990e6b515b18daeb3e9fb883))
+
 ## [0.34.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.34.0...payload-crowdin-sync-v0.34.1) (2025-03-13)
 
 
