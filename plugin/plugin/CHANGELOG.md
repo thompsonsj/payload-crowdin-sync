@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.34.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.34.3...payload-crowdin-sync-v0.34.4) (2025-03-27)
+
+
+### Bug Fixes
+
+* **packagejson:** remove main entry ([#273](https://github.com/thompsonsj/payload-crowdin-sync/issues/273)) ([2eda1fd](https://github.com/thompsonsj/payload-crowdin-sync/commit/2eda1fd318279960a41a256a15e9c9bf8e07353a))
+
 ## [0.34.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.34.2...payload-crowdin-sync-v0.34.3) (2025-03-26)
 
 
