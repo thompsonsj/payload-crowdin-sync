@@ -18,7 +18,6 @@
   "dependencies": {
     "tslib": "^2.3.0"
   },
-  "main": "./src/index.ts",
   "peerDependencies": {
     "payload": "^3",
     "@payloadcms/db-mongodb": "^3",
