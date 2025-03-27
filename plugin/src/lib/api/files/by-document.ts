@@ -100,17 +100,40 @@ export class filesApiByDocument {
 
   async findOrCreateArticleDirectory(): Promise<CrowdinArticleDirectory> {
     let crowdinPayloadArticleDirectory;
-    if (this.document.crowdinArticleDirectory) {
-      // Update not possible. Article name needs to be updated manually on Crowdin.
-      // The name of the directory is Crowdin specific helper text to give
-      // context to translators.
-      // See https://developer.crowdin.com/api/v2/#operation/api.projects.directories.getMany
+    if (this.global) {
+      const result = await this.req.payload.find({
+        collection: "crowdin-article-directories",
+        where: {
+          globalSlug: { equals: this.collectionSlug},
+        },
+        req: this.req,
+      })
+      if (result.totalDocs > 0) {
+        crowdinPayloadArticleDirectory = result.docs[0];
+      }
+    } else {
+      const result = await this.req.payload.find({
+        collection: "crowdin-article-directories",
+        where: {
+          ['collectionDocument.value']:  { equals: this.document.id },
+          ['collectionDocument.relationTo']:  { equals: this.collectionSlug },
+        },
+        req: this.req,
+      })
+      if (result.totalDocs > 0) {
+        crowdinPayloadArticleDirectory = result.docs[0];
+      }
+    }
+    // support legacy method of storing article directory
+    if (!crowdinPayloadArticleDirectory && this.document.crowdinArticleDirectory) {
       crowdinPayloadArticleDirectory = this.document.crowdinArticleDirectory.id ? this.document.crowdinArticleDirectory : await this.req.payload.findByID({
         collection: "crowdin-article-directories",
         id: this.document.crowdinArticleDirectory,
         req: this.req,
-      }) as unknown;
-    } else {
+      });
+    }
+    
+    if (!crowdinPayloadArticleDirectory) {
       const crowdinPayloadCollectionDirectory =
         await this.findOrCreateCollectionDirectory({
           collectionSlug: this.global ? "globals" : this.collectionSlug,
@@ -142,6 +165,31 @@ export class filesApiByDocument {
       );
 
       // Store result in Payload CMS
+      console.log({
+        ...(crowdinPayloadCollectionDirectory?.['id'] && {
+          crowdinCollectionDirectory: `${crowdinPayloadCollectionDirectory?.['id']}`,
+        }),
+        originalId: crowdinDirectory.data.id,
+        directoryId: crowdinDirectory.data.directoryId,
+        name,
+        reference: {
+          createdAt: crowdinDirectory.data.createdAt,
+          updatedAt: crowdinDirectory.data.updatedAt,
+          projectId: this.projectId,
+        },
+        ...(parent && {
+          parent: parent.id,
+        }),
+        ...(this.global && {
+          globalSlug: this.collectionSlug,
+        }),
+        ...(!this.global && !parent && {
+          collectionDocument: {
+            value: this.document.id,
+            relationTo: this.collectionSlug,
+          },
+        }),
+      })
       const result = await this.req.payload.create({
         collection: "crowdin-article-directories",
         data: {
@@ -158,34 +206,20 @@ export class filesApiByDocument {
           },
           ...(parent && {
             parent: parent.id,
-          })
+          }),
+          ...(this.global && {
+            globalSlug: this.collectionSlug,
+          }),
+          ...(!this.global && !parent && {
+            collectionDocument: {
+              value: this.document.id,
+              relationTo: this.collectionSlug,
+            },
+          }),
         },
         req: this.req,
       }) as unknown;
       crowdinPayloadArticleDirectory = result as CrowdinArticleDirectory
-      const crowdinArticleDirectory = crowdinPayloadArticleDirectory.id
-
-      // Associate result with document
-      if (!this.parent) {
-        if (this.global) {
-          await this.req.payload.updateGlobal({
-            slug: this.collectionSlug as GlobalSlug,
-            data: {
-              crowdinArticleDirectory,
-            } as never,
-            req: this.req,
-          });
-        } else {
-          await this.req.payload.update({
-            collection: this.collectionSlug as CollectionSlug,
-            id: this.document.id,
-            data: {
-              crowdinArticleDirectory,
-            } as never,
-            req: this.req,
-          });
-        }
-      }
     }
 
     this.articleDirectory = crowdinPayloadArticleDirectory;

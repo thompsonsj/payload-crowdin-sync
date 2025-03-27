@@ -75,6 +75,53 @@ export async function getArticleDirectory(
     : undefined;
 }
 
+export async function getArticleDirectoryPolymorphic(
+  {
+    documentId,
+    global,
+    payload,
+    allowEmpty,
+    parent,
+    req,
+  }: {
+    documentId: string,
+    global: boolean,
+    payload: Payload,
+    allowEmpty?: boolean,
+    parent?: CrowdinArticleDirectory | null | string,
+    req?: PayloadRequest,
+  }
+) {
+  let crowdinPayloadArticleDirectory
+  if (global) {
+    crowdinPayloadArticleDirectory = await req.payload.find({
+      collection: "crowdin-article-directories",
+      where: {
+        globalSlug: { equals: documentId },
+      },
+      req,
+    })
+  } else {
+    crowdinPayloadArticleDirectory = await req.payload.find({
+      collection: "crowdin-article-directories",
+      where: {
+        ['collectionDocument.value']: { equals: documentId },
+      },
+      req,
+    })
+  }
+  if (crowdinPayloadArticleDirectory.totalDocs === 0 && allowEmpty) {
+    // a thrown error won't be reported in an api call, so console.log it as well.
+    console.log(`No article directory found for document ${documentId}`);
+    throw new Error(
+      "This article does not have a corresponding entry in the  crowdin-article-directories collection."
+    );
+  }
+  return crowdinPayloadArticleDirectory
+    ? crowdinPayloadArticleDirectory.docs[0]
+    : undefined;
+}
+
 export async function getLexicalFieldArticleDirectory({
   payload,
   parent,
