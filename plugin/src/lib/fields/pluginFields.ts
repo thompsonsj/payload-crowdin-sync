@@ -18,6 +18,39 @@ const crowdinArticleDirectoryField: Field = {
     readOnly: true,
     disabled: true,
   },*/
+  hooks: {
+    beforeChange: [
+      ({ siblingData }) => {
+        // ensures data is not stored in DB
+        delete siblingData['crowdinArticleDirectory']
+      }
+    ],
+    afterRead: [
+      async ({ data, req, global }) => {
+        let result
+        if (global?.slug) {
+          result = await req.payload.find({
+            collection: "crowdin-article-directories",
+            where: {
+              globalSlug: { equals: global.slug },
+            },
+            req,
+          })
+        } else {
+          result = await req.payload.find({
+            collection: "crowdin-article-directories",
+            where: {
+              collectionDocument: { equals: data.id },
+            },
+            req,
+          })
+        }
+        if (result.totalDocs > 0) {
+          return result.docs[0];
+        }
+      }
+    ],
+  }
 };
 
 export const pluginCollectionOrGlobalFields = ({
