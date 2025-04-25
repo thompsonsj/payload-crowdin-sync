@@ -3,7 +3,7 @@ import fs from 'fs'
 const removeFiles = (dir: string) => {
   if (fs.existsSync(dir))
     fs.readdirSync(dir).forEach((f) => {
-      if (f.startsWith('cristian-palmer-XexawgzYOBc-unsplash-')) {
+      if (f.startsWith('cristian-palmer-XexawgzYOBc-unsplash')) {
         fs.rmSync(`${dir}/${f}`)
       }
     })
@@ -193,7 +193,7 @@ describe('Lexical editor with blocks', () => {
                 "type": "upload",
                 "value": {
                   "createdAt": media.createdAt,
-                  "filename": "cristian-palmer-XexawgzYOBc-unsplash-1.jpg",
+                  "filename": "cristian-palmer-XexawgzYOBc-unsplash.jpg",
                   "filesize": 1491638,
                   "focalX": 50,
                   "focalY": 50,
@@ -202,33 +202,33 @@ describe('Lexical editor with blocks', () => {
                   "mimeType": "image/jpeg",
                   "sizes": {
                     "card": {
-                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-1-768x1024.jpg",
+                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-768x1024.jpg",
                       "filesize": 85547,
                       "height": 1024,
                       "mimeType": "image/jpeg",
-                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1-768x1024.jpg",
+                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-768x1024.jpg",
                       "width": 768,
                     },
                     "tablet": {
-                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-1-1024x768.jpg",
+                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-1024x768.jpg",
                       "filesize": 76596,
                       "height": 768,
                       "mimeType": "image/jpeg",
-                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1-1024x768.jpg",
+                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1024x768.jpg",
                       "width": 1024,
                     },
                     "thumbnail": {
-                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-1-400x300.jpg",
+                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg",
                       "filesize": 13898,
                       "height": 300,
                       "mimeType": "image/jpeg",
-                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1-400x300.jpg",
+                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg",
                       "width": 400,
                     },
                   },
-                  "thumbnailURL": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1-400x300.jpg",
+                  "thumbnailURL": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg",
                   "updatedAt": media.updatedAt,
-                  "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1.jpg",
+                  "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash.jpg",
                   "width": 4000,
                 },
                 "version": 3,
@@ -435,7 +435,7 @@ describe('Lexical editor with blocks', () => {
                 "type": "upload",
                 "value": {
                   "createdAt": media.createdAt,
-                  "filename": "cristian-palmer-XexawgzYOBc-unsplash-1.jpg",
+                  "filename": "cristian-palmer-XexawgzYOBc-unsplash.jpg",
                   "filesize": 1491638,
                   "focalX": 50,
                   "focalY": 50,
@@ -444,33 +444,33 @@ describe('Lexical editor with blocks', () => {
                   "mimeType": "image/jpeg",
                   "sizes": {
                     "card": {
-                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-1-768x1024.jpg",
+                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-768x1024.jpg",
                       "filesize": 85547,
                       "height": 1024,
                       "mimeType": "image/jpeg",
-                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1-768x1024.jpg",
+                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-768x1024.jpg",
                       "width": 768,
                     },
                     "tablet": {
-                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-1-1024x768.jpg",
+                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-1024x768.jpg",
                       "filesize": 76596,
                       "height": 768,
                       "mimeType": "image/jpeg",
-                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1-1024x768.jpg",
+                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1024x768.jpg",
                       "width": 1024,
                     },
                     "thumbnail": {
-                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-1-400x300.jpg",
+                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg",
                       "filesize": 13898,
                       "height": 300,
                       "mimeType": "image/jpeg",
-                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1-400x300.jpg",
+                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg",
                       "width": 400,
                     },
                   },
-                  "thumbnailURL": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1-400x300.jpg",
+                  "thumbnailURL": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg",
                   "updatedAt": media.updatedAt,
-                  "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1.jpg",
+                  "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash.jpg",
                   "width": 4000,
                 },
                 "version": 3,
