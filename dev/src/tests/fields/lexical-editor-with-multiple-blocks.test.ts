@@ -713,9 +713,21 @@ describe('Lexical editor with multiple blocks', () => {
       payload,
     })
     const contentHtmlFile = crowdinFiles.find((file) => file.field === 'content')
-    expect(contentHtmlFile?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8 data-block-type=highlight></span><span data-block-id=65d67e2291c92e447e7472f9 data-block-type=imageText></span><ul class="list-bullet"><li value=1></li></ul>"`,
-    )
+    expect(contentHtmlFile?.fileData?.html).toMatchInlineSnapshot(`
+      "<div class="payload-richtext"><p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li
+                class=""
+                style=""
+                value="1"
+              >one bullet list item; and</li><li
+                class=""
+                style=""
+                value="2"
+              >another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8 data-block-type=highlight></span><span data-block-id=65d67e2291c92e447e7472f9 data-block-type=imageText></span><ul class="list-bullet"><li
+                class=""
+                style=""
+                value="1"
+              ></li></ul></div>"
+    `)
     const contentBlocksCrowdinFiles = await getFilesByDocumentID({
       documentId: `${pluginOptions.lexicalBlockFolderPrefix}content`,
       payload,
@@ -726,7 +738,7 @@ describe('Lexical editor with multiple blocks', () => {
       (file) => file.field?.endsWith('.highlight.content') && file.field?.startsWith('blocks.'),
     )
     expect(contentBlocksHtmlFile?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>The plugin parses your block configuration for the Lexical rich text editor. It extracts all block values from the rich text field and then treats this config/data combination as a regular \`blocks\` field.</p><p>Markers are placed in the html and this content is restored into the correct place on translation.</p>"`,
+      `"<div class="payload-richtext"><p>The plugin parses your block configuration for the Lexical rich text editor. It extracts all block values from the rich text field and then treats this config/data combination as a regular \`blocks\` field.</p><p>Markers are placed in the html and this content is restored into the correct place on translation.</p></div>"`,
     )
   })
 
@@ -791,13 +803,37 @@ describe('Lexical editor with multiple blocks', () => {
     expect(fileOneCrowdinFiles.length).toEqual(2)
     expect(fileTwoCrowdinFiles.length).toEqual(2)
 
-    expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8 data-block-type=highlight></span><span data-block-id=65d67e2291c92e447e7472f9 data-block-type=imageText></span><ul class="list-bullet"><li value=1></li></ul>"`,
-    )
+    expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(`
+      "<div class="payload-richtext"><p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li
+                class=""
+                style=""
+                value="1"
+              >one bullet list item; and</li><li
+                class=""
+                style=""
+                value="2"
+              >another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8 data-block-type=highlight></span><span data-block-id=65d67e2291c92e447e7472f9 data-block-type=imageText></span><ul class="list-bullet"><li
+                class=""
+                style=""
+                value="1"
+              ></li></ul></div>"
+    `)
 
-    expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li value=1>one bullet list item; and</li><li value=2>another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8 data-block-type=highlight></span><span data-block-id=65d67e2291c92e447e7472f9 data-block-type=imageText></span><ul class="list-bullet"><li value=1></li></ul>"`,
-    )
+    expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(`
+      "<div class="payload-richtext"><p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li
+                class=""
+                style=""
+                value="1"
+              >one bullet list item; and</li><li
+                class=""
+                style=""
+                value="2"
+              >another!</li></ul><span data-block-id=65d67d8191c92e447e7472f8 data-block-type=highlight></span><span data-block-id=65d67e2291c92e447e7472f9 data-block-type=imageText></span><ul class="list-bullet"><li
+                class=""
+                style=""
+                value="1"
+              ></li></ul></div>"
+    `)
   })
 
   it('updates a Payload article with a rich text field that uses the Lexical editor with multiple blocks with a translation received from Crowdin', async () => {

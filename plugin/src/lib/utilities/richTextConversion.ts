@@ -8,12 +8,12 @@ import {
 } from "@slate-serializers/html"
 
 import {
-  ServerBlockNode as BlockNode,
-  HTMLConverter,
+  SerializedUploadNode,
+  UploadData,
   type SanitizedServerEditorConfig as SanitizedEditorConfig,
-  convertLexicalToHTML,
-  consolidateHTMLConverters,
 } from '@payloadcms/richtext-lexical'
+
+import { convertLexicalToHTML, HTMLConverters } from '@payloadcms/richtext-lexical/html'
 
 import {
   convertSlateToLexical,
@@ -27,19 +27,39 @@ import { cloneDeep } from "es-toolkit";
 import type { Descendant } from "slate";
 import type { SerializedEditorState } from 'lexical'
 
-const BlockHTMLConverter: HTMLConverter<any> = {
-  converter: async ({ node }) => {
-    return `<span data-block-id=${node.fields.id} data-block-type=${node.fields.blockType}></span>`
-  },
-  nodeTypes: [BlockNode.getType()],
-}
+import { getLexicalBlockFields } from "./lexical"
+import { FileData, TypeWithID } from "payload"
 
 export const convertLexicalToHtml = async (editorData: SerializedEditorState, editorConfig: SanitizedEditorConfig) => {
-  return await convertLexicalToHTML({
-    converters: [
-      ...consolidateHTMLConverters({ editorConfig }),
-      BlockHTMLConverter,
-    ],
+  const blockSlugs = getLexicalBlockFields(editorConfig)?.blocks.map(block => block.slug)
+  const blockConvertors = blockSlugs?.reduce((acc, slug) => {
+    acc[slug] = ({ node }) => {
+      const blockId = node.fields.id
+      const blockType = node.fields.blockType
+      return `<span data-block-id=${blockId} data-block-type=${blockType}></span>`
+    }
+    return acc
+  }, {}) || {}
+
+  /**
+   * This is a custom HTML converter for the Upload node type.
+   * 
+   * Place a marker in the HTML output to indicate where the upload node is.
+   * When translations are applied, the marker will be replaced with the actual upload node.
+   */
+  const UploadHTMLConverter: HTMLConverters<SerializedUploadNode> = {
+    upload: ({ node }) => {
+    return `<span data-block-id=${node.id} data-block-type="pcsUpload"></span>`
+  }}
+
+  return convertLexicalToHTML({
+    converters: ({
+      defaultConverters,
+    }) => ({
+      ...defaultConverters,
+      ...UploadHTMLConverter,
+      blocks: blockConvertors,
+    }),
     data: editorData,
   })
 }

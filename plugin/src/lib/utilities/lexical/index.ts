@@ -1,10 +1,14 @@
-import { LexicalRichTextAdapter, SanitizedServerEditorConfig as SanitizedEditorConfig } from "@payloadcms/richtext-lexical";
+import { LexicalRichTextAdapter, SanitizedServerEditorConfig as SanitizedEditorConfig, SerializedUploadNode } from "@payloadcms/richtext-lexical";
 import type { BlocksField as BlockField, RichTextField } from "payload";
 import { SerializedRootNode, SerializedLexicalNode } from "lexical"
 import { SerializedBlockNode } from "@payloadcms/richtext-lexical";
 
 const isSerializedBlockNode = (node: SerializedLexicalNode): node is SerializedBlockNode => {
   return node.type === 'block';
+}
+
+const isSerializedUploadNode = (node: SerializedLexicalNode): node is SerializedUploadNode => {
+  return node.type === 'upload';
 }
 
 export const isLexical = (field: RichTextField): field is RichTextField => field && field.editor && "editorConfig" in field.editor && "lexical" in (field.editor as LexicalRichTextAdapter).editorConfig || false
@@ -33,4 +37,9 @@ export const getLexicalBlockFields = (editorConfig: SanitizedEditorConfig): Bloc
 export const extractLexicalBlockContent = (root: SerializedRootNode) => {
   const nodes = root.children
   return nodes.filter(isSerializedBlockNode).map(node => node.fields)
+}
+
+export const extractLexicalUploadContent = (root: SerializedRootNode) => {
+  const nodes = root.children
+  return nodes.filter(isSerializedUploadNode).map(node => node.fields)
 }
