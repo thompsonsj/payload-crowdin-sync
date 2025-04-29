@@ -49,7 +49,7 @@ export const convertLexicalToHtml = async (editorData: SerializedEditorState, ed
    */
   const UploadHTMLConverter: HTMLConverters<SerializedUploadNode> = {
     upload: ({ node }) => {
-    return `<span data-block-id=${node.id} data-block-type="pcsUpload"></span>`
+    return `<span data-block-id=${node.id} data-relation-to=${node.relationTo} data-block-type="pcsUpload"></span>`
   }}
 
   return convertLexicalToHTML({
@@ -65,7 +65,7 @@ export const convertLexicalToHtml = async (editorData: SerializedEditorState, ed
   })
 }
 
-export const convertHtmlToLexical = (htmlString: string, editorConfig: SanitizedEditorConfig, blockTranslations?: {
+export const convertHtmlToLexical = (htmlString: string,  blockTranslations?: {
   [key: string]: any;
 } | null) => {
   // use editorConfig to determine custom convertors
@@ -82,15 +82,31 @@ export const convertHtmlToLexical = (htmlString: string, editorConfig: Sanitized
       span: (el) => {
         const blockId = el && getAttributeValue(el, 'data-block-id')
         const blockType = el && getAttributeValue(el, 'data-block-type')
-        const translation = (blockTranslations?.['blocks'] || []).find((block: any) => block.id === blockId)
 
+        if (!blockId || !blockType) {
+          return undefined
+        }
+
+        if (blockType === 'pcsUpload') {
+          const relationTo = el && getAttributeValue(el, 'data-relation-to')
           return {
-          // use a relatively obscure name to reduce likelihood of a clash with an existing Slate editor configuration `nodeType`.
-          type: 'pcs-block',
-          // fieldName needed to obtain translations?
-          translation,
-          blockId,
-          blockType,
+            type: 'upload',
+            relationTo,
+            value: {
+              id: blockId,
+            },
+          }
+        } else {
+          const translation = (blockTranslations?.['blocks'] || []).find((block: any) => block.id === blockId)
+
+            return {
+            // use a relatively obscure name to reduce likelihood of a clash with an existing Slate editor configuration `nodeType`.
+            type: 'pcs-block',
+            // fieldName needed to obtain translations?
+            translation,
+            blockId,
+            blockType,
+          }
         }
       },
     },
