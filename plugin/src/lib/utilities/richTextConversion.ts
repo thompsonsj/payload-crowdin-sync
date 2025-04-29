@@ -9,7 +9,6 @@ import {
 
 import {
   SerializedUploadNode,
-  UploadData,
   type SanitizedServerEditorConfig as SanitizedEditorConfig,
 } from '@payloadcms/richtext-lexical'
 
@@ -28,7 +27,6 @@ import type { Descendant } from "slate";
 import type { SerializedEditorState } from 'lexical'
 
 import { getLexicalBlockFields } from "./lexical"
-import { FileData, TypeWithID } from "payload"
 
 export const convertLexicalToHtml = async (editorData: SerializedEditorState, editorConfig: SanitizedEditorConfig) => {
   const blockSlugs = getLexicalBlockFields(editorConfig)?.blocks.map(block => block.slug)
