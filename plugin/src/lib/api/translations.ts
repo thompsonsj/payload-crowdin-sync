@@ -455,7 +455,7 @@ export class payloadCrowdinSyncTranslationsApi {
               crowdinArticleDirectoryId: lexicalFieldCrowdinArticleDirectoryId,
             }) : null
 
-            return convertHtmlToLexical(data, editorConfig, blockTranslations) || {
+            return convertHtmlToLexical(data,  blockTranslations) || {
               "root": {
                   "type": "root",
                   "format": "",

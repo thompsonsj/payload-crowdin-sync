@@ -83,9 +83,11 @@ export const convertHtmlToLexical = (htmlString: string,  blockTranslations?: {
         const blockId = el && getAttributeValue(el, 'data-block-id')
         const blockType = el && getAttributeValue(el, 'data-block-type')
 
+        /**
         if (!blockId || !blockType) {
           return undefined
         }
+          */
 
         if (blockType === 'pcsUpload') {
           const relationTo = el && getAttributeValue(el, 'data-relation-to')
