@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.35.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.34.5...payload-crowdin-sync-v0.35.0) (2025-04-29)
+
+
+### Features
+
+* **lexical:** update lexical html fn, load translation restore uploads ([#281](https://github.com/thompsonsj/payload-crowdin-sync/issues/281)) ([f694df0](https://github.com/thompsonsj/payload-crowdin-sync/commit/f694df03b747d0b9742370e9be1503ea482df324))
+
 ## [0.34.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.34.4...payload-crowdin-sync-v0.34.5) (2025-04-16)
 
 

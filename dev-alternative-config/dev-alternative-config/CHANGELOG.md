@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.2.10...dev-alternative-config-v0.3.0) (2025-04-29)
+
+
+### Features
+
+* **lexical:** update lexical html fn, load translation restore uploads ([#281](https://github.com/thompsonsj/payload-crowdin-sync/issues/281)) ([f694df0](https://github.com/thompsonsj/payload-crowdin-sync/commit/f694df03b747d0b9742370e9be1503ea482df324))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.34.5 to 0.35.0
+
 ## [0.2.10](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.2.9...dev-alternative-config-v0.2.10) (2025-04-16)
 
 
