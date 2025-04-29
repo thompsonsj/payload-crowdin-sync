@@ -61,6 +61,7 @@ export const convertLexicalToHtml = async (editorData: SerializedEditorState, ed
       blocks: blockConvertors,
     }),
     data: editorData,
+    disableContainer: true,
   })
 }
 

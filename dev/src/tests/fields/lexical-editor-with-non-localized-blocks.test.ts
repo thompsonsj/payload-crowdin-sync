@@ -320,7 +320,7 @@ describe('Lexical editor with blocks', () => {
     const crowdinFiles = await getFilesByDocumentID({ documentId: `${policy.id}`, payload })
     const contentHtmlFile = crowdinFiles.find((file) => file.field === 'content')
     expect(contentHtmlFile?.fileData?.html).toMatchInlineSnapshot(
-      `"<div class="payload-richtext"><p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span></div>"`,
+      `"<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span>"`,
     )
   })
 

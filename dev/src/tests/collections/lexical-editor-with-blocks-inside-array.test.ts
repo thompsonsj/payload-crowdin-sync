@@ -716,7 +716,7 @@ describe('Lexical editor with multiple blocks', () => {
     expect(files.length).toEqual(3)
 
     expect(files[0].fileData).toEqual({
-      html: `<div class="payload-richtext"><p>If you add custom blocks, these will also be translated!</p><span data-block-id=${lexicalBlockIds[0]} data-block-type=highlight></span></div>`,
+      html: `<p>If you add custom blocks, these will also be translated!</p><span data-block-id=${lexicalBlockIds[0]} data-block-type=highlight></span>`,
       sourceBlocks: JSON.stringify([
         {
           id: `${lexicalBlockIds[0]}`,
@@ -846,7 +846,7 @@ describe('Lexical editor with multiple blocks', () => {
     })
     expect(files[1].fileData).toMatchInlineSnapshot(`
       {
-        "html": "<div class="payload-richtext"><p>Lexical fields nested within complex layouts - such as this one (a <code>blocks</code> field in an <code>array</code> item within a <code>tab</code>), are supported.</p></div>",
+        "html": "<p>Lexical fields nested within complex layouts - such as this one (a <code>blocks</code> field in an <code>array</code> item within a <code>tab</code>), are supported.</p>",
       }
     `)
     expect(files[2].fileData).toEqual({
@@ -910,9 +910,9 @@ describe('Lexical editor with multiple blocks', () => {
     expect((files[0]?.crowdinArticleDirectory as CrowdinArticleDirectory)?.parent).toBeDefined()
     expect(files[0].fileData).toMatchInlineSnapshot(`
       {
-        "html": "<div class="payload-richtext"><p>Note a key difference with regular blocks - all <code>text</code>, <code>textarea</code> and <code>richText</code> fields will be sent to Crowdin regardless of whether or not they are <a href="https://payloadcms.com/docs/configuration/localization#field-by-field-localization">
+        "html": "<p>Note a key difference with regular blocks - all <code>text</code>, <code>textarea</code> and <code>richText</code> fields will be sent to Crowdin regardless of whether or not they are <a href="https://payloadcms.com/docs/configuration/localization#field-by-field-localization">
               localized fields
-            </a>.</p></div>",
+            </a>.</p>",
       }
     `)
     expect((files[1]?.crowdinArticleDirectory as CrowdinArticleDirectory)?.parent).toBeDefined()

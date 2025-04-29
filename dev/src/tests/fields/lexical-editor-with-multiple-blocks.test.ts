@@ -714,7 +714,7 @@ describe('Lexical editor with multiple blocks', () => {
     })
     const contentHtmlFile = crowdinFiles.find((file) => file.field === 'content')
     expect(contentHtmlFile?.fileData?.html).toMatchInlineSnapshot(`
-      "<div class="payload-richtext"><p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li
+      "<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li
                 class=""
                 style=""
                 value="1"
@@ -726,7 +726,7 @@ describe('Lexical editor with multiple blocks', () => {
                 class=""
                 style=""
                 value="1"
-              ></li></ul></div>"
+              ></li></ul>"
     `)
     const contentBlocksCrowdinFiles = await getFilesByDocumentID({
       documentId: `${pluginOptions.lexicalBlockFolderPrefix}content`,
@@ -738,7 +738,7 @@ describe('Lexical editor with multiple blocks', () => {
       (file) => file.field?.endsWith('.highlight.content') && file.field?.startsWith('blocks.'),
     )
     expect(contentBlocksHtmlFile?.fileData?.html).toMatchInlineSnapshot(
-      `"<div class="payload-richtext"><p>The plugin parses your block configuration for the Lexical rich text editor. It extracts all block values from the rich text field and then treats this config/data combination as a regular \`blocks\` field.</p><p>Markers are placed in the html and this content is restored into the correct place on translation.</p></div>"`,
+      `"<p>The plugin parses your block configuration for the Lexical rich text editor. It extracts all block values from the rich text field and then treats this config/data combination as a regular \`blocks\` field.</p><p>Markers are placed in the html and this content is restored into the correct place on translation.</p>"`,
     )
   })
 
@@ -804,7 +804,7 @@ describe('Lexical editor with multiple blocks', () => {
     expect(fileTwoCrowdinFiles.length).toEqual(2)
 
     expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(`
-      "<div class="payload-richtext"><p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li
+      "<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li
                 class=""
                 style=""
                 value="1"
@@ -816,11 +816,11 @@ describe('Lexical editor with multiple blocks', () => {
                 class=""
                 style=""
                 value="1"
-              ></li></ul></div>"
+              ></li></ul>"
     `)
 
     expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(`
-      "<div class="payload-richtext"><p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li
+      "<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li
                 class=""
                 style=""
                 value="1"
@@ -832,7 +832,7 @@ describe('Lexical editor with multiple blocks', () => {
                 class=""
                 style=""
                 value="1"
-              ></li></ul></div>"
+              ></li></ul>"
     `)
   })
 
@@ -1044,6 +1044,7 @@ describe('Lexical editor with multiple blocks', () => {
       .query({
         targetLanguageId: 'fr',
       })
+      // include a legacy (since #281) response - existing translations will still be loaded in this way post upgrade
       .reply(
         200,
         "<p>Le plugin analyse la configuration de votre bloc pour l'éditeur de texte enrichi lexical. Il extrait toutes les valeurs de bloc du champ de texte enrichi, puis traite cette combinaison configuration/données comme un champ « blocs » normal.</p<p>>Les marqueurs sont placés dans le code HTML et ce contenu est restauré au bon endroit lors de la traduction.</p>",
