@@ -1,4 +1,4 @@
-import { CrowdinArticleDirectory } from "../../payload-types";
+import { CrowdinArticleDirectory, CrowdinCollectionDirectory } from "../../payload-types";
 import { isCrowdinArticleDirectory, PluginOptions } from "../../types";
 import type { CollectionConfig, CollectionSlug, Document, GlobalSlug, PayloadRequest } from 'payload';
 import { toWords } from 'payload';
@@ -98,6 +98,7 @@ export class filesApiByDocument {
     }
   }
 
+  /** this is where the problem lies? */
   async findOrCreateArticleDirectory(): Promise<CrowdinArticleDirectory> {
     let crowdinPayloadArticleDirectory;
     if (this.document.crowdinArticleDirectory) {
@@ -130,16 +131,13 @@ export class filesApiByDocument {
         this.req.payload
       )
       const useAsTitle = (collectionConfig as CollectionConfig)?.admin?.useAsTitle
-      const crowdinDirectory = await this.sourceFilesApi.createDirectory(
-        this.projectId,
-        {
-          directoryId: (parent ? parent.originalId : crowdinPayloadCollectionDirectory?.['originalId']) as number,
-          name,
-          title: this.global
-            ? toWords(this.collectionSlug)
-            : useAsTitle && this.document[useAsTitle] || this.document.title || this.document.name, // no tests for this Crowdin metadata, but makes it easier for translators
-        }
-      );
+      
+      const crowdinDirectory = await this.crowdinCreateDirectory({
+        parent,
+        crowdinPayloadCollectionDirectory,
+        name,
+        useAsTitle,
+      });
 
       // Store result in Payload CMS
       const result = await this.req.payload.create({
@@ -194,7 +192,7 @@ export class filesApiByDocument {
 
   private async findOrCreateCollectionDirectory({
     collectionSlug,
-  }: IfindOrCreateCollectionDirectory) {
+  }: IfindOrCreateCollectionDirectory): Promise<CrowdinCollectionDirectory | undefined> {
     if (this.parent) {
       return undefined
     }
@@ -245,5 +243,34 @@ export class filesApiByDocument {
     }
 
     return crowdinPayloadCollectionDirectory;
+  }
+
+  async crowdinCreateDirectory({
+    parent,
+    crowdinPayloadCollectionDirectory,
+    name,
+    useAsTitle,
+  }: {
+    parent?: CrowdinArticleDirectory
+    crowdinPayloadCollectionDirectory?: CrowdinCollectionDirectory
+    name: string
+    useAsTitle?: string
+  }) {
+    try {
+      const crowdinDirectory = await this.sourceFilesApi.createDirectory(
+        this.projectId,
+        {
+          directoryId: (parent ? parent.originalId : crowdinPayloadCollectionDirectory?.['originalId']) as number,
+          name,
+          title: this.global
+            ? toWords(this.collectionSlug)
+            : useAsTitle && this.document[useAsTitle] || this.document.title || this.document.name, // no tests for this Crowdin metadata, but makes it easier for translators
+        }
+      );
+      return crowdinDirectory
+    }
+    catch (error) {
+      console.error(error);
+    }
   }
 }
