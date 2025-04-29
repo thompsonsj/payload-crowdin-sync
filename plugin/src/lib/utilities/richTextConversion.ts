@@ -8,12 +8,11 @@ import {
 } from "@slate-serializers/html"
 
 import {
-  ServerBlockNode as BlockNode,
-  HTMLConverter,
+  SerializedUploadNode,
   type SanitizedServerEditorConfig as SanitizedEditorConfig,
-  convertLexicalToHTML,
-  consolidateHTMLConverters,
 } from '@payloadcms/richtext-lexical'
+
+import { convertLexicalToHTML, HTMLConverters } from '@payloadcms/richtext-lexical/html'
 
 import {
   convertSlateToLexical,
@@ -27,24 +26,44 @@ import { cloneDeep } from "es-toolkit";
 import type { Descendant } from "slate";
 import type { SerializedEditorState } from 'lexical'
 
-const BlockHTMLConverter: HTMLConverter<any> = {
-  converter: async ({ node }) => {
-    return `<span data-block-id=${node.fields.id} data-block-type=${node.fields.blockType}></span>`
-  },
-  nodeTypes: [BlockNode.getType()],
-}
+import { getLexicalBlockFields } from "./lexical"
 
 export const convertLexicalToHtml = async (editorData: SerializedEditorState, editorConfig: SanitizedEditorConfig) => {
-  return await convertLexicalToHTML({
-    converters: [
-      ...consolidateHTMLConverters({ editorConfig }),
-      BlockHTMLConverter,
-    ],
+  const blockSlugs = getLexicalBlockFields(editorConfig)?.blocks.map(block => block.slug)
+  const blockConvertors = blockSlugs?.reduce((acc, slug) => {
+    acc[slug] = ({ node }) => {
+      const blockId = node.fields.id
+      const blockType = node.fields.blockType
+      return `<span data-block-id=${blockId} data-block-type=${blockType}></span>`
+    }
+    return acc
+  }, {}) || {}
+
+  /**
+   * This is a custom HTML converter for the Upload node type.
+   * 
+   * Place a marker in the HTML output to indicate where the upload node is.
+   * When translations are applied, the marker will be replaced with the actual upload node.
+   */
+  const UploadHTMLConverter: HTMLConverters<SerializedUploadNode> = {
+    upload: ({ node }) => {
+    return `<span data-block-id=${node.id} data-relation-to=${node.relationTo} data-block-type="pcsUpload"></span>`
+  }}
+
+  return convertLexicalToHTML({
+    converters: ({
+      defaultConverters,
+    }) => ({
+      ...defaultConverters,
+      ...UploadHTMLConverter,
+      blocks: blockConvertors,
+    }),
     data: editorData,
+    disableContainer: true,
   })
 }
 
-export const convertHtmlToLexical = (htmlString: string, editorConfig: SanitizedEditorConfig, blockTranslations?: {
+export const convertHtmlToLexical = (htmlString: string,  blockTranslations?: {
   [key: string]: any;
 } | null) => {
   // use editorConfig to determine custom convertors
@@ -61,15 +80,33 @@ export const convertHtmlToLexical = (htmlString: string, editorConfig: Sanitized
       span: (el) => {
         const blockId = el && getAttributeValue(el, 'data-block-id')
         const blockType = el && getAttributeValue(el, 'data-block-type')
-        const translation = (blockTranslations?.['blocks'] || []).find((block: any) => block.id === blockId)
 
+        /**
+        if (!blockId || !blockType) {
+          return undefined
+        }
+          */
+
+        if (blockType === 'pcsUpload') {
+          const relationTo = el && getAttributeValue(el, 'data-relation-to')
           return {
-          // use a relatively obscure name to reduce likelihood of a clash with an existing Slate editor configuration `nodeType`.
-          type: 'pcs-block',
-          // fieldName needed to obtain translations?
-          translation,
-          blockId,
-          blockType,
+            type: 'upload',
+            relationTo,
+            value: {
+              id: blockId,
+            },
+          }
+        } else {
+          const translation = (blockTranslations?.['blocks'] || []).find((block: any) => block.id === blockId)
+
+            return {
+            // use a relatively obscure name to reduce likelihood of a clash with an existing Slate editor configuration `nodeType`.
+            type: 'pcs-block',
+            // fieldName needed to obtain translations?
+            translation,
+            blockId,
+            blockType,
+          }
         }
       },
     },

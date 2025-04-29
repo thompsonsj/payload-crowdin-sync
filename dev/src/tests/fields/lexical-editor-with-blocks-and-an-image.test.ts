@@ -88,181 +88,179 @@ describe('Lexical editor with blocks', () => {
         doc: policy,
         fields: Policies.fields,
       }),
-    ).toEqual(
-      {
-        "content": {
-          "root": {
-            "children": [
-              {
-                "children": [
-                  {
-                    "detail": 0,
-                    "format": 0,
-                    "mode": "normal",
-                    "style": "",
-                    "text": "What happens if a block doesn't have any localized fields?",
-                    "type": "text",
-                    "version": 1,
-                  },
-                ],
-                "direction": "ltr",
-                "format": "",
-                "indent": 0,
-                "textFormat": 0,
-                "textStyle": "",
-                "type": "paragraph",
-                "version": 1,
-              },
-              {
-                "fields": {
-                  "blockName": "",
-                  "blockType": "cookieTable",
-                  "cookieCategoryId": "strictlyNecessary",
-                  "id": "678564c06ec4a6f1fcf6a623",
+    ).toEqual({
+      content: {
+        root: {
+          children: [
+            {
+              children: [
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: "What happens if a block doesn't have any localized fields?",
+                  type: 'text',
+                  version: 1,
                 },
-                "format": "",
-                "type": "block",
-                "version": 2,
+              ],
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              textFormat: 0,
+              textStyle: '',
+              type: 'paragraph',
+              version: 1,
+            },
+            {
+              fields: {
+                blockName: '',
+                blockType: 'cookieTable',
+                cookieCategoryId: 'strictlyNecessary',
+                id: '678564c06ec4a6f1fcf6a623',
               },
-              {
-                "children": [
-                  {
-                    "detail": 0,
-                    "format": 0,
-                    "mode": "normal",
-                    "style": "",
-                    "text": "For example - a block that only contains a select field, which is included twice for good measure!",
-                    "type": "text",
-                    "version": 1,
-                  },
-                ],
-                "direction": "ltr",
-                "format": "",
-                "indent": 0,
-                "textFormat": 0,
-                "textStyle": "",
-                "type": "paragraph",
-                "version": 1,
-              },
-              {
-                "fields": {
-                  "blockName": "",
-                  "blockType": "cookieTable",
-                  "cookieCategoryId": "functional",
-                  "id": "678564926ec4a6f1fcf6a622",
+              format: '',
+              type: 'block',
+              version: 2,
+            },
+            {
+              children: [
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: 'For example - a block that only contains a select field, which is included twice for good measure!',
+                  type: 'text',
+                  version: 1,
                 },
-                "format": "",
-                "type": "block",
-                "version": 2,
+              ],
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              textFormat: 0,
+              textStyle: '',
+              type: 'paragraph',
+              version: 1,
+            },
+            {
+              fields: {
+                blockName: '',
+                blockType: 'cookieTable',
+                cookieCategoryId: 'functional',
+                id: '678564926ec4a6f1fcf6a622',
               },
-              {
-                "children": [
-                  {
-                    "detail": 0,
-                    "format": 0,
-                    "mode": "normal",
-                    "style": "",
-                    "text": "Also, can we include images and expect those to be included in the final version?",
-                    "type": "text",
-                    "version": 1,
-                  },
-                ],
-                "direction": "ltr",
-                "format": "",
-                "indent": 0,
-                "textFormat": 0,
-                "textStyle": "",
-                "type": "paragraph",
-                "version": 1,
-              },
-              {
-                "children": [],
-                "direction": null,
-                "format": "",
-                "indent": 0,
-                "textFormat": 0,
-                "textStyle": "",
-                "type": "paragraph",
-                "version": 1,
-              },
-              {
-                "fields": null,
-                "format": "",
-                "id": "6807d878f8296947487161eb",
-                "relationTo": "media",
-                "type": "upload",
-                "value": {
-                  "createdAt": media.createdAt,
-                  "filename": "cristian-palmer-XexawgzYOBc-unsplash.jpg",
-                  "filesize": 1491638,
-                  "focalX": 50,
-                  "focalY": 50,
-                  "height": 3000,
-                  "id": media.id,
-                  "mimeType": "image/jpeg",
-                  "sizes": {
-                    "card": {
-                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-768x1024.jpg",
-                      "filesize": 85547,
-                      "height": 1024,
-                      "mimeType": "image/jpeg",
-                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-768x1024.jpg",
-                      "width": 768,
-                    },
-                    "tablet": {
-                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-1024x768.jpg",
-                      "filesize": 76596,
-                      "height": 768,
-                      "mimeType": "image/jpeg",
-                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1024x768.jpg",
-                      "width": 1024,
-                    },
-                    "thumbnail": {
-                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg",
-                      "filesize": 13898,
-                      "height": 300,
-                      "mimeType": "image/jpeg",
-                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg",
-                      "width": 400,
-                    },
-                  },
-                  "thumbnailURL": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg",
-                  "updatedAt": media.updatedAt,
-                  "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash.jpg",
-                  "width": 4000,
+              format: '',
+              type: 'block',
+              version: 2,
+            },
+            {
+              children: [
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: 'Also, can we include images and expect those to be included in the final version?',
+                  type: 'text',
+                  version: 1,
                 },
-                "version": 3,
-              },
-              {
-                "children": [
-                  {
-                    "detail": 0,
-                    "format": 0,
-                    "mode": "normal",
-                    "style": "",
-                    "text": "Some final paragraph text - for good measure (overused phrase at this point).",
-                    "type": "text",
-                    "version": 1,
+              ],
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              textFormat: 0,
+              textStyle: '',
+              type: 'paragraph',
+              version: 1,
+            },
+            {
+              children: [],
+              direction: null,
+              format: '',
+              indent: 0,
+              textFormat: 0,
+              textStyle: '',
+              type: 'paragraph',
+              version: 1,
+            },
+            {
+              fields: null,
+              format: '',
+              id: '6807d878f8296947487161eb',
+              relationTo: 'media',
+              type: 'upload',
+              value: {
+                createdAt: media.createdAt,
+                filename: 'cristian-palmer-XexawgzYOBc-unsplash.jpg',
+                filesize: 1491638,
+                focalX: 50,
+                focalY: 50,
+                height: 3000,
+                id: media.id,
+                mimeType: 'image/jpeg',
+                sizes: {
+                  card: {
+                    filename: 'cristian-palmer-XexawgzYOBc-unsplash-768x1024.jpg',
+                    filesize: 85547,
+                    height: 1024,
+                    mimeType: 'image/jpeg',
+                    url: '/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-768x1024.jpg',
+                    width: 768,
                   },
-                ],
-                "direction": "ltr",
-                "format": "",
-                "indent": 0,
-                "textFormat": 0,
-                "textStyle": "",
-                "type": "paragraph",
-                "version": 1,
+                  tablet: {
+                    filename: 'cristian-palmer-XexawgzYOBc-unsplash-1024x768.jpg',
+                    filesize: 76596,
+                    height: 768,
+                    mimeType: 'image/jpeg',
+                    url: '/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1024x768.jpg',
+                    width: 1024,
+                  },
+                  thumbnail: {
+                    filename: 'cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg',
+                    filesize: 13898,
+                    height: 300,
+                    mimeType: 'image/jpeg',
+                    url: '/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg',
+                    width: 400,
+                  },
+                },
+                thumbnailURL: '/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg',
+                updatedAt: media.updatedAt,
+                url: '/api/media/file/cristian-palmer-XexawgzYOBc-unsplash.jpg',
+                width: 4000,
               },
-            ],
-            "direction": "ltr",
-            "format": "",
-            "indent": 0,
-            "type": "root",
-            "version": 1,
-          },
+              version: 3,
+            },
+            {
+              children: [
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: 'Some final paragraph text - for good measure (overused phrase at this point).',
+                  type: 'text',
+                  version: 1,
+                },
+              ],
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              textFormat: 0,
+              textStyle: '',
+              type: 'paragraph',
+              version: 1,
+            },
+          ],
+          direction: 'ltr',
+          format: '',
+          indent: 0,
+          type: 'root',
+          version: 1,
         },
-      }
-    )
+      },
+    })
   })
 
   it('builds a Crowdin JSON object as expected', async () => {
@@ -330,182 +328,180 @@ describe('Lexical editor with blocks', () => {
         fields: Policies.fields,
         document: policy,
       }),
-    ).toEqual(
-      {
-        "content": {
-          "root": {
-            "children": [
-              {
-                "children": [
-                  {
-                    "detail": 0,
-                    "format": 0,
-                    "mode": "normal",
-                    "style": "",
-                    "text": "What happens if a block doesn't have any localized fields?",
-                    "type": "text",
-                    "version": 1,
-                  },
-                ],
-                "direction": "ltr",
-                "format": "",
-                "indent": 0,
-                "textFormat": 0,
-                "textStyle": "",
-                "type": "paragraph",
-                "version": 1,
-              },
-              {
-                "fields": {
-                  "blockName": "",
-                  "blockType": "cookieTable",
-                  "cookieCategoryId": "strictlyNecessary",
-                  "id": "678564c06ec4a6f1fcf6a623",
+    ).toEqual({
+      content: {
+        root: {
+          children: [
+            {
+              children: [
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: "What happens if a block doesn't have any localized fields?",
+                  type: 'text',
+                  version: 1,
                 },
-                "format": "",
-                "type": "block",
-                "version": 2,
+              ],
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              textFormat: 0,
+              textStyle: '',
+              type: 'paragraph',
+              version: 1,
+            },
+            {
+              fields: {
+                blockName: '',
+                blockType: 'cookieTable',
+                cookieCategoryId: 'strictlyNecessary',
+                id: '678564c06ec4a6f1fcf6a623',
               },
-              {
-                "children": [
-                  {
-                    "detail": 0,
-                    "format": 0,
-                    "mode": "normal",
-                    "style": "",
-                    "text": "For example - a block that only contains a select field, which is included twice for good measure!",
-                    "type": "text",
-                    "version": 1,
-                  },
-                ],
-                "direction": "ltr",
-                "format": "",
-                "indent": 0,
-                "textFormat": 0,
-                "textStyle": "",
-                "type": "paragraph",
-                "version": 1,
-              },
-              {
-                "fields": {
-                  "blockName": "",
-                  "blockType": "cookieTable",
-                  "cookieCategoryId": "functional",
-                  "id": "678564926ec4a6f1fcf6a622",
+              format: '',
+              type: 'block',
+              version: 2,
+            },
+            {
+              children: [
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: 'For example - a block that only contains a select field, which is included twice for good measure!',
+                  type: 'text',
+                  version: 1,
                 },
-                "format": "",
-                "type": "block",
-                "version": 2,
+              ],
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              textFormat: 0,
+              textStyle: '',
+              type: 'paragraph',
+              version: 1,
+            },
+            {
+              fields: {
+                blockName: '',
+                blockType: 'cookieTable',
+                cookieCategoryId: 'functional',
+                id: '678564926ec4a6f1fcf6a622',
               },
-              {
-                "children": [
-                  {
-                    "detail": 0,
-                    "format": 0,
-                    "mode": "normal",
-                    "style": "",
-                    "text": "Also, can we include images and expect those to be included in the final version?",
-                    "type": "text",
-                    "version": 1,
-                  },
-                ],
-                "direction": "ltr",
-                "format": "",
-                "indent": 0,
-                "textFormat": 0,
-                "textStyle": "",
-                "type": "paragraph",
-                "version": 1,
-              },
-              {
-                "children": [],
-                "direction": null,
-                "format": "",
-                "indent": 0,
-                "textFormat": 0,
-                "textStyle": "",
-                "type": "paragraph",
-                "version": 1,
-              },
-              {
-                "fields": null,
-                "format": "",
-                "id": "6807d878f8296947487161eb",
-                "relationTo": "media",
-                "type": "upload",
-                "value": {
-                  "createdAt": media.createdAt,
-                  "filename": "cristian-palmer-XexawgzYOBc-unsplash.jpg",
-                  "filesize": 1491638,
-                  "focalX": 50,
-                  "focalY": 50,
-                  "height": 3000,
-                  "id": media.id,
-                  "mimeType": "image/jpeg",
-                  "sizes": {
-                    "card": {
-                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-768x1024.jpg",
-                      "filesize": 85547,
-                      "height": 1024,
-                      "mimeType": "image/jpeg",
-                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-768x1024.jpg",
-                      "width": 768,
-                    },
-                    "tablet": {
-                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-1024x768.jpg",
-                      "filesize": 76596,
-                      "height": 768,
-                      "mimeType": "image/jpeg",
-                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1024x768.jpg",
-                      "width": 1024,
-                    },
-                    "thumbnail": {
-                      "filename": "cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg",
-                      "filesize": 13898,
-                      "height": 300,
-                      "mimeType": "image/jpeg",
-                      "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg",
-                      "width": 400,
-                    },
-                  },
-                  "thumbnailURL": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg",
-                  "updatedAt": media.updatedAt,
-                  "url": "/api/media/file/cristian-palmer-XexawgzYOBc-unsplash.jpg",
-                  "width": 4000,
+              format: '',
+              type: 'block',
+              version: 2,
+            },
+            {
+              children: [
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: 'Also, can we include images and expect those to be included in the final version?',
+                  type: 'text',
+                  version: 1,
                 },
-                "version": 3,
-              },
-              {
-                "children": [
-                  {
-                    "detail": 0,
-                    "format": 0,
-                    "mode": "normal",
-                    "style": "",
-                    "text": "Some final paragraph text - for good measure (overused phrase at this point).",
-                    "type": "text",
-                    "version": 1,
+              ],
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              textFormat: 0,
+              textStyle: '',
+              type: 'paragraph',
+              version: 1,
+            },
+            {
+              children: [],
+              direction: null,
+              format: '',
+              indent: 0,
+              textFormat: 0,
+              textStyle: '',
+              type: 'paragraph',
+              version: 1,
+            },
+            {
+              fields: null,
+              format: '',
+              id: '6807d878f8296947487161eb',
+              relationTo: 'media',
+              type: 'upload',
+              value: {
+                createdAt: media.createdAt,
+                filename: 'cristian-palmer-XexawgzYOBc-unsplash.jpg',
+                filesize: 1491638,
+                focalX: 50,
+                focalY: 50,
+                height: 3000,
+                id: media.id,
+                mimeType: 'image/jpeg',
+                sizes: {
+                  card: {
+                    filename: 'cristian-palmer-XexawgzYOBc-unsplash-768x1024.jpg',
+                    filesize: 85547,
+                    height: 1024,
+                    mimeType: 'image/jpeg',
+                    url: '/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-768x1024.jpg',
+                    width: 768,
                   },
-                ],
-                "direction": "ltr",
-                "format": "",
-                "indent": 0,
-                "textFormat": 0,
-                "textStyle": "",
-                "type": "paragraph",
-                "version": 1,
+                  tablet: {
+                    filename: 'cristian-palmer-XexawgzYOBc-unsplash-1024x768.jpg',
+                    filesize: 76596,
+                    height: 768,
+                    mimeType: 'image/jpeg',
+                    url: '/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-1024x768.jpg',
+                    width: 1024,
+                  },
+                  thumbnail: {
+                    filename: 'cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg',
+                    filesize: 13898,
+                    height: 300,
+                    mimeType: 'image/jpeg',
+                    url: '/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg',
+                    width: 400,
+                  },
+                },
+                thumbnailURL: '/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg',
+                updatedAt: media.updatedAt,
+                url: '/api/media/file/cristian-palmer-XexawgzYOBc-unsplash.jpg',
+                width: 4000,
               },
-            ],
-            "direction": "ltr",
-            "format": "",
-            "indent": 0,
-            "type": "root",
-            "version": 1,
-          },
+              version: 3,
+            },
+            {
+              children: [
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: 'Some final paragraph text - for good measure (overused phrase at this point).',
+                  type: 'text',
+                  version: 1,
+                },
+              ],
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              textFormat: 0,
+              textStyle: '',
+              type: 'paragraph',
+              version: 1,
+            },
+          ],
+          direction: 'ltr',
+          format: '',
+          indent: 0,
+          type: 'root',
+          version: 1,
         },
-        "title": "Test policy",
-      }
-    )
+      },
+      title: 'Test policy',
+    })
   })
 
   it('creates an HTML file for Crowdin as expected', async () => {
@@ -537,8 +533,8 @@ describe('Lexical editor with blocks', () => {
     })
     const crowdinFiles = await getFilesByDocumentID({ documentId: `${policy.id}`, payload })
     const contentHtmlFile = crowdinFiles.find((file) => file.field === 'content')
-    expect(contentHtmlFile?.fileData?.html).toMatch(
-      `<p>What happens if a block doesn&#39;t have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p></p><img src="${media.id}" /><p>Some final paragraph text - for good measure (overused phrase at this point).</p>`,
+    expect(contentHtmlFile?.fileData?.html).toMatchInlineSnapshot(
+      `"<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=6807d878f8296947487161eb data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>"`,
     )
   })
 
@@ -602,12 +598,12 @@ describe('Lexical editor with blocks', () => {
     expect(fileOneCrowdinFiles.length).toEqual(0)
     expect(fileTwoCrowdinFiles.length).toEqual(0)
 
-    expect(htmlFileOne?.fileData?.html).toMatch(
-      `<p>What happens if a block doesn&#39;t have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p></p><img src="${media.id}" /><p>Some final paragraph text - for good measure (overused phrase at this point).</p>`,
+    expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(
+      `"<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=6807d878f8296947487161eb data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>"`,
     )
 
-    expect(htmlFileTwo?.fileData?.html).toMatch(
-      `<p>What happens if a block doesn&#39;t have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p></p><img src="${media.id}" /><p>Some final paragraph text - for good measure (overused phrase at this point).</p>`,
+    expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(
+      `"<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=6807d878f8296947487161eb data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>"`,
     )
   })
 })
