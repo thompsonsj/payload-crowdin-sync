@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.35.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.35.0...payload-crowdin-sync-v0.35.1) (2025-05-01)
+
+
+### Bug Fixes
+
+* **bydocument:** check lexical blocks article directory exists ([#283](https://github.com/thompsonsj/payload-crowdin-sync/issues/283)) ([4bc32b8](https://github.com/thompsonsj/payload-crowdin-sync/commit/4bc32b8eaf4a12863c54a636f1f8f91717f7332f))
+
 ## [0.35.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.34.5...payload-crowdin-sync-v0.35.0) (2025-04-29)
 
 
