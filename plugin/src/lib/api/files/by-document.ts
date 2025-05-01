@@ -10,7 +10,7 @@ const require = createRequire(import.meta.url);
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const crowdin = require('@crowdin/crowdin-api-client');
-import { Credentials, SourceFiles } from "@crowdin/crowdin-api-client";
+import { Credentials, ResponseObject, SourceFiles, SourceFilesModel } from "@crowdin/crowdin-api-client";
 
 interface IfindOrCreateCollectionDirectory {
   collectionSlug: CollectionSlug | "globals";
@@ -117,11 +117,11 @@ export class filesApiByDocument {
           collectionSlug: this.global ? "globals" : this.collectionSlug,
         });
 
-      const parent: CrowdinArticleDirectory = isCrowdinArticleDirectory(this.parent) ? this.parent : this.parent && await this.req.payload.findByID({
+      const parent = isCrowdinArticleDirectory(this.parent) ? this.parent : this.parent && await this.req.payload.findByID({
           collection: "crowdin-article-directories",
           id: this.parent,
           req: this.req,
-        }) as any;
+        }) as CrowdinArticleDirectory;
 
       // Create article directory on Crowdin
       const name = this.global ? this.collectionSlug : this.document.id
@@ -131,8 +131,8 @@ export class filesApiByDocument {
         this.req.payload
       )
       const useAsTitle = (collectionConfig as CollectionConfig)?.admin?.useAsTitle
-      
-      const crowdinDirectory = await this.crowdinCreateDirectory({
+
+      crowdinPayloadArticleDirectory = await this.crowdinFindOrCreateDirectory({
         parent,
         crowdinPayloadCollectionDirectory,
         name,
@@ -140,27 +140,9 @@ export class filesApiByDocument {
       });
 
       // Store result in Payload CMS
-      const result = await this.req.payload.create({
-        collection: "crowdin-article-directories",
-        data: {
-          ...(crowdinPayloadCollectionDirectory?.['id'] && {
-            crowdinCollectionDirectory: `${crowdinPayloadCollectionDirectory?.['id']}`,
-          }),
-          originalId: crowdinDirectory.data.id,
-          directoryId: crowdinDirectory.data.directoryId,
-          name,
-          reference: {
-            createdAt: crowdinDirectory.data.createdAt,
-            updatedAt: crowdinDirectory.data.updatedAt,
-            projectId: this.projectId,
-          },
-          ...(parent && {
-            parent: parent.id,
-          })
-        },
-        req: this.req,
-      }) as unknown;
-      crowdinPayloadArticleDirectory = result as CrowdinArticleDirectory
+      if (!crowdinPayloadArticleDirectory) {
+        throw new Error("Crowdin article directory not found");
+      }
       const crowdinArticleDirectory = crowdinPayloadArticleDirectory.id
 
       // Associate result with document
@@ -211,6 +193,11 @@ export class filesApiByDocument {
 
     if (query.totalDocs === 0) {
       // Create collection directory on Crowdin
+      if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+        console.log(
+          `Creating collection directory on Crowdin: ${collectionSlug}`
+        );
+      }
       const crowdinDirectory = await this.sourceFilesApi.createDirectory(
         this.projectId,
         {
@@ -245,7 +232,47 @@ export class filesApiByDocument {
     return crowdinPayloadCollectionDirectory;
   }
 
-  async crowdinCreateDirectory({
+  /**
+   * Check if a directory exists on Crowdin
+   * 
+   * Field directories are stored in article directories.
+   * 
+   * The existence check is done in Payload CMS - 
+   * check for a CrowdinArticleDirectory with the same name.
+   */
+  async crowdinFindFieldDirectory({
+    parent,
+    name,
+  }: {
+    parent: CrowdinArticleDirectory
+    name: string
+  }) {
+    try {
+      const result = await this.req.payload.find({
+        collection: "crowdin-article-directories",
+        where: {
+          name: {
+            equals: name,
+          },
+          parent: {
+            equals: parent.id,
+          }
+        }
+      })
+      if (result.totalDocs === 0) {
+        return undefined
+      }
+      return result.docs[0] as CrowdinArticleDirectory
+    }
+    catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Create a directory on Crowdin
+   */
+  async crowdinFindOrCreateDirectory({
     parent,
     crowdinPayloadCollectionDirectory,
     name,
@@ -257,6 +284,16 @@ export class filesApiByDocument {
     useAsTitle?: string
   }) {
     try {
+      // Check if directory already exists
+      const existingDirectory = parent && await this.crowdinFindFieldDirectory({
+        parent,
+        name,
+      });
+      if (existingDirectory) {
+        // Directory already exists
+        return existingDirectory
+      }
+
       const crowdinDirectory = await this.sourceFilesApi.createDirectory(
         this.projectId,
         {
@@ -267,9 +304,58 @@ export class filesApiByDocument {
             : useAsTitle && this.document[useAsTitle] || this.document.title || this.document.name, // no tests for this Crowdin metadata, but makes it easier for translators
         }
       );
-      return crowdinDirectory
+      const result = await this.payloadStoreCrowdinDirectory({
+        crowdinDirectory,
+        crowdinPayloadCollectionDirectory,
+        name,
+        parent,
+      });
+      return result as CrowdinArticleDirectory
     }
     catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Store a record of the Crowdin directory in Payload CMS
+   * 
+   * This is how we can find the directory on Crowdin later.
+   */
+  async payloadStoreCrowdinDirectory({
+    crowdinDirectory,
+    crowdinPayloadCollectionDirectory,
+    name,
+    parent,
+  }: {
+    crowdinDirectory: ResponseObject<SourceFilesModel.Directory>
+    crowdinPayloadCollectionDirectory?: CrowdinCollectionDirectory
+    name: string
+    parent?: CrowdinArticleDirectory
+  }) {
+    try {
+      const result = await this.req.payload.create({
+        collection: "crowdin-article-directories",
+        data: {
+          ...(crowdinPayloadCollectionDirectory?.['id'] && {
+            crowdinCollectionDirectory: `${crowdinPayloadCollectionDirectory?.['id']}`,
+          }),
+          originalId: crowdinDirectory.data.id,
+          directoryId: crowdinDirectory.data.directoryId,
+          name,
+          reference: {
+            createdAt: crowdinDirectory.data.createdAt,
+            updatedAt: crowdinDirectory.data.updatedAt,
+            projectId: this.projectId,
+          },
+          ...(parent && {
+            parent: parent.id,
+          })
+        },
+        req: this.req,
+      });
+      return result as CrowdinArticleDirectory
+    } catch (error) {
       console.error(error);
     }
   }
