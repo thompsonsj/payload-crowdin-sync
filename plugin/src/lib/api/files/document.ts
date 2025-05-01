@@ -289,6 +289,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
             sourceBlocks: blockContent
           }),
         });
+        
       } else {
         const html = "<span>lexical configuration not found</span>"
         await this.createOrUpdateFile({
@@ -319,7 +320,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     blockConfig: BlockField
     name: string
     req: PayloadRequest
-  }) {    
+  }) {
     // directory name must be unique from file names - Crowdin API
     const folderName = `${this.pluginOptions.lexicalBlockFolderPrefix}${name}`
     /**
