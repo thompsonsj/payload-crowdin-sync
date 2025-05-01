@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.32.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.32.0...dev-v0.32.1) (2025-05-01)
+
+
+### Bug Fixes
+
+* **bydocument:** check lexical blocks article directory exists ([#283](https://github.com/thompsonsj/payload-crowdin-sync/issues/283)) ([4bc32b8](https://github.com/thompsonsj/payload-crowdin-sync/commit/4bc32b8eaf4a12863c54a636f1f8f91717f7332f))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.35.0 to 0.35.1
+
 ## [0.32.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.31.6...dev-v0.32.0) (2025-04-29)
 
 
