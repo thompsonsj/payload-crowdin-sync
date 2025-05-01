@@ -8,7 +8,7 @@ import {
   utilities,
 } from 'payload-crowdin-sync'
 import Policies from '../../collections/Policies'
-import { fixture } from './lexical-editor-with-multiple-blocks.fixture'
+import { fixture, fixture2 } from './lexical-editor-with-multiple-blocks.fixture'
 import nock from 'nock'
 import { pluginConfig } from '../helpers/plugin-config'
 import { CrowdinArticleDirectory, Policy } from '../../payload-types'
@@ -668,6 +668,7 @@ describe('Lexical editor with multiple blocks', () => {
       collection: 'policies',
       data: {
         title: 'Test policy',
+        content: fixture2,
       },
     })) as any
     const lexicalBlocksArticleDirectory: CrowdinArticleDirectory = (await getArticleDirectory({
