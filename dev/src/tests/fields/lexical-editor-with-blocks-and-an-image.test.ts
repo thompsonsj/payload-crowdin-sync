@@ -534,7 +534,7 @@ describe('Lexical editor with blocks', () => {
     const crowdinFiles = await getFilesByDocumentID({ documentId: `${policy.id}`, payload })
     const contentHtmlFile = crowdinFiles.find((file) => file.field === 'content')
     expect(contentHtmlFile?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=6807d878f8296947487161eb data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>"`,
+      `"<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=68148917b8d7e7f63cb56e54 data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>"`,
     )
   })
 
@@ -599,11 +599,11 @@ describe('Lexical editor with blocks', () => {
     expect(fileTwoCrowdinFiles.length).toEqual(0)
 
     expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=6807d878f8296947487161eb data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>"`,
+      `"<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=68148917b8d7e7f63cb56e54 data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>"`,
     )
 
     expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=6807d878f8296947487161eb data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>"`,
+      `"<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=68148917b8d7e7f63cb56e54 data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>"`,
     )
   })
 })
