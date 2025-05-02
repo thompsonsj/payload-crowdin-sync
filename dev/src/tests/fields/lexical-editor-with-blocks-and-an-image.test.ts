@@ -64,14 +64,14 @@ describe('Lexical editor with blocks', () => {
      */
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-      .times(2)
+      .times(4)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
-      .times(1)
+      .times(2)
       // .times(4)
       .reply(200, mockClient.addStorage())
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
-      .times(1)
+      .times(2)
       // .times(4)
       .reply(200, mockClient.createFile({}))
 
@@ -266,7 +266,7 @@ describe('Lexical editor with blocks', () => {
   it('builds a Crowdin JSON object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-      .times(2)
+      .times(3)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
       .times(2)
@@ -297,7 +297,7 @@ describe('Lexical editor with blocks', () => {
   it('builds a Payload update object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-      .twice()
+      .times(3)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
       .times(2)
@@ -507,7 +507,7 @@ describe('Lexical editor with blocks', () => {
   it('creates an HTML file for Crowdin as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-      .twice()
+      .times(3)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
       .times(2)
@@ -533,15 +533,15 @@ describe('Lexical editor with blocks', () => {
     })
     const crowdinFiles = await getFilesByDocumentID({ documentId: `${policy.id}`, payload })
     const contentHtmlFile = crowdinFiles.find((file) => file.field === 'content')
-    expect(contentHtmlFile?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=6807d878f8296947487161eb data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>"`,
+    expect(contentHtmlFile?.fileData?.html).toMatch(
+      `<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=${media.id} data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>`,
     )
   })
 
   it('creates HTML files for Crowdin as expected for lexical content within an array field that is embedded in a group', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-      .times(3)
+      .times(5)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
       .times(3)
@@ -598,12 +598,12 @@ describe('Lexical editor with blocks', () => {
     expect(fileOneCrowdinFiles.length).toEqual(0)
     expect(fileTwoCrowdinFiles.length).toEqual(0)
 
-    expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=6807d878f8296947487161eb data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>"`,
+    expect(htmlFileOne?.fileData?.html).toMatch(
+      `<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=${media.id} data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>`,
     )
 
-    expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(
-      `"<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=6807d878f8296947487161eb data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>"`,
+    expect(htmlFileTwo?.fileData?.html).toMatch(
+      `<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=${media.id} data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>`,
     )
   })
 })

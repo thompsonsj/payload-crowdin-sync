@@ -47,7 +47,20 @@ export const convertLexicalToHtml = async (editorData: SerializedEditorState, ed
    */
   const UploadHTMLConverter: HTMLConverters<SerializedUploadNode> = {
     upload: ({ node }) => {
-    return `<span data-block-id=${node.id} data-relation-to=${node.relationTo} data-block-type="pcsUpload"></span>`
+    const uploadValueId = (node: SerializedUploadNode) => {
+      if (typeof node.value === 'number') {
+        return `${node.value}`
+      }
+      if (typeof node.value === 'string') {
+        return node.value
+      }
+      return node.value.id
+    }
+    
+    // naming is unfortunate here - we are reusing structure from blocks
+    // refactor to indicate type? i.e. block or upload?
+    // in this case, data-block-id is not block id, but upload id
+    return `<span data-block-id=${uploadValueId(node)} data-relation-to=${node.relationTo} data-block-type="pcsUpload"></span>`
   }}
 
   return convertLexicalToHTML({
