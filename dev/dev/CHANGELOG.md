@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.32.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.32.1...dev-v0.32.2) (2025-05-02)
+
+
+### Bug Fixes
+
+* **richtextconversion:** pass upload value id not block id ([#286](https://github.com/thompsonsj/payload-crowdin-sync/issues/286)) ([dcebac7](https://github.com/thompsonsj/payload-crowdin-sync/commit/dcebac7931f40aa8e65dbfabb585a1bfad839398))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.35.1 to 0.35.2
+
 ## [0.32.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.32.0...dev-v0.32.1) (2025-05-01)
 
 
