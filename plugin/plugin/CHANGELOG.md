@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.36.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.35.2...payload-crowdin-sync-v0.36.0) (2025-05-12)
+
+
+### Features
+
+* **utilities:** support fields in tab in localized parent ([#288](https://github.com/thompsonsj/payload-crowdin-sync/issues/288)) ([0c80382](https://github.com/thompsonsj/payload-crowdin-sync/commit/0c8038256fe87e414c1ab1e05888a7dd28e4bba4))
+
 ## [0.35.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.35.1...payload-crowdin-sync-v0.35.2) (2025-05-02)
 
 
