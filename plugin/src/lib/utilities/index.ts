@@ -242,14 +242,16 @@ export const convertTabs = ({
               ? ({
                   type: 'group',
                   name: tab.name,
-                  localized,
+                  ...(localized && {
+                    localized: true,
+                  }),
                   fields: tab.fields,
                 } as Field)
               : ({
                   label: 'fromTab',
                   type: 'collapsible',
                   fields: (tab.fields || []).map((tabField) => {
-                    if (localized && isLocalized(tabField, localized)) {
+                    if (isLocalized(tabField, localized)) {
                       return {
                         ...tabField,
                         localized: true,
