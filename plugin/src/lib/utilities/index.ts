@@ -4,19 +4,19 @@ import type {
   CollectionConfig,
   Field,
   GlobalConfig,
-} from "payload";
-import deepEqual from "deep-equal";
-import { FieldWithName, type CrowdinHtmlObject } from "../types";
+} from 'payload';
+import deepEqual from 'deep-equal';
+import { FieldWithName, type CrowdinHtmlObject } from '../types';
 
-import {  merge, omitBy } from "es-toolkit";
-import { get, isEmpty, map } from 'es-toolkit/compat'
-import dot from "dot-object";
+import { merge, omitBy } from 'es-toolkit';
+import { get, isEmpty, map } from 'es-toolkit/compat';
+import dot from 'dot-object';
 
-const localizedFieldTypes = ["richText", "text", "textarea"];
+const localizedFieldTypes = ['richText', 'text', 'textarea'];
 
-const nestedFieldTypes = ["array", "group", "blocks"];
+const nestedFieldTypes = ['array', 'group', 'blocks'];
 
-type IsLocalized = (field: Field, localizedParent?: boolean) => boolean
+type IsLocalized = (field: Field, localizedParent?: boolean) => boolean;
 
 export const containsNestedFields = (field: Field) =>
   nestedFieldTypes.includes(field.type);
@@ -27,64 +27,67 @@ export const findField = ({
   firstIteration = true,
   filterLocalizedFields = true,
 }: {
-  dotNotation: string
-  fields: Field[]
-  firstIteration?: boolean,
-  filterLocalizedFields?: boolean,
+  dotNotation: string;
+  fields: Field[];
+  firstIteration?: boolean;
+  filterLocalizedFields?: boolean;
 }): Field | undefined => {
   const localizedFields = getLocalizedFields({
     fields,
-    isLocalized: (firstIteration && filterLocalizedFields) ? undefined : (field) => !!(field),
-  })
-  const keys = dotNotation.split(`.`)
+    isLocalized:
+      firstIteration && filterLocalizedFields ? undefined : (field) => !!field,
+  });
+  const keys = dotNotation.split(`.`);
   if (keys.length === 0) {
-    return undefined
+    return undefined;
   }
   for (const field of localizedFields) {
     if (field.type === 'group' && keys.length > 1) {
-      const dotNotation = keys.slice(1).join(`.`)
+      const dotNotation = keys.slice(1).join(`.`);
       const search = findField({
         dotNotation,
         fields: field.fields,
         firstIteration: false,
-      })
+      });
       if (search) {
-        return search
+        return search;
       }
     }
     if (field.type === 'array' && keys.length > 2) {
-      const dotNotation = keys.slice(2).join(`.`)
+      const dotNotation = keys.slice(2).join(`.`);
       const search = findField({
         dotNotation,
         fields: field.fields,
         firstIteration: false,
-      })
+      });
       if (search) {
-        return search
+        return search;
       }
     }
     if (field.type === 'blocks' && keys.length > 3) {
-      const dotNotation = keys.slice(3).join(`.`)
-      const blockType = keys[2]
+      const dotNotation = keys.slice(3).join(`.`);
+      const blockType = keys[2];
       // find the block definition
-      const block = field.blocks.find((field: Block) => field.slug === blockType)
+      const block = field.blocks.find(
+        (field: Block) => field.slug === blockType,
+      );
       if (block) {
         const search = findField({
           dotNotation,
           fields: block.fields,
           firstIteration: false,
-        })
+        });
         if (search) {
-          return search
+          return search;
         }
       }
     }
     if (field.name === keys[0]) {
-      return field
+      return field;
     }
   }
-  return undefined
-}
+  return undefined;
+};
 
 export const getLocalizedFields = ({
   fields,
@@ -93,15 +96,15 @@ export const getLocalizedFields = ({
   isLocalized = isLocalizedField,
 }: {
   fields: Field[];
-  type?: "json" | "html";
+  type?: 'json' | 'html';
   localizedParent?: boolean;
-  isLocalized?: IsLocalized
+  isLocalized?: IsLocalized;
 }): any[] => [
   ...fields
     // localized or group fields only.
     .filter(
       (field) =>
-        isLocalized(field, localizedParent) || containsNestedFields(field)
+        isLocalized(field, localizedParent) || containsNestedFields(field),
     )
     // further filter on Crowdin field type
     .filter((field) => {
@@ -115,7 +118,7 @@ export const getLocalizedFields = ({
     // exclude group, array and block fields with no localized fields
     // TODO: find a better way to do this - block, array and group logic is duplicated, and this filter needs to be compatible with field extraction logic later in this function
     .filter((field) => {
-      if (field.type === "group" || field.type === "array") {
+      if (field.type === 'group' || field.type === 'array') {
         return containsLocalizedFields({
           fields: field.fields,
           type,
@@ -123,21 +126,21 @@ export const getLocalizedFields = ({
           isLocalized,
         });
       }
-      if (field.type === "blocks") {
+      if (field.type === 'blocks') {
         return field.blocks.find((block) =>
           containsLocalizedFields({
             fields: block.fields,
             type,
             localizedParent: localizedParent || hasLocalizedProp(field),
             isLocalized,
-          })
+          }),
         );
       }
       return true;
     })
     // recursion for group, array and blocks field
     .map((field) => {
-      if (field.type === "group" || field.type === "array") {
+      if (field.type === 'group' || field.type === 'array') {
         return {
           ...field,
           fields: getLocalizedFields({
@@ -148,7 +151,7 @@ export const getLocalizedFields = ({
           }),
         };
       }
-      if (field.type === "blocks") {
+      if (field.type === 'blocks') {
         const blocks = field.blocks
           .map((block: Block) => {
             if (
@@ -169,7 +172,7 @@ export const getLocalizedFields = ({
                 }),
               };
             }
-            return
+            return;
           })
           .filter((block) => block);
         return {
@@ -181,15 +184,18 @@ export const getLocalizedFields = ({
     })
     .filter(
       (field) =>
-        (field as any).type !== "collapsible" && (field as any).type !== "tabs"
+        (field as any).type !== 'collapsible' && (field as any).type !== 'tabs',
     ),
   ...convertTabs({
     fields,
-    callback: (fields) => getLocalizedFields({
-      fields,
-      type,
-      isLocalized,
-    })
+    localized: localizedParent,
+    callback: (fields) =>
+      getLocalizedFields({
+        fields,
+        type,
+        localizedParent,
+        isLocalized,
+      }),
   }),
   // recursion for collapsible field - flatten results into the returned array
   ...getCollapsibleLocalizedFields({ fields, type, isLocalized }),
@@ -201,43 +207,58 @@ export const getCollapsibleLocalizedFields = ({
   isLocalized = isLocalizedField,
 }: {
   fields: Field[];
-  type?: "json" | "html";
+  type?: 'json' | 'html';
   isLocalized?: IsLocalized;
 }): any[] =>
   fields
-    .filter((field) => field.type === "collapsible")
+    .filter((field) => field.type === 'collapsible')
     .flatMap((field) =>
       getLocalizedFields({
         fields: (field as CollapsibleField).fields,
         type,
         isLocalized,
-      })
+      }),
     );
 
 export const convertTabs = ({
   fields,
   callback,
+  localized = false,
+  isLocalized = isLocalizedField,
 }: {
   fields: Field[];
-  callback: (fields: Field[]) => Field[]
+  callback: (fields: Field[]) => Field[];
+  localized?: boolean;
+  isLocalized?: IsLocalized;
 }): Field[] =>
   fields
-    .filter((field) => field.type === "tabs")
+    .filter((field) => field.type === 'tabs')
     .flatMap((field) => {
-      if (field.type === "tabs") {
+      if (field.type === 'tabs') {
         const flattenedFields = field.tabs.reduce((tabFields, tab) => {
           return [
             ...tabFields,
-            "name" in tab
+            'name' in tab
               ? ({
-                  type: "group",
+                  type: 'group',
                   name: tab.name,
+                  ...(localized && {
+                    localized: true,
+                  }),
                   fields: tab.fields,
                 } as Field)
               : ({
-                  label: "fromTab",
-                  type: "collapsible",
-                  fields: tab.fields,
+                  label: 'fromTab',
+                  type: 'collapsible',
+                  fields: (tab.fields || []).map((tabField) => {
+                    if (isLocalized(tabField, localized)) {
+                      return {
+                        ...tabField,
+                        localized: true,
+                      } as Field;
+                    }
+                    return tabField;
+                  }),
                 } as Field),
           ];
         }, [] as Field[]);
@@ -248,7 +269,7 @@ export const convertTabs = ({
 
 export const getLocalizedRequiredFields = (
   collection: CollectionConfig | GlobalConfig,
-  type?: "json" | "html"
+  type?: 'json' | 'html',
 ): any[] => {
   const fields = getLocalizedFields({ fields: collection.fields, type });
   return fields.filter((field) => field.required);
@@ -261,26 +282,23 @@ export const getLocalizedRequiredFields = (
 export const getFieldSlugs = (fields: FieldWithName[]): string[] =>
   fields
     .filter(
-      (field: Field) => field.type === "text" || field.type === "richText"
+      (field: Field) => field.type === 'text' || field.type === 'richText',
     )
     .map((field: FieldWithName) => field.name);
 
 const hasLocalizedProp = (field: Field) =>
-  "localized" in field && field.localized;
+  'localized' in field && field.localized;
 
 /**
  * Is Localized Field
  *
  * Note that `id` should be excluded - it is a `text` field that is added by Payload CMS.
  */
-export const isLocalizedField = (
-  field: Field,
-  addLocalizedProp = false
-) =>
+export const isLocalizedField = (field: Field, addLocalizedProp = false) =>
   (hasLocalizedProp(field) || addLocalizedProp) &&
   localizedFieldTypes.includes(field.type) &&
   !excludeBasedOnConfig(field) &&
-  (field as FieldWithName).name !== "id";
+  (field as FieldWithName).name !== 'id';
 
 /**
  * Re-localize Field
@@ -288,18 +306,17 @@ export const isLocalizedField = (
  * Is Localized Field - for non-localized field collections. e.g.
  * fields within blocks nested in a localized Lexical rich text block.
  */
-export const reLocalizeField = (
-  field: Field,
-) => localizedFieldTypes.includes(field.type) &&
+export const reLocalizeField = (field: Field) =>
+  localizedFieldTypes.includes(field.type) &&
   !excludeBasedOnConfig(field) &&
-  (field as FieldWithName).name !== "id";
+  (field as FieldWithName).name !== 'id';
 
 const excludeBasedOnConfig = (field: Field) => {
-  const description = `${get(field, "admin.description", "")}`;
-  if (description.includes("Not sent to Crowdin. Localize in the CMS.")) {
+  const description = `${get(field, 'admin.description', '')}`;
+  if (description.includes('Not sent to Crowdin. Localize in the CMS.')) {
     return true;
   }
-  const custom = get(field, "custom.crowdinSync.disable", false);
+  const custom = get(field, 'custom.crowdinSync.disable', false);
   if (custom) {
     return true;
   }
@@ -313,29 +330,31 @@ export const containsLocalizedFields = ({
   isLocalized = isLocalizedField,
 }: {
   fields: Field[];
-  type?: "json" | "html";
+  type?: 'json' | 'html';
   localizedParent?: boolean;
   isLocalized?: IsLocalized;
 }): boolean => {
-  return !isEmpty(getLocalizedFields({ fields, type, localizedParent, isLocalized }));
+  return !isEmpty(
+    getLocalizedFields({ fields, type, localizedParent, isLocalized }),
+  );
 };
 
 export const fieldChanged = (
   previousValue: string | object | undefined,
   value: string | object | undefined,
-  type: string
+  type: string,
 ) => {
-  if (type === "richText") {
+  if (type === 'richText') {
     return !deepEqual(previousValue || {}, value || {});
   }
   return previousValue !== value;
 };
 
 export const removeLineBreaks = (string: string) =>
-  string.replace(/(\r\n|\n|\r)/gm, "");
+  string.replace(/(\r\n|\n|\r)/gm, '');
 
-export const fieldCrowdinFileType = (field: FieldWithName): "json" | "html" =>
-  field.type === "richText" ? "html" : "json";
+export const fieldCrowdinFileType = (field: FieldWithName): 'json' | 'html' =>
+  field.type === 'richText' ? 'html' : 'json';
 
 /**
  * Reorder blocks and array values based on the order of the original document.
@@ -358,36 +377,36 @@ export const restoreOrder = ({
   // gets an appropriate updateDocument structure: flattens collapsible/tag fields
   fields = getLocalizedFields({
     fields,
-    isLocalized: (fields) => !!(fields)
-  })
+    isLocalized: (fields) => !!fields,
+  });
   fields.forEach((field: any) => {
     if (!updateDocument || !updateDocument[field.name]) {
       return;
     }
-    if (field.type === "group") {
+    if (field.type === 'group') {
       response[field.name] = restoreOrder({
         updateDocument: updateDocument[field.name],
         document: document[field.name],
         fields: field.fields,
       });
-    } else if (field.type === "array" || field.type === "blocks") {
+    } else if (field.type === 'array' || field.type === 'blocks') {
       response[field.name] = document[field.name]
         .map((item: any) => {
           const arrayItem = updateDocument[field.name].find(
             (updateItem: any) => {
               return updateItem.id === item.id;
-            }
+            },
           );
           if (!arrayItem) {
             return {
               id: item.id,
-              ...(field.type === "blocks" && { blockType: item.blockType }),
+              ...(field.type === 'blocks' && { blockType: item.blockType }),
             };
           }
           const subFields =
-            field.type === "blocks"
+            field.type === 'blocks'
               ? field.blocks.find(
-                  (block: Block) => block.slug === item.blockType
+                  (block: Block) => block.slug === item.blockType,
                 )?.fields || []
               : field.fields;
           return {
@@ -397,7 +416,7 @@ export const restoreOrder = ({
               fields: subFields,
             }),
             id: arrayItem.id,
-            ...(field.type === "blocks" && { blockType: arrayItem.blockType }),
+            ...(field.type === 'blocks' && { blockType: arrayItem.blockType }),
           };
         })
         .filter((item: any) => !isEmpty(item));
@@ -436,26 +455,28 @@ export const buildPayloadUpdateObject = ({
 }) => {
   let response: { [key: string]: any } = {};
   if (crowdinHtmlObject) {
-    const destructured = dot.object(crowdinHtmlObject) as {[key: string]: any };
+    const destructured = dot.object(crowdinHtmlObject) as {
+      [key: string]: any;
+    };
 
     merge(crowdinJsonObject, destructured);
   }
   const filteredFields = getLocalizedFields({
     fields,
-    type: topLevel ? (!crowdinHtmlObject ? "json" : undefined) : undefined,
-    isLocalized: topLevel ? isLocalized : (field) => !!(field)
+    type: topLevel ? (!crowdinHtmlObject ? 'json' : undefined) : undefined,
+    isLocalized: topLevel ? isLocalized : (field) => !!field,
   });
   filteredFields.forEach((field) => {
     if (!crowdinJsonObject[field.name]) {
       return;
     }
-    if (field.type === "group") {
+    if (field.type === 'group') {
       response[field.name] = buildPayloadUpdateObject({
         crowdinJsonObject: crowdinJsonObject[field.name],
         fields: field.fields,
         topLevel: false,
       });
-    } else if (field.type === "array") {
+    } else if (field.type === 'array') {
       response[field.name] = map(crowdinJsonObject[field.name], (item, id) => {
         const payloadUpdateObject = buildPayloadUpdateObject({
           crowdinJsonObject: item,
@@ -467,12 +488,12 @@ export const buildPayloadUpdateObject = ({
           id,
         };
       }).filter((item: any) => !isEmpty(item));
-    } else if (field.type === "blocks") {
+    } else if (field.type === 'blocks') {
       response[field.name] = map(crowdinJsonObject[field.name], (item, id) => {
         // get first and only object key
         const blockType = Object.keys(item)[0];
         const payloadUpdateObject = buildPayloadUpdateObject({
-          crowdinJsonObject: item[blockType], 
+          crowdinJsonObject: item[blockType],
           fields:
             field.blocks.find((block: Block) => block.slug === blockType)
               ?.fields || [],
@@ -512,25 +533,25 @@ export const buildCrowdinJsonObject = ({
   isLocalized?: IsLocalized;
 }) => {
   let response: { [key: string]: any } = {};
-  
+
   const filteredFields = getLocalizedFields({
     fields,
-    type: "json",
+    type: 'json',
     // localization check not needed after `topLevel`, but still need to filter field type.
-    isLocalized: topLevel ? isLocalized : (field) => !!(field),
+    isLocalized: topLevel ? isLocalized : (field) => !!field,
   });
   filteredFields.forEach((field) => {
     if (!doc[field.name]) {
       return;
     }
-    if (field.type === "group") {
+    if (field.type === 'group') {
       response[field.name] = buildCrowdinJsonObject({
         doc: doc[field.name],
         fields: field.fields,
         topLevel: false,
         isLocalized,
       });
-    } else if (field.type === "array") {
+    } else if (field.type === 'array') {
       response[field.name] = doc[field.name]
         .map((item: any) => {
           const crowdinJsonObject = buildCrowdinJsonObject({
@@ -544,11 +565,11 @@ export const buildCrowdinJsonObject = ({
               [item.id]: crowdinJsonObject,
             };
           }
-          return
+          return;
         })
         .filter((item: any) => !isEmpty(item))
         .reduce((acc: object, item: any) => ({ ...acc, ...item }), {});
-    } else if (field.type === "blocks") {
+    } else if (field.type === 'blocks') {
       response[field.name] = doc[field.name]
         .map((item: any) => {
           const crowdinJsonObject = buildCrowdinJsonObject({
@@ -566,7 +587,7 @@ export const buildCrowdinJsonObject = ({
               },
             };
           }
-          return
+          return;
         })
         .filter((item: any) => !isEmpty(item))
         .reduce((acc: object, item: any) => ({ ...acc, ...item }), {});
@@ -580,7 +601,7 @@ export const buildCrowdinJsonObject = ({
 export const buildCrowdinHtmlObject = ({
   doc,
   fields,
-  prefix = "",
+  prefix = '',
   topLevel = true,
   isLocalized,
 }: {
@@ -593,26 +614,26 @@ export const buildCrowdinHtmlObject = ({
   topLevel?: boolean;
   isLocalized?: IsLocalized;
 }) => {
-  let response: CrowdinHtmlObject  = {};
+  let response: CrowdinHtmlObject = {};
   // it is convenient to be able to pass all fields - filter in this case
   const filteredFields = getLocalizedFields({
     fields,
-    type: "html",
+    type: 'html',
     // localization check not needed after `topLevel`, but still need to filter field type.
-    isLocalized: topLevel ? isLocalized : (field) => !!(field),
+    isLocalized: topLevel ? isLocalized : (field) => !!field,
   });
 
   filteredFields.forEach((field) => {
     const name = [prefix, (field as FieldWithName).name]
       .filter((string) => string)
-      .join(".");
+      .join('.');
     if (!doc[field.name]) {
       return;
     }
-    if (field.type === "group") {
+    if (field.type === 'group') {
       const subPrefix = `${[prefix, field.name]
         .filter((string) => string)
-        .join(".")}`;
+        .join('.')}`;
       response = {
         ...response,
         ...buildCrowdinHtmlObject({
@@ -623,11 +644,11 @@ export const buildCrowdinHtmlObject = ({
           isLocalized,
         }),
       };
-    } else if (field.type === "array") {
+    } else if (field.type === 'array') {
       const arrayValues = doc[field.name].map((item: any, index: number) => {
         const subPrefix = `${[prefix, `${field.name}`, `${item.id}`]
           .filter((string) => string)
-          .join(".")}`;
+          .join('.')}`;
         return buildCrowdinHtmlObject({
           doc: item,
           fields: field.fields,
@@ -640,7 +661,7 @@ export const buildCrowdinHtmlObject = ({
         ...response,
         ...merge({}, Object.assign({}, ...arrayValues)),
       };
-    } else if (field.type === "blocks") {
+    } else if (field.type === 'blocks') {
       const arrayValues = doc[field.name].map((item: any, index: number) => {
         const subPrefix = `${[
           prefix,
@@ -649,7 +670,7 @@ export const buildCrowdinHtmlObject = ({
           `${item.blockType}`,
         ]
           .filter((string) => string)
-          .join(".")}`;
+          .join('.')}`;
         return buildCrowdinHtmlObject({
           doc: item,
           fields:
@@ -665,7 +686,7 @@ export const buildCrowdinHtmlObject = ({
         ...merge({}, Object.assign({}, ...arrayValues)),
       };
     } else {
-      response[name] = doc[field.name]
+      response[name] = doc[field.name];
     }
   });
   return response;

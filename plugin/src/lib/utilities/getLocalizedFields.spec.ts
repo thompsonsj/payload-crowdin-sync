@@ -239,6 +239,75 @@ describe('fn: getLocalizedFields', () => {
       expect(getLocalizedFields({ fields })).toEqual(expected);
     });
 
+    it('includes localized fields within a tab from an array with a localization setting on the array field', () => {
+      /**
+       * Note that the localized prop is added to fields in this case.
+       */
+      const fields: Field[] = [
+        ...mixedFieldCollection,
+        {
+          name: 'arrayField',
+          type: 'array',
+          localized: true,
+          fields: [
+            {
+              type: 'tabs',
+              tabs: [
+                {
+                  label: 'Text',
+                  fields: [
+                    {
+                      name: 'title',
+                      type: 'text',
+                    },
+                    {
+                      name: 'text',
+                      type: 'text',
+                    },
+                    {
+                      name: 'textarea',
+                      type: 'textarea',
+                    },
+                    {
+                      name: 'select',
+                      type: 'select',
+                      options: ['one', 'two'],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ];
+      const expected = [
+        ...localizedFieldCollection,
+        {
+          name: 'arrayField',
+          type: 'array',
+          localized: true,
+          fields: [
+            {
+              localized: true,
+              name: 'title',
+              type: 'text',
+            },
+            {
+              localized: true,
+              name: 'text',
+              type: 'text',
+            },
+            {
+              localized: true,
+              name: 'textarea',
+              type: 'textarea',
+            },
+          ],
+        },
+      ];
+      expect(getLocalizedFields({ fields })).toEqual(expected);
+    });
+
     it('includes localized fields from an array inside a collapsible field where the top-level field group only contains collapsible fields', () => {
       const fields: Field[] = [
         {
