@@ -122,7 +122,7 @@ export const getLocalizedFields = ({
         return containsLocalizedFields({
           fields: field.fields,
           type,
-          localizedParent: localizedParent || hasLocalizedProp(field),
+          localizedParent: localizedParent || isLocalized(field),
           isLocalized,
         });
       }
@@ -131,7 +131,7 @@ export const getLocalizedFields = ({
           containsLocalizedFields({
             fields: block.fields,
             type,
-            localizedParent: localizedParent || hasLocalizedProp(field),
+            localizedParent: localizedParent || isLocalized(field),
             isLocalized,
           }),
         );
@@ -146,7 +146,7 @@ export const getLocalizedFields = ({
           fields: getLocalizedFields({
             fields: field.fields,
             type,
-            localizedParent: localizedParent || hasLocalizedProp(field),
+            localizedParent: localizedParent || isLocalized(field),
             isLocalized,
           }),
         };
@@ -158,7 +158,7 @@ export const getLocalizedFields = ({
               containsLocalizedFields({
                 fields: block.fields,
                 type,
-                localizedParent: localizedParent || hasLocalizedProp(field),
+                localizedParent: localizedParent || isLocalized(field),
                 isLocalized,
               })
             ) {
@@ -167,7 +167,7 @@ export const getLocalizedFields = ({
                 fields: getLocalizedFields({
                   fields: block.fields,
                   type,
-                  localizedParent: localizedParent || hasLocalizedProp(field),
+                  localizedParent: localizedParent || isLocalized(field),
                   isLocalized,
                 }),
               };
@@ -296,7 +296,7 @@ const hasLocalizedProp = (field: Field) =>
  */
 export const isLocalizedField = (field: Field, addLocalizedProp = false) =>
   (hasLocalizedProp(field) || addLocalizedProp) &&
-  localizedFieldTypes.includes(field.type) &&
+  (localizedFieldTypes.includes(field.type) || containsNestedFields(field)) &&
   !excludeBasedOnConfig(field) &&
   (field as FieldWithName).name !== 'id';
 
