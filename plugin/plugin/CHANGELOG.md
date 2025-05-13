@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.36.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.36.0...payload-crowdin-sync-v0.36.1) (2025-05-13)
+
+
+### Bug Fixes
+
+* **getlocalizedfields:** respect exclude prop on group fields ([#290](https://github.com/thompsonsj/payload-crowdin-sync/issues/290)) ([c8fbf78](https://github.com/thompsonsj/payload-crowdin-sync/commit/c8fbf78d23b435d32e2289314ac1a21216a008a8))
+
 ## [0.36.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.35.2...payload-crowdin-sync-v0.36.0) (2025-05-12)
 
 
