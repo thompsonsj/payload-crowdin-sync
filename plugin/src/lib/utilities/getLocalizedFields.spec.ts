@@ -54,8 +54,8 @@ describe('fn: getLocalizedFields', () => {
           custom: {
             crowdinSync: {
               disable: true,
-            }
-          }
+            },
+          },
         },
       ];
       expect(getLocalizedFields({ fields })).toEqual([
@@ -304,6 +304,58 @@ describe('fn: getLocalizedFields', () => {
             },
           ],
         },
+      ];
+      expect(getLocalizedFields({ fields })).toEqual(expected);
+    });
+
+    it('excludes localized fields within a tab from an array with a localization setting on the array field and the "exclude" custom property', () => {
+      /**
+       * Note that the localized prop is added to fields in this case.
+       */
+      const fields: Field[] = [
+        ...mixedFieldCollection,
+        {
+          name: 'arrayField',
+          type: 'array',
+          localized: true,
+          custom: {
+            crowdinSync: {
+              disable: true,
+            },
+          },
+          fields: [
+            {
+              type: 'tabs',
+              tabs: [
+                {
+                  label: 'Text',
+                  fields: [
+                    {
+                      name: 'title',
+                      type: 'text',
+                    },
+                    {
+                      name: 'text',
+                      type: 'text',
+                    },
+                    {
+                      name: 'textarea',
+                      type: 'textarea',
+                    },
+                    {
+                      name: 'select',
+                      type: 'select',
+                      options: ['one', 'two'],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ];
+      const expected = [
+        ...localizedFieldCollection,
       ];
       expect(getLocalizedFields({ fields })).toEqual(expected);
     });
