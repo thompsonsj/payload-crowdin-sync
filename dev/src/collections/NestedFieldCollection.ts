@@ -95,6 +95,19 @@ const NestedFieldCollection: CollectionConfig = {
         TestBlockArrayOfRichText,
       ],
     },
+    // blocks - top level localized
+    {
+      name: "layoutTwo", // required
+      type: "blocks", // required
+      localized: true,
+      blocks: [
+        BasicBlockTextFields,
+        BasicBlockTextFieldsNonLocalized,
+        BasicBlockRichTextField,
+        BasicBlockMixedFields,
+        TestBlockArrayOfRichText,
+      ],
+    },
     // collapsible
     /*{
       label: 'Collapsible',
