@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.36.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.36.1...payload-crowdin-sync-v0.36.2) (2025-06-09)
+
+
+### Bug Fixes
+
+* **islocalized:** always exclude blockName ([#292](https://github.com/thompsonsj/payload-crowdin-sync/issues/292)) ([7fa17ed](https://github.com/thompsonsj/payload-crowdin-sync/commit/7fa17ed757dc7911b03072b2011edd68e1dffbb3))
+
 ## [0.36.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.36.0...payload-crowdin-sync-v0.36.1) (2025-05-13)
 
 
