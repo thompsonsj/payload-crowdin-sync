@@ -293,12 +293,14 @@ const hasLocalizedProp = (field: Field) =>
  * Is Localized Field
  *
  * Note that `id` should be excluded - it is a `text` field that is added by Payload CMS.
+ * Note that `blockName` should be excluded - it is a `text` field that is added by Payload CMS and is not localized.
  */
 export const isLocalizedField = (field: Field, addLocalizedProp = false) =>
   (hasLocalizedProp(field) || addLocalizedProp) &&
   (localizedFieldTypes.includes(field.type) || containsNestedFields(field)) &&
   !excludeBasedOnConfig(field) &&
-  (field as FieldWithName).name !== 'id';
+  (field as FieldWithName).name !== 'id'  &&
+  (field as FieldWithName).name !== 'blockName';
 
 /**
  * Re-localize Field

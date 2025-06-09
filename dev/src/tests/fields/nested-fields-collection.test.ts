@@ -282,6 +282,82 @@ describe('Nested Fields Collection: blocks field', () => {
     })
   })
 
+  it('builds a Crowdin JSON object as expected: excluding blockName: top level localized', async () => {
+    nock('https://api.crowdin.com')
+      .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
+      .times(1)
+      .reply(200, mockClient.createDirectory({}))
+      .post(`/api/v2/storages`)
+      .times(2)
+      .reply(200, mockClient.addStorage())
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .times(2)
+      .reply(200, mockClient.createFile({}))
+
+    const doc = await payload.create({
+      collection: 'nested-field-collection',
+      data: {
+        title: 'Test',
+        layoutTwo: [
+          {
+            blockType: 'basicBlock',
+            blockName: 'Block 1',
+            textField: 'Block 1 text',
+          },
+          {
+            blockType: 'basicBlockRichText',
+            blockName: 'Block 2',
+            richTextField: [
+              {
+                children: [
+                  {
+                    text: 'This is editable ',
+                  },
+                  {
+                    text: 'rich',
+                    bold: true,
+                  },
+                  {
+                    text: ' text, ',
+                  },
+                  {
+                    text: 'much',
+                    italic: true,
+                  },
+                  {
+                    text: ' better than a ',
+                  },
+                  {
+                    text: '<textarea>',
+                    code: true,
+                  },
+                  {
+                    text: '!',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    })
+    const blockId = doc?.layoutTwo?.find((block) => block.blockType === 'basicBlock')?.id
+    expect(
+      utilities.buildCrowdinJsonObject({
+        doc,
+        fields: NestedFieldCollection.fields,
+      }),
+    ).toEqual({
+      layoutTwo: {
+        [`${blockId}`]: {
+          basicBlock: {
+            textField: 'Block 1 text',
+          },
+        },
+      },
+    })
+  })
+
   it('builds a Payload update object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)

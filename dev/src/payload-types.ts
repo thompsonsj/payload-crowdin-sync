@@ -521,6 +521,73 @@ export interface NestedFieldCollection {
           }
       )[]
     | null;
+  layoutTwo?:
+    | (
+        | {
+            textField?: string | null;
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            textareaField?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlock';
+          }
+        | {
+            textField?: string | null;
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            textareaField?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlockNonLocalized';
+          }
+        | {
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlockRichText';
+          }
+        | {
+            textField?: string | null;
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            textareaField?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlockMixed';
+          }
+        | {
+            title?: string | null;
+            messages?:
+              | {
+                  title?: string | null;
+                  message?:
+                    | {
+                        [k: string]: unknown;
+                      }[]
+                    | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'testBlockArrayOfRichText';
+          }
+      )[]
+    | null;
   group?: {
     textField?: string | null;
     richTextField?:
@@ -1007,6 +1074,58 @@ export interface NestedFieldCollectionSelect<T extends boolean = true> {
         id?: T;
       };
   layout?:
+    | T
+    | {
+        basicBlock?:
+          | T
+          | {
+              textField?: T;
+              richTextField?: T;
+              textareaField?: T;
+              id?: T;
+              blockName?: T;
+            };
+        basicBlockNonLocalized?:
+          | T
+          | {
+              textField?: T;
+              richTextField?: T;
+              textareaField?: T;
+              id?: T;
+              blockName?: T;
+            };
+        basicBlockRichText?:
+          | T
+          | {
+              richTextField?: T;
+              id?: T;
+              blockName?: T;
+            };
+        basicBlockMixed?:
+          | T
+          | {
+              textField?: T;
+              richTextField?: T;
+              textareaField?: T;
+              id?: T;
+              blockName?: T;
+            };
+        testBlockArrayOfRichText?:
+          | T
+          | {
+              title?: T;
+              messages?:
+                | T
+                | {
+                    title?: T;
+                    message?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+      };
+  layoutTwo?:
     | T
     | {
         basicBlock?:
