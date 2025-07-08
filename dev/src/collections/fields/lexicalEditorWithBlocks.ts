@@ -1,5 +1,5 @@
 import type { RichTextField } from 'payload';
-import { BlocksFeature, BoldFeature as BoldTextFeature, lexicalEditor, LinkFeature } from '@payloadcms/richtext-lexical'
+import { BlocksFeature, BoldFeature as BoldTextFeature, EXPERIMENTAL_TableFeature, lexicalEditor, LinkFeature } from '@payloadcms/richtext-lexical'
 import { SlateToLexicalFeature } from '@payloadcms/richtext-lexical/migrate'
 import { slateEditor } from '@payloadcms/richtext-slate';
 
@@ -11,6 +11,7 @@ export const lexicalEditorWithBlocks: RichTextField = {
     features: ({ defaultFeatures }) => [
       ...defaultFeatures,
       SlateToLexicalFeature(),
+      EXPERIMENTAL_TableFeature(),
       BlocksFeature({
         blocks: [
           {
