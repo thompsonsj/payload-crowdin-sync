@@ -14,6 +14,12 @@ const crowdinArticleDirectoryField: Field = {
   type: "relationship",
   relationTo: "crowdin-article-directories",
   hasMany: false,
+  hooks: {
+    // ensure crowdinArticleDirectory is not copied to a duplicated document
+    beforeDuplicate: [
+      () => undefined,
+    ],
+  },
   /*admin: {
     readOnly: true,
     disabled: true,
