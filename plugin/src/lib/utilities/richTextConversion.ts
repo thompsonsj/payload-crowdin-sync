@@ -27,6 +27,7 @@ import type { Descendant } from "slate";
 import type { SerializedEditorState } from 'lexical'
 
 import { getLexicalBlockFields } from "./lexical"
+import { SlateTableConverter } from "./lexical/slateTableConverter"
 
 export const convertLexicalToHtml = async (editorData: SerializedEditorState, editorConfig: SanitizedEditorConfig) => {
   const blockSlugs = getLexicalBlockFields(editorConfig)?.blocks.map(block => block.slug)
@@ -83,6 +84,7 @@ export const convertHtmlToLexical = (htmlString: string,  blockTranslations?: {
   const converters = cloneDeep([
     ...defaultSlateConverters,
     SlateBlockConverter,
+    SlateTableConverter,
     // AnotherCustomConverter
   ])
 
@@ -122,6 +124,12 @@ export const convertHtmlToLexical = (htmlString: string,  blockTranslations?: {
           }
         }
       },
+      table: () => ({ type: 'table' }),
+      tr: () => ({ type: 'table-row' }),
+      td: () => ({ type: 'table-cell' }),
+      thead: () => ({ type: 'table-header' }),
+      th: () => ({ type: 'table-header-cell' }),
+      tbody: () => ({ type: 'table-body' }),
     },
   } as HtmlToSlateConfig
   return convertSlateToLexical({
