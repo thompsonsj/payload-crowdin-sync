@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.18.0...source-v0.18.1) (2025-07-09)
+
+
+### Bug Fixes
+
+* **richtextconversion:** remove the table wrapper div added to HTML ([#300](https://github.com/thompsonsj/payload-crowdin-sync/issues/300)) ([cd0022b](https://github.com/thompsonsj/payload-crowdin-sync/commit/cd0022b024a57171de8771d55edc99357f736769))
+
 ## [0.18.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.17.2...source-v0.18.0) (2025-07-09)
 
 

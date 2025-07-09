@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.33.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.33.0...dev-v0.33.1) (2025-07-09)
+
+
+### Bug Fixes
+
+* **richtextconversion:** remove the table wrapper div added to HTML ([#300](https://github.com/thompsonsj/payload-crowdin-sync/issues/300)) ([cd0022b](https://github.com/thompsonsj/payload-crowdin-sync/commit/cd0022b024a57171de8771d55edc99357f736769))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.37.0 to 0.37.1
+
 ## [0.33.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.32.5...dev-v0.33.0) (2025-07-09)
 
 
