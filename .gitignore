@@ -45,3 +45,5 @@ Thumbs.db
 
 .env
 nx-cloud.env
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
