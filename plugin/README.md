@@ -12,7 +12,7 @@ Table of contents:
 
 ## Install
 
-- Payload version `1.0.19` or higher is required
+- Payload version `3.0` or higher is required
 
 ```
 #npm
