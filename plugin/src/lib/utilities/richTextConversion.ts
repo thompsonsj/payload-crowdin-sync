@@ -19,7 +19,7 @@ import {
   defaultSlateConverters,
 } from '@payloadcms/richtext-lexical/migrate'
 
-import { getAttributeValue } from 'domutils'
+import { findOne, getAttributeValue } from 'domutils'
 import { SlateBlockConverter } from "./lexical/slateBlockConverter";
 import { cloneDeep } from "es-toolkit";
 
@@ -126,12 +126,23 @@ export const convertHtmlToLexical = (htmlString: string,  blockTranslations?: {
           }
         }
       },
+      div: () => ({ type: 'div' }),
       table: () => ({ type: 'table' }),
       tr: () => ({ type: 'table-row' }),
       td: () => ({ type: 'table-cell' }),
       // thead: () => ({ type: 'table-header' }),
       th: () => ({ type: 'table-header-cell' }),
       // tbody: () => ({ type: 'table-body' }),
+    },
+    htmlUpdaterMap: {
+      div: (el) => {
+        // is this is a direct parent of a table
+        const table = findOne((node) => node.name === 'table', [el]);
+        if (table) {
+          return table;
+        }
+        return el;
+      },
     },
   } as HtmlToSlateConfig
   return convertSlateToLexical({
