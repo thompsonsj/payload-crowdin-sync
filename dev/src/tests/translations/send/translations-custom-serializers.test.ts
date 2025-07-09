@@ -1,4 +1,4 @@
-import { payloadHtmlToSlateConfig, payloadCrowdinSyncTranslationsApi } from "payload-crowdin-sync";
+import { payloadCrowdinSyncTranslationsApi } from "payload-crowdin-sync";
 import nock from "nock";
 import { mockCrowdinClient } from "payload-crowdin-sync";
 import { pluginConfig } from "../../helpers/plugin-config"
@@ -19,22 +19,7 @@ let payload: Payload
  * stored as expected.
  */
 
-const pluginOptionsDefault = pluginConfig()
-const pluginOptions = {
-  ...pluginOptionsDefault,
-  htmlToSlateConfig: {
-    ...payloadHtmlToSlateConfig,
-    elementTags: {
-      ...payloadHtmlToSlateConfig.elementTags,
-      table: () => ({ type: 'table' }),
-      tr: () => ({ type: 'table-row' }),
-      td: () => ({ type: 'table-cell' }),
-      thead: () => ({ type: 'table-header' }),
-      th: () => ({ type: 'table-header-cell' }),
-      tbody: () => ({ type: 'table-body' }),
-    },
-  },
-};
+const pluginOptions = pluginConfig()
 const mockClient = mockCrowdinClient(pluginOptions)
 
 /**
