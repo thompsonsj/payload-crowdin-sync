@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.33.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.32.5...dev-v0.33.0) (2025-07-09)
+
+
+### Features
+
+* **richtextconversion:** support lexical table feature ([#295](https://github.com/thompsonsj/payload-crowdin-sync/issues/295)) ([5efdd19](https://github.com/thompsonsj/payload-crowdin-sync/commit/5efdd192c58bcf0ac9ff9d92bc38ae6025593a8d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.36.2 to 0.37.0
+
 ## [0.32.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.32.4...dev-v0.32.5) (2025-06-09)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.17.2...source-v0.18.0) (2025-07-09)
+
+
+### Features
+
+* **richtextconversion:** support lexical table feature ([#295](https://github.com/thompsonsj/payload-crowdin-sync/issues/295)) ([5efdd19](https://github.com/thompsonsj/payload-crowdin-sync/commit/5efdd192c58bcf0ac9ff9d92bc38ae6025593a8d))
+
 ## [0.17.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.17.1...source-v0.17.2) (2025-06-09)
 
 
