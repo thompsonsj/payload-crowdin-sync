@@ -1,6 +1,4 @@
-import { Policy } from "@/payload-types";
-
-export const fixture = {
+{
   "root": {
     "type": "root",
     "children": [
@@ -220,4 +218,4 @@ export const fixture = {
     "indent": 0,
     "version": 1
   }
-} as Policy['content']
+}

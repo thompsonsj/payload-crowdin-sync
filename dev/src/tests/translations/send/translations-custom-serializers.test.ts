@@ -103,7 +103,7 @@ describe("Translations", () => {
         .query({
           targetLanguageId: 'de',
         })
-        .reply(200, "<table><thead><tr><th>Text für Überschriftenzelle 1</th><th>Text für Überschriftenzelle 2</th><th>Text für Überschriftenzelle 3</th><th>Text für Überschriftenzelle 4</th></tr></thead><tbody><tr><td>Text für Tabellenzelle, Zeile 1, Spalte 1</td><td>Text für Tabellenzelle, Zeile 1, Spalte 2</td><td>Text für Tabellenzelle, Zeile 1, Spalte 3</td><td><p>Absatz 1-Text für Tabellenzelle, Zeile 1, Spalte 4</p><p>Absatz 2-Text für Tabellenzelle, Zeile 1, Spalte 4</p></td></tr></tbody></table>",
+        .reply(200, "<table><tr><th>Text für Überschriftenzelle 1</th><th>Text für Überschriftenzelle 2</th><th>Text für Überschriftenzelle 3</th><th>Text für Überschriftenzelle 4</th></tr><tr><td>Text für Tabellenzelle, Zeile 1, Spalte 1</td><td>Text für Tabellenzelle, Zeile 1, Spalte 2</td><td>Text für Tabellenzelle, Zeile 1, Spalte 3</td><td><p>Absatz 1-Text für Tabellenzelle, Zeile 1, Spalte 4</p><p>Absatz 2-Text für Tabellenzelle, Zeile 1, Spalte 4</p></td></tr></table>",
         )
         .post(
           `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
@@ -120,7 +120,7 @@ describe("Translations", () => {
         .query({
           targetLanguageId: 'fr',
         })
-        .reply(200, "<table><thead><tr><th>Texte pour la cellule d'en-tête 1</th><th>Texte pour la cellule d'en-tête 2</th><th>Texte pour la cellule d'en-tête 3</th><th>Texte pour la cellule d'en-tête 4</th></tr></thead><tbody><tr><td>Texte de la cellule du tableau, ligne 1, col 1</td><td>Texte de la cellule du tableau, ligne 1, col 2</td><td>Texte de la cellule du tableau, ligne 1, col 3</td><td><p>Texte du paragraphe 1 pour la ligne 1 de la cellule du tableau, colonne 4</p><p>Texte du paragraphe 2 pour la ligne 1 de la cellule du tableau, colonne 4</p></td></tr></tbody></table>",
+        .reply(200, "<table><tr><th>Texte pour la cellule d'en-tête 1</th><th>Texte pour la cellule d'en-tête 2</th><th>Texte pour la cellule d'en-tête 3</th><th>Texte pour la cellule d'en-tête 4</th></tr><tr><td>Texte de la cellule du tableau, ligne 1, col 1</td><td>Texte de la cellule du tableau, ligne 1, col 2</td><td>Texte de la cellule du tableau, ligne 1, col 3</td><td><p>Texte du paragraphe 1 pour la ligne 1 de la cellule du tableau, colonne 4</p><p>Texte du paragraphe 2 pour la ligne 1 de la cellule du tableau, colonne 4</p></td></tr></table>",
         );
       const post = await payload.create({
         collection: "policies",
@@ -143,12 +143,14 @@ describe("Translations", () => {
         id: post.id,
         locale: "de_DE",
       }); 
+
       expect(result["content"]).toEqual(fixtureDe);
       const frResult = await payload.findByID({
         collection: "policies",
         id: post.id,
         locale: "fr_FR",
       });
+      
       expect(frResult["content"]).toEqual(fixtureFr);
     });
   });

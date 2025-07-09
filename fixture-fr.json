@@ -1,6 +1,4 @@
-import { Policy } from "@/payload-types";
-
-export const fixture = {
+{
   "root": {
     "type": "root",
     "children": [
@@ -32,7 +30,7 @@ export const fixture = {
                     "format": 0,
                     "mode": "normal",
                     "style": "",
-                    "text": "Text für Überschriftenzelle 1",
+                    "text": "Texte pour la cellule d'en-tête 1",
                     "version": 1
                   }
                 ]
@@ -51,7 +49,7 @@ export const fixture = {
                     "format": 0,
                     "mode": "normal",
                     "style": "",
-                    "text": "Text für Überschriftenzelle 2",
+                    "text": "Texte pour la cellule d'en-tête 2",
                     "version": 1
                   }
                 ]
@@ -70,7 +68,7 @@ export const fixture = {
                     "format": 0,
                     "mode": "normal",
                     "style": "",
-                    "text": "Text für Überschriftenzelle 3",
+                    "text": "Texte pour la cellule d'en-tête 3",
                     "version": 1
                   }
                 ]
@@ -89,7 +87,7 @@ export const fixture = {
                     "format": 0,
                     "mode": "normal",
                     "style": "",
-                    "text": "Text für Überschriftenzelle 4",
+                    "text": "Texte pour la cellule d'en-tête 4",
                     "version": 1
                   }
                 ]
@@ -117,7 +115,7 @@ export const fixture = {
                     "format": 0,
                     "mode": "normal",
                     "style": "",
-                    "text": "Text für Tabellenzelle, Zeile 1, Spalte 1",
+                    "text": "Texte de la cellule du tableau, ligne 1, col 1",
                     "version": 1
                   }
                 ]
@@ -136,7 +134,7 @@ export const fixture = {
                     "format": 0,
                     "mode": "normal",
                     "style": "",
-                    "text": "Text für Tabellenzelle, Zeile 1, Spalte 2",
+                    "text": "Texte de la cellule du tableau, ligne 1, col 2",
                     "version": 1
                   }
                 ]
@@ -155,7 +153,7 @@ export const fixture = {
                     "format": 0,
                     "mode": "normal",
                     "style": "",
-                    "text": "Text für Tabellenzelle, Zeile 1, Spalte 3",
+                    "text": "Texte de la cellule du tableau, ligne 1, col 3",
                     "version": 1
                   }
                 ]
@@ -177,7 +175,7 @@ export const fixture = {
                         "format": 0,
                         "mode": "normal",
                         "style": "",
-                        "text": "Absatz 1-Text für Tabellenzelle, Zeile 1, Spalte 4",
+                        "text": "Texte du paragraphe 1 pour la ligne 1 de la cellule du tableau, colonne 4",
                         "version": 1
                       }
                     ],
@@ -197,7 +195,7 @@ export const fixture = {
                         "format": 0,
                         "mode": "normal",
                         "style": "",
-                        "text": "Absatz 2-Text für Tabellenzelle, Zeile 1, Spalte 4",
+                        "text": "Texte du paragraphe 2 pour la ligne 1 de la cellule du tableau, colonne 4",
                         "version": 1
                       }
                     ],
@@ -220,4 +218,4 @@ export const fixture = {
     "indent": 0,
     "version": 1
   }
-} as Policy['content']
+}

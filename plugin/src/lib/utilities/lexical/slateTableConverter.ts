@@ -1,5 +1,7 @@
-import type { SerializedTableNode } from "@payloadcms/richtext-lexical"
+import type { SerializedTableCellNode, SerializedTableNode, SerializedTableRowNode } from "@payloadcms/richtext-lexical"
 import type { SlateNodeConverter } from '@payloadcms/richtext-lexical'
+import { converters } from './../richTextConversion'
+import { convertSlateNodesToLexical, convertSlateToLexical } from "@payloadcms/richtext-lexical/migrate"
 
 // note that there is no attempt to restore any formatting on the table when loading translations - only content.
 // to avoid repetition, define default values for each node in one place
@@ -15,37 +17,46 @@ export const SlateTableConverter: SlateNodeConverter = {
     return {
       type: 'table',
       ...defaultLexicalNodeProps,
-      children: slateNode['children']?.map((row) => ({
-        ...defaultLexicalNodeProps,
-        type: 'tablerow',
-        children: row.children?.map(() => ({
-          ...defaultLexicalNodeProps,
-          type: 'tablecell',
-          "children": [
-            {
-              "children": [
-                {
-                  "detail": 0,
-                  "format": 0,
-                  "mode": "normal",
-                  "style": "",
-                  "text": "Row 2 cell 5",
-                  "type": "text",
-                  "version": 1
-                }
-              ],
-              "direction": "ltr",
-              "format": "",
-              "indent": 0,
-              "type": "paragraph",
-              "version": 1,
-              "textFormat": 0,
-              "textStyle": ""
-            }
-          ]
-        }))
-      })),
+      children: convertSlateNodesToLexical({
+        canContainParagraphs: false,
+        converters,
+        parentNodeType: 'table',
+        slateNodes: slateNode.children,
+      }),
     } as const as SerializedTableNode
   },
   nodeTypes: ['table'],
+}
+
+export const SlateTableRowConverter: SlateNodeConverter = {
+  converter({ slateNode }) {
+    return {
+      type: 'tablerow',
+      ...defaultLexicalNodeProps,
+      children: convertSlateNodesToLexical({
+        canContainParagraphs: false,
+        converters,
+        parentNodeType: 'tablerow',
+        slateNodes: slateNode.children,
+      }),
+    } as const as SerializedTableRowNode
+  },
+  nodeTypes: ['table-row'],
+}
+
+export const SlateTableCellConverter: SlateNodeConverter = {
+  converter({ slateNode }) {
+    return {
+      type: 'tablecell',
+      headerState: slateNode.type === 'table-header-cell' ? 1 : 0,
+      ...defaultLexicalNodeProps,
+      children: convertSlateNodesToLexical({
+        canContainParagraphs: false,
+        converters,
+        parentNodeType: 'tablecell',
+        slateNodes: slateNode.children,
+      }),
+    } as const as SerializedTableCellNode
+  },
+  nodeTypes: ['table-cell', 'table-header-cell'],
 }
