@@ -27,6 +27,17 @@ import type { Descendant } from "slate";
 import type { SerializedEditorState } from 'lexical'
 
 import { getLexicalBlockFields } from "./lexical"
+import { SlateTableCellConverter, SlateTableConverter, SlateTableRowConverter } from "./lexical/slateTableConverter"
+
+// use editorConfig to determine custom convertors
+export const converters = cloneDeep([
+  ...defaultSlateConverters,
+  SlateBlockConverter,
+  SlateTableConverter,
+  SlateTableRowConverter,
+  SlateTableCellConverter
+  // AnotherCustomConverter
+])
 
 export const convertLexicalToHtml = async (editorData: SerializedEditorState, editorConfig: SanitizedEditorConfig) => {
   const blockSlugs = getLexicalBlockFields(editorConfig)?.blocks.map(block => block.slug)
@@ -79,13 +90,6 @@ export const convertLexicalToHtml = async (editorData: SerializedEditorState, ed
 export const convertHtmlToLexical = (htmlString: string,  blockTranslations?: {
   [key: string]: any;
 } | null) => {
-  // use editorConfig to determine custom convertors
-  const converters = cloneDeep([
-    ...defaultSlateConverters,
-    SlateBlockConverter,
-    // AnotherCustomConverter
-  ])
-
   const htmlToSlateConfig = {
     ...payloadHtmlToSlateConfig,
     elementTags: {
@@ -122,6 +126,12 @@ export const convertHtmlToLexical = (htmlString: string,  blockTranslations?: {
           }
         }
       },
+      table: () => ({ type: 'table' }),
+      tr: () => ({ type: 'table-row' }),
+      td: () => ({ type: 'table-cell' }),
+      // thead: () => ({ type: 'table-header' }),
+      th: () => ({ type: 'table-header-cell' }),
+      // tbody: () => ({ type: 'table-body' }),
     },
   } as HtmlToSlateConfig
   return convertSlateToLexical({
