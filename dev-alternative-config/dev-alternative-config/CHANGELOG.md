@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.4.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.3.7...dev-alternative-config-v0.4.0) (2025-07-18)
+
+
+### Features
+
+* **richtextconversion:** support text formatting ([#303](https://github.com/thompsonsj/payload-crowdin-sync/issues/303)) ([379dc9d](https://github.com/thompsonsj/payload-crowdin-sync/commit/379dc9dcfd3b882092caf6ef8be5bdde0d5048d4))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.37.1 to 0.38.0
+
 ## [0.3.7](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.3.6...dev-alternative-config-v0.3.7) (2025-07-09)
 
 

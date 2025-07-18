@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.38.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.37.1...payload-crowdin-sync-v0.38.0) (2025-07-18)
+
+
+### Features
+
+* **richtextconversion:** support text formatting ([#303](https://github.com/thompsonsj/payload-crowdin-sync/issues/303)) ([379dc9d](https://github.com/thompsonsj/payload-crowdin-sync/commit/379dc9dcfd3b882092caf6ef8be5bdde0d5048d4))
+
 ## [0.37.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.37.0...payload-crowdin-sync-v0.37.1) (2025-07-09)
 
 
