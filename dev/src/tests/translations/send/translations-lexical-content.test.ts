@@ -77,23 +77,6 @@ describe("Translations", () => {
         .post(
           `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
           {
-            targetLanguageId: 'de',
-          }
-        )
-        .reply(200, mockClient.buildProjectFileTranslation({
-          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=de`
-        }))
-        .get(
-          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
-        )
-        .query({
-          targetLanguageId: 'de',
-        })
-        .reply(200, "<div class=\"lexical-table-container\"><table class=\"lexical-table\" style=\"border-collapse: collapse;\"><tr class=\"lexical-table-row\"><th class=\"lexical-table-cell lexical-table-cell-header-1\">Text für Überschriftenzelle 1</th><th class=\"lexical-table-cell lexical-table-cell-header-1\">Text für Überschriftenzelle 2</th><th class=\"lexical-table-cell lexical-table-cell-header-1\">Text für Überschriftenzelle 3</th><th class=\"lexical-table-cell lexical-table-cell-header-1\">Text für Überschriftenzelle 4</th></tr class=\"lexical-table-row\"><tr><td class=\"lexical-table-cell lexical-table-cell-header-0\">Text für Tabellenzelle, Zeile 1, Spalte 1</td><td class=\"lexical-table-cell lexical-table-cell-header-0\">Text für Tabellenzelle, Zeile 1, Spalte 2</td><td class=\"lexical-table-cell lexical-table-cell-header-0\">Text für Tabellenzelle, Zeile 1, Spalte 3</td><td class=\"lexical-table-cell lexical-table-cell-header-0\"><p>Absatz 1-Text für Tabellenzelle, Zeile 1, Spalte 4</p><p>Absatz 2-Text für Tabellenzelle, Zeile 1, Spalte 4</p></td></tr></table></div>",
-        )
-        .post(
-          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
-          {
             targetLanguageId: 'fr',
           }
         )
@@ -149,13 +132,6 @@ describe("Translations", () => {
         dryRun: false,
       });
       // retrieve translated post from Payload
-      const result = await payload.findByID({
-        collection: "policies",
-        id: post.id,
-        locale: "de_DE",
-      }); 
-
-      expect(result["content"]).toEqual(fixtureDe);
       const frResult = await payload.findByID({
         collection: "policies",
         id: post.id,

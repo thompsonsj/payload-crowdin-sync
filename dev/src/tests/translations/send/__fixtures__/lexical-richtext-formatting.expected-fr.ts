@@ -1,5 +1,8 @@
 import { Policy } from "@/payload-types";
 
+// commented out lines demonstrate lack of support from convertSlateToLexical
+// @see https://github.com/payloadcms/payload/blob/main/packages/richtext-lexical/src/features/migrations/slateToLexical/converter/index.ts
+
 export const fixture = {
     "root": {
       "children": [
@@ -277,7 +280,8 @@ export const fixture = {
           ],
           "direction": "ltr",
           "format": "",
-          "indent": 1,
+          // "indent": 1,
+          "indent": 0,
           "type": "paragraph",
           "version": 1,
           "textFormat": 0,
@@ -315,7 +319,8 @@ export const fixture = {
             }
           ],
           "direction": "ltr",
-          "format": "center",
+          // "format": "center",
+          "format": "",
           "indent": 0,
           "type": "paragraph",
           "version": 1,
@@ -355,7 +360,8 @@ export const fixture = {
             }
           ],
           "direction": "ltr",
-          "format": "justify",
+          // "format": "justify",
+          "format": "",
           "indent": 0,
           "type": "paragraph",
           "version": 1,
@@ -375,7 +381,8 @@ export const fixture = {
             }
           ],
           "direction": "ltr",
-          "format": "justify",
+          // "format": "justify",
+          "format": "",
           "indent": 0,
           "type": "heading",
           "version": 1,
@@ -399,7 +406,7 @@ export const fixture = {
                   "format": 0,
                   "mode": "normal",
                   "style": "",
-                  "text": "Payload Crowdin Sync",
+                  "text": " Payload Crowdin Sync ",
                   "type": "text",
                   "version": 1
                 }
@@ -408,12 +415,13 @@ export const fixture = {
               "format": "",
               "indent": 0,
               "type": "link",
-              "version": 3,
+              "version": 2,
               "fields": {
+                "doc": null,
                 "url": "https://github.com/thompsonsj/payload-crowdin-sync",
+                "newTab": false,
                 "linkType": "custom"
               },
-              "id": "6874f6aa8bf70415eaa85996"
             },
             {
               "detail": 0,
@@ -428,25 +436,43 @@ export const fixture = {
               "children": [
                 {
                   "detail": 0,
+                  "format": 0,
+                  "mode": "normal",
+                  "style": "",
+                  "text": " ",
+                  "type": "text",
+                  "version": 1,
+                },
+                {
+                  "detail": 0,
                   "format": 8,
                   "mode": "normal",
                   "style": "",
                   "text": "Payload Crowdin Sync",
                   "type": "text",
                   "version": 1
-                }
+                },
+                {
+                  "detail": 0,
+                  "format": 0,
+                  "mode": "normal",
+                  "style": "",
+                  "text": " ",
+                  "type": "text",
+                  "version": 1,
+                },
               ],
               "direction": "ltr",
               "format": "",
               "indent": 0,
               "type": "link",
-              "version": 3,
-              "textFormat": 8,
+              "version": 2,
               "fields": {
+                "doc": null,
                 "url": "https://github.com/thompsonsj/payload-crowdin-sync",
+                "newTab": false,
                 "linkType": "custom"
               },
-              "id": "6874f6c48bf70415eaa85997"
             },
             {
               "detail": 0,
@@ -463,7 +489,7 @@ export const fixture = {
           "indent": 0,
           "type": "paragraph",
           "version": 1,
-          "textFormat": 8,
+          "textFormat": 0,
           "textStyle": ""
         },
         {
@@ -473,7 +499,7 @@ export const fixture = {
               "format": 0,
               "mode": "normal",
               "style": "",
-              "text": "Lists",
+              "text": "Listes",
               "type": "text",
               "version": 1
             }
@@ -651,17 +677,34 @@ export const fixture = {
                   "format": 0,
                   "mode": "normal",
                   "style": "",
+                  "text": " ",
+                  "type": "text",
+                  "version": 1,
+                },
+                {
+                  "detail": 0,
+                  "format": 0,
+                  "mode": "normal",
+                  "style": "",
                   "text": "Élément de liste 1",
                   "type": "text",
                   "version": 1
-                }
+                },
+                {
+                  "detail": 0,
+                  "format": 0,
+                  "mode": "normal",
+                  "style": "",
+                  "text": "\n",
+                  "type": "text",
+                  "version": 1,
+                },
               ],
               "direction": "ltr",
               "format": "",
               "indent": 0,
               "type": "listitem",
               "version": 1,
-              "checked": false,
               "value": 1
             },
             {
@@ -671,17 +714,34 @@ export const fixture = {
                   "format": 0,
                   "mode": "normal",
                   "style": "",
+                  "text": " ",
+                  "type": "text",
+                  "version": 1,
+                },
+                {
+                  "detail": 0,
+                  "format": 0,
+                  "mode": "normal",
+                  "style": "",
                   "text": "Élément de liste 2",
                   "type": "text",
                   "version": 1
-                }
+                },
+                {
+                  "detail": 0,
+                  "format": 0,
+                  "mode": "normal",
+                  "style": "",
+                  "text": "\n",
+                  "type": "text",
+                  "version": 1,
+                },
               ],
               "direction": "ltr",
               "format": "",
               "indent": 0,
               "type": "listitem",
               "version": 1,
-              "checked": false,
               "value": 2
             }
           ],
@@ -690,7 +750,7 @@ export const fixture = {
           "indent": 0,
           "type": "list",
           "version": 1,
-          "listType": "check",
+          "listType": "bullet",
           "start": 1,
           "tag": "ul"
         }
@@ -700,11 +760,10 @@ export const fixture = {
       "indent": 0,
       "type": "root",
       "version": 1,
-      "textFormat": 8
     }
   } as Policy['content']
 
-export const fixtureHtml = `<h1>Formatage de texte riche</h1><p>Ceci est un champ de texte Lexical riche pour démontrer la mise en forme de texte riche. L'éditeur Lexical est :</p><blockquote>Un cadre d'édition de texte étendable qui fait les choses différemment.</blockquote><h2>Styles de texte</h2><p>Il prend en charge le texte riche tel que le <strong>bold</strong>, <span style="text-decoration: underline;">underline</span>, <em>italic</em>, <span style="text-decoration: line-through;">strikethrough</span> ou une <span style="text-decoration: underline;"><em><strong>combination</strong></em></span>.</p><p>Vous pouvez utiliser <sub>subscript</sub> et <sup>superscript</sup> .</p><p style="padding-inline-start: 2rem;">Vous pouvez également <code>format code</code>. Ce paragraphe est indenté.</p><h2>Alignment</h2><p style="text-align: center;">Align center.</p><p>Align right.</p><p style="text-align: justify;">Justify.</p><h2 style="text-align: justify;">Links</h2><p>Voici un lien: <a href="https://github.com/thompsonsj/payload-crowdin-sync">
+export const fixtureHtml = `<h1>Formatage de texte riche</h1><p>Ceci est un champ de texte Lexical riche pour démontrer la mise en forme de texte riche. L'éditeur Lexical est :</p><blockquote>Un cadre d'édition de texte étendable qui fait les choses différemment.</blockquote><h2>Styles de texte</h2><p>Il prend en charge le texte riche tel que le <strong>bold</strong>, <span style="text-decoration: underline;">underline</span>, <em>italic</em>, <span style="text-decoration: line-through;">strikethrough</span> ou une <span style="text-decoration: underline;"><em><strong>combinaison</strong></em></span>.</p><p>Vous pouvez utiliser <sub>subscript</sub> et <sup>superscript</sup> .</p><p style="padding-inline-start: 2rem;">Vous pouvez également <code>format code</code>. Ce paragraphe est indenté.</p><h2>Alignment</h2><p style="text-align: center;">Align center.</p><p>Align right.</p><p style="text-align: justify;">Justify.</p><h2 style="text-align: justify;">Links</h2><p>Voici un lien: <a href="https://github.com/thompsonsj/payload-crowdin-sync">
         Payload Crowdin Sync
       </a>. Voici un lien avec du texte formaté: <a href="https://github.com/thompsonsj/payload-crowdin-sync">
         <span style="text-decoration: underline;">Payload Crowdin Sync</span>
