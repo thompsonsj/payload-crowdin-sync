@@ -19,6 +19,7 @@ import {
   defaultSlateConverters,
 } from '@payloadcms/richtext-lexical/migrate'
 
+import { Element } from 'domhandler'
 import { findOne, getAttributeValue } from 'domutils'
 import { SlateBlockConverter } from "./lexical/slateBlockConverter";
 import { cloneDeep } from "es-toolkit";
@@ -92,19 +93,21 @@ export const convertHtmlToLexical = (htmlString: string,  blockTranslations?: {
 } | null) => {
   const htmlToSlateConfig = {
     ...payloadHtmlToSlateConfig,
+    textTags: {
+      ...payloadHtmlToSlateConfig.textTags,
+      sub: () => ({ subscript: true }),
+      sup: () => ({ superscript: true }),
+    },
     elementTags: {
       ...payloadHtmlToSlateConfig.elementTags,
       span: (el) => {
         const blockId = el && getAttributeValue(el, 'data-block-id')
         const blockType = el && getAttributeValue(el, 'data-block-type')
 
-        /**
-        if (!blockId || !blockType) {
-          return undefined
-        }
-          */
+        
+        const isBlock =  !!blockId && !!blockType
 
-        if (blockType === 'pcsUpload') {
+        if (isBlock && blockType === 'pcsUpload') {
           const relationTo = el && getAttributeValue(el, 'data-relation-to')
           return {
             type: 'upload',
@@ -113,7 +116,8 @@ export const convertHtmlToLexical = (htmlString: string,  blockTranslations?: {
               id: blockId,
             },
           }
-        } else {
+        }
+        else {
           const translation = (blockTranslations?.['blocks'] || []).find((block: any) => block.id === blockId)
 
             return {
@@ -143,6 +147,51 @@ export const convertHtmlToLexical = (htmlString: string,  blockTranslations?: {
         }
         return el;
       },
+      span: (el) => {
+        // is this a formatting span?
+        const styleAttribs = (el && getAttributeValue(el, 'style')) || ''
+        if (styleAttribs) {
+          const styleObject: {[key: string]: boolean} = {}
+          styleAttribs.split(';').forEach((item) => {
+            const styleItem = item.trim().split(':')
+            if (styleItem.length === 2) {
+              if (styleItem[0].trim() === 'text-decoration' && styleItem[1].trim() === 'underline') {
+                styleObject['underline'] = true
+              }
+              if (styleItem[0].trim() === 'text-decoration' && styleItem[1].trim() === 'line-through') {
+                styleObject['strikethrough'] = true
+              }
+            }
+          })
+          if (styleObject['strikethrough'] && styleObject['underline']) {
+            return new Element(
+              's',
+              el.attribs,
+              [new Element(
+                'u',
+                el.attribs,
+                el.children,
+              )],
+            )
+          }
+          if (styleObject['underline']) {
+            return new Element(
+              'u',
+              el.attribs,
+              el.children,
+            )
+          }
+          if (styleObject['strikethrough']) {
+            return new Element(
+              's',
+              el.attribs,
+              el.children,
+            )
+          }
+        
+        }
+        return el
+      }
     },
   } as HtmlToSlateConfig
   return convertSlateToLexical({
