@@ -17,7 +17,7 @@ const crowdinArticleDirectoryField: Field = {
   hooks: {
     // ensure crowdinArticleDirectory is not copied to a duplicated document
     beforeDuplicate: [
-      () => undefined,
+      () => '',
     ],
   },
   /*admin: {
