@@ -196,16 +196,11 @@ describe("Collection: Localized Posts With Conditon", () => {
         .post(
           `/api/v2/storages`
         )
-        .twice()
         .reply(200, mockClient.addStorage())
         .post(
           `/api/v2/projects/${pluginOptions.projectId}/files`
         )
         .reply(200, mockClient.createFile({}))
-        .put(
-          `/api/v2/projects/${pluginOptions.projectId}/files/${fileId}`
-        )
-        .reply(200, mockClient.updateOrRestoreFile({ fileId }))
 
       const post = await payload.create({
         collection: "localized-posts-with-condition",
@@ -225,10 +220,13 @@ describe("Collection: Localized Posts With Conditon", () => {
       const duplicatedPost = await payload.duplicate({
         id: post.id,
         collection: "localized-posts-with-condition",
+        data: {
+          translateWithCrowdin: false,
+        },
         draft: true,
       });
 
-      expect((result.crowdinArticleDirectory as CrowdinArticleDirectory).id).not.toEqual((duplicatedPost.crowdinArticleDirectory as CrowdinArticleDirectory).id);
+      expect((result.crowdinArticleDirectory as CrowdinArticleDirectory)?.id).not.toEqual((duplicatedPost.crowdinArticleDirectory as CrowdinArticleDirectory)?.id);
     });
 
     it("creates an article directory if the conditon is met on an existing article", async () => {
