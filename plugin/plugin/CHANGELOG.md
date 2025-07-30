@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.38.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.38.0...payload-crowdin-sync-v0.38.1) (2025-07-30)
+
+
+### Bug Fixes
+
+* **pluginfields:** unset crowdinArticleDirectory on duplicate ([#294](https://github.com/thompsonsj/payload-crowdin-sync/issues/294)) ([2e97237](https://github.com/thompsonsj/payload-crowdin-sync/commit/2e9723777e85f7cda57318feba3a87822841a802))
+
 ## [0.38.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.37.1...payload-crowdin-sync-v0.38.0) (2025-07-18)
 
 
