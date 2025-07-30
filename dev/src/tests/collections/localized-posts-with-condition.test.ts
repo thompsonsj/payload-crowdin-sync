@@ -186,26 +186,28 @@ describe("Collection: Localized Posts With Conditon", () => {
       expect(Object.prototype.hasOwnProperty.call(result, 'crowdinArticleDirectory')).toBeTruthy();
     });
 
-    it("creates an article directory if the conditon is met and does not copy this article directory to a duplicated post", async () => {
-      const fileId = 1079
+    it("creates an article directory if the conditon is met for a new document and creates a new article directory when this document is duplicated (does not copy the same article directory)", async () => {
       nock('https://api.crowdin.com')
         .post(
           `/api/v2/projects/${pluginOptions.projectId}/directories`
         )
+        .twice()
         .reply(200, mockClient.createDirectory({}))
         .post(
           `/api/v2/storages`
         )
+        .twice()
         .reply(200, mockClient.addStorage())
         .post(
           `/api/v2/projects/${pluginOptions.projectId}/files`
         )
+        .twice()
         .reply(200, mockClient.createFile({}))
 
       const post = await payload.create({
         collection: "localized-posts-with-condition",
         data: {
-          title: "Test post",
+          title: "Test post to be/has been duplicated",
           translateWithCrowdin: true,
         },
         draft: true,
@@ -220,9 +222,6 @@ describe("Collection: Localized Posts With Conditon", () => {
       const duplicatedPost = await payload.duplicate({
         id: post.id,
         collection: "localized-posts-with-condition",
-        data: {
-          translateWithCrowdin: false,
-        },
         draft: true,
       });
 

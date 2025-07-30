@@ -101,6 +101,7 @@ export class filesApiByDocument {
   /** this is where the problem lies? */
   async findOrCreateArticleDirectory(): Promise<CrowdinArticleDirectory> {
     let crowdinPayloadArticleDirectory;
+    // null check - currently there is no way to unset a
     if (this.document.crowdinArticleDirectory) {
       // Update not possible. Article name needs to be updated manually on Crowdin.
       // The name of the directory is Crowdin specific helper text to give
