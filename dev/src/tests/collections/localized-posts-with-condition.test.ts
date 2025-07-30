@@ -4,6 +4,7 @@ import { pluginConfig } from "../helpers/plugin-config"
 
 import { initPayloadInt } from '../helpers/initPayloadInt'
 import type { Payload } from 'payload'
+import { CrowdinArticleDirectory } from "@/payload-types";
 
 let payload: Payload
 
@@ -183,6 +184,48 @@ describe("Collection: Localized Posts With Conditon", () => {
         draft: true,
       });
       expect(Object.prototype.hasOwnProperty.call(result, 'crowdinArticleDirectory')).toBeTruthy();
+    });
+
+    it("creates an article directory if the conditon is met for a new document and creates a new article directory when this document is duplicated (does not copy the same article directory)", async () => {
+      nock('https://api.crowdin.com')
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/directories`
+        )
+        .twice()
+        .reply(200, mockClient.createDirectory({}))
+        .post(
+          `/api/v2/storages`
+        )
+        .twice()
+        .reply(200, mockClient.addStorage())
+        .post(
+          `/api/v2/projects/${pluginOptions.projectId}/files`
+        )
+        .twice()
+        .reply(200, mockClient.createFile({}))
+
+      const post = await payload.create({
+        collection: "localized-posts-with-condition",
+        data: {
+          title: "Test post to be/has been duplicated",
+          translateWithCrowdin: true,
+        },
+        draft: true,
+      });
+      const result = await payload.findByID({
+        collection: "localized-posts-with-condition",
+        id: post.id,
+        draft: true,
+      });
+      expect(Object.prototype.hasOwnProperty.call(result, 'crowdinArticleDirectory')).toBeTruthy();
+
+      const duplicatedPost = await payload.duplicate({
+        id: post.id,
+        collection: "localized-posts-with-condition",
+        draft: true,
+      });
+
+      expect((result.crowdinArticleDirectory as CrowdinArticleDirectory)?.id).not.toEqual((duplicatedPost.crowdinArticleDirectory as CrowdinArticleDirectory)?.id);
     });
 
     it("creates an article directory if the conditon is met on an existing article", async () => {
