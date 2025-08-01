@@ -93,6 +93,7 @@ const NestedFieldCollection: CollectionConfig = {
         BasicBlockRichTextField,
         BasicBlockMixedFields,
         TestBlockArrayOfRichText,
+        BasicBlockLexical,
       ],
     },
     // blocks - top level localized
@@ -106,6 +107,7 @@ const NestedFieldCollection: CollectionConfig = {
         BasicBlockRichTextField,
         BasicBlockMixedFields,
         TestBlockArrayOfRichText,
+        BasicBlockLexical,
       ],
     },
     // collapsible
