@@ -27,7 +27,6 @@ const customJestConfig = {
     '@payload-types': '<rootDir>/src/payload-types.ts',
     'payload-crowdin-sync': '<rootDir>/../../plugin/src/index.ts',
   },
-  prettierPath: require.resolve('prettier-2'),
 }
 
 export default customJestConfig

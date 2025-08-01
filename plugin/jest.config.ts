@@ -52,7 +52,6 @@ const config = {
     '^.+\\.(t|j)sx?$': ['@swc/jest'],
   },
   verbose: true,
-  prettierPath: require.resolve('prettier-2'),
 };
 
 export default config;

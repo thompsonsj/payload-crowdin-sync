@@ -40,7 +40,6 @@ const dirname = path.dirname(filename)
 /** @type {import('jest').Config}  */
 const baseJestConfig = {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
-  setupFilesAfterEnv: ['<rootDir>/test/jest.setup.js'],
   transformIgnorePatterns: [
     `/node_modules/(?!.pnpm)(?!(${esModules})/)`,
     `/node_modules/.pnpm/(?!(${esModules.replace(/\//g, '\\+')})@)`,
