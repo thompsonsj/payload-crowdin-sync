@@ -75,6 +75,27 @@ export async function getArticleDirectory(
     : undefined;
 }
 
+export async function getLexicalFieldArticleDirectories({
+  payload,
+  parent,
+  req,
+}: {
+  payload: Payload,
+  parent?: CrowdinArticleDirectory | null | string,
+  req?: PayloadRequest,
+}) {
+  const query = await payload.find({
+    collection: "crowdin-article-directories",
+    where: {
+      parent: {
+        equals: isCrowdinArticleDirectory(parent) ? parent?.id : parent,
+      }
+    },
+    req,
+  });
+  return query.docs
+}
+
 export async function getLexicalFieldArticleDirectory({
   payload,
   parent,
