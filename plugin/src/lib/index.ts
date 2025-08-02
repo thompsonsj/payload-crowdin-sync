@@ -9,6 +9,7 @@ import {
   getFilesByDocumentID,
   getArticleDirectory,
   getLexicalFieldArticleDirectory,
+  getLexicalFieldArticleDirectories,
 } from "./api/helpers"
 // translations api
 import { payloadCrowdinSyncTranslationsApi } from "./api/translations";
@@ -41,5 +42,6 @@ export {
   mockCrowdinClient,
   extractLexicalBlockContent,
   getLexicalFieldArticleDirectory,
+  getLexicalFieldArticleDirectories,
   getRelationshipId,
 };
