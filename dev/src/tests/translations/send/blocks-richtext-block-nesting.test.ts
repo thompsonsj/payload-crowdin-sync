@@ -113,7 +113,9 @@ describe("Translations", () => {
         parent: post.crowdinArticleDirectory,
       })
       expect(childDirectories.length).toBe(1);
+      console.log(childDirectories)
       const childDirectory = childDirectories[0]
+      expect(childDirectory.name).toEqual(`lex.layout.688dd685258ffa0224ea6daa.basicBlockLexical.content`)
       const childDirectoryFiles = await getFiles(childDirectory.id, payload);
       // here's the issue - Crowdin files are not created for the child directory. Is this a simple localization fix?
       expect(childDirectoryFiles.length).toBeGreaterThan(0)
