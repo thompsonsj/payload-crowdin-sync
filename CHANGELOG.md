@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.19.1...source-v0.19.2) (2025-08-08)
+
+
+### Bug Fixes
+
+* **bydocument:** nested lexical fields source translation ([#309](https://github.com/thompsonsj/payload-crowdin-sync/issues/309)) ([71c5648](https://github.com/thompsonsj/payload-crowdin-sync/commit/71c5648feeb05ce065395efed1efda0ac18af038))
+
 ## [0.19.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.19.0...source-v0.19.1) (2025-07-30)
 
 
