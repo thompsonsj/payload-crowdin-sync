@@ -13,7 +13,7 @@ export const getCollectionConfig = (
     | SanitizedGlobalConfig
     | SanitizedCollectionConfig
     | undefined;
-  if (!collection || !global) {
+  if (!collection && !global) {
     return undefined
   }
   if (global) {

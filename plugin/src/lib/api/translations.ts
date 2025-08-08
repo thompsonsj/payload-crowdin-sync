@@ -272,11 +272,16 @@ export class payloadCrowdinSyncTranslationsApi {
       });
     }
 
-    const collectionConfig = this.getCollectionConfig(collection, global);
+    let collectionConfig = undefined
+    try {
+      collectionConfig = this.getCollectionConfig(collection, global);
+    } catch (error) {
+      console.log(error)
+    }
 
-    const localizedFields = getLocalizedFields({
+    const localizedFields = collectionConfig ? getLocalizedFields({
       fields: collectionConfig.fields,
-    });
+    }) : [];
 
     // build crowdin json object
     const crowdinJsonObject = buildCrowdinJsonObject({
@@ -320,11 +325,16 @@ export class payloadCrowdinSyncTranslationsApi {
     locale,
     global = false,
   }: IgetLatestDocumentTranslation) {
-    const collectionConfig = this.getCollectionConfig(collection, global);
+    let collectionConfig = undefined
+    try {
+      collectionConfig = this.getCollectionConfig(collection, global);
+    } catch (error) {
+      console.log(error)
+    }
 
-    const localizedFields = getLocalizedFields({
+    const localizedFields = collectionConfig ? getLocalizedFields({
       fields: collectionConfig.fields,
-    });
+    }) : [];
 
     if (!localizedFields) {
       return { message: "no localized fields" };
@@ -366,21 +376,23 @@ export class payloadCrowdinSyncTranslationsApi {
     });
 
     // Add required fields if not present
-    const requiredFieldSlugs = getFieldSlugs(
-      getLocalizedRequiredFields(collectionConfig)
-    );
-    if (requiredFieldSlugs.length > 0) {
-      const currentTranslations = await this.getCurrentDocumentTranslation({
-        doc: doc,
-        collection: collection,
-        locale: locale,
-        global,
-      });
-      requiredFieldSlugs.forEach((slug) => {
-        if (!Object.prototype.hasOwnProperty.call(docTranslations, slug)) {
-          docTranslations[slug] = currentTranslations[slug];
-        }
-      });
+    if (collectionConfig) {
+      const requiredFieldSlugs = getFieldSlugs(
+        getLocalizedRequiredFields(collectionConfig)
+      );
+      if (requiredFieldSlugs.length > 0) {
+        const currentTranslations = await this.getCurrentDocumentTranslation({
+          doc: doc,
+          collection: collection,
+          locale: locale,
+          global,
+        });
+        requiredFieldSlugs.forEach((slug) => {
+          if (!Object.prototype.hasOwnProperty.call(docTranslations, slug)) {
+            docTranslations[slug] = currentTranslations[slug];
+          }
+        });
+      }
     }
     return docTranslations;
   }
