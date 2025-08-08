@@ -1,7 +1,7 @@
 import { PluginOptions } from '../../index';
 import { payloadCrowdinSyncFilesApi } from ".";
 import { CrowdinArticleDirectory, CrowdinFile } from '../../payload-types';
-import { BlocksField as BlockField, CollectionConfig, Document, GlobalConfig, PayloadRequest, RichTextField } from 'payload';
+import { BlocksField as BlockField, CollectionConfig, Document, Field, GlobalConfig, PayloadRequest, RichTextField } from 'payload';
 
 import { isEmpty } from 'es-toolkit/compat';
 import {
@@ -257,7 +257,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     // brittle check for Lexical value - improve this detection. Type check? Anything from Payload to indicate the type?
     let blockContent, blockConfig: BlockField | undefined
     const isLexical = Object.prototype.hasOwnProperty.call(value, "root")
-    
+
     if (isLexical) {
       const field = findField({
         dotNotation: name,
@@ -272,6 +272,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
         // no need to detect change - this has already been done on the field's JSON object
         blockContent = value && extractLexicalBlockContent(value.root)
         blockConfig = editorConfig && getLexicalBlockFields(editorConfig)
+
         if (blockContent && blockContent.length > 0 && blockConfig) {
           await this.createLexicalBlocks({
             collection,
@@ -343,6 +344,9 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       },
     );
 
+    /**
+     * Here's the issue, the code pauses/stops here.
+     */
     const filesApi = await apiByDocument.get()
       const fieldName = `blocks`
       const currentCrowdinJsonData = buildCrowdinJsonObject({
@@ -353,6 +357,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
           {
             name: fieldName,
             type: 'blocks',
+            localized: true,
             blocks: blockConfig.blocks,
           }
         ],
@@ -366,12 +371,12 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
           {
             name: fieldName,
             type: 'blocks',
+            localized: true,
             blocks: blockConfig.blocks,
           }
         ],
         isLocalized: reLocalizeField, // ignore localized attribute
       });
-
     await filesApi.createOrUpdateJsonFile({
       fileData: currentCrowdinJsonData,
       fileName: fieldName,
@@ -387,7 +392,8 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
             {
               name: fieldName,
               type: 'blocks',
-              blocks: blockConfig ? blockConfig.blocks : [],
+              localized: true,
+              blocks: blockConfig ? blockConfig.blocks : []
             }
           ],
         },

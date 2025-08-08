@@ -1,6 +1,6 @@
 import { CrowdinArticleDirectory, CrowdinCollectionDirectory } from "../../payload-types";
 import { isCrowdinArticleDirectory, PluginOptions } from "../../types";
-import type { CollectionConfig, CollectionSlug, Document, GlobalSlug, PayloadRequest } from 'payload';
+import type { CollectionConfig, CollectionSlug, Document, GlobalConfig, GlobalSlug, PayloadRequest } from 'payload';
 import { toWords } from 'payload';
 import { payloadCrowdinSyncDocumentFilesApi } from "./document";
 import { getCollectionConfig } from "../helpers";
@@ -116,6 +116,7 @@ export class filesApiByDocument {
         await this.findOrCreateCollectionDirectory({
           collectionSlug: this.global ? "globals" : this.collectionSlug,
         });
+        
 
       const parent = isCrowdinArticleDirectory(this.parent) ? this.parent : this.parent && await this.req.payload.findByID({
           collection: "crowdin-article-directories",
@@ -125,11 +126,16 @@ export class filesApiByDocument {
 
       // Create article directory on Crowdin
       const name = this.global ? this.collectionSlug : this.document.id
-      const collectionConfig = this.global ? undefined : getCollectionConfig(
-        this.collectionSlug,
-        false,
-        this.req.payload
-      )
+      let collectionConfig: CollectionConfig | GlobalConfig;
+      try {
+        collectionConfig = getCollectionConfig(
+          this.collectionSlug,
+          false,
+          this.req.payload
+        )
+      } catch (error) {
+        console.log(error)
+      }
       const useAsTitle = (collectionConfig as CollectionConfig)?.admin?.useAsTitle
 
       crowdinPayloadArticleDirectory = await this.crowdinFindOrCreateDirectory({

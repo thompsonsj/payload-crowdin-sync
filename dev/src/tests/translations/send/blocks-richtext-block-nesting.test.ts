@@ -62,7 +62,7 @@ describe("Translations", () => {
         .post(
           `/api/v2/projects/${pluginOptions.projectId}/directories`
         )
-        .times(3)
+        .times(4)
         .reply(200, mockClient.createDirectory({}))
         .post(
           `/api/v2/storages`
@@ -74,23 +74,6 @@ describe("Translations", () => {
         .reply(200, mockClient.createFile({
           fileId,
         }))
-        /* .post(
-          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`,
-          {
-            targetLanguageId: 'fr',
-          }
-        )
-        .reply(200, mockClient.buildProjectFileTranslation({
-          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download?targetLanguageId=fr`
-        }))
-        .get(
-          `/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`
-        )
-        .query({
-          targetLanguageId: 'fr',
-        })
-        .reply(200, fixtureHtmlFr,
-        ) */;
       const create = await payload.create({
         collection: "nested-field-collection",
         data: {
@@ -104,47 +87,27 @@ describe("Translations", () => {
         id: create.id,
       })
       const files = await getFiles( (post.crowdinArticleDirectory as CrowdinArticleDirectory)?.id, payload)
-      expect(files.length).toBe(1);
-      const file = files[0];
-      expect(file.fileData?.html).toMatchSnapshot();
-      expect(file.fileData?.sourceBlocks).toMatchSnapshot();
+      expect(files.length).toBe(0);
       const childDirectories = await getLexicalFieldArticleDirectories({
         payload,
         parent: post.crowdinArticleDirectory,
       })
       expect(childDirectories.length).toBe(1);
-      console.log(childDirectories)
       const childDirectory = childDirectories[0]
       expect(childDirectory.name).toEqual(`lex.layout.688dd685258ffa0224ea6daa.basicBlockLexical.content`)
       const childDirectoryFiles = await getFiles(childDirectory.id, payload);
-      // here's the issue - Crowdin files are not created for the child directory. Is this a simple localization fix?
-      expect(childDirectoryFiles.length).toBeGreaterThan(0)
-      /* const regexp = /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/g;
-      regexp.lastIndex = 1;
-      const str = file.docs[0].fileData?.html || ``;
-      const uuids = Array.from(str.matchAll(regexp), (m) => m[0]);
-      let fixtureHtmlWithUuids = fixtureHtml
-      uuids.forEach((uuid, index) => {
-        fixtureHtmlWithUuids = fixtureHtmlWithUuids.replace(`<uuid[${index}]>`, uuid)
-      })
-      expect(file.docs[0].fileData?.html).toEqual(fixtureHtmlWithUuids);
-      const translationsApi = new payloadCrowdinSyncTranslationsApi(
-        pluginOptions,
+      expect(childDirectoryFiles.length).toBe(0)
+      const grandChildDirectories = await getLexicalFieldArticleDirectories({
         payload,
-      );
-      await translationsApi.updateTranslation({
-        documentId: `${post.id}`,
-        collection: "policies",
-        dryRun: false,
-      });
-      // retrieve translated post from Payload
-      const frResult = await payload.findByID({
-        collection: "policies",
-        id: post.id,
-        locale: "fr_FR",
-      });
-      
-      expect(frResult["content"]).toEqual(fixtureFr); */
+        parent: childDirectory,
+      })
+      expect(grandChildDirectories.length).toBe(1);
+      const grandChildDirectory = grandChildDirectories[0]
+      expect(grandChildDirectory.name).toEqual(`lex.blocks.688dd6eca950db7862106962.highlight.content`)
+      const grandChildDirectoryFiles = await getFiles(grandChildDirectory.id, payload);
+      expect(grandChildDirectoryFiles.length).toBe(1)
+      const file = grandChildDirectoryFiles[0];
+      expect(file.fileData?.json).toMatchSnapshot();
     });
   });
 });

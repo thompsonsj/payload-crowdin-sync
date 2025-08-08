@@ -13,6 +13,9 @@ export const getCollectionConfig = (
     | SanitizedGlobalConfig
     | SanitizedCollectionConfig
     | undefined;
+  if (!collection || !global) {
+    return undefined
+  }
   if (global) {
     collectionConfig = payload.config.globals.find(
       (col: GlobalConfig) => col.slug === collection
@@ -161,9 +164,14 @@ export async function getFileByDocumentID(
   payload: Payload,
   req?: PayloadRequest,
 ): Promise<CrowdinFile> {
-  const articleDirectory = await getArticleDirectory({
-    documentId, payload, req,
-  });
+  let articleDirectory = undefined
+  try {
+    articleDirectory = await getArticleDirectory({
+      documentId, payload, req,
+    });
+  } catch (error) {
+    console.log(error)
+  }  
   return getFile(name, `${articleDirectory?.id}`, payload, req);
 }
 
@@ -178,13 +186,18 @@ export async function getFilesByDocumentID({
   parent?: CrowdinArticleDirectory,
   req?: PayloadRequest
 }): Promise<CrowdinFile[]> {
-  const articleDirectory = await getArticleDirectory({
-    documentId: `${documentId}`,
-    payload,
-    allowEmpty: false,
-    parent,
-    req,
-  });
+  let articleDirectory = undefined
+  try {
+    articleDirectory = await getArticleDirectory({
+      documentId: `${documentId}`,
+      payload,
+      allowEmpty: false,
+      parent,
+      req,
+    });
+  } catch (error) {
+    console.log(error)
+  }
   if (!articleDirectory) {
     // tests call this function to make sure files are deleted
     return [];
