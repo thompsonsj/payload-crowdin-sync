@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.34.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.34.1...dev-v0.34.2) (2025-08-08)
+
+
+### Bug Fixes
+
+* **bydocument:** nested lexical fields source translation ([#309](https://github.com/thompsonsj/payload-crowdin-sync/issues/309)) ([71c5648](https://github.com/thompsonsj/payload-crowdin-sync/commit/71c5648feeb05ce065395efed1efda0ac18af038))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.38.1 to 0.38.2
+
 ## [0.34.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.34.0...dev-v0.34.1) (2025-07-30)
 
 
