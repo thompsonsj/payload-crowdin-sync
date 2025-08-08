@@ -52,6 +52,26 @@ export const lexicalEditorWithBlocks: RichTextField = {
                   features: () => [
                     BoldTextFeature(),
                     LinkFeature({}),
+                    BlocksFeature({
+                      blocks: [
+                        {
+                          slug: "featureList",
+                          imageAltText: "Feature List block",
+                          fields: [
+                            {
+                              name: "items",
+                              type: "array",
+                              fields: [
+                                {
+                                  name: "text",
+                                  type: "text"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    })
                   ]
                 }),
               },

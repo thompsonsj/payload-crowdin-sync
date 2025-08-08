@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Translations fn: updateTranslation - custom serializer updates a Payload article with a \`richText\` field translation retrieved from Crowdin restoring table structure 1`] = `
+{
+  "blocks": {
+    "688dd71aa950db7862106963": {
+      "featureList": {
+        "items": {
+          "688dd71d258ffa0224ea6dac": {
+            "text": "Text in an array field in the 'Feature List' block. This block is embedded in a parent Lexical field within the 'Highlight' block.",
+          },
+          "688dd71f258ffa0224ea6dae": {
+            "text": "The Payload Crowdin Sync plugin can parse complex field structures including blocks nested in Lexical fields nested in blocks nested in ...etc.",
+          },
+        },
+      },
+    },
+  },
+}
+`;

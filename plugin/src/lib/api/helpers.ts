@@ -13,6 +13,9 @@ export const getCollectionConfig = (
     | SanitizedGlobalConfig
     | SanitizedCollectionConfig
     | undefined;
+  if (!collection && !global) {
+    return undefined
+  }
   if (global) {
     collectionConfig = payload.config.globals.find(
       (col: GlobalConfig) => col.slug === collection
@@ -73,6 +76,27 @@ export async function getArticleDirectory(
   return crowdinPayloadArticleDirectory
     ? crowdinPayloadArticleDirectory.docs[0]
     : undefined;
+}
+
+export async function getLexicalFieldArticleDirectories({
+  payload,
+  parent,
+  req,
+}: {
+  payload: Payload,
+  parent?: CrowdinArticleDirectory | null | string,
+  req?: PayloadRequest,
+}) {
+  const query = await payload.find({
+    collection: "crowdin-article-directories",
+    where: {
+      parent: {
+        equals: isCrowdinArticleDirectory(parent) ? parent?.id : parent,
+      }
+    },
+    req,
+  });
+  return query.docs
 }
 
 export async function getLexicalFieldArticleDirectory({
@@ -140,9 +164,14 @@ export async function getFileByDocumentID(
   payload: Payload,
   req?: PayloadRequest,
 ): Promise<CrowdinFile> {
-  const articleDirectory = await getArticleDirectory({
-    documentId, payload, req,
-  });
+  let articleDirectory = undefined
+  try {
+    articleDirectory = await getArticleDirectory({
+      documentId, payload, req,
+    });
+  } catch (error) {
+    console.log(error)
+  }  
   return getFile(name, `${articleDirectory?.id}`, payload, req);
 }
 
@@ -157,13 +186,18 @@ export async function getFilesByDocumentID({
   parent?: CrowdinArticleDirectory,
   req?: PayloadRequest
 }): Promise<CrowdinFile[]> {
-  const articleDirectory = await getArticleDirectory({
-    documentId: `${documentId}`,
-    payload,
-    allowEmpty: false,
-    parent,
-    req,
-  });
+  let articleDirectory = undefined
+  try {
+    articleDirectory = await getArticleDirectory({
+      documentId: `${documentId}`,
+      payload,
+      allowEmpty: false,
+      parent,
+      req,
+    });
+  } catch (error) {
+    console.log(error)
+  }
   if (!articleDirectory) {
     // tests call this function to make sure files are deleted
     return [];

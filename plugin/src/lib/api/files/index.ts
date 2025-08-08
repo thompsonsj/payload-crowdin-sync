@@ -111,11 +111,16 @@ export class payloadCrowdinSyncFilesApi {
   }
 
   async getArticleDirectory(documentId: string): Promise<CrowdinArticleDirectory | undefined> {
-    const result = await getArticleDirectory({
-      documentId,
-      payload: this.req.payload,
-      req: this.req
-    });
+    let result = undefined
+    try {
+      result = await getArticleDirectory({
+        documentId,
+        payload: this.req.payload,
+        req: this.req
+      });
+    } catch (error) {
+      console.log(error)
+    }
     return result as CrowdinArticleDirectory | undefined;
   }
 
