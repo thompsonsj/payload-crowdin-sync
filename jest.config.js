@@ -29,6 +29,7 @@ const esModules = [
   'path-exists',
   'qs-esm',
   'uint8array-extras',
+  '@borewit/text-codec',
 ].join('|')
 
 import path from 'path'
