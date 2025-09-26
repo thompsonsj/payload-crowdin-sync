@@ -1,20 +1,11 @@
 {
   "migrations": [
     {
-      "version": "21.3.0-beta.3",
-      "requires": { "jest": ">=30.0.0" },
-      "description": "Rename the CLI option `testPathPattern` to `testPathPatterns`.",
-      "implementation": "./src/migrations/update-21-3-0/rename-test-path-pattern",
-      "package": "@nx/jest",
-      "name": "rename-test-path-pattern"
-    },
-    {
-      "version": "21.3.0-beta.3",
-      "requires": { "jest": ">=30.0.0" },
-      "description": "Replace removed matcher aliases in Jest v30 with their corresponding matcher",
-      "implementation": "./src/migrations/update-21-3-0/replace-removed-matcher-aliases",
-      "package": "@nx/jest",
-      "name": "replace-removed-matcher-aliases"
+      "version": "21.5.0-beta.2",
+      "description": "Migrate the legacy 'development' custom condition to a workspace-unique custom condition name.",
+      "factory": "./src/migrations/update-21-5-0/migrate-development-custom-condition",
+      "package": "@nx/js",
+      "name": "migrate-development-custom-condition"
     }
   ]
 }
