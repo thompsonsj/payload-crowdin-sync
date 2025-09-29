@@ -405,7 +405,14 @@ export interface NestedFieldCollection {
                     [k: string]: unknown;
                   }[];
                   direction: ('ltr' | 'rtl') | null;
-                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                  format:
+                    | 'left'
+                    | 'start'
+                    | 'center'
+                    | 'right'
+                    | 'end'
+                    | 'justify'
+                    | '';
                   indent: number;
                   version: number;
                 };
@@ -468,7 +475,14 @@ export interface Policy {
                 [k: string]: unknown;
               }[];
               direction: ('ltr' | 'rtl') | null;
-              format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+              format:
+                | 'left'
+                | 'start'
+                | 'center'
+                | 'right'
+                | 'end'
+                | 'justify'
+                | '';
               indent: number;
               version: number;
             };

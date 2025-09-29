@@ -299,7 +299,7 @@ export const isLocalizedField = (field: Field, addLocalizedProp = false) =>
   (hasLocalizedProp(field) || addLocalizedProp) &&
   (localizedFieldTypes.includes(field.type) || containsNestedFields(field)) &&
   !excludeBasedOnConfig(field) &&
-  (field as FieldWithName).name !== 'id'  &&
+  (field as FieldWithName).name !== 'id' &&
   (field as FieldWithName).name !== 'blockName';
 
 /**

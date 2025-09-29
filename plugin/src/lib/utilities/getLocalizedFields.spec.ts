@@ -354,9 +354,7 @@ describe('fn: getLocalizedFields', () => {
           ],
         },
       ];
-      const expected = [
-        ...localizedFieldCollection,
-      ];
+      const expected = [...localizedFieldCollection];
       expect(getLocalizedFields({ fields })).toEqual(expected);
     });
 
@@ -673,7 +671,7 @@ describe('fn: getLocalizedFields', () => {
       },
     ];
     expect(getLocalizedFields({ fields: global.fields, type: 'html' })).toEqual(
-      expected
+      expected,
     );
   });
 

@@ -30,7 +30,7 @@ const esModules = [
   'qs-esm',
   'uint8array-extras',
   '@borewit/text-codec',
-].join('|')
+].join('|');
 
 const config = {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],

@@ -2,8 +2,8 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import jestBaseConfig from '../../../jest.config.js'
 
-import { createRequire } from 'module';
-const _require = createRequire(import.meta.url);
+import { createRequire } from 'module'
+const _require = createRequire(import.meta.url)
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)

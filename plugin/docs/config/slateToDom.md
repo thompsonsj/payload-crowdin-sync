@@ -7,7 +7,7 @@ Describe how Slate JSON **node types** are mapped to HTML element tags.
 In the following simple example, Slate JSON nodes with a `type` of `heading-one` are mapped to `h1` HTML elements.
 
 ```ts
-import { SlateToDomConfig } from 'slate-serializers'
+import { SlateToDomConfig } from 'slate-serializers';
 
 const config: SlateToDomConfig = {
   // ...
@@ -15,7 +15,7 @@ const config: SlateToDomConfig = {
     ['heading-one']: 'h1',
   },
   // ...
-}
+};
 ```
 
 ## elementTransforms
@@ -23,7 +23,7 @@ const config: SlateToDomConfig = {
 For more complex transformations, use `elementTransforms`.
 
 ```ts
-import { Element } from 'domhandler'
+import { Element } from 'domhandler';
 
 const config: SlateToDomConfig = {
   // ...
@@ -31,11 +31,11 @@ const config: SlateToDomConfig = {
     image: ({ node }: { node?: any }) => {
       return new Element('img', {
         src: node.url,
-      })
+      });
     },
   },
   // ...
-}
+};
 ```
 
 The Slate JS node is passed into this function. A node of type `Element` from `domhandler` must be returned. Combine this with [utilities from `domutils`](https://domutils.js.org/) to perform further manipulation.
@@ -49,7 +49,7 @@ Describe how Slate JSON **node attributes** are mapped to HTML formatting elemen
 In the following simple example, Slate JSON nodes with an attribute of `subScript: true` include a `sub` HTML formatting element.
 
 ```ts
-import { SlateToDomConfig } from 'slate-serializers'
+import { SlateToDomConfig } from 'slate-serializers';
 
 const config: SlateToDomConfig = {
   // ...
@@ -57,7 +57,7 @@ const config: SlateToDomConfig = {
     subScript: ['sub'],
   },
   // ...
-}
+};
 ```
 
 Note that the config value is an array of strings. This allows multiple formatting elements to be mapped to a single Slate JSON node attribute.
@@ -67,7 +67,7 @@ Note that the config value is an array of strings. This allows multiple formatti
 For more complex transformations, use `markTransforms`.
 
 ```ts
-import { Element } from 'domhandler'
+import { Element } from 'domhandler';
 
 const config: SlateToDomConfig = {
   // ...
@@ -75,11 +75,11 @@ const config: SlateToDomConfig = {
     fontSize: ({ node }: { node?: any }) => {
       return new Element('span', {
         style: `font-size:${node.fontSize};`,
-      })
+      });
     },
   },
   // ...
-}
+};
 ```
 
 **Keys should map keys on the Slate object**. This is different to `elementTransform` which uses the value of the Slate JSON `type` property only.

@@ -1,42 +1,32 @@
-import { getOtherLocales } from './locales'
+import { getOtherLocales } from './locales';
 
 const localeMap = {
   da_DK: {
-    crowdinId: "da",
+    crowdinId: 'da',
   },
   de_DE: {
-    crowdinId: "de",
+    crowdinId: 'de',
   },
   fr_FR: {
-    crowdinId: "fr",
+    crowdinId: 'fr',
   },
 };
 
 describe('fn: getOtherLocales', () => {
   const fixtures = [
-    [
-      'da_DK',
-      ['de_DE', 'fr_FR']
-    ],
-    [
-      'de_DE',
-      ['da_DK', 'fr_FR']
-    ],
-    [
-      'fr_FR',
-      ['da_DK', 'de_DE']
-    ],
-    [
-      '',
-      ['da_DK', 'de_DE', 'fr_FR']
-    ],
-  ]
+    ['da_DK', ['de_DE', 'fr_FR']],
+    ['de_DE', ['da_DK', 'fr_FR']],
+    ['fr_FR', ['da_DK', 'de_DE']],
+    ['', ['da_DK', 'de_DE', 'fr_FR']],
+  ];
   describe.each(fixtures)(`%s`, (string, result) => {
     it(`${string} is excluded in returned locales`, () => {
-        expect(getOtherLocales({
+      expect(
+        getOtherLocales({
           locale: string as string,
-          localeMap
-      })).toEqual(result)
+          localeMap,
+        }),
+      ).toEqual(result);
     });
   });
 });

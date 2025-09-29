@@ -1,4 +1,4 @@
-import type { Field} from 'payload';
+import type { Field } from 'payload';
 import { getLocalizedFields } from '.';
 import { reLocalizeField } from '.';
 
@@ -11,7 +11,9 @@ describe('fn: getLocalizedFields using reLocalizeField', () => {
           type: 'text',
         },
       ];
-      expect(getLocalizedFields({ fields, isLocalized: reLocalizeField })).toEqual(fields);
+      expect(
+        getLocalizedFields({ fields, isLocalized: reLocalizeField }),
+      ).toEqual(fields);
     });
 
     it('excludes a localized text field based on the admin description', () => {
@@ -28,7 +30,9 @@ describe('fn: getLocalizedFields using reLocalizeField', () => {
           },
         },
       ];
-      expect(getLocalizedFields({ fields, isLocalized: reLocalizeField })).toEqual([
+      expect(
+        getLocalizedFields({ fields, isLocalized: reLocalizeField }),
+      ).toEqual([
         {
           name: 'textLocalizedField',
           type: 'text',
@@ -43,7 +47,9 @@ describe('fn: getLocalizedFields using reLocalizeField', () => {
           type: 'richText',
         },
       ];
-      expect(getLocalizedFields({ fields, isLocalized: reLocalizeField })).toEqual(fields);
+      expect(
+        getLocalizedFields({ fields, isLocalized: reLocalizeField }),
+      ).toEqual(fields);
     });
 
     it('includes a textarea field', () => {
@@ -53,65 +59,70 @@ describe('fn: getLocalizedFields using reLocalizeField', () => {
           type: 'textarea',
         },
       ];
-      expect(getLocalizedFields({ fields, isLocalized: reLocalizeField })).toEqual(fields);
+      expect(
+        getLocalizedFields({ fields, isLocalized: reLocalizeField }),
+      ).toEqual(fields);
     });
 
-    it("returns relocalized fields in tabs within an array", () => {
+    it('returns relocalized fields in tabs within an array', () => {
       const fields: Field[] = [
-        {
-          name: 'items',
-          type: 'array',
-          fields:[
-            {
-              type: "tabs",
-              tabs: [
-                {
-                  label: "Tab One Label",
-                  description: "This will appear within the tab above the fields.",
-                  fields: [
-                    {
-                      name: "textField",
-                      type: "text",
-                    },
-                    {
-                      name: "textareaField",
-                      type: "textarea",
-                    },
-                    // select not supported: included to ensure it does not send to Crowdin
-                    {
-                      name: "select",
-                      type: "select",
-                      options: ["one", "two"],
-                    },
-                    // image not supported: included to ensure it does send to Crowdin
-                    {
-                      name: "image",
-                      type: "upload",
-                      relationTo: "media",
-                    },
-                  ],
-                },
-              ],
-            },
-          ]
-        } 
-      ];
-  
-      expect(getLocalizedFields({ fields, isLocalized: reLocalizeField })).toEqual([
         {
           name: 'items',
           type: 'array',
           fields: [
             {
-              name: "textField",
-              type: "text",
+              type: 'tabs',
+              tabs: [
+                {
+                  label: 'Tab One Label',
+                  description:
+                    'This will appear within the tab above the fields.',
+                  fields: [
+                    {
+                      name: 'textField',
+                      type: 'text',
+                    },
+                    {
+                      name: 'textareaField',
+                      type: 'textarea',
+                    },
+                    // select not supported: included to ensure it does not send to Crowdin
+                    {
+                      name: 'select',
+                      type: 'select',
+                      options: ['one', 'two'],
+                    },
+                    // image not supported: included to ensure it does send to Crowdin
+                    {
+                      name: 'image',
+                      type: 'upload',
+                      relationTo: 'media',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ];
+
+      expect(
+        getLocalizedFields({ fields, isLocalized: reLocalizeField }),
+      ).toEqual([
+        {
+          name: 'items',
+          type: 'array',
+          fields: [
+            {
+              name: 'textField',
+              type: 'text',
             },
             {
-              name: "textareaField",
-              type: "textarea",
+              name: 'textareaField',
+              type: 'textarea',
             },
-          ]
-        }
+          ],
+        },
       ]);
     });
   });

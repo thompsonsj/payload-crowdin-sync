@@ -2,9 +2,9 @@ import type {
   CollectionAfterDeleteHook,
   CollectionSlug,
   GlobalSlug,
-} from "payload";
-import { PluginOptions } from "../../types";
-import { filesApiByDocument } from "../../api/files/by-document";
+} from 'payload';
+import { PluginOptions } from '../../types';
+import { filesApiByDocument } from '../../api/files/by-document';
 
 interface CommonArgs {
   pluginOptions: PluginOptions;
@@ -23,7 +23,7 @@ export const getAfterDeleteHook =
     /**
      * Abort if token not set and not in test mode
      */
-    if (!pluginOptions.token && process.env['NODE_ENV'] !== "test") {
+    if (!pluginOptions.token && process.env['NODE_ENV'] !== 'test') {
       return doc;
     }
 
@@ -31,16 +31,14 @@ export const getAfterDeleteHook =
      * Initialize Crowdin client sourceFilesApi
      */
     const global = false; // delete only on collections by nature.
-    const apiByDocument = new filesApiByDocument(
-      {
-        document: doc,
-        collectionSlug: collection.slug as CollectionSlug | GlobalSlug,
-        global,
-        pluginOptions,
-        req: req
-      },
-    );
-    const filesApi = await apiByDocument.get()
+    const apiByDocument = new filesApiByDocument({
+      document: doc,
+      collectionSlug: collection.slug as CollectionSlug | GlobalSlug,
+      global,
+      pluginOptions,
+      req: req,
+    });
+    const filesApi = await apiByDocument.get();
 
     await filesApi.deleteFilesAndDirectory();
   };

@@ -59,1201 +59,1211 @@ export type SupportedTimezones =
   | 'Pacific/Guam'
   | 'Pacific/Noumea'
   | 'Pacific/Auckland'
-  | 'Pacific/Fiji';
+  | 'Pacific/Fiji'
 
 export interface Config {
   auth: {
-    users: UserAuthOperations;
-  };
-  blocks: {};
+    users: UserAuthOperations
+  }
+  blocks: {}
   collections: {
-    categories: Category;
-    'multi-rich-text': MultiRichText;
-    'localized-posts': LocalizedPost;
-    'nested-field-collection': NestedFieldCollection;
-    policies: Policy;
-    posts: Post;
-    'localized-posts-with-condition': LocalizedPostsWithCondition;
-    tags: Tag;
-    users: User;
-    'crowdin-files': CrowdinFile;
-    'crowdin-collection-directories': CrowdinCollectionDirectory;
-    'crowdin-article-directories': CrowdinArticleDirectory;
-    'payload-jobs': PayloadJob;
-    'payload-locked-documents': PayloadLockedDocument;
-    'payload-preferences': PayloadPreference;
-    'payload-migrations': PayloadMigration;
-  };
-  collectionsJoins: {};
+    categories: Category
+    'multi-rich-text': MultiRichText
+    'localized-posts': LocalizedPost
+    'nested-field-collection': NestedFieldCollection
+    policies: Policy
+    posts: Post
+    'localized-posts-with-condition': LocalizedPostsWithCondition
+    tags: Tag
+    users: User
+    'crowdin-files': CrowdinFile
+    'crowdin-collection-directories': CrowdinCollectionDirectory
+    'crowdin-article-directories': CrowdinArticleDirectory
+    'payload-jobs': PayloadJob
+    'payload-locked-documents': PayloadLockedDocument
+    'payload-preferences': PayloadPreference
+    'payload-migrations': PayloadMigration
+  }
+  collectionsJoins: {}
   collectionsSelect: {
-    categories: CategoriesSelect<false> | CategoriesSelect<true>;
-    'multi-rich-text': MultiRichTextSelect<false> | MultiRichTextSelect<true>;
-    'localized-posts': LocalizedPostsSelect<false> | LocalizedPostsSelect<true>;
-    'nested-field-collection': NestedFieldCollectionSelect<false> | NestedFieldCollectionSelect<true>;
-    policies: PoliciesSelect<false> | PoliciesSelect<true>;
-    posts: PostsSelect<false> | PostsSelect<true>;
-    'localized-posts-with-condition': LocalizedPostsWithConditionSelect<false> | LocalizedPostsWithConditionSelect<true>;
-    tags: TagsSelect<false> | TagsSelect<true>;
-    users: UsersSelect<false> | UsersSelect<true>;
-    'crowdin-files': CrowdinFilesSelect<false> | CrowdinFilesSelect<true>;
-    'crowdin-collection-directories': CrowdinCollectionDirectoriesSelect<false> | CrowdinCollectionDirectoriesSelect<true>;
-    'crowdin-article-directories': CrowdinArticleDirectoriesSelect<false> | CrowdinArticleDirectoriesSelect<true>;
-    'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
-    'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
-    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
-    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
-  };
+    categories: CategoriesSelect<false> | CategoriesSelect<true>
+    'multi-rich-text': MultiRichTextSelect<false> | MultiRichTextSelect<true>
+    'localized-posts': LocalizedPostsSelect<false> | LocalizedPostsSelect<true>
+    'nested-field-collection':
+      | NestedFieldCollectionSelect<false>
+      | NestedFieldCollectionSelect<true>
+    policies: PoliciesSelect<false> | PoliciesSelect<true>
+    posts: PostsSelect<false> | PostsSelect<true>
+    'localized-posts-with-condition':
+      | LocalizedPostsWithConditionSelect<false>
+      | LocalizedPostsWithConditionSelect<true>
+    tags: TagsSelect<false> | TagsSelect<true>
+    users: UsersSelect<false> | UsersSelect<true>
+    'crowdin-files': CrowdinFilesSelect<false> | CrowdinFilesSelect<true>
+    'crowdin-collection-directories':
+      | CrowdinCollectionDirectoriesSelect<false>
+      | CrowdinCollectionDirectoriesSelect<true>
+    'crowdin-article-directories':
+      | CrowdinArticleDirectoriesSelect<false>
+      | CrowdinArticleDirectoriesSelect<true>
+    'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>
+    'payload-locked-documents':
+      | PayloadLockedDocumentsSelect<false>
+      | PayloadLockedDocumentsSelect<true>
+    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>
+    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>
+  }
   db: {
-    defaultIDType: string;
-  };
+    defaultIDType: string
+  }
   globals: {
-    'localized-nav': LocalizedNav;
-    nav: Nav;
-    statistics: Statistic;
-  };
+    'localized-nav': LocalizedNav
+    nav: Nav
+    statistics: Statistic
+  }
   globalsSelect: {
-    'localized-nav': LocalizedNavSelect<false> | LocalizedNavSelect<true>;
-    nav: NavSelect<false> | NavSelect<true>;
-    statistics: StatisticsSelect<false> | StatisticsSelect<true>;
-  };
-  locale: 'en' | 'de_DE' | 'fr_FR';
+    'localized-nav': LocalizedNavSelect<false> | LocalizedNavSelect<true>
+    nav: NavSelect<false> | NavSelect<true>
+    statistics: StatisticsSelect<false> | StatisticsSelect<true>
+  }
+  locale: 'en' | 'de_DE' | 'fr_FR'
   user: User & {
-    collection: 'users';
-  };
+    collection: 'users'
+  }
   jobs: {
     tasks: {
-      crowdinSyncTranslations: TaskCrowdinSyncTranslations;
+      crowdinSyncTranslations: TaskCrowdinSyncTranslations
       inline: {
-        input: unknown;
-        output: unknown;
-      };
-    };
-    workflows: unknown;
-  };
+        input: unknown
+        output: unknown
+      }
+    }
+    workflows: unknown
+  }
 }
 export interface UserAuthOperations {
   forgotPassword: {
-    email: string;
-    password: string;
-  };
+    email: string
+    password: string
+  }
   login: {
-    email: string;
-    password: string;
-  };
+    email: string
+    password: string
+  }
   registerFirstUser: {
-    email: string;
-    password: string;
-  };
+    email: string
+    password: string
+  }
   unlock: {
-    email: string;
-    password: string;
-  };
+    email: string
+    password: string
+  }
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
  */
 export interface Category {
-  id: string;
-  name?: string | null;
+  id: string
+  name?: string | null
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "multi-rich-text".
  */
 export interface MultiRichText {
-  id: string;
+  id: string
   field_0?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
+    | null
   field_1?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
+    | null
   field_2?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
+    | null
   field_3?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
+    | null
   field_4?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
+    | null
   field_5?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
+    | null
   field_6?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
+    | null
   field_7?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
+    | null
   field_8?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
+    | null
   field_9?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
+    | null
   field_10?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
+    | null
   /**
    * Sync translations for this locale from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
    */
-  syncTranslations?: boolean | null;
+  syncTranslations?: boolean | null
   /**
    * Sync all translations from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
    */
-  syncAllTranslations?: boolean | null;
-  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
-  updatedAt: string;
-  createdAt: string;
+  syncAllTranslations?: boolean | null
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "crowdin-article-directories".
  */
 export interface CrowdinArticleDirectory {
-  id: string;
+  id: string
   /**
    * Select locales to exclude from translation synchronization.
    */
-  excludeLocales?: ('de_DE' | 'fr_FR')[] | null;
-  name?: string | null;
-  crowdinCollectionDirectory?: (string | null) | CrowdinCollectionDirectory;
-  crowdinFiles?: (string | CrowdinFile)[] | null;
-  parent?: (string | null) | CrowdinArticleDirectory;
+  excludeLocales?: ('de_DE' | 'fr_FR')[] | null
+  name?: string | null
+  crowdinCollectionDirectory?: (string | null) | CrowdinCollectionDirectory
+  crowdinFiles?: (string | CrowdinFile)[] | null
+  parent?: (string | null) | CrowdinArticleDirectory
   reference?: {
-    createdAt?: string | null;
-    updatedAt?: string | null;
-    projectId?: number | null;
-  };
-  originalId?: number | null;
-  directoryId?: number | null;
-  updatedAt: string;
-  createdAt: string;
+    createdAt?: string | null
+    updatedAt?: string | null
+    projectId?: number | null
+  }
+  originalId?: number | null
+  directoryId?: number | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "crowdin-collection-directories".
  */
 export interface CrowdinCollectionDirectory {
-  id: string;
-  name?: string | null;
-  title?: string | null;
-  collectionSlug?: string | null;
+  id: string
+  name?: string | null
+  title?: string | null
+  collectionSlug?: string | null
   reference?: {
-    createdAt?: string | null;
-    updatedAt?: string | null;
-    projectId?: number | null;
-  };
-  originalId?: number | null;
-  directoryId?: number | null;
-  updatedAt: string;
-  createdAt: string;
+    createdAt?: string | null
+    updatedAt?: string | null
+    projectId?: number | null
+  }
+  originalId?: number | null
+  directoryId?: number | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "crowdin-files".
  */
 export interface CrowdinFile {
-  id: string;
-  title?: string | null;
-  field?: string | null;
-  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  id: string
+  title?: string | null
+  field?: string | null
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory
   reference?: {
-    createdAt?: string | null;
-    updatedAt?: string | null;
-    projectId?: number | null;
-  };
-  originalId?: number | null;
-  directoryId?: number | null;
-  revisionId?: number | null;
-  name?: string | null;
-  type?: ('json' | 'html') | null;
-  path?: string | null;
+    createdAt?: string | null
+    updatedAt?: string | null
+    projectId?: number | null
+  }
+  originalId?: number | null
+  directoryId?: number | null
+  revisionId?: number | null
+  name?: string | null
+  type?: ('json' | 'html') | null
+  path?: string | null
   /**
    * The file data submitted to the Crowdin API
    */
   fileData?: {
     json?:
       | {
-          [k: string]: unknown;
+          [k: string]: unknown
         }
       | unknown[]
       | string
       | number
       | boolean
-      | null;
-    html?: string | null;
+      | null
+    html?: string | null
     /**
      * Copy Lexical field blocks as a translation source enabling a convenient method of merging block content on translation (i.e. merge non-translated fields like type=select).
      */
     sourceBlocks?:
       | {
-          [k: string]: unknown;
+          [k: string]: unknown
         }
       | unknown[]
       | string
       | number
       | boolean
-      | null;
-  };
-  updatedAt: string;
-  createdAt: string;
+      | null
+  }
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "localized-posts".
  */
 export interface LocalizedPost {
-  id: string;
-  title?: string | null;
-  author?: (string | null) | User;
-  publishedDate?: string | null;
-  category?: (string | null) | Category;
-  tags?: (string | Tag)[] | null;
+  id: string
+  title?: string | null
+  author?: (string | null) | User
+  publishedDate?: string | null
+  category?: (string | null) | Category
+  tags?: (string | Tag)[] | null
   content?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
-  status?: ('draft' | 'published') | null;
+    | null
+  status?: ('draft' | 'published') | null
   /**
    * Sync translations for this locale from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
    */
-  syncTranslations?: boolean | null;
+  syncTranslations?: boolean | null
   /**
    * Sync all translations from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
    */
-  syncAllTranslations?: boolean | null;
-  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
+  syncAllTranslations?: boolean | null
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory
+  updatedAt: string
+  createdAt: string
+  _status?: ('draft' | 'published') | null
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
-  name?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
+  id: string
+  name?: string | null
+  updatedAt: string
+  createdAt: string
+  email: string
+  resetPasswordToken?: string | null
+  resetPasswordExpiration?: string | null
+  salt?: string | null
+  hash?: string | null
+  loginAttempts?: number | null
+  lockUntil?: string | null
   sessions?:
     | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
+        id: string
+        createdAt?: string | null
+        expiresAt: string
       }[]
-    | null;
-  password?: string | null;
+    | null
+  password?: string | null
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "tags".
  */
 export interface Tag {
-  id: string;
-  name?: string | null;
+  id: string
+  name?: string | null
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "nested-field-collection".
  */
 export interface NestedFieldCollection {
-  id: string;
-  title?: string | null;
-  textField?: string | null;
+  id: string
+  title?: string | null
+  textField?: string | null
   richTextField?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
-  textareaField?: string | null;
+    | null
+  textareaField?: string | null
   arrayField?:
     | {
-        textField?: string | null;
+        textField?: string | null
         richTextField?:
           | {
-              [k: string]: unknown;
+              [k: string]: unknown
             }[]
-          | null;
-        textareaField?: string | null;
-        id?: string | null;
+          | null
+        textareaField?: string | null
+        id?: string | null
       }[]
-    | null;
+    | null
   layout?:
     | (
         | {
-            textField?: string | null;
+            textField?: string | null
             richTextField?:
               | {
-                  [k: string]: unknown;
+                  [k: string]: unknown
                 }[]
-              | null;
-            textareaField?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'basicBlock';
+              | null
+            textareaField?: string | null
+            id?: string | null
+            blockName?: string | null
+            blockType: 'basicBlock'
           }
         | {
-            textField?: string | null;
+            textField?: string | null
             richTextField?:
               | {
-                  [k: string]: unknown;
+                  [k: string]: unknown
                 }[]
-              | null;
-            textareaField?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'basicBlockNonLocalized';
+              | null
+            textareaField?: string | null
+            id?: string | null
+            blockName?: string | null
+            blockType: 'basicBlockNonLocalized'
           }
         | {
             richTextField?:
               | {
-                  [k: string]: unknown;
+                  [k: string]: unknown
                 }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'basicBlockRichText';
+              | null
+            id?: string | null
+            blockName?: string | null
+            blockType: 'basicBlockRichText'
           }
         | {
-            textField?: string | null;
+            textField?: string | null
             richTextField?:
               | {
-                  [k: string]: unknown;
+                  [k: string]: unknown
                 }[]
-              | null;
-            textareaField?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'basicBlockMixed';
+              | null
+            textareaField?: string | null
+            id?: string | null
+            blockName?: string | null
+            blockType: 'basicBlockMixed'
           }
         | {
-            title?: string | null;
+            title?: string | null
             messages?:
               | {
-                  title?: string | null;
+                  title?: string | null
                   message?:
                     | {
-                        [k: string]: unknown;
+                        [k: string]: unknown
                       }[]
-                    | null;
-                  id?: string | null;
+                    | null
+                  id?: string | null
                 }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'testBlockArrayOfRichText';
+              | null
+            id?: string | null
+            blockName?: string | null
+            blockType: 'testBlockArrayOfRichText'
           }
       )[]
-    | null;
+    | null
   group?: {
-    textField?: string | null;
+    textField?: string | null
     richTextField?:
       | {
-          [k: string]: unknown;
+          [k: string]: unknown
         }[]
-      | null;
-    textareaField?: string | null;
-  };
-  tabOneTitle?: string | null;
+      | null
+    textareaField?: string | null
+  }
+  tabOneTitle?: string | null
   tabOneContent?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
+    | null
   items?:
     | {
-        heading?: string | null;
+        heading?: string | null
         block?:
           | {
               content?: {
                 root: {
-                  type: string;
+                  type: string
                   children: {
-                    type: string;
-                    version: number;
-                    [k: string]: unknown;
-                  }[];
-                  direction: ('ltr' | 'rtl') | null;
-                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                  indent: number;
-                  version: number;
-                };
-                [k: string]: unknown;
-              } | null;
-              id?: string | null;
-              blockName?: string | null;
-              blockType: 'basicBlockLexical';
+                    type: string
+                    version: number
+                    [k: string]: unknown
+                  }[]
+                  direction: ('ltr' | 'rtl') | null
+                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+                  indent: number
+                  version: number
+                }
+                [k: string]: unknown
+              } | null
+              id?: string | null
+              blockName?: string | null
+              blockType: 'basicBlockLexical'
             }[]
-          | null;
-        id?: string | null;
+          | null
+        id?: string | null
       }[]
-    | null;
+    | null
   tabTwo?: {
-    tabTwoTitle?: string | null;
+    tabTwoTitle?: string | null
     tabTwoContent?:
       | {
-          [k: string]: unknown;
+          [k: string]: unknown
         }[]
-      | null;
-  };
-  updatedAt: string;
-  createdAt: string;
+      | null
+  }
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "policies".
  */
 export interface Policy {
-  id: string;
-  title?: string | null;
+  id: string
+  title?: string | null
   content?: {
     root: {
-      type: string;
+      type: string
       children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+        type: string
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  } | null
   group?: {
     array?:
       | {
-          title?: string | null;
+          title?: string | null
           content?: {
             root: {
-              type: string;
+              type: string
               children: {
-                type: string;
-                version: number;
-                [k: string]: unknown;
-              }[];
-              direction: ('ltr' | 'rtl') | null;
-              format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-              indent: number;
-              version: number;
-            };
-            [k: string]: unknown;
-          } | null;
-          id?: string | null;
+                type: string
+                version: number
+                [k: string]: unknown
+              }[]
+              direction: ('ltr' | 'rtl') | null
+              format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+              indent: number
+              version: number
+            }
+            [k: string]: unknown
+          } | null
+          id?: string | null
         }[]
-      | null;
-  };
-  updatedAt: string;
-  createdAt: string;
+      | null
+  }
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts".
  */
 export interface Post {
-  id: string;
-  title?: string | null;
-  author?: (string | null) | User;
-  publishedDate?: string | null;
-  category?: (string | null) | Category;
-  tags?: (string | Tag)[] | null;
+  id: string
+  title?: string | null
+  author?: (string | null) | User
+  publishedDate?: string | null
+  category?: (string | null) | Category
+  tags?: (string | Tag)[] | null
   content?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
-  status?: ('draft' | 'published') | null;
-  updatedAt: string;
-  createdAt: string;
+    | null
+  status?: ('draft' | 'published') | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "localized-posts-with-condition".
  */
 export interface LocalizedPostsWithCondition {
-  id: string;
-  title?: string | null;
-  translateWithCrowdin?: boolean | null;
-  author?: (string | null) | User;
-  publishedDate?: string | null;
-  category?: (string | null) | Category;
-  tags?: (string | Tag)[] | null;
+  id: string
+  title?: string | null
+  translateWithCrowdin?: boolean | null
+  author?: (string | null) | User
+  publishedDate?: string | null
+  category?: (string | null) | Category
+  tags?: (string | Tag)[] | null
   content?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }[]
-    | null;
-  status?: ('draft' | 'published') | null;
+    | null
+  status?: ('draft' | 'published') | null
   /**
    * Sync translations for this locale from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
    */
-  syncTranslations?: boolean | null;
+  syncTranslations?: boolean | null
   /**
    * Sync all translations from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
    */
-  syncAllTranslations?: boolean | null;
-  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
+  syncAllTranslations?: boolean | null
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory
+  updatedAt: string
+  createdAt: string
+  _status?: ('draft' | 'published') | null
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-jobs".
  */
 export interface PayloadJob {
-  id: string;
+  id: string
   /**
    * Input data provided to the job
    */
   input?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null;
+    | null
   taskStatus?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null;
-  completedAt?: string | null;
-  totalTried?: number | null;
+    | null
+  completedAt?: string | null
+  totalTried?: number | null
   /**
    * If hasError is true this job will not be retried
    */
-  hasError?: boolean | null;
+  hasError?: boolean | null
   /**
    * If hasError is true, this is the error that caused it
    */
   error?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null;
+    | null
   /**
    * Task execution log
    */
   log?:
     | {
-        executedAt: string;
-        completedAt: string;
-        taskSlug: 'inline' | 'crowdinSyncTranslations';
-        taskID: string;
+        executedAt: string
+        completedAt: string
+        taskSlug: 'inline' | 'crowdinSyncTranslations'
+        taskID: string
         input?:
           | {
-              [k: string]: unknown;
+              [k: string]: unknown
             }
           | unknown[]
           | string
           | number
           | boolean
-          | null;
+          | null
         output?:
           | {
-              [k: string]: unknown;
+              [k: string]: unknown
             }
           | unknown[]
           | string
           | number
           | boolean
-          | null;
-        state: 'failed' | 'succeeded';
+          | null
+        state: 'failed' | 'succeeded'
         error?:
           | {
-              [k: string]: unknown;
+              [k: string]: unknown
             }
           | unknown[]
           | string
           | number
           | boolean
-          | null;
-        id?: string | null;
+          | null
+        id?: string | null
       }[]
-    | null;
-  taskSlug?: ('inline' | 'crowdinSyncTranslations') | null;
-  queue?: string | null;
-  waitUntil?: string | null;
-  processing?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
+    | null
+  taskSlug?: ('inline' | 'crowdinSyncTranslations') | null
+  queue?: string | null
+  waitUntil?: string | null
+  processing?: boolean | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: string
   document?:
     | ({
-        relationTo: 'categories';
-        value: string | Category;
+        relationTo: 'categories'
+        value: string | Category
       } | null)
     | ({
-        relationTo: 'multi-rich-text';
-        value: string | MultiRichText;
+        relationTo: 'multi-rich-text'
+        value: string | MultiRichText
       } | null)
     | ({
-        relationTo: 'localized-posts';
-        value: string | LocalizedPost;
+        relationTo: 'localized-posts'
+        value: string | LocalizedPost
       } | null)
     | ({
-        relationTo: 'nested-field-collection';
-        value: string | NestedFieldCollection;
+        relationTo: 'nested-field-collection'
+        value: string | NestedFieldCollection
       } | null)
     | ({
-        relationTo: 'policies';
-        value: string | Policy;
+        relationTo: 'policies'
+        value: string | Policy
       } | null)
     | ({
-        relationTo: 'posts';
-        value: string | Post;
+        relationTo: 'posts'
+        value: string | Post
       } | null)
     | ({
-        relationTo: 'localized-posts-with-condition';
-        value: string | LocalizedPostsWithCondition;
+        relationTo: 'localized-posts-with-condition'
+        value: string | LocalizedPostsWithCondition
       } | null)
     | ({
-        relationTo: 'tags';
-        value: string | Tag;
+        relationTo: 'tags'
+        value: string | Tag
       } | null)
     | ({
-        relationTo: 'users';
-        value: string | User;
+        relationTo: 'users'
+        value: string | User
       } | null)
     | ({
-        relationTo: 'crowdin-files';
-        value: string | CrowdinFile;
+        relationTo: 'crowdin-files'
+        value: string | CrowdinFile
       } | null)
     | ({
-        relationTo: 'crowdin-collection-directories';
-        value: string | CrowdinCollectionDirectory;
+        relationTo: 'crowdin-collection-directories'
+        value: string | CrowdinCollectionDirectory
       } | null)
     | ({
-        relationTo: 'crowdin-article-directories';
-        value: string | CrowdinArticleDirectory;
+        relationTo: 'crowdin-article-directories'
+        value: string | CrowdinArticleDirectory
       } | null)
     | ({
-        relationTo: 'payload-jobs';
-        value: string | PayloadJob;
-      } | null);
-  globalSlug?: string | null;
+        relationTo: 'payload-jobs'
+        value: string | PayloadJob
+      } | null)
+  globalSlug?: string | null
   user: {
-    relationTo: 'users';
-    value: string | User;
-  };
-  updatedAt: string;
-  createdAt: string;
+    relationTo: 'users'
+    value: string | User
+  }
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: string
   user: {
-    relationTo: 'users';
-    value: string | User;
-  };
-  key?: string | null;
+    relationTo: 'users'
+    value: string | User
+  }
+  key?: string | null
   value?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null;
-  updatedAt: string;
-  createdAt: string;
+    | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
-  name?: string | null;
-  batch?: number | null;
-  updatedAt: string;
-  createdAt: string;
+  id: string
+  name?: string | null
+  batch?: number | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
-  name?: T;
+  name?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "multi-rich-text_select".
  */
 export interface MultiRichTextSelect<T extends boolean = true> {
-  field_0?: T;
-  field_1?: T;
-  field_2?: T;
-  field_3?: T;
-  field_4?: T;
-  field_5?: T;
-  field_6?: T;
-  field_7?: T;
-  field_8?: T;
-  field_9?: T;
-  field_10?: T;
-  syncTranslations?: T;
-  syncAllTranslations?: T;
-  crowdinArticleDirectory?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  field_0?: T
+  field_1?: T
+  field_2?: T
+  field_3?: T
+  field_4?: T
+  field_5?: T
+  field_6?: T
+  field_7?: T
+  field_8?: T
+  field_9?: T
+  field_10?: T
+  syncTranslations?: T
+  syncAllTranslations?: T
+  crowdinArticleDirectory?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "localized-posts_select".
  */
 export interface LocalizedPostsSelect<T extends boolean = true> {
-  title?: T;
-  author?: T;
-  publishedDate?: T;
-  category?: T;
-  tags?: T;
-  content?: T;
-  status?: T;
-  syncTranslations?: T;
-  syncAllTranslations?: T;
-  crowdinArticleDirectory?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
+  title?: T
+  author?: T
+  publishedDate?: T
+  category?: T
+  tags?: T
+  content?: T
+  status?: T
+  syncTranslations?: T
+  syncAllTranslations?: T
+  crowdinArticleDirectory?: T
+  updatedAt?: T
+  createdAt?: T
+  _status?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "nested-field-collection_select".
  */
 export interface NestedFieldCollectionSelect<T extends boolean = true> {
-  title?: T;
-  textField?: T;
-  richTextField?: T;
-  textareaField?: T;
+  title?: T
+  textField?: T
+  richTextField?: T
+  textareaField?: T
   arrayField?:
     | T
     | {
-        textField?: T;
-        richTextField?: T;
-        textareaField?: T;
-        id?: T;
-      };
+        textField?: T
+        richTextField?: T
+        textareaField?: T
+        id?: T
+      }
   layout?:
     | T
     | {
         basicBlock?:
           | T
           | {
-              textField?: T;
-              richTextField?: T;
-              textareaField?: T;
-              id?: T;
-              blockName?: T;
-            };
+              textField?: T
+              richTextField?: T
+              textareaField?: T
+              id?: T
+              blockName?: T
+            }
         basicBlockNonLocalized?:
           | T
           | {
-              textField?: T;
-              richTextField?: T;
-              textareaField?: T;
-              id?: T;
-              blockName?: T;
-            };
+              textField?: T
+              richTextField?: T
+              textareaField?: T
+              id?: T
+              blockName?: T
+            }
         basicBlockRichText?:
           | T
           | {
-              richTextField?: T;
-              id?: T;
-              blockName?: T;
-            };
+              richTextField?: T
+              id?: T
+              blockName?: T
+            }
         basicBlockMixed?:
           | T
           | {
-              textField?: T;
-              richTextField?: T;
-              textareaField?: T;
-              id?: T;
-              blockName?: T;
-            };
+              textField?: T
+              richTextField?: T
+              textareaField?: T
+              id?: T
+              blockName?: T
+            }
         testBlockArrayOfRichText?:
           | T
           | {
-              title?: T;
+              title?: T
               messages?:
                 | T
                 | {
-                    title?: T;
-                    message?: T;
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
-      };
+                    title?: T
+                    message?: T
+                    id?: T
+                  }
+              id?: T
+              blockName?: T
+            }
+      }
   group?:
     | T
     | {
-        textField?: T;
-        richTextField?: T;
-        textareaField?: T;
-      };
-  tabOneTitle?: T;
-  tabOneContent?: T;
+        textField?: T
+        richTextField?: T
+        textareaField?: T
+      }
+  tabOneTitle?: T
+  tabOneContent?: T
   items?:
     | T
     | {
-        heading?: T;
+        heading?: T
         block?:
           | T
           | {
               basicBlockLexical?:
                 | T
                 | {
-                    content?: T;
-                    id?: T;
-                    blockName?: T;
-                  };
-            };
-        id?: T;
-      };
+                    content?: T
+                    id?: T
+                    blockName?: T
+                  }
+            }
+        id?: T
+      }
   tabTwo?:
     | T
     | {
-        tabTwoTitle?: T;
-        tabTwoContent?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
+        tabTwoTitle?: T
+        tabTwoContent?: T
+      }
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "policies_select".
  */
 export interface PoliciesSelect<T extends boolean = true> {
-  title?: T;
-  content?: T;
+  title?: T
+  content?: T
   group?:
     | T
     | {
         array?:
           | T
           | {
-              title?: T;
-              content?: T;
-              id?: T;
-            };
-      };
-  updatedAt?: T;
-  createdAt?: T;
+              title?: T
+              content?: T
+              id?: T
+            }
+      }
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
-  title?: T;
-  author?: T;
-  publishedDate?: T;
-  category?: T;
-  tags?: T;
-  content?: T;
-  status?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  title?: T
+  author?: T
+  publishedDate?: T
+  category?: T
+  tags?: T
+  content?: T
+  status?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "localized-posts-with-condition_select".
  */
 export interface LocalizedPostsWithConditionSelect<T extends boolean = true> {
-  title?: T;
-  translateWithCrowdin?: T;
-  author?: T;
-  publishedDate?: T;
-  category?: T;
-  tags?: T;
-  content?: T;
-  status?: T;
-  syncTranslations?: T;
-  syncAllTranslations?: T;
-  crowdinArticleDirectory?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
+  title?: T
+  translateWithCrowdin?: T
+  author?: T
+  publishedDate?: T
+  category?: T
+  tags?: T
+  content?: T
+  status?: T
+  syncTranslations?: T
+  syncAllTranslations?: T
+  crowdinArticleDirectory?: T
+  updatedAt?: T
+  createdAt?: T
+  _status?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "tags_select".
  */
 export interface TagsSelect<T extends boolean = true> {
-  name?: T;
+  name?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
-  name?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
+  name?: T
+  updatedAt?: T
+  createdAt?: T
+  email?: T
+  resetPasswordToken?: T
+  resetPasswordExpiration?: T
+  salt?: T
+  hash?: T
+  loginAttempts?: T
+  lockUntil?: T
   sessions?:
     | T
     | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
-      };
+        id?: T
+        createdAt?: T
+        expiresAt?: T
+      }
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "crowdin-files_select".
  */
 export interface CrowdinFilesSelect<T extends boolean = true> {
-  title?: T;
-  field?: T;
-  crowdinArticleDirectory?: T;
+  title?: T
+  field?: T
+  crowdinArticleDirectory?: T
   reference?:
     | T
     | {
-        createdAt?: T;
-        updatedAt?: T;
-        projectId?: T;
-      };
-  originalId?: T;
-  directoryId?: T;
-  revisionId?: T;
-  name?: T;
-  type?: T;
-  path?: T;
+        createdAt?: T
+        updatedAt?: T
+        projectId?: T
+      }
+  originalId?: T
+  directoryId?: T
+  revisionId?: T
+  name?: T
+  type?: T
+  path?: T
   fileData?:
     | T
     | {
-        json?: T;
-        html?: T;
-        sourceBlocks?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
+        json?: T
+        html?: T
+        sourceBlocks?: T
+      }
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "crowdin-collection-directories_select".
  */
 export interface CrowdinCollectionDirectoriesSelect<T extends boolean = true> {
-  name?: T;
-  title?: T;
-  collectionSlug?: T;
+  name?: T
+  title?: T
+  collectionSlug?: T
   reference?:
     | T
     | {
-        createdAt?: T;
-        updatedAt?: T;
-        projectId?: T;
-      };
-  originalId?: T;
-  directoryId?: T;
-  updatedAt?: T;
-  createdAt?: T;
+        createdAt?: T
+        updatedAt?: T
+        projectId?: T
+      }
+  originalId?: T
+  directoryId?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "crowdin-article-directories_select".
  */
 export interface CrowdinArticleDirectoriesSelect<T extends boolean = true> {
-  excludeLocales?: T;
-  name?: T;
-  crowdinCollectionDirectory?: T;
-  crowdinFiles?: T;
-  parent?: T;
+  excludeLocales?: T
+  name?: T
+  crowdinCollectionDirectory?: T
+  crowdinFiles?: T
+  parent?: T
   reference?:
     | T
     | {
-        createdAt?: T;
-        updatedAt?: T;
-        projectId?: T;
-      };
-  originalId?: T;
-  directoryId?: T;
-  updatedAt?: T;
-  createdAt?: T;
+        createdAt?: T
+        updatedAt?: T
+        projectId?: T
+      }
+  originalId?: T
+  directoryId?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-jobs_select".
  */
 export interface PayloadJobsSelect<T extends boolean = true> {
-  input?: T;
-  taskStatus?: T;
-  completedAt?: T;
-  totalTried?: T;
-  hasError?: T;
-  error?: T;
+  input?: T
+  taskStatus?: T
+  completedAt?: T
+  totalTried?: T
+  hasError?: T
+  error?: T
   log?:
     | T
     | {
-        executedAt?: T;
-        completedAt?: T;
-        taskSlug?: T;
-        taskID?: T;
-        input?: T;
-        output?: T;
-        state?: T;
-        error?: T;
-        id?: T;
-      };
-  taskSlug?: T;
-  queue?: T;
-  waitUntil?: T;
-  processing?: T;
-  updatedAt?: T;
-  createdAt?: T;
+        executedAt?: T
+        completedAt?: T
+        taskSlug?: T
+        taskID?: T
+        input?: T
+        output?: T
+        state?: T
+        error?: T
+        id?: T
+      }
+  taskSlug?: T
+  queue?: T
+  waitUntil?: T
+  processing?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents_select".
  */
 export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
-  document?: T;
-  globalSlug?: T;
-  user?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  document?: T
+  globalSlug?: T
+  user?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-preferences_select".
  */
 export interface PayloadPreferencesSelect<T extends boolean = true> {
-  user?: T;
-  key?: T;
-  value?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  user?: T
+  key?: T
+  value?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-migrations_select".
  */
 export interface PayloadMigrationsSelect<T extends boolean = true> {
-  name?: T;
-  batch?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  name?: T
+  batch?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "localized-nav".
  */
 export interface LocalizedNav {
-  id: string;
+  id: string
   items: {
-    label?: string | null;
-    id?: string | null;
-  }[];
-  updatedAt?: string | null;
-  createdAt?: string | null;
+    label?: string | null
+    id?: string | null
+  }[]
+  updatedAt?: string | null
+  createdAt?: string | null
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "nav".
  */
 export interface Nav {
-  id: string;
+  id: string
   items: {
-    label?: string | null;
-    id?: string | null;
-  }[];
-  updatedAt?: string | null;
-  createdAt?: string | null;
+    label?: string | null
+    id?: string | null
+  }[]
+  updatedAt?: string | null
+  createdAt?: string | null
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "statistics".
  */
 export interface Statistic {
-  id: string;
+  id: string
   users?: {
-    text?: string | null;
+    text?: string | null
     /**
      * Restricted to multiples of 100 in order to simplify localization.
      */
-    number?: number | null;
-  };
+    number?: number | null
+  }
   countries?: {
-    text?: string | null;
-    number?: number | null;
-  };
+    text?: string | null
+    number?: number | null
+  }
   /**
    * Sync translations for this locale from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
    */
-  syncTranslations?: boolean | null;
+  syncTranslations?: boolean | null
   /**
    * Sync all translations from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
    */
-  syncAllTranslations?: boolean | null;
-  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
-  _status?: ('draft' | 'published') | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
+  syncAllTranslations?: boolean | null
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory
+  _status?: ('draft' | 'published') | null
+  updatedAt?: string | null
+  createdAt?: string | null
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1263,12 +1273,12 @@ export interface LocalizedNavSelect<T extends boolean = true> {
   items?:
     | T
     | {
-        label?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
+        label?: T
+        id?: T
+      }
+  updatedAt?: T
+  createdAt?: T
+  globalType?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1278,12 +1288,12 @@ export interface NavSelect<T extends boolean = true> {
   items?:
     | T
     | {
-        label?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
+        label?: T
+        id?: T
+      }
+  updatedAt?: T
+  createdAt?: T
+  globalType?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1293,22 +1303,22 @@ export interface StatisticsSelect<T extends boolean = true> {
   users?:
     | T
     | {
-        text?: T;
-        number?: T;
-      };
+        text?: T
+        number?: T
+      }
   countries?:
     | T
     | {
-        text?: T;
-        number?: T;
-      };
-  syncTranslations?: T;
-  syncAllTranslations?: T;
-  crowdinArticleDirectory?: T;
-  _status?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
+        text?: T
+        number?: T
+      }
+  syncTranslations?: T
+  syncAllTranslations?: T
+  crowdinArticleDirectory?: T
+  _status?: T
+  updatedAt?: T
+  createdAt?: T
+  globalType?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1316,31 +1326,30 @@ export interface StatisticsSelect<T extends boolean = true> {
  */
 export interface TaskCrowdinSyncTranslations {
   input: {
-    articleDirectoryId: string;
-    draft?: boolean | null;
-    excludeLocales?: ('de_DE' | 'fr_FR')[] | null;
-    dryRun?: boolean | null;
-  };
+    articleDirectoryId: string
+    draft?: boolean | null
+    excludeLocales?: ('de_DE' | 'fr_FR')[] | null
+    dryRun?: boolean | null
+  }
   output: {
     result?:
       | {
-          [k: string]: unknown;
+          [k: string]: unknown
         }
       | unknown[]
       | string
       | number
       | boolean
-      | null;
-  };
+      | null
+  }
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "auth".
  */
 export interface Auth {
-  [k: string]: unknown;
+  [k: string]: unknown
 }
-
 
 declare module 'payload' {
   export interface GeneratedTypes extends Config {}

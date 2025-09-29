@@ -7,7 +7,7 @@ Describe how HTML element tags are mapped to Slate JSON nodes.
 In the following simple example, `h1` HTML elements are mapped to a Slate JSON node with a `type` of `heading-one`.
 
 ```ts
-import { HtmlToSlateConfig } from 'slate-serializers'
+import { HtmlToSlateConfig } from 'slate-serializers';
 
 const config: HtmlToSlateConfig = {
   // ...
@@ -17,14 +17,14 @@ const config: HtmlToSlateConfig = {
     }),
   },
   // ...
-}
+};
 ```
 
 The node of type `Element` from `domhandler` is passed into this function. Combine this with [utilities from `domutils`](https://domutils.js.org/) to perform further manipulation.
 
 ```ts
-import { getAttributeValue } from 'domutils'
-import { HtmlToSlateConfig } from 'slate-serializers'
+import { getAttributeValue } from 'domutils';
+import { HtmlToSlateConfig } from 'slate-serializers';
 
 const config: HtmlToSlateConfig = {
   // ...
@@ -36,7 +36,7 @@ const config: HtmlToSlateConfig = {
     }),
   },
   // ...
-}
+};
 ```
 
 ### Element maps
@@ -82,13 +82,13 @@ String operations are not ideal, but may be necessary in some cases.
 In the following example, regular expressions are used to replace all `<pre>` HTML elements with `<code>`. This is helpful because `htmlparser2` will separate out `<pre>` tags into their own block, whereas `<code>` tags are kept inline.
 
 ```ts
-import { HtmlToSlateConfig } from 'slate-serializers'
+import { HtmlToSlateConfig } from 'slate-serializers';
 
 const config: HtmlToSlateConfig = {
   // ...
   htmlPreProcessString: (html) => html.replace(/<pre[^>]*>/g, '<code>').replace(/<\/pre>/g, '</code>'),
   // ...
-}
+};
 ```
 
 ### filterWhitespaceNodes
@@ -99,7 +99,7 @@ Remove any Slate JSON nodes that have no type or content. For example:
 
 ```js
 {
-  children: []
+  children: [];
 }
 ```
 

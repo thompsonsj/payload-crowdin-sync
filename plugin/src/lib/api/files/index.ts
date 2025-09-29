@@ -1,12 +1,12 @@
-import { PluginOptions } from "../../types";
+import { PluginOptions } from '../../types';
 import {
   getArticleDirectory,
   getFileByDocumentID,
   getFilesByDocumentID,
-} from "../helpers";
+} from '../helpers';
 
-import { CrowdinArticleDirectory } from '../../payload-types'
-import { PayloadRequest } from "payload";
+import { CrowdinArticleDirectory } from '../../payload-types';
+import { PayloadRequest } from 'payload';
 
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
@@ -17,12 +17,12 @@ import {
   Credentials,
   SourceFiles,
   UploadStorage,
-} from "@crowdin/crowdin-api-client";
+} from '@crowdin/crowdin-api-client';
 
 interface IcreateOrUpdateFile {
   name: string;
   fileData: string | object;
-  fileType: "html" | "json";
+  fileType: 'html' | 'json';
 }
 
 interface IcreateFile extends IcreateOrUpdateFile {
@@ -49,7 +49,9 @@ export class payloadCrowdinSyncFilesApi {
     if (pluginOptions.organization) {
       credentials.organization = pluginOptions.organization;
     }
-    const { sourceFilesApi, uploadStorageApi } = new crowdin.default(credentials);
+    const { sourceFilesApi, uploadStorageApi } = new crowdin.default(
+      credentials,
+    );
     this.projectId = pluginOptions.projectId;
     this.directoryId = pluginOptions.directoryId;
     this.sourceFilesApi = sourceFilesApi;
@@ -67,7 +69,7 @@ export class payloadCrowdinSyncFilesApi {
     const storage = await this.uploadStorageApi.addStorage(
       name,
       fileData,
-      fileType
+      fileType,
     );
     //const file = await sourceFilesApi.deleteFile(projectId, 1161)
     const file = await this.sourceFilesApi.updateOrRestoreFile(
@@ -75,7 +77,7 @@ export class payloadCrowdinSyncFilesApi {
       fileId,
       {
         storageId: storage.data.id,
-      }
+      },
     );
     return file;
   }
@@ -89,7 +91,7 @@ export class payloadCrowdinSyncFilesApi {
     const storage = await this.uploadStorageApi.addStorage(
       name,
       fileData,
-      fileType
+      fileType,
     );
     const options = {
       name: `${name}.${fileType}`,
@@ -101,54 +103,65 @@ export class payloadCrowdinSyncFilesApi {
     try {
       const file = await this.sourceFilesApi.createFile(
         this.projectId,
-        options
+        options,
       );
       return file;
     } catch (error) {
       console.error(error, options);
     }
-    return
+    return;
   }
 
-  async getArticleDirectory(documentId: string): Promise<CrowdinArticleDirectory | undefined> {
-    let result = undefined
+  async getArticleDirectory(
+    documentId: string,
+  ): Promise<CrowdinArticleDirectory | undefined> {
+    let result = undefined;
     try {
       result = await getArticleDirectory({
         documentId,
         payload: this.req.payload,
-        req: this.req
+        req: this.req,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
     return result as CrowdinArticleDirectory | undefined;
   }
 
   async deleteArticleDirectory(documentId: string) {
-    const crowdinPayloadArticleDirectory = await this.getArticleDirectory(
-      documentId
-    );
-    if (!crowdinPayloadArticleDirectory || !crowdinPayloadArticleDirectory.originalId) {
-      return
+    const crowdinPayloadArticleDirectory =
+      await this.getArticleDirectory(documentId);
+    if (
+      !crowdinPayloadArticleDirectory ||
+      !crowdinPayloadArticleDirectory.originalId
+    ) {
+      return;
     }
     await this.sourceFilesApi.deleteDirectory(
       this.projectId,
-      crowdinPayloadArticleDirectory.originalId
+      crowdinPayloadArticleDirectory.originalId,
     );
     await this.req.payload.delete({
-      collection: "crowdin-article-directories",
+      collection: 'crowdin-article-directories',
       id: crowdinPayloadArticleDirectory.id,
       req: this.req,
     });
   }
 
   async getFileByDocumentID(name: string, documentId: string) {
-    const result = await getFileByDocumentID(name, documentId, this.req.payload);
+    const result = await getFileByDocumentID(
+      name,
+      documentId,
+      this.req.payload,
+    );
     return result;
   }
 
   async getFilesByDocumentID(documentId: string) {
-    const result = await getFilesByDocumentID({documentId, payload: this.req.payload});
+    const result = await getFilesByDocumentID({
+      documentId,
+      payload: this.req.payload,
+    });
     return result;
   }
 }

@@ -5,24 +5,24 @@ export const payloadCreateBlocksRichTextData = {
         {
           children: [
             {
-              text: "Rich text content in block layout at index 0.",
+              text: 'Rich text content in block layout at index 0.',
             },
           ],
         },
       ],
-      blockType: "basicBlockRichText",
+      blockType: 'basicBlockRichText',
     },
     {
       richTextField: [
         {
           children: [
             {
-              text: "Rich text content in block layout at index 1.",
+              text: 'Rich text content in block layout at index 1.',
             },
           ],
         },
       ],
-      blockType: "basicBlockRichText",
+      blockType: 'basicBlockRichText',
     },
   ],
-};
+}

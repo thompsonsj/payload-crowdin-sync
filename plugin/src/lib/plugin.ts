@@ -1,20 +1,20 @@
-import type { CollectionConfig, Config, GlobalConfig } from "payload";
-import { isCollectionOrGlobalConfigObject, type PluginOptions } from "./types";
+import type { CollectionConfig, Config, GlobalConfig } from 'payload';
+import { isCollectionOrGlobalConfigObject, type PluginOptions } from './types';
 import {
   getAfterChangeHook,
   getGlobalAfterChangeHook,
-} from "./hooks/collections/afterChange";
-import { getAfterDeleteHook } from "./hooks/collections/afterDelete";
-import { pluginCollectionOrGlobalFields } from "./fields/pluginFields";
-import CrowdinFiles from "./collections/CrowdinFiles";
-import CrowdinCollectionDirectories from "./collections/CrowdinCollectionDirectories";
-import CrowdinArticleDirectories from "./collections/CrowdinArticleDirectories";
-import { containsLocalizedFields } from "./utilities";
-import { getReviewTranslationEndpoint } from "./endpoints/globals/reviewTranslation";
-import { getReviewFieldsEndpoint } from "./endpoints/globals/reviewFields";
-import Joi from "joi";
-import { crowdinArticleDirectoryFields } from "./fields/crowdinArticleDirectoryFields";
-import { syncTranslations } from "./tasks/sync-translation";
+} from './hooks/collections/afterChange';
+import { getAfterDeleteHook } from './hooks/collections/afterDelete';
+import { pluginCollectionOrGlobalFields } from './fields/pluginFields';
+import CrowdinFiles from './collections/CrowdinFiles';
+import CrowdinCollectionDirectories from './collections/CrowdinCollectionDirectories';
+import CrowdinArticleDirectories from './collections/CrowdinArticleDirectories';
+import { containsLocalizedFields } from './utilities';
+import { getReviewTranslationEndpoint } from './endpoints/globals/reviewTranslation';
+import { getReviewFieldsEndpoint } from './endpoints/globals/reviewFields';
+import Joi from 'joi';
+import { crowdinArticleDirectoryFields } from './fields/crowdinArticleDirectoryFields';
+import { syncTranslations } from './tasks/sync-translation';
 
 /**
  * This plugin extends all collections that contain localized fields
@@ -25,8 +25,8 @@ import { syncTranslations } from "./tasks/sync-translation";
  **/
 
 interface CollectionOrGlobalConfigActive {
-  slugsConfig: PluginOptions['collections'] | PluginOptions['globals'],
-  collection: CollectionConfig | GlobalConfig,
+  slugsConfig: PluginOptions['collections'] | PluginOptions['globals'];
+  collection: CollectionConfig | GlobalConfig;
 }
 
 /**
@@ -45,22 +45,22 @@ const collectionOrGlobalConfigActive = ({
 }: CollectionOrGlobalConfigActive) => {
   // if undefined, all collections/globals are active
   if (!slugsConfig) {
-    return containsLocalizedFields({ fields: collection.fields })
+    return containsLocalizedFields({ fields: collection.fields });
   }
 
   // normalize slugs
-  const slugs = slugsConfig.map(config => {
+  const slugs = slugsConfig.map((config) => {
     if (isCollectionOrGlobalConfigObject(config)) {
-      return config.slug
+      return config.slug;
     }
-    return config
-  })
+    return config;
+  });
 
   if (slugs.includes(collection.slug)) {
-   return containsLocalizedFields({ fields: collection.fields })
+    return containsLocalizedFields({ fields: collection.fields });
   }
-  return false
-}
+  return false;
+};
 
 export const crowdinSync =
   (pluginOptions: PluginOptions) =>
@@ -81,19 +81,29 @@ export const crowdinSync =
         /./,
         Joi.object({
           crowdinId: Joi.string().required(),
-        }).pattern(/./, Joi.any())
+        }).pattern(/./, Joi.any()),
       ),
 
       sourceLocale: Joi.string().required(),
 
-      collections: Joi.array().items(Joi.alternatives().try(Joi.object({
-        slug: Joi.string(),
-        condition: Joi.function()
-      }), Joi.string())),
-      globals: Joi.array().items(Joi.alternatives().try(Joi.object({
-        slug: Joi.string(),
-        condition: Joi.function()
-      }), Joi.string())),
+      collections: Joi.array().items(
+        Joi.alternatives().try(
+          Joi.object({
+            slug: Joi.string(),
+            condition: Joi.function(),
+          }),
+          Joi.string(),
+        ),
+      ),
+      globals: Joi.array().items(
+        Joi.alternatives().try(
+          Joi.object({
+            slug: Joi.string(),
+            condition: Joi.function(),
+          }),
+          Joi.string(),
+        ),
+      ),
       slateToHtmlConfig: Joi.object(),
       htmlToSlateConfig: Joi.object(),
       pluginCollectionAccess: Joi.object(),
@@ -108,13 +118,14 @@ export const crowdinSync =
 
     if (validate.error) {
       console.log(
-        "Payload Crowdin Sync option validation errors:",
-        validate.error
+        'Payload Crowdin Sync option validation errors:',
+        validate.error,
       );
     }
 
     // option defaults
-    pluginOptions.lexicalBlockFolderPrefix = pluginOptions.lexicalBlockFolderPrefix || 'lex.';
+    pluginOptions.lexicalBlockFolderPrefix =
+      pluginOptions.lexicalBlockFolderPrefix || 'lex.';
 
     return {
       ...config,
@@ -124,17 +135,18 @@ export const crowdinSync =
       jobs: {
         ...config.jobs,
         tasks: [
-          ...config.jobs?.tasks || [],
+          ...(config.jobs?.tasks || []),
           syncTranslations({ pluginOptions }),
-        ]
+        ],
       },
       collections: [
-        ...(config.collections || [])
-        .map((existingCollection) => {
-          if (collectionOrGlobalConfigActive({
-            slugsConfig: pluginOptions.collections,
-            collection: existingCollection
-          })) {
+        ...(config.collections || []).map((existingCollection) => {
+          if (
+            collectionOrGlobalConfigActive({
+              slugsConfig: pluginOptions.collections,
+              collection: existingCollection,
+            })
+          ) {
             const fields = pluginCollectionOrGlobalFields({
               fields: existingCollection.fields,
               pluginOptions,
@@ -173,7 +185,7 @@ export const crowdinSync =
           admin: {
             ...CrowdinFiles.admin,
             ...pluginOptions.pluginCollectionAdmin,
-          }
+          },
         },
         {
           ...CrowdinCollectionDirectories,
@@ -184,7 +196,7 @@ export const crowdinSync =
           admin: {
             ...CrowdinCollectionDirectories.admin,
             ...pluginOptions.pluginCollectionAdmin,
-          }
+          },
         },
         {
           ...CrowdinArticleDirectories,
@@ -197,22 +209,19 @@ export const crowdinSync =
             ...pluginOptions.pluginCollectionAdmin,
           },
           fields: [
-
             {
-              type: "tabs",
+              type: 'tabs',
               tabs: [
                 {
-                  label: "Options",
-                  fields: crowdinArticleDirectoryFields({ pluginOptions })
+                  label: 'Options',
+                  fields: crowdinArticleDirectoryFields({ pluginOptions }),
                 },
                 {
-                  label: "Internal",
-                  fields: [
-                    ...CrowdinArticleDirectories.fields
-                  ]
+                  label: 'Internal',
+                  fields: [...CrowdinArticleDirectories.fields],
                 },
-              ]
-            }
+              ],
+            },
           ],
           endpoints: [
             ...(CrowdinArticleDirectories.endpoints || []),
@@ -221,21 +230,22 @@ export const crowdinSync =
             }),
             getReviewTranslationEndpoint({
               pluginOptions,
-              type: "update",
+              type: 'update',
             }),
             getReviewFieldsEndpoint({
-              pluginOptions
-            })
+              pluginOptions,
+            }),
           ],
         },
       ],
       globals: [
-        ...(config.globals || [])
-        .map((existingGlobal) => {
-          if (collectionOrGlobalConfigActive({
-            slugsConfig: pluginOptions.globals,
-            collection: existingGlobal
-          })) {
+        ...(config.globals || []).map((existingGlobal) => {
+          if (
+            collectionOrGlobalConfigActive({
+              slugsConfig: pluginOptions.globals,
+              collection: existingGlobal,
+            })
+          ) {
             const fields = pluginCollectionOrGlobalFields({
               fields: existingGlobal.fields,
               pluginOptions,

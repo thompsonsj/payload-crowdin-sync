@@ -1,7 +1,14 @@
-import type { SerializedTableCellNode, SerializedTableNode, SerializedTableRowNode } from "@payloadcms/richtext-lexical"
-import type { SlateNodeConverter } from '@payloadcms/richtext-lexical'
-import { converters } from './../richTextConversion'
-import { convertSlateNodesToLexical, convertSlateToLexical } from "@payloadcms/richtext-lexical/migrate"
+import type {
+  SerializedTableCellNode,
+  SerializedTableNode,
+  SerializedTableRowNode,
+} from '@payloadcms/richtext-lexical';
+import type { SlateNodeConverter } from '@payloadcms/richtext-lexical';
+import { converters } from './../richTextConversion';
+import {
+  convertSlateNodesToLexical,
+  convertSlateToLexical,
+} from '@payloadcms/richtext-lexical/migrate';
 
 // note that there is no attempt to restore any formatting on the table when loading translations - only content.
 // to avoid repetition, define default values for each node in one place
@@ -10,7 +17,7 @@ const defaultLexicalNodeProps = {
   direction: null,
   version: 1,
   indent: 0,
-}
+};
 
 export const SlateTableConverter: SlateNodeConverter = {
   converter({ slateNode }) {
@@ -23,10 +30,10 @@ export const SlateTableConverter: SlateNodeConverter = {
         parentNodeType: 'table',
         slateNodes: slateNode.children,
       }),
-    } as const as SerializedTableNode
+    } as const as SerializedTableNode;
   },
   nodeTypes: ['table'],
-}
+};
 
 export const SlateTableRowConverter: SlateNodeConverter = {
   converter({ slateNode }) {
@@ -39,10 +46,10 @@ export const SlateTableRowConverter: SlateNodeConverter = {
         parentNodeType: 'tablerow',
         slateNodes: slateNode.children,
       }),
-    } as const as SerializedTableRowNode
+    } as const as SerializedTableRowNode;
   },
   nodeTypes: ['table-row'],
-}
+};
 
 export const SlateTableCellConverter: SlateNodeConverter = {
   converter({ slateNode }) {
@@ -56,7 +63,7 @@ export const SlateTableCellConverter: SlateNodeConverter = {
         parentNodeType: 'tablecell',
         slateNodes: slateNode.children,
       }),
-    } as const as SerializedTableCellNode
+    } as const as SerializedTableCellNode;
   },
   nodeTypes: ['table-cell', 'table-header-cell'],
-}
+};

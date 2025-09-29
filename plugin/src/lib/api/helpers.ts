@@ -1,8 +1,23 @@
-import { Payload } from "payload";
-import { CrowdinArticleDirectory, CrowdinCollectionDirectory, CrowdinFile } from "../payload-types";
-import { payloadCrowdinSyncTranslationsApi } from "./translations";
-import { PluginOptions, isCollectionOrGlobalConfigObject, isCollectionOrGlobalConfigSlug, isCrowdinArticleDirectory } from "../types";
-import type { CollectionConfig, GlobalConfig, PayloadRequest, SanitizedCollectionConfig, SanitizedGlobalConfig } from "payload";
+import { Payload } from 'payload';
+import {
+  CrowdinArticleDirectory,
+  CrowdinCollectionDirectory,
+  CrowdinFile,
+} from '../payload-types';
+import { payloadCrowdinSyncTranslationsApi } from './translations';
+import {
+  PluginOptions,
+  isCollectionOrGlobalConfigObject,
+  isCollectionOrGlobalConfigSlug,
+  isCrowdinArticleDirectory,
+} from '../types';
+import type {
+  CollectionConfig,
+  GlobalConfig,
+  PayloadRequest,
+  SanitizedCollectionConfig,
+  SanitizedGlobalConfig,
+} from 'payload';
 
 export const getCollectionConfig = (
   collection: string,
@@ -14,21 +29,21 @@ export const getCollectionConfig = (
     | SanitizedCollectionConfig
     | undefined;
   if (!collection && !global) {
-    return undefined
+    return undefined;
   }
   if (global) {
     collectionConfig = payload.config.globals.find(
-      (col: GlobalConfig) => col.slug === collection
+      (col: GlobalConfig) => col.slug === collection,
     );
   } else {
     collectionConfig = payload.config.collections.find(
-      (col: CollectionConfig) => col.slug === collection
+      (col: CollectionConfig) => col.slug === collection,
     );
   }
   if (!collectionConfig)
     throw new Error(`Collection ${collection} not found in payload config`);
   return collectionConfig;
-}
+};
 
 /**
  * get Crowdin Article Directory for a given documentId
@@ -37,23 +52,21 @@ export const getCollectionConfig = (
  * so is easy to retrieve. Use this function when you only have
  * a document id.
  */
-export async function getArticleDirectory(
-  {
-    documentId,
-    payload,
-    allowEmpty,
-    parent,
-    req,
-  }: {
-    documentId: string,
-    payload: Payload,
-    allowEmpty?: boolean,
-    parent?: CrowdinArticleDirectory | null | string,
-    req?: PayloadRequest,
-  }
-) {
+export async function getArticleDirectory({
+  documentId,
+  payload,
+  allowEmpty,
+  parent,
+  req,
+}: {
+  documentId: string;
+  payload: Payload;
+  allowEmpty?: boolean;
+  parent?: CrowdinArticleDirectory | null | string;
+  req?: PayloadRequest;
+}) {
   const crowdinPayloadArticleDirectory = await payload.find({
-    collection: "crowdin-article-directories",
+    collection: 'crowdin-article-directories',
     where: {
       name: {
         equals: documentId,
@@ -61,8 +74,8 @@ export async function getArticleDirectory(
       ...(parent && {
         parent: {
           equals: isCrowdinArticleDirectory(parent) ? parent?.id : parent,
-        }
-      })
+        },
+      }),
     },
     req,
   });
@@ -70,7 +83,7 @@ export async function getArticleDirectory(
     // a thrown error won't be reported in an api call, so console.log it as well.
     console.log(`No article directory found for document ${documentId}`);
     throw new Error(
-      "This article does not have a corresponding entry in the  crowdin-article-directories collection."
+      'This article does not have a corresponding entry in the  crowdin-article-directories collection.',
     );
   }
   return crowdinPayloadArticleDirectory
@@ -83,20 +96,20 @@ export async function getLexicalFieldArticleDirectories({
   parent,
   req,
 }: {
-  payload: Payload,
-  parent?: CrowdinArticleDirectory | null | string,
-  req?: PayloadRequest,
+  payload: Payload;
+  parent?: CrowdinArticleDirectory | null | string;
+  req?: PayloadRequest;
 }) {
   const query = await payload.find({
-    collection: "crowdin-article-directories",
+    collection: 'crowdin-article-directories',
     where: {
       parent: {
         equals: isCrowdinArticleDirectory(parent) ? parent?.id : parent,
-      }
+      },
     },
     req,
   });
-  return query.docs
+  return query.docs;
 }
 
 export async function getLexicalFieldArticleDirectory({
@@ -105,30 +118,30 @@ export async function getLexicalFieldArticleDirectory({
   name,
   req,
 }: {
-  payload: Payload,
-  parent?: CrowdinArticleDirectory | null | string,
-  name: string,
-  req?: PayloadRequest,
+  payload: Payload;
+  parent?: CrowdinArticleDirectory | null | string;
+  name: string;
+  req?: PayloadRequest;
 }) {
-  const dir = await getArticleDirectory({
+  const dir = (await getArticleDirectory({
     /** 'document id' is the field name in dot notation for lexical blocks */
     documentId: name,
     payload,
     allowEmpty: false,
     parent,
     req,
-  }) as any
-  return dir as CrowdinArticleDirectory
+  })) as any;
+  return dir as CrowdinArticleDirectory;
 }
 
 export async function getFile(
   name: string,
   crowdinArticleDirectoryId: string,
   payload: Payload,
-  req?: PayloadRequest
+  req?: PayloadRequest,
 ): Promise<any> {
   const result = await payload.find({
-    collection: "crowdin-files",
+    collection: 'crowdin-files',
     where: {
       field: { equals: name },
       crowdinArticleDirectory: {
@@ -143,10 +156,10 @@ export async function getFile(
 export async function getFiles(
   crowdinArticleDirectoryId: string,
   payload: Payload,
-  req?: PayloadRequest
+  req?: PayloadRequest,
 ): Promise<CrowdinFile[]> {
   const result = await payload.find({
-    collection: "crowdin-files",
+    collection: 'crowdin-files',
     limit: 10000,
     where: {
       crowdinArticleDirectory: {
@@ -164,14 +177,16 @@ export async function getFileByDocumentID(
   payload: Payload,
   req?: PayloadRequest,
 ): Promise<CrowdinFile> {
-  let articleDirectory = undefined
+  let articleDirectory = undefined;
   try {
     articleDirectory = await getArticleDirectory({
-      documentId, payload, req,
+      documentId,
+      payload,
+      req,
     });
   } catch (error) {
-    console.log(error)
-  }  
+    console.log(error);
+  }
   return getFile(name, `${articleDirectory?.id}`, payload, req);
 }
 
@@ -180,13 +195,13 @@ export async function getFilesByDocumentID({
   payload,
   parent,
   req,
-} : {
-  documentId: string,
-  payload: Payload,
-  parent?: CrowdinArticleDirectory,
-  req?: PayloadRequest
+}: {
+  documentId: string;
+  payload: Payload;
+  parent?: CrowdinArticleDirectory;
+  req?: PayloadRequest;
 }): Promise<CrowdinFile[]> {
-  let articleDirectory = undefined
+  let articleDirectory = undefined;
   try {
     articleDirectory = await getArticleDirectory({
       documentId: `${documentId}`,
@@ -196,7 +211,7 @@ export async function getFilesByDocumentID({
       req,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
   if (!articleDirectory) {
     // tests call this function to make sure files are deleted
@@ -207,16 +222,16 @@ export async function getFilesByDocumentID({
 }
 
 interface IupdatePayloadTranslation {
-  articleDirectoryId: string
-  pluginOptions: PluginOptions,
-  payload: Payload
+  articleDirectoryId: string;
+  pluginOptions: PluginOptions;
+  payload: Payload;
   /** store translations into a draft */
-  draft?: boolean
+  draft?: boolean;
   /** prevent database changes */
-  dryRun?: boolean
+  dryRun?: boolean;
   /** override article directory exclude locales */
-  excludeLocales?: string[]
-  req?: PayloadRequest
+  excludeLocales?: string[];
+  req?: PayloadRequest;
 }
 
 export async function updatePayloadTranslation({
@@ -231,12 +246,16 @@ export async function updatePayloadTranslation({
   // get article directory
   const articleDirectory = await payload.findByID({
     id: articleDirectoryId,
-    collection: "crowdin-article-directories",
+    collection: 'crowdin-article-directories',
     req,
   });
   // is this a global or a collection?
   const global =
-    (articleDirectory['crowdinCollectionDirectory'] as CrowdinCollectionDirectory)?.collectionSlug as string === "globals";
+    ((
+      articleDirectory[
+        'crowdinCollectionDirectory'
+      ] as CrowdinCollectionDirectory
+    )?.collectionSlug as string) === 'globals';
   // get an instance of our translations api
   const translationsApi = new payloadCrowdinSyncTranslationsApi(
     pluginOptions,
@@ -245,18 +264,25 @@ export async function updatePayloadTranslation({
   );
   try {
     const translations = await translationsApi.updateTranslation({
-      documentId: !global ? articleDirectory["name"] as string : ``,
+      documentId: !global ? (articleDirectory['name'] as string) : ``,
       collection: global
-        ? articleDirectory['name'] as string
-        : (articleDirectory["crowdinCollectionDirectory"] as CrowdinCollectionDirectory)?.collectionSlug as string,
+        ? (articleDirectory['name'] as string)
+        : ((
+            articleDirectory[
+              'crowdinCollectionDirectory'
+            ] as CrowdinCollectionDirectory
+          )?.collectionSlug as string),
       global,
       draft,
       dryRun,
-      excludeLocales: excludeLocales || articleDirectory["excludeLocales"] as string[] || [],
+      excludeLocales:
+        excludeLocales ||
+        (articleDirectory['excludeLocales'] as string[]) ||
+        [],
     });
     return {
       status: 200,
-      ...translations
+      ...translations,
     };
   } catch (error) {
     console.log(
@@ -269,12 +295,12 @@ export async function updatePayloadTranslation({
         excludeLocales,
       },
       'error',
-      error
-    )
+      error,
+    );
     return {
       status: 400,
       error,
-    }
+    };
   }
 }
 
@@ -282,60 +308,60 @@ export const isCrowdinActive = ({
   doc,
   slug,
   global,
-  pluginOptions
+  pluginOptions,
 }: {
-  doc: any,
-  slug: string
-  global: boolean
-  pluginOptions: PluginOptions
+  doc: any;
+  slug: string;
+  global: boolean;
+  pluginOptions: PluginOptions;
 }) => {
   if (!slug) {
-    return false
+    return false;
   }
 
   if (global) {
     if (!pluginOptions.globals) {
-      return true
+      return true;
     }
 
-    const matchingGlobalConfig = pluginOptions.globals.find(config => {
+    const matchingGlobalConfig = pluginOptions.globals.find((config) => {
       if (isCollectionOrGlobalConfigObject(config) && config.slug === slug) {
         if (typeof config.condition !== 'undefined') {
-          return config.condition({ doc })
+          return config.condition({ doc });
         }
-        return true
+        return true;
       }
       if (isCollectionOrGlobalConfigSlug(config)) {
-        return config === slug
+        return config === slug;
       }
-      return false
-    })
+      return false;
+    });
 
     if (typeof matchingGlobalConfig !== 'undefined') {
-      return true
+      return true;
     }
   }
 
   if (!pluginOptions.collections) {
-    return true
+    return true;
   }
 
-  const matchingCollectionConfig = pluginOptions.collections.find(config => {
+  const matchingCollectionConfig = pluginOptions.collections.find((config) => {
     if (isCollectionOrGlobalConfigObject(config) && config.slug === slug) {
       if (typeof config.condition !== 'undefined') {
-        return config.condition({ doc })
+        return config.condition({ doc });
       }
-      return true
+      return true;
     }
     if (isCollectionOrGlobalConfigSlug(config)) {
-      return config === slug
+      return config === slug;
     }
-    return false
-  })
+    return false;
+  });
 
   if (typeof matchingCollectionConfig !== 'undefined') {
-    return true
+    return true;
   }
 
-  return false
-}
+  return false;
+};

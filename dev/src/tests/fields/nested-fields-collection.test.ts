@@ -424,7 +424,9 @@ describe('Nested Fields Collection: blocks field', () => {
       fields: NestedFieldCollection.fields,
     })
     const blockIdBasic = doc?.layout?.find((block) => block.blockType === 'basicBlock')?.id
-    const blockIdBasicRichText = doc?.layout?.find((block) => block.blockType === 'basicBlockRichText')?.id
+    const blockIdBasicRichText = doc?.layout?.find(
+      (block) => block.blockType === 'basicBlockRichText',
+    )?.id
     expect(
       utilities.buildPayloadUpdateObject({
         crowdinJsonObject,
@@ -432,50 +434,48 @@ describe('Nested Fields Collection: blocks field', () => {
         fields: NestedFieldCollection.fields,
         document: doc,
       }),
-    ).toEqual(
-      {
-        "layout": [
-          {
-            "blockType": "basicBlock",
-            "id": blockIdBasic,
-            "textField": "Block 1 text",
-          },
-          {
-            "blockType": "basicBlockRichText",
-            "id": blockIdBasicRichText,
-            "richTextField": [
-              {
-                "children": [
-                  {
-                    "text": "This is editable ",
-                  },
-                  {
-                    "bold": true,
-                    "text": "rich",
-                  },
-                  {
-                    "text": " text, ",
-                  },
-                  {
-                    "italic": true,
-                    "text": "much",
-                  },
-                  {
-                    "text": " better than a ",
-                  },
-                  {
-                    "code": true,
-                    "text": "<textarea>",
-                  },
-                  {
-                    "text": "!",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      }
-    )
+    ).toEqual({
+      layout: [
+        {
+          blockType: 'basicBlock',
+          id: blockIdBasic,
+          textField: 'Block 1 text',
+        },
+        {
+          blockType: 'basicBlockRichText',
+          id: blockIdBasicRichText,
+          richTextField: [
+            {
+              children: [
+                {
+                  text: 'This is editable ',
+                },
+                {
+                  bold: true,
+                  text: 'rich',
+                },
+                {
+                  text: ' text, ',
+                },
+                {
+                  italic: true,
+                  text: 'much',
+                },
+                {
+                  text: ' better than a ',
+                },
+                {
+                  code: true,
+                  text: '<textarea>',
+                },
+                {
+                  text: '!',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
   })
 })
