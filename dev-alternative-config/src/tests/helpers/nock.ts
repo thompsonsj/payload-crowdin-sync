@@ -5,6 +5,13 @@ import { pluginConfig } from './plugin-config'
 const pluginOptions = pluginConfig()
 const mockClient = mockCrowdinClient(pluginOptions)
 
+/**
+ * Sets up a nock scope that mocks Crowdin API requests for creating directories, storages, and files.
+ *
+ * @param createProjectDirectory - If true, mock two directory creation requests (project root and subdirectory); otherwise mock a single directory creation.
+ * @param fileCount - Number of storage and file creation request pairs to mock.
+ * @returns The configured nock scope that intercepts POST requests to Crowdin's directories, storages, and files endpoints.
+ */
 export function nockCreateSourceTranslationFiles({
   createProjectDirectory = false,
   fileCount = 1,

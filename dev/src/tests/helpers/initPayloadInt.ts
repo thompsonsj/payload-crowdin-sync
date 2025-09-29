@@ -111,8 +111,15 @@ const config = buildConfig({
 })
 
 /**
- * Initialize Payload configured for integration tests
- */
+ * Prepare and optionally initialize a Payload instance configured for integration tests.
+ *
+ * Builds a test configuration by merging the module's built config with the test database adapter and a fixed test secret. When `initializePayload` is true, initializes Payload and returns the running instance.
+ *
+ * @param dirname - Directory used to derive the test suite name and to locate an optional custom payload.config.ts (defaults to './dev/src/').
+ * @param testSuiteNameOverride - Optional explicit test suite name to use instead of deriving it from `dirname`.
+ * @param initializePayload - If `false`, only the constructed sanitized config is returned; if `true`, Payload is initialized and returned as well.
+ * @returns An object containing `config` (the sanitized Payload configuration). When initialization is requested, the object also includes `payload` (the initialized Payload instance) and may include `restClient` if created.
+*/
 export async function initPayloadInt(
   dirname: string = './dev/src/',
   testSuiteNameOverride?: string,
