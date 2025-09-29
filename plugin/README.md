@@ -68,7 +68,7 @@ Your [Crowdin project ID](https://support.crowdin.com/enterprise/project-setting
 
 ```js
 {
-  projectId: 323731;
+  projectId: 323731,
 }
 ```
 
@@ -80,7 +80,7 @@ Map your Payload locales to Crowdin locale ids.
 {
   localeMap: {
     de_DE: {
-      crowdinId: 'de';
+      crowdinId: 'de',
     }
   }
 }
@@ -92,7 +92,7 @@ The Payload locale that syncs to source translations (files) on Crowdin.
 
 ```js
 {
-  sourceLocale: 'en';
+  sourceLocale: 'en',
 }
 ```
 
@@ -102,7 +102,7 @@ Your [Crowdin API token](https://support.crowdin.com/enterprise/personal-access-
 
 ```js
 {
-  token: 'xxxxxxx';
+  token: 'xxxxxxx',
 }
 ```
 
@@ -112,7 +112,7 @@ Your [Crowdin organization ID](https://support.crowdin.com/enterprise/organizati
 
 ```js
 {
-  organizationId: 200000000;
+  organizationId: 200000000,
 }
 ```
 
@@ -122,7 +122,7 @@ Crowdin directory ID to store translations. To get the directory ID without maki
 
 ```js
 {
-  directoryId: 1169;
+  directoryId: 1169,
 }
 ```
 
@@ -132,7 +132,7 @@ Define an array of collection slugs for which the plugin is active.
 
 ```js
 {
-  collections: ['posts', 'categories'];
+  collections: ['posts', 'categories'],
 }
 ```
 
@@ -140,7 +140,7 @@ If undefined, the plugin will detect localized fields on all collections.
 
 ```js
 {
-  collections: undefined;
+  collections: undefined,
 }
 ```
 
@@ -148,7 +148,7 @@ Use an empty array to disable all collections.
 
 ```js
 {
-  collections: [];
+  collections: [],
 }
 ```
 
@@ -172,7 +172,7 @@ Define an array of global slugs for which the plugin is active.
 
 ```js
 {
-  globals: ['nav'];
+  globals: ['nav'],
 }
 ```
 
@@ -180,7 +180,7 @@ If undefined, the plugin will detect localized fields on all globals.
 
 ```js
 {
-  globals: undefined;
+  globals: undefined,
 }
 ```
 
@@ -188,7 +188,7 @@ Use an empty array to disable all globals.
 
 ```js
 {
-  globals: [];
+  globals: [],
 }
 ```
 
@@ -211,7 +211,7 @@ Pass a custom config for the `slateToHtml` serializer used to convert Payload CM
 
 ```js
 {
-  slateToHtmlConfig: undefined;
+  slateToHtmlConfig: undefined,
 }
 ```
 
@@ -221,7 +221,7 @@ Pass a custom config for the `htmlToSlate` serializer used to conver HTML to Pay
 
 ```js
 {
-  htmlToSlateConfig: undefined;
+  htmlToSlateConfig: undefined,
 }
 ```
 
@@ -231,7 +231,7 @@ Pass a custom config for the `htmlToSlate` serializer used to conver HTML to Pay
 
 ```js
 {
-  pluginCollectionAccess: undefined;
+  pluginCollectionAccess: undefined,
 }
 ```
 
@@ -253,7 +253,7 @@ Appends `Crowdin` tab onto your config using Payload's [Tabs Field](https://payl
 
 ```js
 {
-  tabbedUI: true;
+  tabbedUI: true,
 }
 ```
 
@@ -263,7 +263,7 @@ Default `lex.`. Used as a prefix when constructing directory names for Lexical b
 
 ```js
 {
-  lexicalBlockFolderPrefix: `blocks-`;
+  lexicalBlockFolderPrefix: `blocks-`,
 }
 ```
 
