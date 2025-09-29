@@ -69,7 +69,6 @@ export class payloadCrowdinSyncFilesApi {
     const storage = await this.uploadStorageApi.addStorage(
       name,
       fileData,
-      fileType,
     );
     //const file = await sourceFilesApi.deleteFile(projectId, 1161)
     const file = await this.sourceFilesApi.updateOrRestoreFile(
@@ -91,7 +90,6 @@ export class payloadCrowdinSyncFilesApi {
     const storage = await this.uploadStorageApi.addStorage(
       name,
       fileData,
-      fileType,
     );
     const options = {
       name: `${name}.${fileType}`,
