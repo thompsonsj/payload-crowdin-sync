@@ -3,7 +3,6 @@
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 
 export const databaseAdapter = mongooseAdapter({
-  ensureIndexes: true,
   url:
     process.env.MONGODB_MEMORY_SERVER_URI ||
     process.env.DATABASE_URI ||
