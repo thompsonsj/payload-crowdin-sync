@@ -130,7 +130,7 @@ export class filesApiByDocument {
       try {
         collectionConfig = getCollectionConfig(
           this.collectionSlug,
-          false,
+          this.global,
           this.req.payload
         )
       } catch (error) {

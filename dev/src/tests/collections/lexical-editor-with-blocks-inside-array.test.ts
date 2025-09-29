@@ -15,7 +15,7 @@ import { pluginConfig } from '../helpers/plugin-config'
 import {
   CrowdinArticleDirectory,
   NestedFieldCollection as NestedFieldCollectionType,
-} from '../../payload-types'
+} from '@/payload-types'
 
 export const isNotString = <T>(val: T | string | undefined | null): val is T => {
   return val !== undefined && val !== null && typeof val !== 'string'
@@ -844,11 +844,7 @@ describe('Lexical editor with multiple blocks', () => {
         },
       ]),
     })
-    expect(files[1].fileData).toMatchInlineSnapshot(`
-      {
-        "html": "<p>Lexical fields nested within complex layouts - such as this one (a <code>blocks</code> field in an <code>array</code> item within a <code>tab</code>), are supported.</p>",
-      }
-    `)
+    expect(files[1].fileData).toMatchSnapshot()
     expect(files[2].fileData).toEqual({
       json: {
         items: {
@@ -908,29 +904,9 @@ describe('Lexical editor with multiple blocks', () => {
     expect(files.length).toEqual(2)
 
     expect((files[0]?.crowdinArticleDirectory as CrowdinArticleDirectory)?.parent).toBeDefined()
-    expect(files[0].fileData).toMatchInlineSnapshot(`
-      {
-        "html": "<p>Note a key difference with regular blocks - all <code>text</code>, <code>textarea</code> and <code>richText</code> fields will be sent to Crowdin regardless of whether or not they are <a href="https://payloadcms.com/docs/configuration/localization#field-by-field-localization">
-              localized fields
-            </a>.</p>",
-      }
-    `)
+    expect(files[0].fileData).toMatchSnapshot()
     expect((files[1]?.crowdinArticleDirectory as CrowdinArticleDirectory)?.parent).toBeDefined()
-    expect(files[1].fileData).toMatchInlineSnapshot(`
-      {
-        "json": {
-          "blocks": {
-            "6712ec66a81e050bf5f31b43": {
-              "highlight": {
-                "heading": {
-                  "title": "Block configuration in Lexical fields",
-                },
-              },
-            },
-          },
-        },
-      }
-    `)
+    expect(files[1].fileData).toMatchSnapshot()
   })
 
   it('updates the Payload document with a translation from Crowdin', async () => {

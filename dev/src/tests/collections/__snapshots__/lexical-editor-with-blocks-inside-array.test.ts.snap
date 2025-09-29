@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Lexical editor with multiple blocks creates files for Lexical block with expected data 1`] = `
+{
+  "html": "<p>Note a key difference with regular blocks - all <code>text</code>, <code>textarea</code> and <code>richText</code> fields will be sent to Crowdin regardless of whether or not they are <a href="https://payloadcms.com/docs/configuration/localization#field-by-field-localization">localized fields</a>.</p>",
+}
+`;
+
+exports[`Lexical editor with multiple blocks creates files for Lexical block with expected data 2`] = `
+{
+  "json": {
+    "blocks": {
+      "6712ec66a81e050bf5f31b43": {
+        "highlight": {
+          "heading": {
+            "title": "Block configuration in Lexical fields",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`Lexical editor with multiple blocks creates files for rich text files with expected data 1`] = `
+{
+  "html": "<p>Lexical fields nested within complex layouts - such as this one (a <code>blocks</code> field in an <code>array</code> item within a <code>tab</code>), are supported.</p>",
+}
+`;
