@@ -9,6 +9,16 @@ type Options = {
   init?: Partial<InitOptions>
 }
 
+/**
+ * Initializes a Payload instance for testing and returns the test server URL.
+ *
+ * Merges provided `options.init` into a default init configuration (local mode enabled, a generated secret,
+ * and a local MongoDB URL). Sets test-specific environment variables, registers SWC for TypeScript support,
+ * initializes Payload, and starts an Express server when `local` is false.
+ *
+ * @param options - Optional overrides for initialization; `options.init` values are shallow-merged into the default init options.
+ * @returns An object with `serverURL` set to the running test server's base URL (for example, `http://localhost:3000`).
+ */
 export async function initPayloadTest(options: Options): Promise<{ serverURL: string }> {
   const initOptions = {
     local: true,

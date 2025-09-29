@@ -113,7 +113,12 @@ const config = buildConfig({
 })
 
 /**
- * Initialize Payload configured for integration tests
+ * Prepare and optionally start a Payload instance configured for integration tests.
+ *
+ * @param dirname - Base directory to resolve test-specific config files; defaults to './dev/src/'.
+ * @param testSuiteNameOverride - Optional override for the test suite name used during initialization.
+ * @param initializePayload - If `false`, only builds and returns the sanitized config without starting Payload.
+ * @returns An object containing the sanitized Payload config and, when started, the initialized `payload` instance and optionally a REST client.
  */
 export async function initPayloadInt(
   dirname: string = './dev/src/',
