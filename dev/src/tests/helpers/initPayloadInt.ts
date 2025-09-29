@@ -119,6 +119,7 @@ const config = buildConfig({
  * @param testSuiteNameOverride - Optional explicit test suite name to use instead of deriving it from `dirname`.
  * @param initializePayload - If `false`, only the constructed sanitized config is returned; if `true`, Payload is initialized and returned as well.
  * @returns An object containing `config` (the sanitized Payload configuration). When initialization is requested, the object also includes `payload` (the initialized Payload instance) and may include `restClient` if created.
+*/
 export async function initPayloadInt(
   dirname: string = './dev/src/',
   testSuiteNameOverride?: string,
