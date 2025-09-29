@@ -82,7 +82,7 @@ const config: SlateToDomConfig = {
 };
 ```
 
-**Keys should map keys on the Slate object**. This is different to `elementTransform` which uses the value of the Slate JSON `type` property only.
+**Keys should map keys on the Slate object**. This is different to `elementTransforms`, which use the value of the Slate JSON `type` property only.
 
 The Slate JS node is passed into this function. A node of type `Element` from `domhandler` must be returned. Combine this with [utilities from `domutils`](https://domutils.js.org/) to perform further manipulation.
 
