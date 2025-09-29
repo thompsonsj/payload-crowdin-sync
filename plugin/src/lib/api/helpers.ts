@@ -29,7 +29,8 @@ export const getCollectionConfig = (
     | SanitizedCollectionConfig
     | undefined;
   if (!collection && !global) {
-    return undefined;
+  if (!collection && !global) {
+    throw new Error('Either a collection slug must be provided or global=true');
   }
   if (global) {
     collectionConfig = payload.config.globals.find(
