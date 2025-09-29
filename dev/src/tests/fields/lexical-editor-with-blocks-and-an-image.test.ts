@@ -193,7 +193,7 @@ describe('Lexical editor with blocks', () => {
               value: {
                 createdAt: media.createdAt,
                 filename: 'cristian-palmer-XexawgzYOBc-unsplash.jpg',
-                filesize: 943210,
+                filesize: 1491638,
                 focalX: 50,
                 focalY: 50,
                 height: 3000,
@@ -433,7 +433,7 @@ describe('Lexical editor with blocks', () => {
               value: {
                 createdAt: media.createdAt,
                 filename: 'cristian-palmer-XexawgzYOBc-unsplash.jpg',
-                filesize: 943210,
+                filesize: 1491638,
                 focalX: 50,
                 focalY: 50,
                 height: 3000,
