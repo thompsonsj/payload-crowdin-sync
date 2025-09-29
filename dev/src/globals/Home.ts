@@ -17,7 +17,7 @@ export const Home: GlobalConfig = {
           description: 'Product feature navigation cards.',
           fields: [
             {
-              label: 'Colapsible',
+              label: 'Collapsible',
               type: 'collapsible',
               fields: [
                 {
