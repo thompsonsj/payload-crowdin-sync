@@ -1,3 +1,5 @@
 **/CHANGELOG.md
 **/payload-types.ts
 **/importMap.js
+**/databaseAdapter.js
+
