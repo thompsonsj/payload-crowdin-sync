@@ -63,7 +63,7 @@ i.e. `<p style="text-align: right;">This is a right aligned paragraph.</p>` will
 {
   // ...
   elementStyleMap: {
-    align: 'textAlign'
+    align: 'textAlign',
   },
   // ...
 }
@@ -99,7 +99,7 @@ Remove any Slate JSON nodes that have no type or content. For example:
 
 ```js
 {
-  children: [];
+  children: [],
 }
 ```
 
