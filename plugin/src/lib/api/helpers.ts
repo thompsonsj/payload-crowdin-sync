@@ -146,8 +146,11 @@ export async function getLexicalFieldArticleDirectory({
     allowEmpty: false,
     parent,
     req,
-  })) as any;
-  return dir as CrowdinArticleDirectory;
+  })) as CrowdinArticleDirectory | undefined;
+  if (!dir) {
+    throw new Error(`Lexical field article directory not found for "${name}"`);
+  }
+  return dir;
 }
 
 /**
