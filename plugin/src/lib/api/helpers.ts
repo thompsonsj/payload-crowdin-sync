@@ -138,8 +138,8 @@ export async function getLexicalFieldArticleDirectory({
   parent?: CrowdinArticleDirectory | null | string;
   name: string;
   req?: PayloadRequest;
-}) {
-  const dir = (await getArticleDirectory({
+}): Promise<CrowdinArticleDirectory | undefined> {
+  return (await getArticleDirectory({
     /** 'document id' is the field name in dot notation for lexical blocks */
     documentId: name,
     payload,
@@ -147,10 +147,6 @@ export async function getLexicalFieldArticleDirectory({
     parent,
     req,
   })) as CrowdinArticleDirectory | undefined;
-  if (!dir) {
-    return undefined;
-  }
-  return dir;
 }
 
 /**
