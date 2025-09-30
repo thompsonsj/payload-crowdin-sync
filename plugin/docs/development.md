@@ -10,7 +10,7 @@
 
 The `payload-crowdin-sync` plugin is developed in the `plugin` folder.
 
-Both the `dev` and `dev-alternative-config` folder contain configured local Payload CMS installations which use this plugin.
+Both the `dev` and `dev-alternative-config` folders contain configured local Payload CMS installations that use this plugin.
 
 ## Build
 
