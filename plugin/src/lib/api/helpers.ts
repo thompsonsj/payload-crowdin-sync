@@ -50,10 +50,11 @@ export const getCollectionConfig = (
  *
  * If `parent` is provided, the lookup is restricted to directories with that parent.
  *
- * @param allowEmpty - If `true`, throws an `Error` when no matching directory is found; otherwise no directory found yields `undefined`.
+/**
+ * @param allowEmpty - If `false` (default), throws when no matching directory is found; if `true`, returns `undefined` instead of throwing.
  * @param parent - Parent directory (object) or parent ID (string) to limit the search.
- * @returns The matched Crowdin article directory, or `undefined` if none is found and `allowEmpty` is not `true`.
- * @throws Error when no matching directory exists and `allowEmpty` is `true`.
+ * @returns The matched Crowdin article directory, or `undefined` when not found and `allowEmpty` is `true`.
+ * @throws Error when no matching directory exists and `allowEmpty` is `false`.
  */
 export async function getArticleDirectory({
   documentId,
