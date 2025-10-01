@@ -74,11 +74,15 @@ export async function getArticleDirectory({
       name: {
         equals: documentId,
       },
-      ...(parent && {
-        parent: {
-          equals: isCrowdinArticleDirectory(parent) ? parent?.id : parent,
-        },
-      }),
+      ...(
+        parent !== undefined
+          ? {
+              parent: {
+                equals: isCrowdinArticleDirectory(parent) ? parent?.id : parent,
+              },
+            }
+          : {}
+      ),
     },
     req,
   });
