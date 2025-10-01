@@ -114,13 +114,18 @@ export async function getLexicalFieldArticleDirectories({
   parent?: CrowdinArticleDirectory | null | string;
   req?: PayloadRequest;
 }) {
+  const where =
+    parent === undefined
+      ? {}
+      : {
+          parent: {
+            equals: isCrowdinArticleDirectory(parent) ? parent?.id : parent,
+          },
+        };
+
   const query = await payload.find({
     collection: 'crowdin-article-directories',
-    where: {
-      parent: {
-        equals: isCrowdinArticleDirectory(parent) ? parent?.id : parent,
-      },
-    },
+    where,
     req,
   });
   return query.docs;
