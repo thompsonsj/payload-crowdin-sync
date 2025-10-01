@@ -429,6 +429,7 @@ describe(`Crowdin file create, update and delete`, () => {
       const crowdinPayloadArticleDirectory = await getArticleDirectory({
         documentId: `${post.id}`,
         payload,
+        allowEmpty: true,
       })
       expect(crowdinPayloadArticleDirectory).toBeUndefined()
     })
