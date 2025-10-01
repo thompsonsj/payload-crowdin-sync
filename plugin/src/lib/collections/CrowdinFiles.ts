@@ -1,4 +1,4 @@
-import type { CollectionConfig } from "payload";
+import type { CollectionConfig } from 'payload';
 
 /*
   Sample data returned from Crowdin API
@@ -27,11 +27,11 @@ import type { CollectionConfig } from "payload";
 */
 
 const CrowdinFiles: CollectionConfig = {
-  slug: "crowdin-files",
+  slug: 'crowdin-files',
   admin: {
-    defaultColumns: ["path", "title", "field", "revisionId", "updatedAt"],
-    useAsTitle: "path",
-    group: "Crowdin Admin",
+    defaultColumns: ['path', 'title', 'field', 'revisionId', 'updatedAt'],
+    useAsTitle: 'path',
+    group: 'Crowdin Admin',
   },
   access: {
     read: () => true,
@@ -39,91 +39,89 @@ const CrowdinFiles: CollectionConfig = {
   fields: [
     /* Crowdin field */
     {
-      name: "title",
-      type: "text",
+      name: 'title',
+      type: 'text',
     },
     /* Internal fields  */
     {
-      name: "field",
-      type: "text",
+      name: 'field',
+      type: 'text',
     },
     {
-      name: "crowdinArticleDirectory",
-      type: "relationship",
-      relationTo: "crowdin-article-directories",
+      name: 'crowdinArticleDirectory',
+      type: 'relationship',
+      relationTo: 'crowdin-article-directories',
       hasMany: false,
     },
     /* Crowdin fields */
     {
-      type: "group",
-       /* For reference only - unused */
-      name: "reference",
+      type: 'group',
+      /* For reference only - unused */
+      name: 'reference',
       fields: [
         {
-          name: "createdAt",
-          type: "date",
+          name: 'createdAt',
+          type: 'date',
         },
         {
-          name: "updatedAt",
-          type: "date",
+          name: 'updatedAt',
+          type: 'date',
         },
         {
-          name: "projectId",
-          type: "number",
+          name: 'projectId',
+          type: 'number',
         },
       ],
     },
     {
-      name: "originalId",
-      type: "number",
+      name: 'originalId',
+      type: 'number',
     },
     {
-      name: "directoryId",
-      type: "number",
+      name: 'directoryId',
+      type: 'number',
     },
     {
-      name: "revisionId",
-      type: "number",
+      name: 'revisionId',
+      type: 'number',
     },
     {
-      name: "name",
-      type: "text",
+      name: 'name',
+      type: 'text',
     },
     {
-      name: "type",
-      type: "select",
-      options: [
-        "json",
-        "html"
-      ]
+      name: 'type',
+      type: 'select',
+      options: ['json', 'html'],
     },
     {
-      name: "path",
-      type: "text",
+      name: 'path',
+      type: 'text',
     },
     {
-      name: "fileData",
-      type: "group",
+      name: 'fileData',
+      type: 'group',
       admin: {
-        description: "The file data submitted to the Crowdin API",
+        description: 'The file data submitted to the Crowdin API',
       },
       fields: [
         {
-          name: "json",
-          type: "json",
+          name: 'json',
+          type: 'json',
         },
         {
-          name: "html",
-          type: "textarea",
+          name: 'html',
+          type: 'textarea',
           maxLength: 2000000,
         },
         {
-          name: "sourceBlocks",
-          type: "json",
+          name: 'sourceBlocks',
+          type: 'json',
           admin: {
-            description: "Copy Lexical field blocks as a translation source enabling a convenient method of merging block content on translation (i.e. merge non-translated fields like type=select)."
+            description:
+              'Copy Lexical field blocks as a translation source enabling a convenient method of merging block content on translation (i.e. merge non-translated fields like type=select).',
           },
-        }
+        },
       ],
     },
   ],

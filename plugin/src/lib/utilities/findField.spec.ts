@@ -8,7 +8,7 @@ describe('fn: findField', () => {
       findField({
         dotNotation: 'logoTitle',
         fields: BookDemo.fields,
-      })
+      }),
     ).toMatchInlineSnapshot(`
       {
         "localized": true,
@@ -24,7 +24,7 @@ describe('fn: findField', () => {
       findField({
         dotNotation: 'form.title',
         fields: BookDemo.fields,
-      })
+      }),
     ).toMatchInlineSnapshot(`
       {
         "editor": [Function],
@@ -39,7 +39,7 @@ describe('fn: findField', () => {
       findField({
         dotNotation: 'form.content.items.6474baaf73b854f4d464e38f.text',
         fields: BookDemo.fields,
-      })
+      }),
     ).toMatchInlineSnapshot(`
       {
         "name": "text",
@@ -106,7 +106,7 @@ describe('fn: findField', () => {
       findField({
         dotNotation: 'blocksField.6474baaf73b854f4d464e38f.testBlockTwo.url',
         fields,
-      })
+      }),
     ).toMatchInlineSnapshot(`
       {
         "localized": true,

@@ -1,24 +1,24 @@
 /**
  * Home global
- * 
+ *
  * Test nested fields with nested localized props.
  */
 
-import type { GlobalConfig } from "payload";
+import type { GlobalConfig } from 'payload'
 
 export const Home: GlobalConfig = {
-  slug: "home",
+  slug: 'home',
   fields: [
     {
-      type: "tabs",
+      type: 'tabs',
       tabs: [
         {
           label: 'Navigation Cards 1',
           description: 'Product feature navigation cards.',
           fields: [
             {
-              label: "Colapsible",
-              type: "collapsible",
+              label: 'Collapsible',
+              type: 'collapsible',
               fields: [
                 {
                   name: 'parentGroup',
@@ -83,10 +83,10 @@ export const Home: GlobalConfig = {
                   ],
                 },
               ],
-            }
+            },
           ],
         },
       ],
     },
   ],
-};
+}

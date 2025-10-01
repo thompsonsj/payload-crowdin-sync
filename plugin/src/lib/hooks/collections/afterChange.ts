@@ -7,20 +7,18 @@ import type {
   PayloadRequest,
   CollectionSlug,
   GlobalSlug,
-} from "payload";
-import { Descendant } from "slate";
-import { PluginOptions } from "../../types";
+} from 'payload';
+import { Descendant } from 'slate';
+import { PluginOptions } from '../../types';
 import {
   buildCrowdinHtmlObject,
   buildCrowdinJsonObject,
   fieldChanged,
-} from "../../utilities";
-import deepEqual from "deep-equal";
-import { getLocalizedFields } from "../../utilities";
-import {
-  isCrowdinActive,
-} from "../../api/helpers";
-import { filesApiByDocument } from "../../api/files/by-document";
+} from '../../utilities';
+import deepEqual from 'deep-equal';
+import { getLocalizedFields } from '../../utilities';
+import { isCrowdinActive } from '../../api/helpers';
+import { filesApiByDocument } from '../../api/files/by-document';
 
 /**
  * Update Crowdin collections and make updates in Crowdin
@@ -52,7 +50,7 @@ export const getGlobalAfterChangeHook =
     previousDoc, // document data before updating the collection
     req, // full express request
   }) => {
-    const operation = previousDoc ? "update" : "create";
+    const operation = previousDoc ? 'update' : 'create';
     return performAfterChange({
       doc,
       req,
@@ -108,7 +106,11 @@ const performAfterChange = async ({
     return doc;
   }
 
-  const sanitizedCollection = global ? req.payload.globals.config.find(config => config.slug === collection.slug) : req.payload.collections[collection.slug].config
+  const sanitizedCollection = global
+    ? req.payload.globals.config.find(
+        (config) => config.slug === collection.slug,
+      )
+    : req.payload.collections[collection.slug].config;
 
   if (!sanitizedCollection) {
     return doc;
@@ -121,8 +123,8 @@ const performAfterChange = async ({
     doc,
     slug: sanitizedCollection.slug,
     global,
-    pluginOptions
-  })
+    pluginOptions,
+  });
 
   if (!active) {
     return doc;
@@ -166,16 +168,14 @@ const performAfterChange = async ({
   /**
    * Initialize Crowdin client sourceFilesApi
    */
-  const apiByDocument = new filesApiByDocument(
-    {
-      document: doc,
-      collectionSlug: sanitizedCollection.slug as CollectionSlug | GlobalSlug,
-      global,
-      pluginOptions,
-      req: req
-    },
-  );
-  const filesApi = await apiByDocument.get()
+  const apiByDocument = new filesApiByDocument({
+    document: doc,
+    collectionSlug: sanitizedCollection.slug as CollectionSlug | GlobalSlug,
+    global,
+    pluginOptions,
+    req: req,
+  });
+  const filesApi = await apiByDocument.get();
 
   // START: function definitions
 
@@ -183,10 +183,10 @@ const performAfterChange = async ({
     if (
       (!deepEqual(currentCrowdinJsonData, prevCrowdinJsonData) &&
         Object.keys(currentCrowdinJsonData).length !== 0) ||
-      process.env['PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE'] === "true"
+      process.env['PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE'] === 'true'
     ) {
       await filesApi.createOrUpdateJsonFile({
-        fileData: currentCrowdinJsonData
+        fileData: currentCrowdinJsonData,
       });
     }
   };
@@ -210,21 +210,23 @@ const performAfterChange = async ({
       doc: previousDoc,
       fields: localizedFields,
     });
-    await Promise.allSettled(Object.keys(currentCrowdinHtmlData).map(async (name) => {
-      const currentValue = currentCrowdinHtmlData[name];
-      const prevValue = prevCrowdinHtmlData[name];
-      if (
-        !fieldChanged(prevValue, currentValue, "richText") &&
-        process.env['PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE'] !== "true"
-      ) {
-        return;
-      }
-      await filesApi.createOrUpdateHtmlFile({
-        name,
-        value: currentValue as Descendant[],
-        collection: sanitizedCollection,
-      });
-    }));
+    await Promise.allSettled(
+      Object.keys(currentCrowdinHtmlData).map(async (name) => {
+        const currentValue = currentCrowdinHtmlData[name];
+        const prevValue = prevCrowdinHtmlData[name];
+        if (
+          !fieldChanged(prevValue, currentValue, 'richText') &&
+          process.env['PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE'] !== 'true'
+        ) {
+          return;
+        }
+        await filesApi.createOrUpdateHtmlFile({
+          name,
+          value: currentValue as Descendant[],
+          collection: sanitizedCollection,
+        });
+      }),
+    );
   };
   // END: function definitions
 

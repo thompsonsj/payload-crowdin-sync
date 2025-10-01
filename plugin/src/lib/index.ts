@@ -1,7 +1,10 @@
-import { crowdinSync } from "./plugin";
-import { payloadHtmlToSlateConfig, payloadSlateToHtmlConfig } from '@slate-serializers/html'
-import * as utilities from "./utilities";
-import { isDefined, type PluginOptions } from "./types";
+import { crowdinSync } from './plugin';
+import {
+  payloadHtmlToSlateConfig,
+  payloadSlateToHtmlConfig,
+} from '@slate-serializers/html';
+import * as utilities from './utilities';
+import { isDefined, type PluginOptions } from './types';
 // helpers
 import {
   getFiles,
@@ -10,18 +13,18 @@ import {
   getArticleDirectory,
   getLexicalFieldArticleDirectory,
   getLexicalFieldArticleDirectories,
-} from "./api/helpers"
+} from './api/helpers';
 // translations api
-import { payloadCrowdinSyncTranslationsApi } from "./api/translations";
-import { getLocalizedFields } from "./utilities";
+import { payloadCrowdinSyncTranslationsApi } from './api/translations';
+import { getLocalizedFields } from './utilities';
 import {
   extractLexicalBlockContent,
   getLexicalBlockFields,
   getLexicalEditorConfig,
   isLexical,
-} from "./utilities/lexical"
-import { mockCrowdinClient } from "./api/mock/crowdin-api-responses";
-import { getRelationshipId } from './utilities/payload'
+} from './utilities/lexical';
+import { mockCrowdinClient } from './api/mock/crowdin-api-responses';
+import { getRelationshipId } from './utilities/payload';
 
 export {
   getFiles,

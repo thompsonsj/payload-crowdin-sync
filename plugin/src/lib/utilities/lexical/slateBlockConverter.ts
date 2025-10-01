@@ -1,5 +1,5 @@
-import type { SerializedBlockNode } from "@payloadcms/richtext-lexical"
-import type { SlateNodeConverter } from '@payloadcms/richtext-lexical'
+import type { SerializedBlockNode } from '@payloadcms/richtext-lexical';
+import type { SlateNodeConverter } from '@payloadcms/richtext-lexical';
 
 export const SlateBlockConverter: SlateNodeConverter = {
   converter({ slateNode }) {
@@ -8,7 +8,7 @@ export const SlateBlockConverter: SlateNodeConverter = {
       format: '',
       type: slateNode['translation'] ? 'block' : 'noTranslation',
       version: 2,
-    } as const as SerializedBlockNode
+    } as const as SerializedBlockNode;
   },
   nodeTypes: ['pcs-block'],
-}
+};

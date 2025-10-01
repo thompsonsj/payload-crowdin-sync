@@ -14,32 +14,32 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
-import { LocalizedNav } from "./../../globals/LocalizedNav";
-import Nav from "./../../globals/Nav";
-import Statistics from "./../../globals/Statistics";
-import Categories from "./../../collections/Categories";
-import { Media } from "./../../collections/Media";
-import MultiRichText from "./../../collections/MultiRichText";
-import LocalizedPosts from "./../../collections/LocalizedPosts";
-import Policies from "./../../collections/Policies"
-import Posts from "./../../collections/Posts";
-import LocalizedPostsWithCondition from "./../../collections/LocalizedPostsWithCondition"
-import NestedFieldCollection from "./../../collections/NestedFieldCollection";
-import Tags from "./../../collections/Tags";
-import Users from "./../../collections/Users";
+import { LocalizedNav } from './../../globals/LocalizedNav'
+import Nav from './../../globals/Nav'
+import Statistics from './../../globals/Statistics'
+import Categories from './../../collections/Categories'
+import { Media } from './../../collections/Media'
+import MultiRichText from './../../collections/MultiRichText'
+import LocalizedPosts from './../../collections/LocalizedPosts'
+import Policies from './../../collections/Policies'
+import Posts from './../../collections/Posts'
+import LocalizedPostsWithCondition from './../../collections/LocalizedPostsWithCondition'
+import NestedFieldCollection from './../../collections/NestedFieldCollection'
+import Tags from './../../collections/Tags'
+import Users from './../../collections/Users'
 
-import { crowdinSync } from "payload-crowdin-sync";
+import { crowdinSync } from 'payload-crowdin-sync'
 import { slateEditor } from '@payloadcms/richtext-slate'
 import { Home } from './../../globals/Home'
 
 const localeMap = {
   de_DE: {
-    crowdinId: "de",
+    crowdinId: 'de',
   },
   fr_FR: {
-    crowdinId: "fr",
+    crowdinId: 'fr',
   },
-};
+}
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -52,28 +52,28 @@ const config = buildConfig({
     },
   },
   plugins: [
-  crowdinSync({
-    projectId: parseInt(process.env['CROWDIN_PROJECT_ID'] || ``) || 323731,
-    directoryId: parseInt(process.env['CROWDIN_DIRECTORY_ID'] || ``) || 1169,
-    token: process.env['NODE_ENV'] === 'test' ? `fake-token` : process.env['CROWDIN_TOKEN'] || ``, // CrowdIn API is mocked but we need a token to pass schema validation
-    organization: process.env['CROWDIN_ORGANIZATION'] || ``,
-    localeMap,
-    sourceLocale: "en",
-    tabbedUI: true,
-    collections: [
-      "categories",
-      'multi-rich-text',
-      'localized-posts',
-      'nested-field-collection',
-      'policies',
-      'posts',
-      {
-        slug: 'localized-posts-with-condition',
-        condition: ({ doc }) => doc.translateWithCrowdin,
-      },
-      'tags',
-      'users',
-    ]
+    crowdinSync({
+      projectId: parseInt(process.env['CROWDIN_PROJECT_ID'] || ``) || 323731,
+      directoryId: parseInt(process.env['CROWDIN_DIRECTORY_ID'] || ``) || 1169,
+      token: process.env['NODE_ENV'] === 'test' ? `fake-token` : process.env['CROWDIN_TOKEN'] || ``, // CrowdIn API is mocked but we need a token to pass schema validation
+      organization: process.env['CROWDIN_ORGANIZATION'] || ``,
+      localeMap,
+      sourceLocale: 'en',
+      tabbedUI: true,
+      collections: [
+        'categories',
+        'multi-rich-text',
+        'localized-posts',
+        'nested-field-collection',
+        'policies',
+        'posts',
+        {
+          slug: 'localized-posts-with-condition',
+          condition: ({ doc }) => doc.translateWithCrowdin,
+        },
+        'tags',
+        'users',
+      ],
     }),
   ],
   collections: [
@@ -88,15 +88,10 @@ const config = buildConfig({
     Tags,
     Users,
   ],
-  globals: [
-    Home,
-    LocalizedNav,
-    Nav,
-    Statistics,
-  ],
+  globals: [Home, LocalizedNav, Nav, Statistics],
   localization: {
-    locales: ["en", ...Object.keys(localeMap)],
-    defaultLocale: "en",
+    locales: ['en', ...Object.keys(localeMap)],
+    defaultLocale: 'en',
     fallback: true,
   },
   /**
@@ -115,10 +110,16 @@ const config = buildConfig({
   sharp,
 })
 
-
 /**
- * Initialize Payload configured for integration tests
- */
+ * Prepare and optionally initialize a Payload instance configured for integration tests.
+ *
+ * Builds a test configuration by merging the module's built config with the test database adapter and a fixed test secret. When `initializePayload` is true, initializes Payload and returns the running instance.
+ *
+ * @param dirname - Directory used to derive the test suite name and to locate an optional custom payload.config.ts (defaults to './dev/src/').
+ * @param testSuiteNameOverride - Optional explicit test suite name to use instead of deriving it from `dirname`.
+ * @param initializePayload - If `false`, only the constructed sanitized config is returned; if `true`, Payload is initialized and returned as well.
+ * @returns An object containing `config` (the sanitized Payload configuration). When initialization is requested, the object also includes `payload` (the initialized Payload instance) and may include `restClient` if created.
+*/
 export async function initPayloadInt(
   dirname: string = './dev/src/',
   testSuiteNameOverride?: string,
@@ -130,8 +131,7 @@ export async function initPayloadInt(
   // See https://github.com/payloadcms/payload/blob/main/test/helpers/initPayloadInt.ts
   // console.log('importing config', path.resolve(dirname, 'payload.config.ts'))
 
- // const { default: config } = await import(path.resolve(dirname, 'payload.config.ts'))
-
+  // const { default: config } = await import(path.resolve(dirname, 'payload.config.ts'))
 
   const payloadConfig = {
     ...(await config),

@@ -1,4 +1,4 @@
-import type { GlobalConfig } from 'payload';
+import type { GlobalConfig } from 'payload'
 
 const Statistics: GlobalConfig = {
   slug: 'statistics',
@@ -27,8 +27,7 @@ const Statistics: GlobalConfig = {
           min: 0,
           admin: {
             step: 100,
-            description:
-              'Restricted to multiples of 100 in order to simplify localization.',
+            description: 'Restricted to multiples of 100 in order to simplify localization.',
           },
         },
       ],
@@ -53,6 +52,6 @@ const Statistics: GlobalConfig = {
       ],
     },
   ],
-};
+}
 
-export default Statistics;
+export default Statistics

@@ -1,7 +1,7 @@
-import type { Field } from "payload";
+import type { Field } from 'payload';
 
 export const collapsibleFields = (label: string, fields: any): Field => ({
-  type: "collapsible",
+  type: 'collapsible',
   label,
   admin: {
     initCollapsed: true,

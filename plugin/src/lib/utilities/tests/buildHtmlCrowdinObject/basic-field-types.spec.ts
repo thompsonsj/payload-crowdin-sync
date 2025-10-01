@@ -1,58 +1,58 @@
-import { slateEditor } from "@payloadcms/richtext-slate";
-import type { Field } from "payload";
-import { buildCrowdinHtmlObject } from "../..";
+import { slateEditor } from '@payloadcms/richtext-slate';
+import type { Field } from 'payload';
+import { buildCrowdinHtmlObject } from '../..';
 
-describe("fn: buildCrowdinHtmlObject", () => {
-  it("does not include undefined localized fields", () => {
+describe('fn: buildCrowdinHtmlObject', () => {
+  it('does not include undefined localized fields', () => {
     const doc = {
-      id: "638641358b1a140462752076",
+      id: '638641358b1a140462752076',
       title: [
         {
-          type: "h1",
+          type: 'h1',
           children: [
             {
-              text: "A ",
+              text: 'A ',
             },
             {
-              text: "test",
+              text: 'test',
               bold: true,
             },
             {
-              text: " rich text value",
+              text: ' rich text value',
             },
           ],
         },
       ],
-      status: "draft",
-      createdAt: "2022-11-29T17:28:21.644Z",
-      updatedAt: "2022-11-29T17:28:21.644Z",
+      status: 'draft',
+      createdAt: '2022-11-29T17:28:21.644Z',
+      updatedAt: '2022-11-29T17:28:21.644Z',
     };
     const fields: Field[] = [
       {
-        name: "title",
-        type: "richText",
+        name: 'title',
+        type: 'richText',
         localized: true,
       },
       {
-        name: "anotherString",
-        type: "text",
+        name: 'anotherString',
+        type: 'text',
         localized: true,
       },
     ];
     const expected = {
       title: [
         {
-          type: "h1",
+          type: 'h1',
           children: [
             {
-              text: "A ",
+              text: 'A ',
             },
             {
-              text: "test",
+              text: 'test',
               bold: true,
             },
             {
-              text: " rich text value",
+              text: ' rich text value',
             },
           ],
         },
@@ -61,76 +61,76 @@ describe("fn: buildCrowdinHtmlObject", () => {
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
 
-  it("includes localized fields", () => {
+  it('includes localized fields', () => {
     const doc = {
-      id: "638641358b1a140462752076",
+      id: '638641358b1a140462752076',
       title: [
         {
-          type: "h1",
+          type: 'h1',
           children: [
             {
-              text: "A ",
+              text: 'A ',
             },
             {
-              text: "test",
+              text: 'test',
               bold: true,
             },
             {
-              text: " rich text value",
+              text: ' rich text value',
             },
           ],
         },
       ],
       content: [
         {
-          type: "p",
+          type: 'p',
           children: [
             {
-              text: "A simple paragraph.",
+              text: 'A simple paragraph.',
             },
           ],
         },
       ],
-      status: "draft",
-      createdAt: "2022-11-29T17:28:21.644Z",
-      updatedAt: "2022-11-29T17:28:21.644Z",
+      status: 'draft',
+      createdAt: '2022-11-29T17:28:21.644Z',
+      updatedAt: '2022-11-29T17:28:21.644Z',
     };
     const fields: Field[] = [
       {
-        name: "title",
-        type: "richText",
+        name: 'title',
+        type: 'richText',
         localized: true,
       },
       {
-        name: "content",
-        type: "richText",
+        name: 'content',
+        type: 'richText',
         localized: true,
       },
     ];
     const expected = {
       title: [
         {
-          type: "h1",
+          type: 'h1',
           children: [
             {
-              text: "A ",
+              text: 'A ',
             },
             {
-              text: "test",
+              text: 'test',
               bold: true,
             },
             {
-              text: " rich text value",
+              text: ' rich text value',
             },
           ],
         },
       ],
       content: [
         {
-          type: "p",
+          type: 'p',
           children: [
             {
-              text: "A simple paragraph.",
+              text: 'A simple paragraph.',
             },
           ],
         },
@@ -139,111 +139,111 @@ describe("fn: buildCrowdinHtmlObject", () => {
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
 
-  it("includes localized fields nested in a group", () => {
+  it('includes localized fields nested in a group', () => {
     const doc = {
-      id: "638641358b1a140462752076",
-      title: "Test Policy created with title",
+      id: '638641358b1a140462752076',
+      title: 'Test Policy created with title',
       groupField: {
         title: [
           {
-            type: "h1",
+            type: 'h1',
             children: [
               {
-                text: "A ",
+                text: 'A ',
               },
               {
-                text: "test",
+                text: 'test',
                 bold: true,
               },
               {
-                text: " rich text value",
+                text: ' rich text value',
               },
             ],
           },
         ],
         content: [
           {
-            type: "p",
+            type: 'p',
             children: [
               {
-                text: "A simple paragraph.",
+                text: 'A simple paragraph.',
               },
             ],
           },
         ],
-        select: "one",
+        select: 'one',
       },
-      status: "draft",
-      createdAt: "2022-11-29T17:28:21.644Z",
-      updatedAt: "2022-11-29T17:28:21.644Z",
+      status: 'draft',
+      createdAt: '2022-11-29T17:28:21.644Z',
+      updatedAt: '2022-11-29T17:28:21.644Z',
     };
     const fields: Field[] = [
       {
-        name: "title",
-        type: "text",
+        name: 'title',
+        type: 'text',
         localized: true,
       },
       // select not supported yet
       {
-        name: "select",
-        type: "select",
+        name: 'select',
+        type: 'select',
         localized: true,
-        options: ["one", "two"],
+        options: ['one', 'two'],
       },
       {
-        name: "groupField",
-        type: "group",
+        name: 'groupField',
+        type: 'group',
         fields: [
           {
             editor: slateEditor({
               admin: {
-                elements: ["link"],
-                leaves: ["bold", "italic", "underline"],
+                elements: ['link'],
+                leaves: ['bold', 'italic', 'underline'],
               },
             }),
-            name: "title",
-            type: "richText",
+            name: 'title',
+            type: 'richText',
             localized: true,
           },
           {
-            name: "content",
-            type: "richText",
+            name: 'content',
+            type: 'richText',
             localized: true,
           },
           // select not supported yet
           {
-            name: "select",
-            type: "select",
+            name: 'select',
+            type: 'select',
             localized: true,
-            options: ["one", "two"],
+            options: ['one', 'two'],
           },
         ],
       },
     ];
     const expected = {
-      ["groupField.title"]: [
+      ['groupField.title']: [
         {
-          type: "h1",
+          type: 'h1',
           children: [
             {
-              text: "A ",
+              text: 'A ',
             },
             {
-              text: "test",
+              text: 'test',
               bold: true,
             },
             {
-              text: " rich text value",
+              text: ' rich text value',
             },
           ],
         },
       ],
-      ["groupField.content"]: [
+      ['groupField.content']: [
         {
-          type: "p",
+          type: 'p',
           children: [
             {
-              text: "A simple paragraph.",
+              text: 'A simple paragraph.',
             },
           ],
         },
@@ -252,109 +252,109 @@ describe("fn: buildCrowdinHtmlObject", () => {
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
 
-  it("includes localized fields nested in a group with a localization setting on the group field", () => {
+  it('includes localized fields nested in a group with a localization setting on the group field', () => {
     const doc = {
-      id: "638641358b1a140462752076",
-      title: "Test Policy created with title",
+      id: '638641358b1a140462752076',
+      title: 'Test Policy created with title',
       groupField: {
         title: [
           {
-            type: "h1",
+            type: 'h1',
             children: [
               {
-                text: "A ",
+                text: 'A ',
               },
               {
-                text: "test",
+                text: 'test',
                 bold: true,
               },
               {
-                text: " rich text value",
+                text: ' rich text value',
               },
             ],
           },
         ],
         content: [
           {
-            type: "p",
+            type: 'p',
             children: [
               {
-                text: "A simple paragraph.",
+                text: 'A simple paragraph.',
               },
             ],
           },
         ],
-        select: "one",
+        select: 'one',
       },
-      status: "draft",
-      createdAt: "2022-11-29T17:28:21.644Z",
-      updatedAt: "2022-11-29T17:28:21.644Z",
+      status: 'draft',
+      createdAt: '2022-11-29T17:28:21.644Z',
+      updatedAt: '2022-11-29T17:28:21.644Z',
     };
     const fields: Field[] = [
       {
-        name: "title",
-        type: "text",
+        name: 'title',
+        type: 'text',
         localized: true,
       },
       // select not supported yet
       {
-        name: "select",
-        type: "select",
+        name: 'select',
+        type: 'select',
         localized: true,
-        options: ["one", "two"],
+        options: ['one', 'two'],
       },
       {
-        name: "groupField",
-        type: "group",
+        name: 'groupField',
+        type: 'group',
         localized: true,
         fields: [
           {
             editor: slateEditor({
               admin: {
-                elements: ["link"],
-                leaves: ["bold", "italic", "underline"],
+                elements: ['link'],
+                leaves: ['bold', 'italic', 'underline'],
               },
             }),
-            name: "title",
-            type: "richText",
+            name: 'title',
+            type: 'richText',
           },
           {
-            name: "content",
-            type: "richText",
+            name: 'content',
+            type: 'richText',
           },
           // select not supported yet
           {
-            name: "select",
-            type: "select",
-            options: ["one", "two"],
+            name: 'select',
+            type: 'select',
+            options: ['one', 'two'],
           },
         ],
       },
     ];
     const expected = {
-      ["groupField.title"]: [
+      ['groupField.title']: [
         {
-          type: "h1",
+          type: 'h1',
           children: [
             {
-              text: "A ",
+              text: 'A ',
             },
             {
-              text: "test",
+              text: 'test',
               bold: true,
             },
             {
-              text: " rich text value",
+              text: ' rich text value',
             },
           ],
         },
       ],
-      ["groupField.content"]: [
+      ['groupField.content']: [
         {
-          type: "p",
+          type: 'p',
           children: [
             {
-              text: "A simple paragraph.",
+              text: 'A simple paragraph.',
             },
           ],
         },

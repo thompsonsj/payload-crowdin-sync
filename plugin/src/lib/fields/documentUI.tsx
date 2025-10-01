@@ -1,16 +1,19 @@
-'use client'
-import React, { FC } from 'react'
-import { useFormFields } from '@payloadcms/ui'
+'use client';
+import React, { FC } from 'react';
+import { useFormFields } from '@payloadcms/ui';
 import { UIField } from 'payload';
 import { CrowdinArticleDirectory } from '../payload-types';
 
-export const DocumentCustomUIField: React.FC<UIField> = () => <LocalePublishedFeedback />;
+export const DocumentCustomUIField: React.FC<UIField> = () => (
+  <LocalePublishedFeedback />
+);
 
-const LocalePublishedFeedback: FC = () =>  {
+const LocalePublishedFeedback: FC = () => {
   const { crowdinArticleDirectory } = useFormFields(([fields]) => {
     return {
-      crowdinArticleDirectory: (fields['crowdinArticleDirectory'].value || []) as CrowdinArticleDirectory,
-    }
+      crowdinArticleDirectory: (fields['crowdinArticleDirectory'].value ||
+        []) as CrowdinArticleDirectory,
+    };
   });
 
   return (
@@ -19,4 +22,4 @@ const LocalePublishedFeedback: FC = () =>  {
       <p>{crowdinArticleDirectory.updatedAt}</p>
     </div>
   );
-}
+};

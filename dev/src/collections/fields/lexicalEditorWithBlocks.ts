@@ -1,7 +1,13 @@
-import type { RichTextField } from 'payload';
-import { BlocksFeature, BoldFeature as BoldTextFeature, EXPERIMENTAL_TableFeature, lexicalEditor, LinkFeature } from '@payloadcms/richtext-lexical'
+import type { RichTextField } from 'payload'
+import {
+  BlocksFeature,
+  BoldFeature as BoldTextFeature,
+  EXPERIMENTAL_TableFeature,
+  lexicalEditor,
+  LinkFeature,
+} from '@payloadcms/richtext-lexical'
 import { SlateToLexicalFeature } from '@payloadcms/richtext-lexical/migrate'
-import { slateEditor } from '@payloadcms/richtext-slate';
+import { slateEditor } from '@payloadcms/richtext-slate'
 
 export const lexicalEditorWithBlocks: RichTextField = {
   name: 'content',
@@ -19,8 +25,8 @@ export const lexicalEditorWithBlocks: RichTextField = {
             imageAltText: 'Text',
             fields: [
               {
-                name: "heading",
-                type: "group",
+                name: 'heading',
+                type: 'group',
                 fields: [
                   {
                     name: 'title',
@@ -30,16 +36,12 @@ export const lexicalEditorWithBlocks: RichTextField = {
                     name: 'preTitle',
                     type: 'text',
                   },
-                ]
+                ],
               },
               {
-                name: "color",
-                type: "select",
-                options: [
-                  'gray',
-                  'yellow',
-                  'green'
-                ],
+                name: 'color',
+                type: 'select',
+                options: ['gray', 'yellow', 'green'],
                 admin: {
                   isClearable: true,
                 },
@@ -55,101 +57,90 @@ export const lexicalEditorWithBlocks: RichTextField = {
                     BlocksFeature({
                       blocks: [
                         {
-                          slug: "featureList",
-                          imageAltText: "Feature List block",
+                          slug: 'featureList',
+                          imageAltText: 'Feature List block',
                           fields: [
                             {
-                              name: "items",
-                              type: "array",
+                              name: 'items',
+                              type: 'array',
                               fields: [
                                 {
-                                  name: "text",
-                                  type: "text"
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    })
-                  ]
+                                  name: 'text',
+                                  type: 'text',
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                      ],
+                    }),
+                  ],
                 }),
               },
-            ]
+            ],
           },
           {
-            slug: "cta",
-            imageAltText: "CTA",
+            slug: 'cta',
+            imageAltText: 'CTA',
             fields: [
               {
-                name: "link",
-                type: "group",
+                name: 'link',
+                type: 'group',
                 fields: [
                   {
-                    name: "text",
-                    type: "text",
+                    name: 'text',
+                    type: 'text',
                   },
                   {
-                    name: "href",
-                    type: "text",
+                    name: 'href',
+                    type: 'text',
                   },
                   {
-                    name: "type",
-                    type: "select",
-                    options: [
-                      "internal",
-                      "external",
-                    ]
-                  }
-                ]
+                    name: 'type',
+                    type: 'select',
+                    options: ['internal', 'external'],
+                  },
+                ],
               },
               {
-                name: "style",
-                type: "select",
-                options: [
-                  "primary",
-                  "secondary",
-                ]
-              }
-            ]
+                name: 'style',
+                type: 'select',
+                options: ['primary', 'secondary'],
+              },
+            ],
           },
           {
-            slug: "imageText",
-            imageAltText: "Image with text",
+            slug: 'imageText',
+            imageAltText: 'Image with text',
             fields: [
               {
-                name: "title",
-                type: "text",
+                name: 'title',
+                type: 'text',
               },
               {
-                name: "content",
-                type: "richText",
+                name: 'content',
+                type: 'richText',
                 editor: slateEditor({}),
               },
               {
-                name: "image",
-                type: "relationship",
-                relationTo: "media",
-              }
+                name: 'image',
+                type: 'relationship',
+                relationTo: 'media',
+              },
             ],
           },
           {
-            slug: "cookieTable",
+            slug: 'cookieTable',
             fields: [
               {
-                name: "cookieCategoryId",
-                type: "select",
-                options: [
-                  'strictlyNecessary',
-                  'functional',
-                  'performance',
-                  'tracking',
-                ]
-              }
+                name: 'cookieCategoryId',
+                type: 'select',
+                options: ['strictlyNecessary', 'functional', 'performance', 'tracking'],
+              },
             ],
-          }
+          },
         ],
-      })
+      }),
     ],
   }),
 }

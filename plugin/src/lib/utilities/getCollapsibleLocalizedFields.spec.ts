@@ -1,39 +1,39 @@
-import type { GlobalConfig } from "payload";
-import { getCollapsibleLocalizedFields } from ".";
+import type { GlobalConfig } from 'payload';
+import { getCollapsibleLocalizedFields } from '.';
 
-describe("fn: getCollapsibleLocalizedFields", () => {
-  it("includes only localized fields from a collapsible field", () => {
+describe('fn: getCollapsibleLocalizedFields', () => {
+  it('includes only localized fields from a collapsible field', () => {
     const global: GlobalConfig = {
-      slug: "global",
+      slug: 'global',
       fields: [
         {
-          name: "textLocalizedField",
-          type: "text",
+          name: 'textLocalizedField',
+          type: 'text',
           localized: true,
         },
         {
-          name: "textNonLocalizedField",
-          type: "text",
+          name: 'textNonLocalizedField',
+          type: 'text',
         },
         {
-          label: "Collapsible Field",
-          type: "collapsible",
+          label: 'Collapsible Field',
+          type: 'collapsible',
           fields: [
             {
-              name: "textLocalizedFieldInCollapsibleField",
-              type: "text",
+              name: 'textLocalizedFieldInCollapsibleField',
+              type: 'text',
               localized: true,
             },
             {
-              name: "textNonLocalizedFieldInCollapsibleField",
-              type: "text",
+              name: 'textNonLocalizedFieldInCollapsibleField',
+              type: 'text',
             },
             // select fields not supported yet
             {
-              name: "selectLocalizedFieldInCollapsibleField",
-              type: "select",
+              name: 'selectLocalizedFieldInCollapsibleField',
+              type: 'select',
               localized: true,
-              options: ["one", "two"],
+              options: ['one', 'two'],
             },
           ],
         },
@@ -41,13 +41,13 @@ describe("fn: getCollapsibleLocalizedFields", () => {
     };
     const expected = [
       {
-        name: "textLocalizedFieldInCollapsibleField",
-        type: "text",
+        name: 'textLocalizedFieldInCollapsibleField',
+        type: 'text',
         localized: true,
       },
     ];
     expect(getCollapsibleLocalizedFields({ fields: global.fields })).toEqual(
-      expected
+      expected,
     );
   });
 });
