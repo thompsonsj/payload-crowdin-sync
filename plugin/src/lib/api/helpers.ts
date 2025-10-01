@@ -143,7 +143,7 @@ export async function getLexicalFieldArticleDirectory({
     /** 'document id' is the field name in dot notation for lexical blocks */
     documentId: name,
     payload,
-    allowEmpty: false,
+    allowEmpty: true,
     parent,
     req,
   })) as CrowdinArticleDirectory | undefined;
