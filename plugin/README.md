@@ -201,7 +201,7 @@ Use an object to define a condition that activates Crowdin based on the document
       slug: 'nav',
       condition: ({ doc }) => doc.translateWithCrowdin,
     },
-  ];
+  ],
 }
 ```
 
