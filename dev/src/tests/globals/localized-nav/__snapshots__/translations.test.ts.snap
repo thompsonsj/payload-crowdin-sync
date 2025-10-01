@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Global: localized-nav builds a Crowdin JSON object as expected 1`] = `
+{
+  "items": {
+    "68ddb03a9432e06617d52103": {
+      "label": "Published nav item 1",
+    },
+    "68ddb04d9432e06617d52105": {
+      "label": "Published nav item 2",
+    },
+  },
+}
+`;
