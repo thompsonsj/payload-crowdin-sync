@@ -13,6 +13,22 @@ exports[`Global: localized-nav builds a Crowdin JSON object as expected 1`] = `
 }
 `;
 
+exports[`Global: localized-nav builds a Crowdin JSON object as expected for a draft 1`] = `
+{
+  "items": {
+    "68ddb03a9432e06617d52103": {
+      "label": "Published nav item 1",
+    },
+    "68ddb04d9432e06617d52105": {
+      "label": "Published nav item 2",
+    },
+    "68ddb14523771003a41a0049": {
+      "label": "Item 3 is included in the draft only",
+    },
+  },
+}
+`;
+
 exports[`Global: localized-nav builds a Payload update object as expected 1`] = `
 {
   "items": [
@@ -28,7 +44,7 @@ exports[`Global: localized-nav builds a Payload update object as expected 1`] = 
 }
 `;
 
-exports[`Global: localized-nav updates the Payload document with a translation from Crowdin 1`] = `
+exports[`Global: localized-nav publishes in fr_FR with a translation from Crowdin 1`] = `
 [
   {
     "id": "68ddb03a9432e06617d52103",
@@ -37,6 +53,36 @@ exports[`Global: localized-nav updates the Payload document with a translation f
   {
     "id": "68ddb04d9432e06617d52105",
     "label": "Élément de navigation publié 2",
+  },
+]
+`;
+
+exports[`Global: localized-nav saves draft in fr_FR with a translation from Crowdin 1`] = `
+[
+  {
+    "id": "68ddb03a9432e06617d52103",
+    "label": "Élément de navigation publié 1",
+  },
+  {
+    "id": "68ddb04d9432e06617d52105",
+    "label": "Élément de navigation publié 2",
+  },
+]
+`;
+
+exports[`Global: localized-nav saves draft in fr_FR with a translation from Crowdin from a source draft version 1`] = `
+[
+  {
+    "id": "68ddb03a9432e06617d52103",
+    "label": "Élément de navigation publié 1",
+  },
+  {
+    "id": "68ddb04d9432e06617d52105",
+    "label": "Élément de navigation publié 2",
+  },
+  {
+    "id": "68ddb14523771003a41a0049",
+    "label": "L'article 3 est inclus uniquement dans le projet",
   },
 ]
 `;

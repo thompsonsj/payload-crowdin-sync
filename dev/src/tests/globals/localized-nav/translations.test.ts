@@ -48,7 +48,6 @@ describe('Global: localized-nav', () => {
     }
   })
 
-
   it('builds a Crowdin JSON object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -102,7 +101,7 @@ describe('Global: localized-nav', () => {
     ).toMatchSnapshot()
   })
 
-  it('updates the Payload document with a translation from Crowdin', async () => {
+  it('publishes in fr_FR with a translation from Crowdin', async () => {
     nock('https://api.crowdin.com')
     // fr - file 1 get translation
     .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`, {
@@ -142,6 +141,132 @@ describe('Global: localized-nav', () => {
     
     const global = (await payload.findGlobal({
       slug: 'localized-nav',
+      locale: 'fr_FR',
+    })) as LocalizedNav
+
+    expect(global.items).toMatchSnapshot()
+  })
+
+  it('saves draft in fr_FR with a translation from Crowdin', async () => {
+    nock('https://api.crowdin.com')
+    // fr - file 1 get translation
+    .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`, {
+      targetLanguageId: 'fr',
+    })
+    .reply(
+      200,
+      mockClient.buildProjectFileTranslation({
+        url: `https://api.crowdin.com/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/${fileId}/download?targetLanguageId=fr`,
+      }),
+    )
+    .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`)
+    .query({
+      targetLanguageId: 'fr',
+    })
+    .reply(200, {
+      "items": {
+        "68ddb03a9432e06617d52103": {
+          "label": "Élément de navigation publié 1",
+        },
+        "68ddb04d9432e06617d52105": {
+          "label": "Élément de navigation publié 2",
+        },
+      },
+    })
+
+    const translationsApi = new payloadCrowdinSyncTranslationsApi(pluginOptions, payload)
+    await translationsApi.updateTranslation({
+      documentId: `can-be-anything`, // this is no needed when global=`true`
+      global: true,
+      collection: 'localized-nav',
+      dryRun: false,
+      draft: true,
+      excludeLocales: ['de_DE'],
+    })
+    
+    const global = (await payload.findGlobal({
+      slug: 'localized-nav',
+      draft: true,
+      locale: 'fr_FR',
+    })) as LocalizedNav
+
+    expect(global.items).toMatchSnapshot()
+  })
+
+  it('builds a Crowdin JSON object as expected for a draft', async () => {
+    nock('https://api.crowdin.com')
+      .post(`/api/v2/storages`)
+      .times(1)
+      .reply(200, mockClient.addStorage())
+      .put(`/api/v2/projects/${pluginOptions.projectId}/files/${fileId}`)
+      .times(1)
+      .reply(200, mockClient.createFile({
+        fileId,
+      }))
+
+    const global = (await payload.updateGlobal({
+      slug: 'localized-nav',
+      data: {
+        items: fixtures.draft.items,
+      },
+      draft: true,
+    })) as LocalizedNav
+
+    expect(
+      utilities.buildCrowdinJsonObject({
+        doc: global,
+        fields: LocalizedNavConfig.fields,
+      }),
+    ).toMatchSnapshot()
+  })
+
+  it('saves draft in fr_FR with a translation from Crowdin from a source draft version', async () => {
+    nock('https://api.crowdin.com')
+    // fr - file 1 get translation
+    .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`, {
+      targetLanguageId: 'fr',
+    })
+    .reply(
+      200,
+      mockClient.buildProjectFileTranslation({
+        url: `https://api.crowdin.com/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/${fileId}/download?targetLanguageId=fr`,
+      }),
+    )
+    .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`)
+    .query({
+      targetLanguageId: 'fr',
+    })
+    .reply(200, {
+      "items": {
+        "68ddb03a9432e06617d52103": {
+          "label": "Élément de navigation publié 1",
+        },
+        "68ddb04d9432e06617d52105": {
+          "label": "Élément de navigation publié 2",
+        },
+        "68ddb14523771003a41a0049": {
+          "label": "L'article 3 est inclus uniquement dans le projet",
+        },
+      },
+    })
+
+    const translationsApi = new payloadCrowdinSyncTranslationsApi(pluginOptions, payload)
+    await translationsApi.updateTranslation({
+      documentId: `can-be-anything`, // this is no needed when global=`true`
+      global: true,
+      collection: 'localized-nav',
+      dryRun: false,
+      draft: true,
+      excludeLocales: ['de_DE'],
+    })
+    
+    const global = (await payload.findGlobal({
+      slug: 'localized-nav',
+      draft: true,
       locale: 'fr_FR',
     })) as LocalizedNav
 
