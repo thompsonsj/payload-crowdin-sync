@@ -23,7 +23,6 @@ import {
   getLexicalEditorConfig,
   isLexical,
 } from './utilities/lexical';
-import { mockCrowdinClient } from './api/mock/crowdin-api-responses';
 import { getRelationshipId } from './utilities/payload';
 
 export {
@@ -42,7 +41,6 @@ export {
   getLexicalBlockFields,
   getLexicalEditorConfig,
   isLexical,
-  mockCrowdinClient,
   extractLexicalBlockContent,
   getLexicalFieldArticleDirectory,
   getLexicalFieldArticleDirectories,
