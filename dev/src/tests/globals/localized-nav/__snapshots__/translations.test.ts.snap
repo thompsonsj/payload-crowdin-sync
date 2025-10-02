@@ -12,3 +12,31 @@ exports[`Global: localized-nav builds a Crowdin JSON object as expected 1`] = `
   },
 }
 `;
+
+exports[`Global: localized-nav builds a Payload update object as expected 1`] = `
+{
+  "items": [
+    {
+      "id": "68ddb03a9432e06617d52103",
+      "label": "Published nav item 1",
+    },
+    {
+      "id": "68ddb04d9432e06617d52105",
+      "label": "Published nav item 2",
+    },
+  ],
+}
+`;
+
+exports[`Global: localized-nav updates the Payload document with a translation from Crowdin 1`] = `
+[
+  {
+    "id": "68ddb03a9432e06617d52103",
+    "label": "Élément de navigation publié 1",
+  },
+  {
+    "id": "68ddb04d9432e06617d52105",
+    "label": "Élément de navigation publié 2",
+  },
+]
+`;

@@ -1,90 +1,150 @@
 import {
-    // payloadCrowdinSyncTranslationsApi,
-    utilities,
-    mockCrowdinClient,
-    // getFilesByDocumentID,
-    // getFiles,
-  } from 'payload-crowdin-sync'
-  import { fixtures } from './fixtures'
-  import nock from 'nock'
+  // payloadCrowdinSyncTranslationsApi,
+  utilities,
+  mockCrowdinClient,
+  payloadCrowdinSyncTranslationsApi,
+  // getFilesByDocumentID,
+  // getFiles,
+} from 'payload-crowdin-sync'
+import { fixtures } from './fixtures'
+import nock from 'nock'
+
+import { pluginConfig } from '../../helpers/plugin-config'
+import {
+  LocalizedNav,
+} from '@/payload-types'
   
-  import { pluginConfig } from '../../helpers/plugin-config'
-  import {
-    CrowdinArticleDirectory,
-    LocalizedNav,
-  } from '@/payload-types'
-  
-  export const isNotString = <T>(val: T | string | undefined | null): val is T => {
-    return val !== undefined && val !== null && typeof val !== 'string'
-  }
-  
-  const getRelationshipId = (relationship?: string | CrowdinArticleDirectory | null) => {
-    if (!relationship) {
-      return undefined
-    }
-    if (isNotString(relationship)) {
-      return relationship.id
-    }
-    return relationship
-  }
-  
-  import { initPayloadInt } from '../../helpers/initPayloadInt'
-  import type { Payload } from 'payload'
+import { initPayloadInt } from '../../helpers/initPayloadInt'
+import type { Payload } from 'payload'
 import { LocalizedNav as LocalizedNavConfig } from './../../../globals/LocalizedNav'
   
-  let payload: Payload
-  
-  const pluginOptions = pluginConfig()
-  const mockClient = mockCrowdinClient(pluginOptions)
-  
-  describe('Global: localized-nav', () => {
-    beforeAll(async () => {
-      const initialized = await initPayloadInt()
-      ;({ payload } = initialized as {
-        payload: Payload
-      })
-    })
-  
-    afterEach((done) => {
-      if (!nock.isDone()) {
-        throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
-      }
-      nock.cleanAll()
-      done()
-    })
-  
-    afterAll(async () => {
-      if (typeof payload.db.destroy === 'function') {
-        await payload.db.destroy()
-      }
-    })
+let payload: Payload
 
-  
-    it('builds a Crowdin JSON object as expected', async () => {
-      nock('https://api.crowdin.com')
-        .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-        .times(2)
-        .reply(200, mockClient.createDirectory({}))
-        .post(`/api/v2/storages`)
-        .times(1)
-        .reply(200, mockClient.addStorage())
-        .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
-        .times(1)
-        .reply(200, mockClient.createFile({}))
-  
-      const global = (await payload.updateGlobal({
-        slug: 'localized-nav',
-        data: {
-          items: fixtures.published.items,
-        },
-      })) as LocalizedNav
-  
-      expect(
-        utilities.buildCrowdinJsonObject({
-          doc: global,
-          fields: LocalizedNavConfig.fields,
-        }),
-      ).toMatchSnapshot()
+const pluginOptions = pluginConfig()
+const mockClient = mockCrowdinClient(pluginOptions)
+
+// fr fileId for the localized-nav global
+const fileId = 48311
+
+describe('Global: localized-nav', () => {
+  beforeAll(async () => {
+    const initialized = await initPayloadInt()
+    ;({ payload } = initialized as {
+      payload: Payload
     })
   })
-  
+
+  afterEach((done) => {
+    if (!nock.isDone()) {
+      throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
+    }
+    nock.cleanAll()
+    done()
+  })
+
+  afterAll(async () => {
+    if (typeof payload.db.destroy === 'function') {
+      await payload.db.destroy()
+    }
+  })
+
+
+  it('builds a Crowdin JSON object as expected', async () => {
+    nock('https://api.crowdin.com')
+      .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
+      .times(2)
+      .reply(200, mockClient.createDirectory({}))
+      .post(`/api/v2/storages`)
+      .times(1)
+      .reply(200, mockClient.addStorage())
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .times(1)
+      .reply(200, mockClient.createFile({
+        fileId,
+      }))
+
+    const global = (await payload.updateGlobal({
+      slug: 'localized-nav',
+      data: {
+        items: fixtures.published.items,
+      },
+    })) as LocalizedNav
+
+    expect(
+      utilities.buildCrowdinJsonObject({
+        doc: global,
+        fields: LocalizedNavConfig.fields,
+      }),
+    ).toMatchSnapshot()
+  })
+
+  it('builds a Payload update object as expected', async () => {  
+    const global = (await payload.findGlobal({
+      slug: 'localized-nav',
+    })) as LocalizedNav
+
+    const crowdinHtmlObject = utilities.buildCrowdinHtmlObject({
+      doc: global,
+      fields: LocalizedNavConfig.fields,
+    })
+    const crowdinJsonObject = utilities.buildCrowdinJsonObject({
+      doc: global,
+      fields: LocalizedNavConfig.fields,
+    })
+
+    expect(
+      utilities.buildPayloadUpdateObject({
+        crowdinJsonObject,
+        crowdinHtmlObject,
+        fields: LocalizedNavConfig.fields,
+        document: global,
+      }),
+    ).toMatchSnapshot()
+  })
+
+  it('updates the Payload document with a translation from Crowdin', async () => {
+    nock('https://api.crowdin.com')
+    // fr - file 1 get translation
+    .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`, {
+      targetLanguageId: 'fr',
+    })
+    .reply(
+      200,
+      mockClient.buildProjectFileTranslation({
+        url: `https://api.crowdin.com/api/v2/projects/${
+          pluginOptions.projectId
+        }/translations/builds/${fileId}/download?targetLanguageId=fr`,
+      }),
+    )
+    .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${fileId}/download`)
+    .query({
+      targetLanguageId: 'fr',
+    })
+    .reply(200, {
+      "items": {
+        "68ddb03a9432e06617d52103": {
+          "label": "Élément de navigation publié 1",
+        },
+        "68ddb04d9432e06617d52105": {
+          "label": "Élément de navigation publié 2",
+        },
+      },
+    })
+
+    const translationsApi = new payloadCrowdinSyncTranslationsApi(pluginOptions, payload)
+    await translationsApi.updateTranslation({
+      documentId: `can-be-anything`, // this is no needed when global=`true`
+      global: true,
+      collection: 'localized-nav',
+      dryRun: false,
+      excludeLocales: ['de_DE'],
+    })
+    
+    const global = (await payload.findGlobal({
+      slug: 'localized-nav',
+      locale: 'fr_FR',
+    })) as LocalizedNav
+
+    expect(global.items).toMatchSnapshot()
+  })
+})

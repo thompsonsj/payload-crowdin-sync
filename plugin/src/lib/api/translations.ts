@@ -163,14 +163,14 @@ export class payloadCrowdinSyncTranslationsApi {
       }
       if (!excludeLocales.includes(locale)) {
         report[locale] = {};
-        ((report[locale].draft = draft),
-          (report[locale].currentTranslations =
-            await this.getCurrentDocumentTranslation({
-              doc: doc,
-              collection: collection,
-              locale: locale,
-              global,
-            })));
+        report[locale].draft = draft;
+        report[locale].currentTranslations =
+          await this.getCurrentDocumentTranslation({
+            doc: doc,
+            collection: collection,
+            locale: locale,
+            global,
+          });
         report[locale].latestTranslations =
           await this.getLatestDocumentTranslation({
             collection: collection,
@@ -343,6 +343,13 @@ export class payloadCrowdinSyncTranslationsApi {
     locale,
     global = false,
   }: IgetLatestDocumentTranslation) {
+    console.log({
+      collection,
+      doc,
+      items: doc.items,
+      locale,
+      global,
+    })
     let collectionConfig = undefined;
     try {
       collectionConfig = this.getCollectionConfig(collection, global);
@@ -474,6 +481,7 @@ export class payloadCrowdinSyncTranslationsApi {
             this.req,
           )
     ) as CrowdinFile;
+    console.log({file})
     // it is possible a file doesn't exist yet - e.g. an article with localized text fields that contains an empty html field.
     if (!file) {
       return;
