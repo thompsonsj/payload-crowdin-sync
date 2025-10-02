@@ -2,6 +2,9 @@ import type { GlobalConfig } from 'payload'
 
 export const LocalizedNav: GlobalConfig = {
   slug: 'localized-nav',
+  versions: {
+    drafts: true,
+  },
   fields: [
     {
       name: 'items',

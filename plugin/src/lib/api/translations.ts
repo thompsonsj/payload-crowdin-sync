@@ -58,6 +58,7 @@ interface IgetLatestDocumentTranslation {
   doc: any;
   locale: string;
   global?: boolean;
+  draft?: boolean;
 }
 
 interface IgetCurrentDocumentTranslation {
@@ -65,6 +66,7 @@ interface IgetCurrentDocumentTranslation {
   collection: string;
   locale: string;
   global?: boolean;
+  draft?: boolean;
 }
 
 interface IgetTranslation {
@@ -144,6 +146,7 @@ export class payloadCrowdinSyncTranslationsApi {
         slug: collection as GlobalSlug,
         locale: this.sourceLocale,
         req: this.req,
+        draft,
       });
     } else {
       doc = await this.payload.findByID({
@@ -151,6 +154,7 @@ export class payloadCrowdinSyncTranslationsApi {
         id: documentId,
         locale: this.sourceLocale,
         req: this.req,
+        draft,
       });
     }
     const report: { [key: string]: any } = {};
@@ -163,20 +167,22 @@ export class payloadCrowdinSyncTranslationsApi {
       }
       if (!excludeLocales.includes(locale)) {
         report[locale] = {};
-        ((report[locale].draft = draft),
-          (report[locale].currentTranslations =
-            await this.getCurrentDocumentTranslation({
-              doc: doc,
-              collection: collection,
-              locale: locale,
-              global,
-            })));
+        report[locale].draft = draft;
+        report[locale].currentTranslations =
+          await this.getCurrentDocumentTranslation({
+            doc: doc,
+            collection: collection,
+            locale: locale,
+            global,
+            draft,
+          });
         report[locale].latestTranslations =
           await this.getLatestDocumentTranslation({
             collection: collection,
             doc: doc,
             locale: locale,
             global,
+            draft,
           });
         report[locale].changed = !deepEqual(
           report[locale].currentTranslations,
@@ -270,6 +276,7 @@ export class payloadCrowdinSyncTranslationsApi {
     collection,
     locale,
     global = false,
+    draft = false,
   }: IgetCurrentDocumentTranslation) {
     // get document
     let document: any;
@@ -278,6 +285,7 @@ export class payloadCrowdinSyncTranslationsApi {
         slug: collection as keyof Config['globals'],
         locale: locale,
         req: this.req,
+        draft,
       });
     } else {
       document = await this.payload.findByID({
@@ -285,6 +293,7 @@ export class payloadCrowdinSyncTranslationsApi {
         id: doc.id,
         locale: locale,
         req: this.req,
+        draft,
       });
     }
 

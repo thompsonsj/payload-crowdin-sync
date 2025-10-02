@@ -531,7 +531,7 @@ export interface NestedFieldCollection {
               root: {
                 type: string;
                 children: {
-                  type: string;
+                  type: any;
                   version: number;
                   [k: string]: unknown;
                 }[];
@@ -618,7 +618,7 @@ export interface NestedFieldCollection {
               root: {
                 type: string;
                 children: {
-                  type: string;
+                  type: any;
                   version: number;
                   [k: string]: unknown;
                 }[];
@@ -659,7 +659,7 @@ export interface NestedFieldCollection {
                 root: {
                   type: string;
                   children: {
-                    type: string;
+                    type: any;
                     version: number;
                     [k: string]: unknown;
                   }[];
@@ -709,7 +709,7 @@ export interface Policy {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -728,7 +728,7 @@ export interface Policy {
             root: {
               type: string;
               children: {
-                type: string;
+                type: any;
                 version: number;
                 [k: string]: unknown;
               }[];
@@ -1554,6 +1554,7 @@ export interface LocalizedNav {
    */
   syncAllTranslations?: boolean | null;
   crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1648,6 +1649,7 @@ export interface LocalizedNavSelect<T extends boolean = true> {
   syncTranslations?: T;
   syncAllTranslations?: T;
   crowdinArticleDirectory?: T;
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
