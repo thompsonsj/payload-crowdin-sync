@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.34.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.34.2...dev-v0.34.3) (2025-10-02)
+
+
+### Bug Fixes
+
+* **translations:** sync translation from draft to draft ([#315](https://github.com/thompsonsj/payload-crowdin-sync/issues/315)) ([6a3898a](https://github.com/thompsonsj/payload-crowdin-sync/commit/6a3898ab40a6c943a5fb678238c099747379a8e8))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.38.2 to 0.38.3
+
 ## [0.34.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.34.1...dev-v0.34.2) (2025-08-08)
 
 
