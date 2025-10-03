@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.19.3...source-v0.19.4) (2025-10-03)
+
+
+### Bug Fixes
+
+* **crowdinapiresponse:** revise data structures/types ([#319](https://github.com/thompsonsj/payload-crowdin-sync/issues/319)) ([f421660](https://github.com/thompsonsj/payload-crowdin-sync/commit/f421660f0f1e52d0b19bb25cd9f553e744a41cd0))
+
 ## [0.19.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.19.2...source-v0.19.3) (2025-10-02)
 
 
