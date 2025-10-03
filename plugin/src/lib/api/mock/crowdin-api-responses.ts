@@ -1,6 +1,5 @@
 import { PluginOptions } from '../../types';
 import {
-  ResponseObject,
   SourceFilesModel,
   UploadStorageModel,
   TranslationsModel,
@@ -30,10 +29,6 @@ class crowdinAPIWrapper {
     this.projectId = pluginOptions.projectId;
     this.directoryId = pluginOptions.directoryId;
     this.branchId = 4;
-  }
-
-  async listFileRevisions(projectId: number, fileId: number) {
-    return await Promise.resolve(1).then(() => undefined);
   }
 
   createDirectory({
@@ -84,14 +79,6 @@ class crowdinAPIWrapper {
     return storage;
   }
 
-  async deleteFile(projectId: number, fileId: number): Promise<void> {
-    await Promise.resolve(1).then(() => undefined);
-  }
-
-  async deleteDirectory(projectId: number, directoryId: number): Promise<void> {
-    await Promise.resolve(1).then(() => undefined);
-  }
-
   /**
    * createFile
    *
@@ -122,8 +109,8 @@ class crowdinAPIWrapper {
         revisionId: 5,
         status: 'active',
         priority: 'normal' as SourceFilesModel.Priority,
-        importOptions: {} as any,
-        exportOptions: {} as any,
+        importOptions: {},
+        exportOptions: {},
         excludedTargetLanguages: [],
         createdAt: date,
         updatedAt: date,
@@ -137,6 +124,7 @@ class crowdinAPIWrapper {
         path: `/policies/security-and-privacy/${request.name || 'fields'}`,
         parserVersion: 3,
         context: '',
+        fields: []
       },
     };
     return file;
@@ -144,24 +132,18 @@ class crowdinAPIWrapper {
 
   updateOrRestoreFile({
     fileId = 1079,
-    request,
   }: {
     fileId: number;
     request?: SourceFilesModel.ReplaceFileFromStorageRequest;
   }): { data: SourceFilesModel.File } {
-    /*const storageId = await this.addStorage({
-      name,
-      fileData,
-      fileType,
-    })*/
     const date = new Date().toISOString();
     const file = {
       data: {
         revisionId: 5,
         status: 'active',
         priority: 'normal' as SourceFilesModel.Priority,
-        importOptions: {} as any,
-        exportOptions: {} as any,
+        importOptions: {},
+        exportOptions: {},
         excludedTargetLanguages: [],
         createdAt: date,
         updatedAt: date,
@@ -175,6 +157,7 @@ class crowdinAPIWrapper {
         path: `/policies/security-and-privacy/file.filetype`,
         parserVersion: 3,
         context: '',
+        fields: []
       },
     };
     return file;
