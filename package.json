@@ -11,6 +11,7 @@
   "dependencies": {
     "@crowdin/crowdin-api-client": "^1.48.3",
     "@payloadcms/db-mongodb": "3.57.0",
+    "@payloadcms/next": "^3.57.0",
     "@payloadcms/richtext-lexical": "3.57.0",
     "@payloadcms/richtext-slate": "3.57.0",
     "@payloadcms/ui": "^3.57.0",
@@ -25,6 +26,7 @@
     "graphql": "^16.11.0",
     "joi": "^18.0.1",
     "next": "15.5.4",
+    "node-fetch": "^3.3.2",
     "payload": "3.57.0",
     "react": "19.1.1",
     "react-dom": "19.1.1",

@@ -22,6 +22,8 @@ import Users from './collections/Users'
 
 import { crowdinSync } from 'payload-crowdin-sync'
 import { slateEditor } from '@payloadcms/richtext-slate'
+import YoutubeVideos from './collections/YoutubeVideos'
+import VideoThumbnails from './collections/VideoThumbnails'
 
 export const localeMap = {
   de_DE: {
@@ -78,6 +80,8 @@ export default buildConfig({
     LocalizedPostsWithCondition,
     Tags,
     Users,
+    YoutubeVideos,
+    VideoThumbnails,
   ],
   globals: [Home, LocalizedNav, Nav, Statistics],
   localization: {
