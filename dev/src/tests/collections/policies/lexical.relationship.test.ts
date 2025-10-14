@@ -230,7 +230,7 @@ describe('Collection: Policies: Lexical Relationship', () => {
         })
         .reply(
           200,
-          '<p>Paragraphe avant la vidéo YouTube.</p><span>unknown node</span><p>Paragraphe après la vidéo YouTube.</p>',
+          '<p>Paragraphe avant la vidéo YouTube.</p><span data-block-id=671a9003910b067fc9bafa92 data-relation-to=youtube-videos data-block-type="pcsRelationship"></span><p>Paragraphe après la vidéo YouTube.</p>',
         )
   
       const translationsApi = new payloadCrowdinSyncTranslationsApi(pluginOptions, payload)

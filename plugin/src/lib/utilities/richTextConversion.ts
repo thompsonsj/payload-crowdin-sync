@@ -157,6 +157,15 @@ export const convertHtmlToLexical = (
               id: blockId,
             },
           };
+        } else if (isBlock && blockType === 'pcsRelationship') {
+          const relationTo = el && getAttributeValue(el, 'data-relation-to');
+          return {
+            type: 'relationship',
+            relationTo,
+            value: {
+              id: blockId,
+            },
+          };
         } else {
           const translation = (blockTranslations?.['blocks'] || []).find(
             (block: any) => block.id === blockId,

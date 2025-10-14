@@ -211,7 +211,9 @@ exports[`Collection: Policies: Lexical Relationship updates the Payload document
       },
       {
         "format": "",
-        "type": "noTranslation",
+        "relationTo": "youtube-videos",
+        "type": "relationship",
+        "value": "671a9003910b067fc9bafa92",
         "version": 2,
       },
       {
