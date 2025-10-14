@@ -8,6 +8,7 @@ import {
 } from '@slate-serializers/html';
 
 import {
+  SerializedRelationshipNode,
   SerializedUploadNode,
   type SanitizedServerEditorConfig as SanitizedEditorConfig,
 } from '@payloadcms/richtext-lexical';
@@ -89,10 +90,36 @@ export const convertLexicalToHtml = async (
     },
   };
 
+  /**
+   * This is a custom HTML converter for the Upload node type.
+   *
+   * Place a marker in the HTML output to indicate where the upload node is.
+   * When translations are applied, the marker will be replaced with the actual upload node.
+   */
+  const RelationshipHTMLConverter: HTMLConverters<SerializedRelationshipNode> = {
+    relationship: ({ node }) => {
+      const relationshipValueId = (node: SerializedRelationshipNode) => {
+        if (typeof node.value === 'number') {
+          return `${node.value}`;
+        }
+        if (typeof node.value === 'string') {
+          return node.value;
+        }
+        return node.value.id;
+      };
+
+      // naming is unfortunate here - we are reusing structure from blocks
+      // refactor to indicate type? i.e. block or upload?
+      // in this case, data-block-id is not block id, but upload id
+      return `<span data-block-id=${relationshipValueId(node)} data-relation-to=${node.relationTo} data-block-type="pcsRelationship"></span>`;
+    },
+  };
+
   return convertLexicalToHTML({
     converters: ({ defaultConverters }) => ({
       ...defaultConverters,
       ...UploadHTMLConverter,
+      ...RelationshipHTMLConverter,
       blocks: blockConvertors,
     }),
     data: editorData,
