@@ -1,0 +1,245 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Collection: Policies: Lexical Relationship builds a Crowdin HTML object as expected 1`] = `
+{
+  "content": {
+    "root": {
+      "children": [
+        {
+          "children": [
+            {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Paragraph before YouTube video.",
+              "type": "text",
+              "version": 1,
+            },
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "textFormat": 0,
+          "textStyle": "",
+          "type": "paragraph",
+          "version": 1,
+        },
+        {
+          "format": "",
+          "relationTo": "youtube-videos",
+          "type": "relationship",
+          "value": {
+            "aspectRatio": 1.3333333333333333,
+            "createdAt": "2024-10-24T18:20:51.757Z",
+            "height": 150,
+            "id": "671a9003910b067fc9bafa92",
+            "oembed": {
+              "author_name": "jawed",
+              "author_url": "https://www.youtube.com/@jawed",
+              "height": 150,
+              "html": "<iframe width="200" height="150" src="https://www.youtube.com/embed/jNQXAC9IVRw?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen title="Me at the zoo"></iframe>",
+              "provider_name": "YouTube",
+              "provider_url": "https://www.youtube.com/",
+              "thumbnail_height": 360,
+              "thumbnail_url": "https://i.ytimg.com/vi/jNQXAC9IVRw/hqdefault.jpg",
+              "thumbnail_width": 480,
+              "title": "Me at the zoo",
+              "type": "video",
+              "version": "1.0",
+              "width": 200,
+            },
+            "thumbnailUrl": "https://i.ytimg.com/vi/jNQXAC9IVRw/hqdefault.jpg",
+            "title": "Me at the zoo",
+            "updatedAt": "2024-10-24T18:20:51.757Z",
+            "videoId": "jNQXAC9IVRw",
+            "width": 200,
+          },
+          "version": 2,
+        },
+        {
+          "children": [
+            {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Paragraph after YouTube video.",
+              "type": "text",
+              "version": 1,
+            },
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "textFormat": 0,
+          "textStyle": "",
+          "type": "paragraph",
+          "version": 1,
+        },
+      ],
+      "direction": null,
+      "format": "",
+      "indent": 0,
+      "type": "root",
+      "version": 1,
+    },
+  },
+}
+`;
+
+exports[`Collection: Policies: Lexical Relationship builds a Crowdin JSON object as expected 1`] = `
+{
+  "title": "Test policy",
+}
+`;
+
+exports[`Collection: Policies: Lexical Relationship builds a Payload update object as expected 1`] = `
+{
+  "content": {
+    "root": {
+      "children": [
+        {
+          "children": [
+            {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Paragraph before YouTube video.",
+              "type": "text",
+              "version": 1,
+            },
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "textFormat": 0,
+          "textStyle": "",
+          "type": "paragraph",
+          "version": 1,
+        },
+        {
+          "format": "",
+          "relationTo": "youtube-videos",
+          "type": "relationship",
+          "value": {
+            "aspectRatio": 1.3333333333333333,
+            "createdAt": "2024-10-24T18:20:51.757Z",
+            "height": 150,
+            "id": "671a9003910b067fc9bafa92",
+            "oembed": {
+              "author_name": "jawed",
+              "author_url": "https://www.youtube.com/@jawed",
+              "height": 150,
+              "html": "<iframe width="200" height="150" src="https://www.youtube.com/embed/jNQXAC9IVRw?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen title="Me at the zoo"></iframe>",
+              "provider_name": "YouTube",
+              "provider_url": "https://www.youtube.com/",
+              "thumbnail_height": 360,
+              "thumbnail_url": "https://i.ytimg.com/vi/jNQXAC9IVRw/hqdefault.jpg",
+              "thumbnail_width": 480,
+              "title": "Me at the zoo",
+              "type": "video",
+              "version": "1.0",
+              "width": 200,
+            },
+            "thumbnailUrl": "https://i.ytimg.com/vi/jNQXAC9IVRw/hqdefault.jpg",
+            "title": "Me at the zoo",
+            "updatedAt": "2024-10-24T18:20:51.757Z",
+            "videoId": "jNQXAC9IVRw",
+            "width": 200,
+          },
+          "version": 2,
+        },
+        {
+          "children": [
+            {
+              "detail": 0,
+              "format": 0,
+              "mode": "normal",
+              "style": "",
+              "text": "Paragraph after YouTube video.",
+              "type": "text",
+              "version": 1,
+            },
+          ],
+          "direction": null,
+          "format": "",
+          "indent": 0,
+          "textFormat": 0,
+          "textStyle": "",
+          "type": "paragraph",
+          "version": 1,
+        },
+      ],
+      "direction": null,
+      "format": "",
+      "indent": 0,
+      "type": "root",
+      "version": 1,
+    },
+  },
+  "title": "Test policy",
+}
+`;
+
+exports[`Collection: Policies: Lexical Relationship creates an HTML file for Crowdin as expected 1`] = `"<p>Paragraph before YouTube video.</p><span>unknown node</span><p>Paragraph after YouTube video.</p>"`;
+
+exports[`Collection: Policies: Lexical Relationship updates the Payload document with a translation from Crowdin 1`] = `
+{
+  "root": {
+    "children": [
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "Paragraphe avant la vidéo YouTube.",
+            "type": "text",
+            "version": 1,
+          },
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "textFormat": 0,
+        "textStyle": "",
+        "type": "paragraph",
+        "version": 1,
+      },
+      {
+        "format": "",
+        "type": "noTranslation",
+        "version": 2,
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "Paragraphe après la vidéo YouTube.",
+            "type": "text",
+            "version": 1,
+          },
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "textFormat": 0,
+        "textStyle": "",
+        "type": "paragraph",
+        "version": 1,
+      },
+    ],
+    "direction": "ltr",
+    "format": "",
+    "indent": 0,
+    "type": "root",
+    "version": 1,
+  },
+}
+`;
