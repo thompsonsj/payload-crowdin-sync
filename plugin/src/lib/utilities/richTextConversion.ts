@@ -91,9 +91,9 @@ export const convertLexicalToHtml = async (
   };
 
   /**
-   * This is a custom HTML converter for the Upload node type.
+   * This is a custom HTML converter for the Relationship node type.
    *
-   * Place a marker in the HTML output to indicate where the upload node is.
+   * Place a marker in the HTML output to indicate where the relationship node is.
    * When translations are applied, the marker will be replaced with the actual upload node.
    */
   const RelationshipHTMLConverter: HTMLConverters<SerializedRelationshipNode> = {
