@@ -11,6 +11,7 @@
   "dependencies": {
     "@crowdin/crowdin-api-client": "^1.48.3",
     "@payloadcms/db-mongodb": "3.59.1",
+    "@payloadcms/next": "^3.59.1",
     "@payloadcms/richtext-lexical": "3.59.1",
     "@payloadcms/richtext-slate": "3.59.1",
     "@payloadcms/ui": "^3.59.1",
