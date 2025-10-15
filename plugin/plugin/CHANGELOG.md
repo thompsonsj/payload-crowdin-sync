@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.39.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.38.4...payload-crowdin-sync-v0.39.0) (2025-10-15)
+
+
+### Features
+
+* **richtextconversion:** support relationship lexical node type ([#324](https://github.com/thompsonsj/payload-crowdin-sync/issues/324)) ([4a2ef01](https://github.com/thompsonsj/payload-crowdin-sync/commit/4a2ef01ac4d7b1f02f7ee35f44b2f8c13abbfd7e))
+
 ## [0.38.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.38.3...payload-crowdin-sync-v0.38.4) (2025-10-03)
 
 
