@@ -77,6 +77,8 @@ export interface Config {
     'localized-posts-with-condition': LocalizedPostsWithCondition;
     tags: Tag;
     users: User;
+    'youtube-videos': YoutubeVideo;
+    'video-thumbnails': VideoThumbnail;
     'crowdin-files': CrowdinFile;
     'crowdin-collection-directories': CrowdinCollectionDirectory;
     'crowdin-article-directories': CrowdinArticleDirectory;
@@ -97,6 +99,8 @@ export interface Config {
     'localized-posts-with-condition': LocalizedPostsWithConditionSelect<false> | LocalizedPostsWithConditionSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    'youtube-videos': YoutubeVideosSelect<false> | YoutubeVideosSelect<true>;
+    'video-thumbnails': VideoThumbnailsSelect<false> | VideoThumbnailsSelect<true>;
     'crowdin-files': CrowdinFilesSelect<false> | CrowdinFilesSelect<true>;
     'crowdin-collection-directories': CrowdinCollectionDirectoriesSelect<false> | CrowdinCollectionDirectoriesSelect<true>;
     'crowdin-article-directories': CrowdinArticleDirectoriesSelect<false> | CrowdinArticleDirectoriesSelect<true>;
@@ -808,6 +812,70 @@ export interface LocalizedPostsWithCondition {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "youtube-videos".
+ */
+export interface YoutubeVideo {
+  id: string;
+  /**
+   * YouTube video URL or video ID.
+   */
+  videoId: string;
+  thumbnail?: (string | null) | VideoThumbnail;
+  title?: string | null;
+  aspectRatio?: number | null;
+  width?: number | null;
+  height?: number | null;
+  thumbnailUrl?: string | null;
+  oembed?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "video-thumbnails".
+ */
+export interface VideoThumbnail {
+  id: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    widescreen?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-jobs".
  */
 export interface PayloadJob {
@@ -944,6 +1012,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: string | User;
+      } | null)
+    | ({
+        relationTo: 'youtube-videos';
+        value: string | YoutubeVideo;
+      } | null)
+    | ({
+        relationTo: 'video-thumbnails';
+        value: string | VideoThumbnail;
       } | null)
     | ({
         relationTo: 'crowdin-files';
@@ -1363,6 +1439,63 @@ export interface UsersSelect<T extends boolean = true> {
         id?: T;
         createdAt?: T;
         expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "youtube-videos_select".
+ */
+export interface YoutubeVideosSelect<T extends boolean = true> {
+  videoId?: T;
+  thumbnail?: T;
+  title?: T;
+  aspectRatio?: T;
+  width?: T;
+  height?: T;
+  thumbnailUrl?: T;
+  oembed?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "video-thumbnails_select".
+ */
+export interface VideoThumbnailsSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        widescreen?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
       };
 }
 /**
