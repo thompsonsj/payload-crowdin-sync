@@ -1,6 +1,6 @@
 {
-  ".": "0.19.4",
-  "plugin": "0.38.4",
-  "dev": "0.34.4",
-  "dev-alternative-config": "0.4.4"
+  ".": "0.20.0",
+  "plugin": "0.39.0",
+  "dev": "0.35.0",
+  "dev-alternative-config": "0.4.5"
 }
