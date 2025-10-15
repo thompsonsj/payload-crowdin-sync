@@ -3,7 +3,6 @@ import type {
   CollectionBeforeChangeHook,
   CollectionBeforeValidateHook,
 } from 'payload'
-import fetch from 'node-fetch'
 import { extractYoutubeId, youtubeVideoUrl } from '../utils/youtube'
 import CustomAdminError from '../errors/CustomAdminError'
 
