@@ -4,6 +4,7 @@ import type {
   CollectionConfig,
   Field,
   GlobalConfig,
+  RowField,
 } from 'payload';
 import deepEqual from 'deep-equal';
 import { FieldWithName, type CrowdinHtmlObject } from '../types';
@@ -184,7 +185,9 @@ export const getLocalizedFields = ({
     })
     .filter(
       (field) =>
-        (field as any).type !== 'collapsible' && (field as any).type !== 'tabs',
+        (field as any).type !== 'collapsible' &&
+        (field as any).type !== 'tabs' &&
+        (field as any).type !== 'row',
     ),
   ...convertTabs({
     fields,
@@ -199,6 +202,8 @@ export const getLocalizedFields = ({
   }),
   // recursion for collapsible field - flatten results into the returned array
   ...getCollapsibleLocalizedFields({ fields, type, isLocalized }),
+  // recursion for row field - flatten results into the returned array
+  ...getRowLocalizedFields({ fields, type, isLocalized }),
 ];
 
 export const getCollapsibleLocalizedFields = ({
@@ -215,6 +220,25 @@ export const getCollapsibleLocalizedFields = ({
     .flatMap((field) =>
       getLocalizedFields({
         fields: (field as CollapsibleField).fields,
+        type,
+        isLocalized,
+      }),
+    );
+
+export const getRowLocalizedFields = ({
+  fields,
+  type,
+  isLocalized = isLocalizedField,
+}: {
+  fields: Field[];
+  type?: 'json' | 'html';
+  isLocalized?: IsLocalized;
+}): any[] =>
+  fields
+    .filter((field) => field.type === 'row')
+    .flatMap((field) =>
+      getLocalizedFields({
+        fields: (field as RowField).fields,
         type,
         isLocalized,
       }),
