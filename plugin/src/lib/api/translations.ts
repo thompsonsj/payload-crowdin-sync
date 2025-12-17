@@ -47,11 +47,8 @@ import { getRelationshipId } from '../utilities/payload';
 import { merge } from 'es-toolkit';
 import { isEmpty } from 'es-toolkit/compat';
 
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+import { Client } from '@crowdin/crowdin-api-client';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const crowdin = require('@crowdin/crowdin-api-client');
 
 interface IgetLatestDocumentTranslation {
   collection: string;
@@ -111,7 +108,9 @@ export class payloadCrowdinSyncTranslationsApi {
       token: pluginOptions.token,
       organization: pluginOptions.organization,
     };
-    const { translationsApi } = new crowdin.default(credentials);
+
+    const { translationsApi } = new Client(credentials);
+
     this.projectId = pluginOptions.projectId;
     this.directoryId = pluginOptions.directoryId;
     this.translationsApi = translationsApi;

@@ -8,12 +8,10 @@ import {
 import { CrowdinArticleDirectory } from '../../payload-types';
 import { PayloadRequest } from 'payload';
 
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+import * as crowdin from '@crowdin/crowdin-api-client';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const crowdin = require('@crowdin/crowdin-api-client');
 import {
+  Client,
   Credentials,
   SourceFiles,
   UploadStorage,
@@ -49,7 +47,7 @@ export class payloadCrowdinSyncFilesApi {
     if (pluginOptions.organization) {
       credentials.organization = pluginOptions.organization;
     }
-    const { sourceFilesApi, uploadStorageApi } = new crowdin.default(
+    const { sourceFilesApi, uploadStorageApi } = new Client(
       credentials,
     );
     this.projectId = pluginOptions.projectId;

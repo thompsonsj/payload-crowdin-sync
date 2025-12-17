@@ -15,12 +15,10 @@ import { toWords } from 'payload';
 import { payloadCrowdinSyncDocumentFilesApi } from './document';
 import { getCollectionConfig } from '../helpers';
 
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+import * as crowdin from '@crowdin/crowdin-api-client';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const crowdin = require('@crowdin/crowdin-api-client');
 import {
+  Client,
   Credentials,
   ResponseObject,
   SourceFiles,
@@ -75,7 +73,7 @@ export class filesApiByDocument {
       token: pluginOptions.token,
       organization: pluginOptions.organization,
     };
-    const { sourceFilesApi } = new crowdin.default(credentials);
+    const { sourceFilesApi } = new Client(credentials);
     this.projectId = pluginOptions.projectId;
     this.directoryId = pluginOptions.directoryId;
     this.sourceFilesApi = sourceFilesApi;
