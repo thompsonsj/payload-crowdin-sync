@@ -472,6 +472,11 @@ export class payloadCrowdinSyncTranslationsApi {
     crowdinArticleDirectoryId,
     fields,
   }: IgetTranslation) {
+
+    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+      console.log('lib/api/translations@getTranslation arguments', { documentId, fieldName, locale, collection, crowdinArticleDirectoryId, fields });
+    }
+
     const file = (
       typeof crowdinArticleDirectoryId === 'string'
         ? await getFile(fieldName, crowdinArticleDirectoryId, this.payload)
@@ -482,6 +487,9 @@ export class payloadCrowdinSyncTranslationsApi {
             this.req,
           )
     ) as CrowdinFile;
+    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+      console.log('lib/api/translations@getTranslation file', file);
+    }
     // it is possible a file doesn't exist yet - e.g. an article with localized text fields that contains an empty html field.
     if (!file) {
       return;
@@ -492,9 +500,17 @@ export class payloadCrowdinSyncTranslationsApi {
         locale,
       });
       if (!response) {
+        if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+          console.log('lib/api/translations@getTranslation no response from buildTranslationFile');
+        }
         return;
       }
+
       const data = await this.getFileDataFromUrl(response.data.url);
+      if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+        console.log('lib/api/translations@getTranslation data', data);
+      }
+
       if (file.type === 'html') {
         const allFields = collection ? collection.fields : fields;
         if (allFields) {
@@ -595,6 +611,9 @@ export class payloadCrowdinSyncTranslationsApi {
     file: CrowdinFile;
     locale: string;
   }) {
+    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+      console.log('lib/api/translations@buildTranslationFile arguments', { file, locale });
+    }
     try {
       const response = await this.translationsApi.buildProjectFileTranslation(
         this.projectId,
