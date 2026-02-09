@@ -6,7 +6,6 @@ import {
   fieldDocValue,
   fieldLocalizedTopLevel,
 } from './fixtures/array-field-type.fixture';
-
 describe('fn: buildCrowdinHtmlObject: array field type', () => {
   it('includes localized fields', () => {
     const doc = {
@@ -35,7 +34,6 @@ describe('fn: buildCrowdinHtmlObject: array field type', () => {
     const expected = fieldCrowdinObject;
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
-
   it('includes localized fields with a top-level localization setting', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -63,7 +61,6 @@ describe('fn: buildCrowdinHtmlObject: array field type', () => {
     const expected = fieldCrowdinObject;
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
-
   it('includes localized fields within a collapsible field', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -95,7 +92,6 @@ describe('fn: buildCrowdinHtmlObject: array field type', () => {
     const expected = fieldCrowdinObject;
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
-
   it('includes localized fields with a top-level localization setting within a collapsible field', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -128,7 +124,6 @@ describe('fn: buildCrowdinHtmlObject: array field type', () => {
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
 });
-
 describe('fn: buildCrowdinHtmlObject - group nested in array', () => {
   const doc = {
     id: '6474a81bef389b66642035ff',
@@ -258,7 +253,6 @@ describe('fn: buildCrowdinHtmlObject - group nested in array', () => {
       },
     ],
   };
-
   const expected: any = {
     ['ctas.6474a80221baea4f5f169757.link.text']: [
       {
@@ -298,13 +292,11 @@ describe('fn: buildCrowdinHtmlObject - group nested in array', () => {
       },
     ],
   };
-
   it('includes group json fields nested inside of array field items', () => {
     expect(buildCrowdinHtmlObject({ doc, fields: Promos.fields })).toEqual(
       expected,
     );
   });
-
   it('can work with an empty group field in an array', () => {
     expect(
       buildCrowdinHtmlObject({

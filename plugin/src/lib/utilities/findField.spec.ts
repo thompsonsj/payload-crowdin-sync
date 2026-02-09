@@ -1,7 +1,6 @@
 import BookDemo from './tests/inline-snapshots/collections/BookDemo';
 import { findField } from '.';
 import type { Block, Field } from 'payload';
-
 describe('fn: findField', () => {
   it('finds a top-level field', () => {
     expect(
@@ -18,7 +17,6 @@ describe('fn: findField', () => {
       }
     `);
   });
-
   it('finds a field nested in a group', () => {
     expect(
       findField({
@@ -33,7 +31,6 @@ describe('fn: findField', () => {
       }
     `);
   });
-
   it('finds a field nested in an array in a group', () => {
     expect(
       findField({
@@ -47,7 +44,6 @@ describe('fn: findField', () => {
       }
     `);
   });
-
   it('finds a block field definition', () => {
     const TestBlockOne: Block = {
       slug: 'testBlockOne',
@@ -70,7 +66,6 @@ describe('fn: findField', () => {
         },
       ],
     };
-
     const TestBlockTwo: Block = {
       slug: 'testBlockTwo',
       fields: [
@@ -81,7 +76,6 @@ describe('fn: findField', () => {
         },
       ],
     };
-
     const fields: Field[] = [
       {
         name: 'title',
@@ -101,7 +95,6 @@ describe('fn: findField', () => {
         blocks: [TestBlockOne, TestBlockTwo],
       },
     ];
-
     expect(
       findField({
         dotNotation: 'blocksField.6474baaf73b854f4d464e38f.testBlockTwo.url',

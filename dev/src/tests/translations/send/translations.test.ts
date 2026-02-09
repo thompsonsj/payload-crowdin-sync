@@ -6,22 +6,17 @@ import { payloadCreateIncludesNonLocalizedBlocksData } from '../../fixtures/nest
 import { multiRichTextFields } from '../../../collections/fields/multiRichTextFields'
 import { mockCrowdinClient } from 'payload-crowdin-sync'
 import { pluginConfig } from '../../helpers/plugin-config'
-
 import { initPayloadInt } from '../../helpers/initPayloadInt'
 import type { Payload } from 'payload'
-
 let payload: Payload
-
 /**
  * Test translations
  *
  * Ensure translations are retrieved, compared, and
  * stored as expected.
  */
-
 const pluginOptions = pluginConfig()
 const mockClient = mockCrowdinClient(pluginOptions)
-
 describe('Translations', () => {
   beforeAll(async () => {
     const initialized = await initPayloadInt()
@@ -29,7 +24,6 @@ describe('Translations', () => {
       payload: Payload
     })
   })
-
   afterEach((done) => {
     if (!nock.isDone()) {
       throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
@@ -37,17 +31,14 @@ describe('Translations', () => {
     nock.cleanAll()
     done()
   })
-
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
       await payload.db.destroy()
     }
   })
-
   describe('fn: getTranslation', () => {
     it('retrieves a translation from Crowdin', async () => {
       const fileId = 344
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .twice()
@@ -93,13 +84,11 @@ describe('Translations', () => {
         .reply(200, {
           title: 'Testbeitrag',
         })
-
       const post = await payload.create({
         collection: 'localized-posts',
         data: { title: 'Test post' },
       })
       const translationsApi = new payloadCrowdinSyncTranslationsApi(pluginOptions, payload)
-
       const translation = await translationsApi.getTranslation({
         documentId: `${post.id}`,
         fieldName: 'fields',
@@ -110,11 +99,9 @@ describe('Translations', () => {
       })
     })
   })
-
   describe('fn: updateTranslation', () => {
     it('updates a Payload article with a `text` field translation retrieved from Crowdin', async () => {
       const fileId = 45674
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .reply(200, mockClient.createDirectory({}))
@@ -159,13 +146,11 @@ describe('Translations', () => {
         .reply(200, {
           title: "Poste d'essai",
         })
-
       const post = await payload.create({
         collection: 'localized-posts',
         data: { title: 'Test post' },
       })
       const translationsApi = new payloadCrowdinSyncTranslationsApi(pluginOptions, payload)
-
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: 'localized-posts',
@@ -179,10 +164,8 @@ describe('Translations', () => {
       })
       expect(result['title']).toEqual('Testbeitrag')
     })
-
     it('updates a Payload article draft with a `text` field translation retrieved from Crowdin', async () => {
       const fileId = 45674
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .reply(200, mockClient.createDirectory({}))
@@ -227,13 +210,11 @@ describe('Translations', () => {
         .reply(200, {
           title: "Poste d'essai",
         })
-
       const post = await payload.create({
         collection: 'localized-posts',
         data: { title: 'Test post' },
       })
       const translationsApi = new payloadCrowdinSyncTranslationsApi(pluginOptions, payload)
-
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: 'localized-posts',
@@ -256,10 +237,8 @@ describe('Translations', () => {
       })
       expect(resultDraft['title']).toEqual('Testbeitrag')
     })
-
     it('updates a Payload article with a `richText` field translation retrieved from Crowdin', async () => {
       const fileId = 45674
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .reply(200, mockClient.createDirectory({}))
@@ -300,7 +279,6 @@ describe('Translations', () => {
           targetLanguageId: 'fr',
         })
         .reply(200, "<p>Poste d'essai</p>")
-
       const post = await payload.create({
         collection: 'localized-posts',
         data: {
@@ -316,7 +294,6 @@ describe('Translations', () => {
         },
       })
       const translationsApi = new payloadCrowdinSyncTranslationsApi(pluginOptions, payload)
-
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: 'localized-posts',
@@ -335,10 +312,8 @@ describe('Translations', () => {
         },
       ])
     })
-
     it('updates a Payload article with a *blocks* field translation retrieved from Crowdin', async () => {
       const fileId = 4563
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .twice()
@@ -352,7 +327,6 @@ describe('Translations', () => {
             fileId,
           }),
         )
-
       const post = await payload.create({
         collection: 'nested-field-collection',
         data: payloadCreateData as any,
@@ -363,7 +337,6 @@ describe('Translations', () => {
       ) as string[]
       const blockTypes =
         post['layout'] instanceof Array ? post['layout'].map((block) => block.blockType) : []
-
       const responseDe = {
         layout: {
           [blockIds[0]]: {
@@ -396,7 +369,6 @@ describe('Translations', () => {
           },
         },
       }
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`, {
           targetLanguageId: 'de',
@@ -426,9 +398,7 @@ describe('Translations', () => {
           targetLanguageId: 'fr',
         })
         .reply(200, responseFr)
-
       const translationsApi = new payloadCrowdinSyncTranslationsApi(pluginOptions, payload)
-
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: 'nested-field-collection',
@@ -475,10 +445,8 @@ describe('Translations', () => {
         },
       ])
     })
-
     it('updates a Payload article with a *blocks* field translation retrieved from Crowdin and respects non-localized fields', async () => {
       const fileId = 1533
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .reply(200, mockClient.createDirectory({}))
@@ -491,7 +459,6 @@ describe('Translations', () => {
             fileId,
           }),
         )
-
       const post = await payload.create({
         collection: 'nested-field-collection',
         data: payloadCreateIncludesNonLocalizedBlocksData as any,
@@ -541,7 +508,6 @@ describe('Translations', () => {
         },
       }
       const translationsApi = new payloadCrowdinSyncTranslationsApi(pluginOptions, payload)
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`, {
           targetLanguageId: 'de',
@@ -571,7 +537,6 @@ describe('Translations', () => {
           targetLanguageId: 'fr',
         })
         .reply(200, responseFr)
-
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: 'nested-field-collection',
@@ -630,10 +595,8 @@ describe('Translations', () => {
         },
       ])
     })
-
     it('updates a Payload article with a *blocks* field translation retrieved from Crowdin and detects no change on the next update attempt', async () => {
       const fileId = 92228
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .reply(200, mockClient.createDirectory({}))
@@ -646,7 +609,6 @@ describe('Translations', () => {
             fileId,
           }),
         )
-
       const post = await payload.create({
         collection: 'nested-field-collection',
         data: payloadCreateData as any,
@@ -690,7 +652,6 @@ describe('Translations', () => {
         },
       }
       const translationsApi = new payloadCrowdinSyncTranslationsApi(pluginOptions, payload)
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${fileId}`, {
           targetLanguageId: 'de',
@@ -724,7 +685,6 @@ describe('Translations', () => {
         })
         .twice()
         .reply(200, responseFr)
-
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: 'nested-field-collection',
@@ -778,11 +738,9 @@ describe('Translations', () => {
       expect(nextTranslation.translations['de_DE'].changed).toBe(false)
       expect(nextTranslation.translations['fr_FR'].changed).toBe(false)
     })
-
     it('updates a Payload article with *blocks* rich text translations retrieved from Crowdin', async () => {
       const fileIdOne = 478
       const fileIdTwo = 479
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .reply(200, mockClient.createDirectory({}))
@@ -803,7 +761,6 @@ describe('Translations', () => {
             fileId: fileIdTwo,
           }),
         )
-
       const post = await payload.create({
         collection: 'nested-field-collection',
         data: payloadCreateBlocksRichTextData as any,
@@ -896,7 +853,6 @@ describe('Translations', () => {
           targetLanguageId: 'fr',
         })
         .reply(200, responseFrTwo)
-
       await translationsApi.updateTranslation({
         documentId: `${post.id}`,
         collection: 'nested-field-collection',
@@ -976,12 +932,10 @@ describe('Translations', () => {
       ])
     })
   })
-
   describe('fn: getHtmlFieldSlugs', () => {
     // If Payload queries are not written we may end up with the default limit of 10.
     it('retrieves all HTML field slugs', async () => {
       const fileId = 92228
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .twice()
@@ -997,23 +951,29 @@ describe('Translations', () => {
             fileId,
           }),
         )
-
       const slug = 'multi-rich-text'
-
       const data = multiRichTextFields
         .filter((field) => field.type === 'richText')
-        .reduce((accum: { [key: string]: any }, field) => {
-          accum[field?.name] = [
-            {
-              children: [
-                {
-                  text: `Rich text content for ${field.name}.`,
-                },
-              ],
+        .reduce(
+          (
+            accum: {
+              [key: string]: any
             },
-          ]
-          return accum
-        }, {})
+            field,
+          ) => {
+            accum[field?.name] = [
+              {
+                children: [
+                  {
+                    text: `Rich text content for ${field.name}.`,
+                  },
+                ],
+              },
+            ]
+            return accum
+          },
+          {},
+        )
       const post = await payload.create({
         collection: slug,
         data,

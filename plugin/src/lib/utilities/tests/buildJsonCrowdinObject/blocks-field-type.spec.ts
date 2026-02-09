@@ -1,7 +1,6 @@
 import type { Block } from 'payload';
 import { buildCrowdinJsonObject, getLocalizedFields } from '../..';
 import { FieldWithName } from '../../../types';
-
 const TestBlockOne: Block = {
   slug: 'testBlockOne',
   fields: [
@@ -23,7 +22,6 @@ const TestBlockOne: Block = {
     },
   ],
 };
-
 const TestBlockTwo: Block = {
   slug: 'testBlockTwo',
   fields: [
@@ -34,7 +32,6 @@ const TestBlockTwo: Block = {
     },
   ],
 };
-
 const TestBlockTwoNonLocalized: Block = {
   slug: 'testBlockTwo',
   fields: [
@@ -44,7 +41,6 @@ const TestBlockTwoNonLocalized: Block = {
     },
   ],
 };
-
 describe('fn: buildCrowdinJsonObject: blocks field type', () => {
   it('includes localized fields nested in blocks', () => {
     const doc = {
@@ -93,7 +89,6 @@ describe('fn: buildCrowdinJsonObject: blocks field type', () => {
             text: 'Block field text content one',
           },
         },
-
         '64735621230d57bce946d371': {
           testBlockTwo: {
             url: 'https://github.com/thompsonsj/payload-crowdin-sync',
@@ -105,7 +100,6 @@ describe('fn: buildCrowdinJsonObject: blocks field type', () => {
       expected,
     );
   });
-
   it('excludes block with no localized fields', () => {
     const doc = {
       title: 'Test Policy created with title',
@@ -159,7 +153,6 @@ describe('fn: buildCrowdinJsonObject: blocks field type', () => {
       expected,
     );
   });
-
   it('excludes block with no localized fields - more blocks', () => {
     const doc = {
       title: 'Test Policy created with title',
@@ -226,7 +219,6 @@ describe('fn: buildCrowdinJsonObject: blocks field type', () => {
       expected,
     );
   });
-
   it('does not include localized fields richText fields nested in an array field within a block in the `fields.json` file', () => {
     const TestBlockArrayOfRichText: Block = {
       slug: 'testBlockArrayOfRichText',
@@ -244,7 +236,6 @@ describe('fn: buildCrowdinJsonObject: blocks field type', () => {
         },
       ],
     };
-
     const doc = {
       id: '638641358b1a140462752076',
       title: 'Test Policy created with title',
@@ -310,7 +301,6 @@ describe('fn: buildCrowdinJsonObject: blocks field type', () => {
       expected,
     );
   });
-
   it('does not include localized fields richText fields nested in an array field within a block in the `fields.json` file 2', () => {
     const TestBlockArrayOfRichText: Block = {
       slug: 'testBlockArrayOfRichText',
@@ -339,7 +329,6 @@ describe('fn: buildCrowdinJsonObject: blocks field type', () => {
         },
       ],
     };
-
     const doc = {
       id: '638641358b1a140462752076',
       title: 'Test Policy created with title',
@@ -410,7 +399,6 @@ describe('fn: buildCrowdinJsonObject: blocks field type', () => {
               '64735620230d57bce946d370': {
                 title: 'Test title 1',
               },
-
               '64735621230d57bce946d371': {
                 title: 'Test title 2',
               },

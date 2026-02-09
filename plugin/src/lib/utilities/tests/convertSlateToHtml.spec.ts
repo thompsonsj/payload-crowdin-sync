@@ -1,6 +1,5 @@
 import { convertSlateToHtml } from '../richTextConversion';
 import { payloadSlateToHtmlConfig } from '@slate-serializers/html';
-
 describe('convertSlateToHtml', () => {
   it('converts content from the default Slate editor configuration in Payload CMS as expected', () => {
     const slate = [
@@ -272,7 +271,6 @@ describe('convertSlateToHtml', () => {
       `"<h1>Heading 1: Payload CMS Slate Example Content</h1><h2>Heading 2: Text formatting</h2><p>Some <strong>bold text</strong> in a sentence.</p><p><u>Underlined text</u> and <i>italic text</i>.</p><h3>Heading 3: Formatting combinations</h3><p>Combine <strong><u><i>all three</i></u></strong> of the aforementioned tags. Throw a <s>strikethrough</s> in there too.</p><h4>Heading 4: Code</h4><p><pre><code>Code block</code></pre></p><h5>Heading 5: Text indent</h5><p>Indented text.</p><p>Indented text in indented text.</p><h6>Heading 6: More combinations</h6><p><strong></strong><a href="https://github.com/thompsonsj" data-link-type="custom"><strong>A link in bold</strong></a>. <a href="https://github.com/thompsonsj" data-link-type="custom" target="_blank">A link with a new tab</a>.</p><h2>Lists</h2><ul><li>Nested unordered list item 1</li></ul><ul><li>Nested Item 1</li><li>Nested item 2</li></ul><ul><li>Item 2</li></ul><ol><li>Ordered list item 1</li><li>Ordered list item 2</li><li>Ordered list item 3</li></ol><p></p>"`,
     );
   });
-
   it('converts custom config Payload CMS Slate content to HTML as expected', () => {
     const slate = [
       {

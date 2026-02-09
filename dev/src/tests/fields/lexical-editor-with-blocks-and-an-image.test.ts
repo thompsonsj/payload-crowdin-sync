@@ -1,5 +1,4 @@
 import fs from 'fs'
-
 const removeFiles = (dir: string) => {
   if (fs.existsSync(dir))
     fs.readdirSync(dir).forEach((f) => {
@@ -8,7 +7,6 @@ const removeFiles = (dir: string) => {
       }
     })
 }
-
 import { getFilesByDocumentID, isDefined, utilities, mockCrowdinClient } from 'payload-crowdin-sync'
 import Policies from '../../collections/Policies'
 import { fixture } from './lexical-editor-with-blocks-and-an-image.fixture'
@@ -19,13 +17,10 @@ import { initPayloadInt } from '../helpers/initPayloadInt'
 import type { Payload } from 'payload'
 import { getFileByPath } from 'payload'
 import path from 'path'
-
 let payload: Payload
 let media: Media
-
 const pluginOptions = pluginConfig()
 const mockClient = mockCrowdinClient(pluginOptions)
-
 describe('Lexical editor with blocks', () => {
   beforeAll(async () => {
     const initialized = await initPayloadInt()
@@ -42,7 +37,6 @@ describe('Lexical editor with blocks', () => {
       file: imageFile,
     })
   })
-
   afterEach((done) => {
     if (!nock.isDone()) {
       throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
@@ -50,13 +44,11 @@ describe('Lexical editor with blocks', () => {
     nock.cleanAll()
     done()
   })
-
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
       await payload.db.destroy()
     }
   })
-
   it('builds a Crowdin HTML object as expected', async () => {
     /**
      * Compare with dev/src/tests/fields/lexical-editor-with-blocks.test.ts where multiple storage and file calls are made
@@ -74,7 +66,6 @@ describe('Lexical editor with blocks', () => {
       .times(2)
       // .times(4)
       .reply(200, mockClient.createFile({}))
-
     const policy = await payload.create({
       collection: 'policies',
       data: {
@@ -82,7 +73,6 @@ describe('Lexical editor with blocks', () => {
         content: fixture(media.id),
       },
     })
-
     expect(
       utilities.buildCrowdinHtmlObject({
         doc: policy,
@@ -262,7 +252,6 @@ describe('Lexical editor with blocks', () => {
       },
     })
   })
-
   it('builds a Crowdin JSON object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -274,7 +263,6 @@ describe('Lexical editor with blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(2)
       .reply(200, mockClient.createFile({}))
-
     const policy = await payload.create({
       collection: 'policies',
       data: {
@@ -293,7 +281,6 @@ describe('Lexical editor with blocks', () => {
       }
     `)
   })
-
   it('builds a Payload update object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -305,7 +292,6 @@ describe('Lexical editor with blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(2)
       .reply(200, mockClient.createFile({}))
-
     const policy = await payload.create({
       collection: 'policies',
       data: {
@@ -503,7 +489,6 @@ describe('Lexical editor with blocks', () => {
       title: 'Test policy',
     })
   })
-
   it('creates an HTML file for Crowdin as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -515,7 +500,6 @@ describe('Lexical editor with blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(2)
       .reply(200, mockClient.createFile({}))
-
     const policy = await payload.create({
       collection: 'policies',
       data: {
@@ -537,7 +521,6 @@ describe('Lexical editor with blocks', () => {
       `<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=${media.id} data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>`,
     )
   })
-
   it('creates HTML files for Crowdin as expected for lexical content within an array field that is embedded in a group', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -549,7 +532,6 @@ describe('Lexical editor with blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(3)
       .reply(200, mockClient.createFile({}))
-
     const policy: Policy = (await payload.create({
       collection: 'policies',
       data: {
@@ -567,24 +549,19 @@ describe('Lexical editor with blocks', () => {
         },
       },
     })) as any
-
     const arrayField = isDefined(policy['group']?.['array']) ? policy['group']?.['array'] : []
     const ids = arrayField.map((item) => item.id) || ([] as string[])
-
     const crowdinFiles = await getFilesByDocumentID({ documentId: `${policy.id}`, payload })
     expect(crowdinFiles.length).toEqual(3)
-
     const htmlFileOne = crowdinFiles.find(
       (file) => file.name === `group.array.${ids[0]}.content.html`,
     )
     const htmlFileTwo = crowdinFiles.find(
       (file) => file.name === `group.array.${ids[1]}.content.html`,
     )
-
     expect(htmlFileOne).toBeDefined()
     expect(htmlFileTwo).toBeDefined()
     expect(crowdinFiles.find((file) => file.name === 'fields.json')).toBeDefined()
-
     const fileOneCrowdinFiles = await getFilesByDocumentID({
       documentId: `${pluginOptions.lexicalBlockFolderPrefix}group.array.${ids[0]}.content`,
       payload,
@@ -597,11 +574,9 @@ describe('Lexical editor with blocks', () => {
     })
     expect(fileOneCrowdinFiles.length).toEqual(0)
     expect(fileTwoCrowdinFiles.length).toEqual(0)
-
     expect(htmlFileOne?.fileData?.html).toMatch(
       `<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=${media.id} data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>`,
     )
-
     expect(htmlFileTwo?.fileData?.html).toMatch(
       `<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=${media.id} data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>`,
     )

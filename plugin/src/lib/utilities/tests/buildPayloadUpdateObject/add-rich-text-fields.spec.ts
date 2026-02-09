@@ -6,7 +6,6 @@ import {
   fieldJsonCrowdinObject,
   fieldDocValue,
 } from '../fixtures/blocks-field-type.fixture';
-
 describe('fn: buildPayloadUpdateObject: blocks field type', () => {
   it('includes localized fields', () => {
     const doc = {
@@ -41,7 +40,6 @@ describe('fn: buildPayloadUpdateObject: blocks field type', () => {
       title: 'Test Policy created with title',
       blocksField: fieldDocValue,
     };
-
     expect(
       buildPayloadUpdateObject({
         crowdinJsonObject,
