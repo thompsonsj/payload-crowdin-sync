@@ -1,7 +1,6 @@
 import { Block, GlobalConfig } from 'payload';
 import { fieldChanged, containsLocalizedFields } from '.';
 import deepEqual from 'deep-equal';
-
 describe('Function: containsLocalizedFields', () => {
   it('detects localized fields on the top-level', () => {
     const global: GlobalConfig = {
@@ -20,7 +19,6 @@ describe('Function: containsLocalizedFields', () => {
     };
     expect(containsLocalizedFields({ fields: global.fields })).toBe(true);
   });
-
   it('detects localized fields in a group field', () => {
     const global: GlobalConfig = {
       slug: 'global',
@@ -44,7 +42,6 @@ describe('Function: containsLocalizedFields', () => {
     };
     expect(containsLocalizedFields({ fields: global.fields })).toBe(true);
   });
-
   it('detects localized fields in an array field', () => {
     const global: GlobalConfig = {
       slug: 'global',
@@ -68,7 +65,6 @@ describe('Function: containsLocalizedFields', () => {
     };
     expect(containsLocalizedFields({ fields: global.fields })).toBe(true);
   });
-
   it('returns false if no localized fields in a blocks field', () => {
     const TestBlock: Block = {
       slug: 'text',
@@ -106,7 +102,6 @@ describe('Function: containsLocalizedFields', () => {
     expect(containsLocalizedFields({ fields: global.fields })).toBe(false);
   });
 });
-
 describe('Function: fieldChanged', () => {
   it('detects a richText field change on create', () => {
     const before = undefined;
@@ -120,7 +115,6 @@ describe('Function: fieldChanged', () => {
     const type = 'richText';
     expect(fieldChanged(before, after, type)).toEqual(true);
   });
-
   it('detects a richText field change on update', () => {
     const before = {
       children: [
@@ -139,7 +133,6 @@ describe('Function: fieldChanged', () => {
     const type = 'richText';
     expect(fieldChanged(before, after, type)).toEqual(true);
   });
-
   it('returns false for equal richText objects', () => {
     const before = {
       children: [
@@ -153,7 +146,6 @@ describe('Function: fieldChanged', () => {
     expect(fieldChanged(before, after, type)).toEqual(false);
   });
 });
-
 /**
  * Test the deep-equal dependency
  *

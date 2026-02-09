@@ -1,7 +1,6 @@
 import type { Field } from 'payload';
 import { getLocalizedFields } from '.';
 import { reLocalizeField } from '.';
-
 describe('fn: getLocalizedFields using reLocalizeField', () => {
   describe('basic field types', () => {
     it('includes a text field', () => {
@@ -15,7 +14,6 @@ describe('fn: getLocalizedFields using reLocalizeField', () => {
         getLocalizedFields({ fields, isLocalized: reLocalizeField }),
       ).toEqual(fields);
     });
-
     it('excludes a localized text field based on the admin description', () => {
       const fields: Field[] = [
         {
@@ -39,7 +37,6 @@ describe('fn: getLocalizedFields using reLocalizeField', () => {
         },
       ]);
     });
-
     it('includes a richText field', () => {
       const fields: Field[] = [
         {
@@ -51,7 +48,6 @@ describe('fn: getLocalizedFields using reLocalizeField', () => {
         getLocalizedFields({ fields, isLocalized: reLocalizeField }),
       ).toEqual(fields);
     });
-
     it('includes a textarea field', () => {
       const fields: Field[] = [
         {
@@ -63,7 +59,6 @@ describe('fn: getLocalizedFields using reLocalizeField', () => {
         getLocalizedFields({ fields, isLocalized: reLocalizeField }),
       ).toEqual(fields);
     });
-
     it('returns relocalized fields in tabs within an array', () => {
       const fields: Field[] = [
         {
@@ -105,7 +100,6 @@ describe('fn: getLocalizedFields using reLocalizeField', () => {
           ],
         },
       ];
-
       expect(
         getLocalizedFields({ fields, isLocalized: reLocalizeField }),
       ).toEqual([

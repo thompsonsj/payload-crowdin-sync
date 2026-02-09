@@ -1,7 +1,6 @@
 import type { Field } from 'payload';
 import { buildCrowdinJsonObject, getLocalizedFields } from '../..';
 import { FieldWithName } from '../../../types';
-
 describe('fn: buildCrowdinJsonObject', () => {
   it('creates an empty object if no content exists', () => {
     const doc = {
@@ -26,7 +25,6 @@ describe('fn: buildCrowdinJsonObject', () => {
       expected,
     );
   });
-
   it('does not include undefined localized fields', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -54,7 +52,6 @@ describe('fn: buildCrowdinJsonObject', () => {
       expected,
     );
   });
-
   it('includes localized fields', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -91,7 +88,6 @@ describe('fn: buildCrowdinJsonObject', () => {
       expected,
     );
   });
-
   it('includes localized fields within a collapsible field', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -164,7 +160,6 @@ describe('fn: buildCrowdinJsonObject', () => {
           title: 'Array field title content one',
           text: 'Array field text content one',
         },
-
         '64735621230d57bce946d371': {
           title: 'Array field title content two',
           text: 'Array field text content two',

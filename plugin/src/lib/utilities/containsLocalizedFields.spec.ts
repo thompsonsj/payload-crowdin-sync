@@ -1,6 +1,5 @@
 import type { CollectionConfig, Field } from 'payload';
 import { containsLocalizedFields } from '.';
-
 describe('fn: containsLocalizedFields: true tests', () => {
   describe('basic field type tests', () => {
     it('includes localized fields from a group field', () => {
@@ -39,7 +38,6 @@ describe('fn: containsLocalizedFields: true tests', () => {
       ];
       expect(containsLocalizedFields({ fields })).toEqual(true);
     });
-
     it('includes localized fields from an array field', () => {
       const fields: Field[] = [
         {
@@ -76,7 +74,6 @@ describe('fn: containsLocalizedFields: true tests', () => {
       ];
       expect(containsLocalizedFields({ fields })).toEqual(true);
     });
-
     it('includes localized fields from an array with a localization setting on the array field', () => {
       const fields: Field[] = [
         {
@@ -111,7 +108,6 @@ describe('fn: containsLocalizedFields: true tests', () => {
       ];
       expect(containsLocalizedFields({ fields })).toEqual(true);
     });
-
     it('includes localized fields from an array inside a collapsible field where the top-level field group only contains collapsible fields', () => {
       const fields: Field[] = [
         {
@@ -145,7 +141,6 @@ describe('fn: containsLocalizedFields: true tests', () => {
       ];
       expect(containsLocalizedFields({ fields })).toEqual(true);
     });
-
     /**
      * * help ensure no errors during version 0 development
      * * mitigate against errors if a new field type is introduced by Payload CMS
@@ -191,7 +186,6 @@ describe('fn: containsLocalizedFields: true tests', () => {
       ];
       expect(containsLocalizedFields({ fields })).toEqual(true);
     });
-
     it('includes localized fields from a group field', () => {
       const fields: Field[] = [
         {
@@ -228,7 +222,6 @@ describe('fn: containsLocalizedFields: true tests', () => {
       ];
       expect(containsLocalizedFields({ fields })).toEqual(true);
     });
-
     it('includes localized fields from a group field with a localization setting on the group field', () => {
       const fields: Field[] = [
         {
@@ -265,7 +258,6 @@ describe('fn: containsLocalizedFields: true tests', () => {
       expect(containsLocalizedFields({ fields })).toEqual(true);
     });
   });
-
   it('includes localized fields from a group field with a localization setting on the group field: localized parent only', () => {
     const fields: Field[] = [
       {
@@ -292,7 +284,6 @@ describe('fn: containsLocalizedFields: true tests', () => {
     ];
     expect(containsLocalizedFields({ fields })).toEqual(true);
   });
-
   describe('extract rich text localized fields', () => {
     const fields: Field[] = [
       {
@@ -351,7 +342,6 @@ describe('fn: containsLocalizedFields: true tests', () => {
     ];
     expect(containsLocalizedFields({ fields })).toEqual(true);
   });
-
   it('returns nested json fields in a group inside an array', () => {
     const linkField: Field = {
       name: 'link',
@@ -406,7 +396,6 @@ describe('fn: containsLocalizedFields: true tests', () => {
     expect(containsLocalizedFields({ fields: Promos.fields })).toEqual(true);
   });
 });
-
 describe('fn: containsLocalizedFields: false tests', () => {
   describe('basic field type tests', () => {
     it('includes localized fields from a group field', () => {
@@ -443,7 +432,6 @@ describe('fn: containsLocalizedFields: false tests', () => {
       ];
       expect(containsLocalizedFields({ fields })).toEqual(false);
     });
-
     it('includes localized fields from an array field', () => {
       const fields: Field[] = [
         {
@@ -477,7 +465,6 @@ describe('fn: containsLocalizedFields: false tests', () => {
       ];
       expect(containsLocalizedFields({ fields })).toEqual(false);
     });
-
     it('includes localized fields from an array with a localization setting on the array field', () => {
       const fields: Field[] = [
         {
@@ -510,7 +497,6 @@ describe('fn: containsLocalizedFields: false tests', () => {
       ];
       expect(containsLocalizedFields({ fields })).toEqual(false);
     });
-
     it('includes localized fields from an array inside a collapsible field where the top-level field group only contains collapsible fields', () => {
       const fields: Field[] = [
         {
@@ -541,7 +527,6 @@ describe('fn: containsLocalizedFields: false tests', () => {
       ];
       expect(containsLocalizedFields({ fields })).toEqual(false);
     });
-
     /**
      * * help ensure no errors during version 0 development
      * * mitigate against errors if a new field type is introduced by Payload CMS
@@ -586,7 +571,6 @@ describe('fn: containsLocalizedFields: false tests', () => {
       ];
       expect(containsLocalizedFields({ fields })).toEqual(false);
     });
-
     it('includes localized fields from a group field', () => {
       const fields: Field[] = [
         {
@@ -621,7 +605,6 @@ describe('fn: containsLocalizedFields: false tests', () => {
       ];
       expect(containsLocalizedFields({ fields })).toEqual(false);
     });
-
     it('includes localized fields from a group field with a localization setting on the group field', () => {
       const fields: Field[] = [
         {
@@ -656,7 +639,6 @@ describe('fn: containsLocalizedFields: false tests', () => {
       expect(containsLocalizedFields({ fields })).toEqual(false);
     });
   });
-
   describe('extract rich text localized fields', () => {
     const fields: Field[] = [
       {
@@ -710,7 +692,6 @@ describe('fn: containsLocalizedFields: false tests', () => {
     ];
     expect(containsLocalizedFields({ fields })).toEqual(false);
   });
-
   it('returns nested json fields in a group inside an array', () => {
     const linkField: Field = {
       name: 'link',

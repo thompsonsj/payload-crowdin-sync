@@ -1,6 +1,5 @@
 import type { GlobalConfig } from 'payload';
 import { getCollapsibleLocalizedFields } from '.';
-
 describe('fn: getCollapsibleLocalizedFields', () => {
   it('includes only localized fields from a collapsible field', () => {
     const global: GlobalConfig = {

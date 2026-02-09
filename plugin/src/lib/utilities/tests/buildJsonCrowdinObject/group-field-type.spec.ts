@@ -7,7 +7,6 @@ import {
   fieldJsonCrowdinObject,
   fieldDocValue,
 } from '../fixtures/basic-localized-fields.fixture';
-
 describe('fn: buildCrowdinJsonObject: group field type', () => {
   it('creates an empty JSON object if fields are empty', () => {
     const doc = {
@@ -36,7 +35,6 @@ describe('fn: buildCrowdinJsonObject: group field type', () => {
       expected,
     );
   });
-
   it('includes localized fields nested in a group', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -67,7 +65,6 @@ describe('fn: buildCrowdinJsonObject: group field type', () => {
       expected,
     );
   });
-
   it('includes localized fields nested in a group with a localization setting on the group field', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -99,7 +96,6 @@ describe('fn: buildCrowdinJsonObject: group field type', () => {
       expected,
     );
   });
-
   it('includes localized fields and meta @payloadcms/plugin-seo ', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -153,7 +149,6 @@ describe('fn: buildCrowdinJsonObject: group field type', () => {
       expected,
     );
   });
-
   it('includes localized fields nested in groups nested in a group', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -201,7 +196,6 @@ describe('fn: buildCrowdinJsonObject: group field type', () => {
       expected,
     );
   });
-
   it('includes localized fields nested in groups nested in a group nested in a collapsible field', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -255,7 +249,6 @@ describe('fn: buildCrowdinJsonObject: group field type', () => {
       expected,
     );
   });
-
   it('includes localized fields nested in groups nested in a group nested in a collapsible field with top-level localization settings', () => {
     const doc = {
       id: '638641358b1a140462752076',

@@ -1,5 +1,4 @@
 import { extractYoutubeId } from './youtube'
-
 describe('fn: extractYoutubeId', () => {
   // @see
   const fixtures = [
@@ -102,7 +101,6 @@ describe('fn: extractYoutubeId', () => {
       output: 'dQw4w9WgXcQ',
     },
   ]
-
   it.each(fixtures)('extracts a video ID from a YouTube URL', ({ input, output }) => {
     expect(extractYoutubeId(input)).toEqual(output)
   })

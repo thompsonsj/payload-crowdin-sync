@@ -5,12 +5,9 @@ import { initPayloadInt } from '../helpers/initPayloadInt'
 import type { Payload } from 'payload'
 import NestedFieldCollection from '../../collections/NestedFieldCollection'
 import { block } from 'sharp'
-
 let payload: Payload
-
 const pluginOptions = pluginConfig()
 const mockClient = mockCrowdinClient(pluginOptions)
-
 describe('Nested Fields Collection: blocks field', () => {
   beforeAll(async () => {
     const initialized = await initPayloadInt()
@@ -18,7 +15,6 @@ describe('Nested Fields Collection: blocks field', () => {
       payload: Payload
     })
   })
-
   afterEach((done) => {
     if (!nock.isDone()) {
       throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
@@ -26,13 +22,11 @@ describe('Nested Fields Collection: blocks field', () => {
     nock.cleanAll()
     done()
   })
-
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
       await payload.db.destroy()
     }
   })
-
   it('builds a Crowdin HTML object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -46,7 +40,6 @@ describe('Nested Fields Collection: blocks field', () => {
       .times(2)
       // .times(4)
       .reply(200, mockClient.createFile({}))
-
     const doc = await payload.create({
       collection: 'nested-field-collection',
       data: {
@@ -131,7 +124,6 @@ describe('Nested Fields Collection: blocks field', () => {
       ],
     })
   })
-
   it('builds a Crowdin JSON object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -143,7 +135,6 @@ describe('Nested Fields Collection: blocks field', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(2)
       .reply(200, mockClient.createFile({}))
-
     const doc = await payload.create({
       collection: 'nested-field-collection',
       data: {
@@ -205,7 +196,6 @@ describe('Nested Fields Collection: blocks field', () => {
       },
     })
   })
-
   it('builds a Crowdin JSON object as expected: excluding blockName', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -217,7 +207,6 @@ describe('Nested Fields Collection: blocks field', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(2)
       .reply(200, mockClient.createFile({}))
-
     const doc = await payload.create({
       collection: 'nested-field-collection',
       data: {
@@ -281,7 +270,6 @@ describe('Nested Fields Collection: blocks field', () => {
       },
     })
   })
-
   it('builds a Crowdin JSON object as expected: excluding blockName: top level localized', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -293,7 +281,6 @@ describe('Nested Fields Collection: blocks field', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(2)
       .reply(200, mockClient.createFile({}))
-
     const doc = await payload.create({
       collection: 'nested-field-collection',
       data: {
@@ -357,7 +344,6 @@ describe('Nested Fields Collection: blocks field', () => {
       },
     })
   })
-
   it('builds a Payload update object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -369,7 +355,6 @@ describe('Nested Fields Collection: blocks field', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(2)
       .reply(200, mockClient.createFile({}))
-
     const doc = await payload.create({
       collection: 'nested-field-collection',
       data: {

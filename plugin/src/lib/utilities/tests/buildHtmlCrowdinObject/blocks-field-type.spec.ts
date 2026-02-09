@@ -5,7 +5,6 @@ import {
   fieldHtmlCrowdinObject,
   fieldDocValue,
 } from '../fixtures/blocks-field-type.fixture';
-
 describe('fn: buildCrowdinHtmlObject: blocks field type', () => {
   it('includes localized fields', () => {
     const doc = {
@@ -34,7 +33,6 @@ describe('fn: buildCrowdinHtmlObject: blocks field type', () => {
     const expected = fieldHtmlCrowdinObject();
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
-
   it('includes localized fields within a collapsible field', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -66,7 +64,6 @@ describe('fn: buildCrowdinHtmlObject: blocks field type', () => {
     const expected = fieldHtmlCrowdinObject();
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
-
   it('includes localized fields within an array field', () => {
     const doc = {
       id: '638641358b1a140462752076',
