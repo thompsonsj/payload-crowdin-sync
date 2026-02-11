@@ -1,5 +1,23 @@
 import { Policy } from '../../payload-types'
 
+/** Placeholder used in snapshots; replace with actual media.id when creating documents. */
+export const FIXTURE_IMAGE_ID = '65d67e6a7fb7e9426b3f9f5f'
+
+function withImageId<T>(obj: T, mediaId: string): T {
+  if (obj === null || typeof obj !== 'object') return obj
+  if (Array.isArray(obj)) return obj.map((item) => withImageId(item, mediaId)) as T
+  const out = { ...obj } as T
+  for (const key of Object.keys(out as object)) {
+    const val = (out as Record<string, unknown>)[key]
+    if (key === 'image' && typeof val === 'string' && val === FIXTURE_IMAGE_ID) {
+      ;(out as Record<string, unknown>)[key] = mediaId
+    } else {
+      ;(out as Record<string, unknown>)[key] = withImageId(val, mediaId)
+    }
+  }
+  return out
+}
+
 export const fixture = {
   root: {
     type: 'root',
@@ -399,3 +417,6 @@ export const fixture2 = {
     direction: 'ltr',
   },
 } as Policy['content']
+
+export const getFixture = (mediaId: string) => withImageId(fixture, mediaId)
+export const getFixture2 = (mediaId: string) => withImageId(fixture2, mediaId)
