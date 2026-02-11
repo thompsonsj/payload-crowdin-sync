@@ -60,6 +60,14 @@ Run all tests.
 npm run test
 ```
 
+**Import maps:** Test runs clear the Payload admin import map in each test app (`dev` and `dev-alternative-config`). After running tests, regenerate them so the apps and future test runs work correctly:
+
+```bash
+npm run generate:importmaps
+```
+
+Or per app: `nx run dev:generate:importmap`, `nx run dev-alternative-config:generate:importmap`. CI will fail if import maps are committed without being regenerated.
+
 ### Release
 
 Build the plugin, change to the plugin directory and run `npm publish`.

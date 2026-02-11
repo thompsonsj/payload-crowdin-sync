@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "release": "nx build plugin && cd dist/plugin && npm publish",
-    "test": "nx run-many --all --target=test --runInBand"
+    "test": "nx run-many --all --target=test --runInBand",
+    "generate:importmaps": "cd dev && npm run generate:importmap && cd ../dev-alternative-config && npm run generate:importmap"
   },
   "private": true,
   "dependencies": {
