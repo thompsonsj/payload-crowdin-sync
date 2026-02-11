@@ -89,6 +89,7 @@ export function nockLexical(): NockLexicalBuilder {
       if (existing) {
         existing.downloadResponse = responseBody
       } else {
+        // Automatically set up the build response when setting download response
         translationMocks.push({
           fileId,
           targetLanguageId,
