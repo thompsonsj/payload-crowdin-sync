@@ -3,6 +3,16 @@
 
 # General Guidelines for working with Nx
 
+## Payload test apps: import maps
+
+The Payload test apps (`dev`, `dev-alternative-config`) use generated admin import maps. Test runs clear these maps and do not regenerate them. After running tests (or before committing), regenerate both with:
+
+```bash
+npm run generate:importmaps
+```
+
+Per-app: `nx run dev:generate:importmap`, `nx run dev-alternative-config:generate:importmap`. CI checks that import map files are up to date and fails with a reminder to run this if they are stale.
+
 - When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
 - You have access to the Nx MCP server and its tools, use them to help the user
 - When answering questions about the repository, use the `nx_workspace` tool first to gain an understanding of the workspace architecture where applicable.

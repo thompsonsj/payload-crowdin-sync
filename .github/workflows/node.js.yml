@@ -24,4 +24,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - run: npm install
+      - name: Verify Payload import maps are up to date
+        run: |
+          npm run generate:importmaps
+          git diff --exit-code "dev/src/app/(payload)/admin/importMap.js" "dev-alternative-config/src/app/(payload)/admin/importMap.js" || (echo "::error::Payload import maps are stale. Run 'npm run generate:importmaps' and commit the updated files." && exit 1)
       - run: npm run test
