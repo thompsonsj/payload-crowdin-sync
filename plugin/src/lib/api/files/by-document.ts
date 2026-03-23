@@ -299,6 +299,34 @@ export class filesApiByDocument {
   }
 
   /**
+   * Find an existing directory on Crowdin by listing directories
+   */
+  async crowdinFindDirectoryByName(
+    name: string,
+    parentDirectoryId: number,
+  ): Promise<ResponseObject<SourceFilesModel.Directory> | undefined> {
+    try {
+      // List all directories in the parent directory
+      const response = await this.sourceFilesApi.listProjectDirectories(
+        this.projectId,
+        {
+          directoryId: parentDirectoryId,
+        },
+      );
+
+      // Find the directory with matching name
+      const directory = response.data.find((d) => d.data.name === name);
+      return directory;
+    } catch (error) {
+      console.error(
+        `Error finding directory "${name}" in parent directory ${parentDirectoryId}:`,
+        error,
+      );
+      return undefined;
+    }
+  }
+
+  /**
    * Create a directory on Crowdin
    */
   async crowdinFindOrCreateDirectory({
@@ -313,7 +341,7 @@ export class filesApiByDocument {
     useAsTitle?: string;
   }) {
     try {
-      // Check if directory already exists
+      // Check if directory already exists in Payload database
       const existingDirectory =
         parent &&
         (await this.crowdinFindFieldDirectory({
@@ -321,31 +349,95 @@ export class filesApiByDocument {
           name,
         }));
       if (existingDirectory) {
-        // Directory already exists
+        // Directory already exists in Payload
         return existingDirectory;
       }
 
-      const crowdinDirectory = await this.sourceFilesApi.createDirectory(
-        this.projectId,
-        {
-          directoryId: (parent
-            ? parent.originalId
-            : crowdinPayloadCollectionDirectory?.['originalId']) as number,
+      const parentDirectoryId = (parent
+        ? parent.originalId
+        : crowdinPayloadCollectionDirectory?.['originalId']) as number;
+
+      const title = this.global
+        ? toWords(this.collectionSlug)
+        : (useAsTitle && this.document[useAsTitle]) ||
+          this.document.title ||
+          this.document.name;
+
+      try {
+        const crowdinDirectory = await this.sourceFilesApi.createDirectory(
+          this.projectId,
+          {
+            directoryId: parentDirectoryId,
+            name,
+            title, // no tests for this Crowdin metadata, but makes it easier for translators
+          },
+        );
+        const result = await this.payloadStoreCrowdinDirectory({
+          crowdinDirectory,
+          crowdinPayloadCollectionDirectory,
           name,
-          title: this.global
-            ? toWords(this.collectionSlug)
-            : (useAsTitle && this.document[useAsTitle]) ||
-              this.document.title ||
-              this.document.name, // no tests for this Crowdin metadata, but makes it easier for translators
-        },
-      );
-      const result = await this.payloadStoreCrowdinDirectory({
-        crowdinDirectory,
-        crowdinPayloadCollectionDirectory,
-        name,
-        parent,
-      });
-      return result as CrowdinArticleDirectory;
+          parent,
+        });
+        return result as CrowdinArticleDirectory;
+      } catch (createError: any) {
+        // Check if this is a "name must be unique" error
+        const isNameConflictError =
+          createError?.error?.errors?.some(
+            (e: any) =>
+              e?.error?.key === 'directory.name.is_already_exists' ||
+              e?.error?.key === 'directory.name' ||
+              String(createError).includes('Name must be unique'),
+          ) || String(createError).includes('Name must be unique');
+
+        if (isNameConflictError) {
+          console.log(
+            `Directory "${name}" already exists on Crowdin in parent directory ${parentDirectoryId}. Attempting to find and sync existing directory...`,
+          );
+
+          // Try to find the existing directory on Crowdin
+          const existingCrowdinDirectory =
+            await this.crowdinFindDirectoryByName(name, parentDirectoryId);
+
+          if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+            console.log('existingCrowdinDirectory', existingCrowdinDirectory);
+          }
+
+          if (existingCrowdinDirectory) {
+            console.log(
+              `Found existing directory on Crowdin. Directory ID: ${existingCrowdinDirectory.data.id}`,
+            );
+
+            // Check if it already exists in Payload (might have been created by another process)
+            if (parent) {
+              const existingInPayload = await this.crowdinFindFieldDirectory({
+                parent: parent,
+                name,
+              });
+
+              if (existingInPayload) {
+                return existingInPayload;
+              }
+            }
+
+            // Store the existing directory in Payload database
+            const result = await this.payloadStoreCrowdinDirectory({
+              crowdinDirectory: existingCrowdinDirectory,
+              crowdinPayloadCollectionDirectory,
+              name,
+              parent,
+            });
+            return result as CrowdinArticleDirectory;
+          } else {
+            console.error(
+              `Could not find existing directory "${name}" on Crowdin despite name conflict error.`,
+            );
+            throw createError;
+          }
+        } else {
+          // Different error, re-throw
+          throw createError;
+        }
+      }
     } catch (error) {
       console.error(error);
     }
