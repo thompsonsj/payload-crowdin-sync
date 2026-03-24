@@ -1,7 +1,6 @@
 import type { Field } from 'payload';
 import { buildCrowdinJsonObject, getLocalizedFields } from '../..';
 import { emptyFieldDocValue } from '../fixtures/basic-localized-fields.fixture';
-
 describe('fn: buildCrowdinJsonObject: group field type', () => {
   it('creates an empty JSON object if fields are empty', () => {
     const doc = {

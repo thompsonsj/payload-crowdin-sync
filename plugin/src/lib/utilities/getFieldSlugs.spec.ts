@@ -1,6 +1,5 @@
 import type { CollectionConfig, GlobalConfig } from 'payload';
 import { getLocalizedFields, getFieldSlugs } from '.';
-
 describe('Function: getFieldSlugs', () => {
   it('detects top-level richText fields', () => {
     const Policies: CollectionConfig = {
@@ -43,7 +42,6 @@ describe('Function: getFieldSlugs', () => {
     });
     expect(getFieldSlugs(htmlFields)).toEqual(['content']);
   });
-
   it('returns an empty array if no rich text fields', () => {
     const Statistics: GlobalConfig = {
       slug: 'statistics',

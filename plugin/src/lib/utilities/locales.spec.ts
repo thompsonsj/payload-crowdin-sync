@@ -1,5 +1,4 @@
 import { getOtherLocales } from './locales';
-
 const localeMap = {
   da_DK: {
     crowdinId: 'da',
@@ -11,7 +10,6 @@ const localeMap = {
     crowdinId: 'fr',
   },
 };
-
 describe('fn: getOtherLocales', () => {
   const fixtures = [
     ['da_DK', ['de_DE', 'fr_FR']],

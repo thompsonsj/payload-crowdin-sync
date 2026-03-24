@@ -2,26 +2,20 @@ import { payloadCrowdinSyncTranslationsApi } from 'payload-crowdin-sync'
 import nock from 'nock'
 import { mockCrowdinClient } from 'payload-crowdin-sync'
 import { pluginConfig } from '../../helpers/plugin-config'
-
 import { fixture } from './__fixtures__/lexical-table.fixture'
 import { fixture as fixtureDe } from './__fixtures__/lexical-table-expected-de.fixture'
 import { fixture as fixtureFr } from './__fixtures__/lexical-table-expected-fr.fixture'
-
 import { initPayloadInt } from '../../helpers/initPayloadInt'
 import type { Payload } from 'payload'
-
 let payload: Payload
-
 /**
  * Test translations
  *
  * Ensure translations are retrieved, compared, and
  * stored as expected.
  */
-
 const pluginOptions = pluginConfig()
 const mockClient = mockCrowdinClient(pluginOptions)
-
 /**
  * payload.config.custom-serializers.ts required for htmlToSlate.
  *
@@ -34,7 +28,6 @@ describe('Translations', () => {
       payload: Payload
     })
   })
-
   afterEach((done) => {
     if (!nock.isDone()) {
       throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
@@ -42,17 +35,14 @@ describe('Translations', () => {
     nock.cleanAll()
     done()
   })
-
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
       await payload.db.destroy()
     }
   })
-
   describe('fn: updateTranslation - custom serializer', () => {
     it('updates a Payload article with a `richText` field translation retrieved from Crowdin restoring table structure', async () => {
       const fileId = 4674
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .twice()
@@ -118,14 +108,12 @@ describe('Translations', () => {
         id: post.id,
         locale: 'de_DE',
       })
-
       expect(result['content']).toEqual(fixtureDe)
       const frResult = await payload.findByID({
         collection: 'policies',
         id: post.id,
         locale: 'fr_FR',
       })
-
       expect(frResult['content']).toEqual(fixtureFr)
     })
   })

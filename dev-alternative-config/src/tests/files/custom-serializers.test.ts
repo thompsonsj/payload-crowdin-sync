@@ -3,22 +3,17 @@ import { CrowdinFile } from '../../payload-types'
 import nock from 'nock'
 import { mockCrowdinClient } from 'payload-crowdin-sync'
 import { pluginConfig } from '../helpers/plugin-config'
-
 import { initPayloadInt } from '../helpers/initPayloadInt'
 import type { Payload } from 'payload'
-
 let payload: Payload
-
 /**
  * Test translations
  *
  * Ensure translations are retrieved, compared, and
  * stored as expected.
  */
-
 const pluginOptions = pluginConfig()
 const mockClient = mockCrowdinClient(pluginOptions)
-
 describe('Files - custom serializer', () => {
   beforeAll(async () => {
     const initialized = await initPayloadInt()
@@ -26,7 +21,6 @@ describe('Files - custom serializer', () => {
       payload: Payload
     })
   })
-
   afterEach((done) => {
     if (!nock.isDone()) {
       throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
@@ -34,17 +28,14 @@ describe('Files - custom serializer', () => {
     nock.cleanAll()
     done()
   })
-
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
       await payload.db.destroy()
     }
   })
-
   describe('fn: updateTranslation', () => {
     it('updates the Crowdin article directory with html for a `richText` field', async () => {
       const fileId = 92
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .twice()
@@ -58,7 +49,6 @@ describe('Files - custom serializer', () => {
             fileId,
           }),
         )
-
       const post = await payload.create({
         collection: 'localized-posts',
         data: {

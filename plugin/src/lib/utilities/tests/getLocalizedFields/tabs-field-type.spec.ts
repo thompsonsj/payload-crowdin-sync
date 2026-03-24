@@ -1,7 +1,6 @@
 import type { Field } from 'payload';
 import { getLocalizedFields } from '../..';
 import { basicLocalizedFields } from '../fixtures/basic-localized-fields.fixture';
-
 describe('presentation only tab fields', () => {
   it('returns an empty array if no localized fields in tabs', () => {
     // fixture from https://payloadcms.com/docs/fields/tabs
@@ -38,10 +37,8 @@ describe('presentation only tab fields', () => {
         ],
       },
     ];
-
     expect(getLocalizedFields({ fields })).toEqual([]);
   });
-
   it('returns localized fields in tabs', () => {
     // fixture from https://payloadcms.com/docs/fields/tabs
     const fields: Field[] = [
@@ -79,7 +76,6 @@ describe('presentation only tab fields', () => {
         ],
       },
     ];
-
     expect(getLocalizedFields({ fields })).toEqual([
       {
         localized: true,
@@ -89,7 +85,6 @@ describe('presentation only tab fields', () => {
       },
     ]);
   });
-
   it('returns localized fields in tabs within an array', () => {
     // fixture from https://payloadcms.com/docs/fields/tabs
     const fields: Field[] = [
@@ -111,7 +106,6 @@ describe('presentation only tab fields', () => {
         ],
       },
     ];
-
     expect(getLocalizedFields({ fields })).toEqual([
       {
         name: 'items',
@@ -131,7 +125,6 @@ describe('presentation only tab fields', () => {
       },
     ]);
   });
-
   it('returns localized fields in tab respecting tab names', () => {
     // fixture from https://payloadcms.com/docs/fields/tabs
     const fields: Field[] = [
@@ -153,7 +146,6 @@ describe('presentation only tab fields', () => {
         ],
       },
     ];
-
     expect(getLocalizedFields({ fields })).toEqual([
       {
         fields: [
@@ -183,7 +175,6 @@ describe('presentation only tab fields', () => {
       },
     ]);
   });
-
   it('returns localized fields in tab respecting tab names with other fields', () => {
     // fixture from https://payloadcms.com/docs/fields/tabs
     const fields: Field[] = [
@@ -215,7 +206,6 @@ describe('presentation only tab fields', () => {
         ],
       },
     ];
-
     expect(getLocalizedFields({ fields })).toEqual([
       {
         name: 'textFieldExtra',

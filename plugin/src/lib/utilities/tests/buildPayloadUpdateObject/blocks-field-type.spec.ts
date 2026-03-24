@@ -1,7 +1,6 @@
 import type { Block, Field } from 'payload';
 import { buildPayloadUpdateObject, getLocalizedFields } from '../..';
 import { FieldWithName } from '../../../types';
-
 const TestBlockOne: Block = {
   slug: 'testBlockOne',
   fields: [
@@ -23,7 +22,6 @@ const TestBlockOne: Block = {
     },
   ],
 };
-
 const TestBlockTwo: Block = {
   slug: 'testBlockTwo',
   fields: [
@@ -34,7 +32,6 @@ const TestBlockTwo: Block = {
     },
   ],
 };
-
 const TestBlockTwoNonLocalized: Block = {
   slug: 'testBlockTwo',
   fields: [
@@ -44,7 +41,6 @@ const TestBlockTwoNonLocalized: Block = {
     },
   ],
 };
-
 describe('fn: buildPayloadUpdateObject: blocks field type', () => {
   it('includes localized fields nested in blocks', () => {
     const crowdinJsonObject = {
@@ -103,7 +99,6 @@ describe('fn: buildPayloadUpdateObject: blocks field type', () => {
       buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields }),
     ).toEqual(expected);
   });
-
   it('excludes block with no localized fields', () => {
     const crowdinJsonObject = {
       title: 'Test Policy created with title',
@@ -151,7 +146,6 @@ describe('fn: buildPayloadUpdateObject: blocks field type', () => {
       buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields }),
     ).toEqual(expected);
   });
-
   it('excludes block with no localized fields - more blocks', () => {
     const crowdinJsonObject = {
       title: 'Test Policy created with title',
@@ -211,7 +205,6 @@ describe('fn: buildPayloadUpdateObject: blocks field type', () => {
       buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields }),
     ).toEqual(expected);
   });
-
   it('does not include localized fields richText fields nested in an array field within a block in the `fields.json` file', () => {
     const TestBlockArrayOfRichText: Block = {
       slug: 'testBlockArrayOfRichText',
@@ -229,7 +222,6 @@ describe('fn: buildPayloadUpdateObject: blocks field type', () => {
         },
       ],
     };
-
     const crowdinJsonObject = {
       title: 'Test Policy created with title',
     };
@@ -260,7 +252,6 @@ describe('fn: buildPayloadUpdateObject: blocks field type', () => {
       buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields }),
     ).toEqual(expected);
   });
-
   it('does not include localized fields richText fields nested in an array field within a block in the `fields.json` file 2', () => {
     const TestBlockArrayOfRichText: Block = {
       slug: 'testBlockArrayOfRichText',
@@ -289,7 +280,6 @@ describe('fn: buildPayloadUpdateObject: blocks field type', () => {
         },
       ],
     };
-
     const crowdinJsonObject = {
       title: 'Test Policy created with title',
       blocksField: {

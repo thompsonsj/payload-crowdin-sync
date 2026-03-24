@@ -1,6 +1,5 @@
 import type { CollectionConfig, Field } from 'payload';
 import { buildCrowdinJsonObject, getLocalizedFields } from '../..';
-
 describe('fn: buildCrowdinJsonObject: group nested in array', () => {
   const doc = {
     id: '6474a81bef389b66642035ff',
@@ -97,7 +96,6 @@ describe('fn: buildCrowdinJsonObject: group nested in array', () => {
       },
     ],
   };
-
   const expected: any = {
     ctas: {
       '6474a80221baea4f5f169757': {
@@ -111,11 +109,9 @@ describe('fn: buildCrowdinJsonObject: group nested in array', () => {
         },
       },
     },
-
     text: 'Get in touch with us or try it out yourself',
     title: 'Experience the magic of our product!',
   };
-
   it('includes group json fields nested inside of array field items', () => {
     expect(
       buildCrowdinJsonObject({
@@ -124,7 +120,6 @@ describe('fn: buildCrowdinJsonObject: group nested in array', () => {
       }),
     ).toEqual(expected);
   });
-
   it('includes group json fields nested inside of array field items even when getLocalizedFields is run twice', () => {
     expect(
       buildCrowdinJsonObject({
@@ -136,7 +131,6 @@ describe('fn: buildCrowdinJsonObject: group nested in array', () => {
       }),
     ).toEqual(expected);
   });
-
   /**
    * afterChange builds a JSON object for the previous version of
    * a document to compare with the current version. Ensure this
@@ -151,7 +145,6 @@ describe('fn: buildCrowdinJsonObject: group nested in array', () => {
       }),
     ).toEqual({});
   });
-
   it('can work with an empty array field', () => {
     expect(
       buildCrowdinJsonObject({
@@ -166,7 +159,6 @@ describe('fn: buildCrowdinJsonObject: group nested in array', () => {
       title: 'Experience the magic of our product!',
     });
   });
-
   it('can work with an empty group field in an array', () => {
     expect(
       buildCrowdinJsonObject({

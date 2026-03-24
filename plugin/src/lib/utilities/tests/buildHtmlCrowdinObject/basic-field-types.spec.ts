@@ -1,7 +1,6 @@
 import { slateEditor } from '@payloadcms/richtext-slate';
 import type { Field } from 'payload';
 import { buildCrowdinHtmlObject } from '../..';
-
 describe('fn: buildCrowdinHtmlObject', () => {
   it('does not include undefined localized fields', () => {
     const doc = {
@@ -60,7 +59,6 @@ describe('fn: buildCrowdinHtmlObject', () => {
     };
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
-
   it('includes localized fields', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -138,7 +136,6 @@ describe('fn: buildCrowdinHtmlObject', () => {
     };
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
-
   it('includes localized fields nested in a group', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -251,7 +248,6 @@ describe('fn: buildCrowdinHtmlObject', () => {
     };
     expect(buildCrowdinHtmlObject({ doc, fields })).toEqual(expected);
   });
-
   it('includes localized fields nested in a group with a localization setting on the group field', () => {
     const doc = {
       id: '638641358b1a140462752076',

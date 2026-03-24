@@ -1,6 +1,5 @@
 import { buildCrowdinJsonObject, getLocalizedFields } from '../..';
 import { FieldWithName } from '../../../types';
-
 describe('fn: buildCrowdinJsonObject: array field type', () => {
   it('do not include non-localized fields nested in an array', () => {
     const doc = {
@@ -66,7 +65,6 @@ describe('fn: buildCrowdinJsonObject: array field type', () => {
       expected,
     );
   });
-
   it('includes localized fields nested in an array', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -143,7 +141,6 @@ describe('fn: buildCrowdinJsonObject: array field type', () => {
       expected,
     );
   });
-
   it('includes localized fields nested in an array with a localization setting on the array field', () => {
     const doc = {
       id: '638641358b1a140462752076',
@@ -218,7 +215,6 @@ describe('fn: buildCrowdinJsonObject: array field type', () => {
       expected,
     );
   });
-
   it('does not include localized fields richText fields nested in an array field in the `fields.json` file', () => {
     const doc = {
       id: '638641358b1a140462752076',

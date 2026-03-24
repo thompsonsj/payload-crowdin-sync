@@ -14,12 +14,9 @@ import { pluginConfig } from '../helpers/plugin-config'
 import { CrowdinArticleDirectory, Policy } from '../../payload-types'
 import { initPayloadInt } from '../helpers/initPayloadInt'
 import type { Payload } from 'payload'
-
 let payload: Payload
-
 const pluginOptions = pluginConfig()
 const mockClient = mockCrowdinClient(pluginOptions)
-
 describe('Lexical editor with multiple blocks', () => {
   beforeAll(async () => {
     const initialized = await initPayloadInt()
@@ -27,7 +24,6 @@ describe('Lexical editor with multiple blocks', () => {
       payload: Payload
     })
   })
-
   afterEach((done) => {
     if (!nock.isDone()) {
       throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
@@ -35,13 +31,11 @@ describe('Lexical editor with multiple blocks', () => {
     nock.cleanAll()
     done()
   })
-
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
       await payload.db.destroy()
     }
   })
-
   it('extracts blocks into a format expected for a "blocks" field', async () => {
     expect(fixture && extractLexicalBlockContent(fixture.root)).toMatchInlineSnapshot(`
       [
@@ -123,7 +117,6 @@ describe('Lexical editor with multiple blocks', () => {
       ]
     `)
   })
-
   it('builds a Crowdin HTML object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -135,7 +128,6 @@ describe('Lexical editor with multiple blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(4)
       .reply(200, mockClient.createFile({}))
-
     const policy = await payload.create({
       collection: 'policies',
       data: {
@@ -143,7 +135,6 @@ describe('Lexical editor with multiple blocks', () => {
         content: fixture,
       },
     })
-
     expect(
       utilities.buildCrowdinHtmlObject({
         doc: policy,
@@ -362,7 +353,6 @@ describe('Lexical editor with multiple blocks', () => {
       }
     `)
   })
-
   it('builds a Crowdin JSON object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -374,7 +364,6 @@ describe('Lexical editor with multiple blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(4)
       .reply(200, mockClient.createFile({}))
-
     const policy = await payload.create({
       collection: 'policies',
       data: {
@@ -393,7 +382,6 @@ describe('Lexical editor with multiple blocks', () => {
       }
     `)
   })
-
   it('builds a Payload update object as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -405,7 +393,6 @@ describe('Lexical editor with multiple blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(4)
       .reply(200, mockClient.createFile({}))
-
     const policy = await payload.create({
       collection: 'policies',
       data: {
@@ -642,7 +629,6 @@ describe('Lexical editor with multiple blocks', () => {
       }
     `)
   })
-
   it('associates a parent Crowdin article directory with a lexical blocks Crowdin article directory', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -654,7 +640,6 @@ describe('Lexical editor with multiple blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(4)
       .reply(200, mockClient.createFile({}))
-
     const create = await payload.create({
       collection: 'policies',
       data: {
@@ -681,7 +666,6 @@ describe('Lexical editor with multiple blocks', () => {
     // Important: ensure an article directory was not queried/returned without a parent
     expect(lexicalBlocksArticleDirectory?.parent).toBeDefined()
   })
-
   it('creates HTML files for Crowdin as expected', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -693,7 +677,6 @@ describe('Lexical editor with multiple blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(4)
       .reply(200, mockClient.createFile({}))
-
     const policy = await payload.create({
       collection: 'policies',
       data: {
@@ -742,7 +725,6 @@ describe('Lexical editor with multiple blocks', () => {
       `"<p>The plugin parses your block configuration for the Lexical rich text editor. It extracts all block values from the rich text field and then treats this config/data combination as a regular \`blocks\` field.</p><p>Markers are placed in the html and this content is restored into the correct place on translation.</p>"`,
     )
   })
-
   it('creates HTML files for Crowdin as expected for lexical content within an array field that is embedded in a group', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -754,7 +736,6 @@ describe('Lexical editor with multiple blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(7)
       .reply(200, mockClient.createFile({}))
-
     const policy: Policy = (await payload.create({
       collection: 'policies',
       data: {
@@ -772,25 +753,20 @@ describe('Lexical editor with multiple blocks', () => {
         },
       },
     })) as any
-
     const arrayField = isDefined(policy['group']?.['array']) ? policy['group']?.['array'] : []
     const ids = arrayField.map((item) => item.id) || ([] as string[])
-
     const crowdinFiles = await getFilesByDocumentID({ documentId: `${policy.id}`, payload })
     // top-level Crowdin files
     expect(crowdinFiles.length).toEqual(3)
-
     const htmlFileOne = crowdinFiles.find(
       (file) => file.name === `group.array.${ids[0]}.content.html`,
     )
     const htmlFileTwo = crowdinFiles.find(
       (file) => file.name === `group.array.${ids[1]}.content.html`,
     )
-
     expect(htmlFileOne).toBeDefined()
     expect(htmlFileTwo).toBeDefined()
     expect(crowdinFiles.find((file) => file.name === 'fields.json')).toBeDefined()
-
     const fileOneCrowdinFiles = await getFilesByDocumentID({
       documentId: `${pluginOptions.lexicalBlockFolderPrefix}group.array.${ids[0]}.content`,
       payload,
@@ -803,7 +779,6 @@ describe('Lexical editor with multiple blocks', () => {
     })
     expect(fileOneCrowdinFiles.length).toEqual(2)
     expect(fileTwoCrowdinFiles.length).toEqual(2)
-
     expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(`
       "<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li
                 class=""
@@ -819,7 +794,6 @@ describe('Lexical editor with multiple blocks', () => {
                 value="1"
               ></li></ul>"
     `)
-
     expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(`
       "<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li
                 class=""
@@ -836,7 +810,6 @@ describe('Lexical editor with multiple blocks', () => {
               ></li></ul>"
     `)
   })
-
   it('updates a Payload article with a rich text field that uses the Lexical editor with multiple blocks with a translation received from Crowdin', async () => {
     nock('https://api.crowdin.com')
       .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -884,9 +857,7 @@ describe('Lexical editor with multiple blocks', () => {
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
-          url: `https://api.crowdin.com/api/v2/projects/${
-            pluginOptions.projectId
-          }/translations/builds/${56641}/download?targetLanguageId=de`,
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56641}/download?targetLanguageId=de`,
         }),
       )
       .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56641}/download`)
@@ -901,9 +872,7 @@ describe('Lexical editor with multiple blocks', () => {
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
-          url: `https://api.crowdin.com/api/v2/projects/${
-            pluginOptions.projectId
-          }/translations/builds/${56644}/download?targetLanguageId=de`,
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56644}/download?targetLanguageId=de`,
         }),
       )
       .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56644}/download`)
@@ -918,9 +887,7 @@ describe('Lexical editor with multiple blocks', () => {
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
-          url: `https://api.crowdin.com/api/v2/projects/${
-            pluginOptions.projectId
-          }/translations/builds/${56642}/download?targetLanguageId=de`,
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56642}/download?targetLanguageId=de`,
         }),
       )
       .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56642}/download`)
@@ -957,9 +924,7 @@ describe('Lexical editor with multiple blocks', () => {
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
-          url: `https://api.crowdin.com/api/v2/projects/${
-            pluginOptions.projectId
-          }/translations/builds/${56643}/download?targetLanguageId=de`,
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56643}/download?targetLanguageId=de`,
         }),
       )
       .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56643}/download`)
@@ -977,9 +942,7 @@ describe('Lexical editor with multiple blocks', () => {
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
-          url: `https://api.crowdin.com/api/v2/projects/${
-            pluginOptions.projectId
-          }/translations/builds/${56641}/download?targetLanguageId=fr`,
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56641}/download?targetLanguageId=fr`,
         }),
       )
       .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56641}/download`)
@@ -994,9 +957,7 @@ describe('Lexical editor with multiple blocks', () => {
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
-          url: `https://api.crowdin.com/api/v2/projects/${
-            pluginOptions.projectId
-          }/translations/builds/${56642}/download?targetLanguageId=fr`,
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56642}/download?targetLanguageId=fr`,
         }),
       )
       .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56642}/download`)
@@ -1029,16 +990,13 @@ describe('Lexical editor with multiple blocks', () => {
         },
       })
       // fr - file 3 get translation
-
       .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${56643}`, {
         targetLanguageId: 'fr',
       })
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
-          url: `https://api.crowdin.com/api/v2/projects/${
-            pluginOptions.projectId
-          }/translations/builds/${56643}/download?targetLanguageId=fr`,
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56643}/download?targetLanguageId=fr`,
         }),
       )
       .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56643}/download`)
@@ -1050,7 +1008,6 @@ describe('Lexical editor with multiple blocks', () => {
         200,
         "<p>Le plugin analyse la configuration de votre bloc pour l'éditeur de texte enrichi lexical. Il extrait toutes les valeurs de bloc du champ de texte enrichi, puis traite cette combinaison configuration/données comme un champ « blocs » normal.</p<p>>Les marqueurs sont placés dans le code HTML et ce contenu est restauré au bon endroit lors de la traduction.</p>",
       )
-
       // fr - file 4 get translation
       .post(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/files/${56644}`, {
         targetLanguageId: 'fr',
@@ -1058,9 +1015,7 @@ describe('Lexical editor with multiple blocks', () => {
       .reply(
         200,
         mockClient.buildProjectFileTranslation({
-          url: `https://api.crowdin.com/api/v2/projects/${
-            pluginOptions.projectId
-          }/translations/builds/${56644}/download?targetLanguageId=fr`,
+          url: `https://api.crowdin.com/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56644}/download?targetLanguageId=fr`,
         }),
       )
       .get(`/api/v2/projects/${pluginOptions.projectId}/translations/builds/${56644}/download`)
@@ -1072,7 +1027,6 @@ describe('Lexical editor with multiple blocks', () => {
         `<p>Exemple de contenu pour un champ de texte enrichi lexical avec plusieurs blocs.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>Une liste à puces entre certains blocs composée de:</p><ul class="bullet"><li value=1>un élément de liste à puces ; et</li><li value=2>
       un autre!</li></ul><span data-block-id=65d67d8191c92e447e7472f8 data-block-type=highlight></span><span data-block-id=65d67e2291c92e447e7472f9 data-block-type=imageText></span><ul class="bullet"><li value=1></li></ul>`,
       )
-
     const policy = await payload.create({
       collection: 'policies',
       data: {
@@ -1086,7 +1040,6 @@ describe('Lexical editor with multiple blocks', () => {
       payload,
       parent: policy['crowdinArticleDirectory'] as CrowdinArticleDirectory,
     })
-
     // check file ids are always mapped in the same way
     const fileIds = crowdinFiles.map((file) => ({
       fileId: file.originalId,

@@ -2,12 +2,9 @@ import { CrowdinArticleDirectory } from '../../payload-types'
 import nock from 'nock'
 import { mockCrowdinClient } from 'payload-crowdin-sync'
 import { pluginConfig } from '../helpers/plugin-config'
-
 import { initPayloadInt } from '../helpers/initPayloadInt'
 import type { Payload } from 'payload'
-
 let payload: Payload
-
 /**
  * Test the collections
  *
@@ -26,10 +23,8 @@ let payload: Payload
  * - collection directory: Crowdin Collection Directory
  * - file: Crowdin File
  */
-
 const pluginOptions = pluginConfig()
 const mockClient = mockCrowdinClient(pluginOptions)
-
 describe('Globals', () => {
   beforeAll(async () => {
     const initialized = await initPayloadInt()
@@ -37,7 +32,6 @@ describe('Globals', () => {
       payload: Payload
     })
   })
-
   afterEach((done) => {
     if (!nock.isDone()) {
       throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
@@ -45,13 +39,11 @@ describe('Globals', () => {
     nock.cleanAll()
     done()
   })
-
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
       await payload.db.destroy()
     }
   })
-
   describe('Non-localized globals', () => {
     it('does not create an article directory', async () => {
       await payload.updateGlobal({
@@ -70,12 +62,10 @@ describe('Globals', () => {
       expect(Object.prototype.hasOwnProperty.call(result, 'crowdinArticleDirectory')).toBeFalsy()
     })
   })
-
   describe('crowdin-article-directories', () => {
     it('creates an article directory', async () => {
       // this test needs revising. fileId needs to be the same for the subsequent tests, and both need a put mock? Check the logic of using nock and what changes take place in hooks for updateGlobal
       const fileId = 69334
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .twice()
@@ -89,7 +79,6 @@ describe('Globals', () => {
             fileId,
           }),
         )
-
       await payload.updateGlobal({
         slug: 'localized-nav',
         data: {
@@ -109,10 +98,8 @@ describe('Globals', () => {
       )?.id
       expect(crowdinArticleDirectoryId).toBeDefined()
     })
-
     it('creates only one article directory', async () => {
       const fileId = 69334
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/storages`)
         .twice()
@@ -125,7 +112,6 @@ describe('Globals', () => {
             fileId,
           }),
         )
-
       await payload.updateGlobal({
         slug: 'localized-nav',
         data: {

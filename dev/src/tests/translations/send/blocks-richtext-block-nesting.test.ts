@@ -2,27 +2,20 @@ import { getFiles, getLexicalFieldArticleDirectories } from 'payload-crowdin-syn
 import nock from 'nock'
 import { mockCrowdinClient } from 'payload-crowdin-sync'
 import { pluginConfig } from '../../helpers/plugin-config'
-
 import { fixture } from './__fixtures__/block-richtext-block-nesting.fixture'
-
 import { initPayloadInt } from '../../helpers/initPayloadInt'
 import type { Payload } from 'payload'
 import { CrowdinArticleDirectory } from '@/payload-types'
-
 let payload: Payload
-
 // const fixtureHtmlFr = '<div class="rich-text"><p>Text in a Lexical field inside a block in the <strong>block</strong> of a <em>Lexical field</em> of a <strong>Lexical field</strong> of a <strong>Lexical field</strong>.</p></div>'
-
 /**
  * Test translations
  *
  * Ensure translations are retrieved, compared, and
  * stored as expected.
  */
-
 const pluginOptions = pluginConfig()
 const mockClient = mockCrowdinClient(pluginOptions)
-
 /**
  * payload.config.custom-serializers.ts required for htmlToSlate.
  *
@@ -35,7 +28,6 @@ describe('Translations', () => {
       payload: Payload
     })
   })
-
   afterEach((done) => {
     if (!nock.isDone()) {
       throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
@@ -43,17 +35,14 @@ describe('Translations', () => {
     nock.cleanAll()
     done()
   })
-
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
       await payload.db.destroy()
     }
   })
-
   describe('fn: updateTranslation - custom serializer', () => {
     it('updates a Payload article with a `richText` field translation retrieved from Crowdin restoring table structure', async () => {
       const fileId = 4674
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .times(4)

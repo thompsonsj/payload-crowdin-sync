@@ -2,13 +2,10 @@ import { CrowdinArticleDirectory } from '../../payload-types'
 import nock from 'nock'
 import { mockCrowdinClient, utilities } from 'payload-crowdin-sync'
 import { pluginConfig } from '../helpers/plugin-config'
-
 import { initPayloadInt } from '../helpers/initPayloadInt'
 import type { Payload } from 'payload'
 import { Home } from './../../globals/Home'
-
 let payload: Payload
-
 /**
  * Test the collections
  *
@@ -27,10 +24,8 @@ let payload: Payload
  * - collection directory: Crowdin Collection Directory
  * - file: Crowdin File
  */
-
 const pluginOptions = pluginConfig()
 const mockClient = mockCrowdinClient(pluginOptions)
-
 describe('global: Home', () => {
   beforeAll(async () => {
     const initialized = await initPayloadInt()
@@ -38,7 +33,6 @@ describe('global: Home', () => {
       payload: Payload
     })
   })
-
   afterEach((done) => {
     if (!nock.isDone()) {
       throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
@@ -46,13 +40,11 @@ describe('global: Home', () => {
     nock.cleanAll()
     done()
   })
-
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
       await payload.db.destroy()
     }
   })
-
   const fixture = {
     parentGroup: {
       preTitle: 'Parent group preTitle',
@@ -69,12 +61,10 @@ describe('global: Home', () => {
       },
     },
   }
-
   describe('crowdin-article-directories', () => {
     it('creates an article directory', async () => {
       // this test needs revising. fileId needs to be the same for the subsequent tests, and both need a put mock? Check the logic of using nock and what changes take place in hooks for updateGlobal
       const fileId = 9332
-
       nock('https://api.crowdin.com')
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .twice()
@@ -88,7 +78,6 @@ describe('global: Home', () => {
             fileId,
           }),
         )
-
       await payload.updateGlobal({
         slug: 'home',
         data: fixture,
@@ -103,14 +92,12 @@ describe('global: Home', () => {
       expect(crowdinArticleDirectoryId).toBeDefined()
     })
   })
-
   describe('utilities', () => {
     it('builds a Crowdin JSON object as expected', async () => {
       const doc = await payload.updateGlobal({
         slug: 'home',
         data: fixture,
       })
-
       expect(
         utilities.buildCrowdinJsonObject({
           doc,

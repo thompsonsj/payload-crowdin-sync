@@ -6,11 +6,8 @@ import {
   getLexicalEditorConfig,
   isLexical,
 } from 'payload-crowdin-sync'
-
 import { isRichTextField } from './../../type-checkers'
-
 const fields: Field[] = Policies.fields
-
 // Need to sanitize config for this to work - this is done in the plugin by retrieving the config from req.payload
 /**
 describe('payload-crowdin-sync: isLexical', () => {
@@ -23,7 +20,6 @@ describe('payload-crowdin-sync: isLexical', () => {
   })
 })
 */
-
 /**
 describe('payload-crowdin-sync: getLexicalBlockFields', () => {
   it('detects a lexical field', () => {
@@ -37,7 +33,6 @@ describe('payload-crowdin-sync: getLexicalBlockFields', () => {
   })
 })
 */
-
 describe('payload-crowdin-sync: getLocalizedFields', () => {
   it('returns policies collection result as expected', () => {
     expect(getLocalizedFields({ fields })).toMatchInlineSnapshot(`
