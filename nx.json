@@ -42,5 +42,6 @@
       "!{projectRoot}/test-setup.[jt]s"
     ],
     "sharedGlobals": []
-  }
+  },
+  "analytics": true
 }
