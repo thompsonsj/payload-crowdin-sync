@@ -160,6 +160,7 @@ export class payloadCrowdinSyncFilesApi {
             `Found existing file on Crowdin. File ID: ${existingFile.data.id}`,
           );
           // Return the existing file so it can be synced to the local database
+          (existingFile as any)._payloadCrowdinSyncWasExisting = true;
           return existingFile;
         } else {
           console.error(

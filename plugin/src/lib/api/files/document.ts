@@ -213,6 +213,9 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       });
       // Store result on Payload CMS
       if (crowdinFile) {
+        const wasExistingFile = Boolean(
+          (crowdinFile as any)._payloadCrowdinSyncWasExisting,
+        );
         // Check if this file already exists in Payload (might have been found on Crowdin)
         const existingPayloadFile = await this.getFile(name);
 
@@ -261,6 +264,22 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
             req: this.req,
           });
           return payloadCrowdinFile;
+        }
+
+        // If we found an existing file on Crowdin (not newly created), update its content.
+        // This happens when the file exists on Crowdin but wasn't in our local database yet.
+        if (wasExistingFile) {
+          if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+            console.log(
+              `Updating content for existing Crowdin file "${name}" (File ID: ${crowdinFile.data.id})`,
+            );
+          }
+          await this.crowdinUpdateFile({
+            fileId: crowdinFile.data.id,
+            name,
+            fileData,
+            fileType,
+          });
         }
 
         const payloadCrowdinFile = await this.req.payload.create({
