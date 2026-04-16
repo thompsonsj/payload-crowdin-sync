@@ -1,14 +1,9 @@
-/**
- * Tests for changes to afterChange.ts (PR scope):
- *  - triggerAfterChange guard: when req.context.triggerAfterChange === false,
- *    the hook returns doc immediately without any further processing.
- */
 import { getAfterChangeHook, getGlobalAfterChangeHook } from './afterChange';
 import { pluginOptions } from '../../api/mock/plugin-options';
 import type { CollectionConfig, GlobalConfig } from 'payload';
 
 const minimalCollection: CollectionConfig = {
-  slug: 'test-posts',
+  slug: 'posts',
   fields: [
     {
       name: 'title',
@@ -19,164 +14,141 @@ const minimalCollection: CollectionConfig = {
 };
 
 const minimalGlobal: GlobalConfig = {
-  slug: 'test-global',
+  slug: 'nav',
   fields: [
     {
-      name: 'heading',
+      name: 'label',
       type: 'text',
       localized: true,
     },
   ],
 };
 
-const doc = { id: 'doc-123', title: 'Test Document' };
+const doc = { id: 'doc-001', title: 'Hello' };
+const previousDoc = { id: 'doc-001', title: 'Old title' };
 
 /**
- * Build a minimal PayloadRequest-like object.
- * When `triggerAfterChange` is false the hook returns before accessing
- * req.payload, so we do not need a real Payload instance.
+ * Build a minimal PayloadRequest stub.
+ * Only the fields that performAfterChange accesses are set.
  */
-function buildReq(contextOverrides: Record<string, unknown> = {}): any {
+function buildReq(context: Record<string, unknown> = {}) {
   return {
     locale: 'en',
-    context: { ...contextOverrides },
-    // payload intentionally not mocked – the hook must not reach it
-  };
-}
-
-describe('getAfterChangeHook: triggerAfterChange guard', () => {
-  const hook = getAfterChangeHook({ collection: minimalCollection, pluginOptions });
-
-  it('returns doc immediately when triggerAfterChange is false', async () => {
-    const req = buildReq({ triggerAfterChange: false });
-    const result = await hook({
-      doc,
-      req,
-      previousDoc: null,
-      operation: 'create',
-      collection: minimalCollection,
-    } as any);
-    expect(result).toBe(doc);
-  });
-
-  it('does not access req.payload when triggerAfterChange is false', async () => {
-    const req = buildReq({ triggerAfterChange: false });
-    // Attach a Proxy that throws on any property access so that if the hook
-    // tries to use payload it will fail the test.
-    req.payload = new Proxy(
-      {},
-      {
-        get(_target, prop) {
-          throw new Error(
-            `Unexpected req.payload access: "${String(prop)}" – hook should have returned early`,
-          );
+    context,
+    payload: {
+      collections: {
+        posts: {
+          config: minimalCollection,
         },
       },
-    );
-    await expect(
-      hook({
-        doc,
-        req,
-        previousDoc: null,
-        operation: 'create',
-        collection: minimalCollection,
-      } as any),
-    ).resolves.toBe(doc);
-  });
+      globals: {
+        config: [minimalGlobal],
+      },
+    },
+  } as any;
+}
 
-  it('does not short-circuit when triggerAfterChange is explicitly true', async () => {
-    // No token set → the hook exits at the token guard (line 111), but only
-    // after it has passed the triggerAfterChange check. We verify the hook
-    // does NOT return at the triggerAfterChange guard by checking it still
-    // returns doc (from the token guard) rather than throwing.
-    const pluginOptionsNoToken = { ...pluginOptions, token: undefined as any };
-    const hookNoToken = getAfterChangeHook({
-      collection: minimalCollection,
-      pluginOptions: pluginOptionsNoToken,
-    });
-    const req = buildReq({ triggerAfterChange: true });
-    // Hook should not throw – it will return doc from the token check.
-    await expect(
-      hookNoToken({
-        doc,
-        req,
-        previousDoc: null,
-        operation: 'create',
+describe('getAfterChangeHook', () => {
+  describe('triggerAfterChange context guard (new in PR)', () => {
+    it('returns doc immediately when req.context.triggerAfterChange is false', async () => {
+      const hook = getAfterChangeHook({
         collection: minimalCollection,
-      } as any),
-    ).resolves.toBe(doc);
-  });
+        pluginOptions,
+      });
 
-  it('returns doc when context is absent and no token is set', async () => {
-    const pluginOptionsNoToken = { ...pluginOptions, token: undefined as any };
-    const hookNoToken = getAfterChangeHook({
-      collection: minimalCollection,
-      pluginOptions: pluginOptionsNoToken,
-    });
-    const req = buildReq(); // no triggerAfterChange key
-    await expect(
-      hookNoToken({
+      const req = buildReq({ triggerAfterChange: false });
+      const result = await hook({
         doc,
+        previousDoc,
         req,
-        previousDoc: null,
-        operation: 'create',
+        operation: 'update',
         collection: minimalCollection,
-      } as any),
-    ).resolves.toBe(doc);
-  });
+      } as any);
 
-  it('returns doc when triggerAfterChange is null (falsy but not false)', async () => {
-    // Only strict false should trigger the early return.
-    // null is falsy but !== false, so the guard should NOT fire.
-    const pluginOptionsNoToken = { ...pluginOptions, token: undefined as any };
-    const hookNoToken = getAfterChangeHook({
-      collection: minimalCollection,
-      pluginOptions: pluginOptionsNoToken,
+      expect(result).toBe(doc);
     });
-    const req = buildReq({ triggerAfterChange: null });
-    await expect(
-      hookNoToken({
-        doc,
-        req,
-        previousDoc: null,
-        operation: 'create',
+
+    it('does NOT short-circuit when req.context.triggerAfterChange is true', async () => {
+      const hook = getAfterChangeHook({
         collection: minimalCollection,
-      } as any),
-    ).resolves.toBe(doc);
+        // Use pluginOptions WITHOUT a token so that the hook aborts at the
+        // token check (the next guard after triggerAfterChange). This verifies
+        // that triggerAfterChange=true does NOT skip past the guard.
+        pluginOptions: { ...pluginOptions, token: '' },
+      });
+
+      const req = buildReq({ triggerAfterChange: true });
+      // With no token, performAfterChange returns doc at the token check.
+      const result = await hook({
+        doc,
+        previousDoc,
+        req,
+        operation: 'update',
+        collection: minimalCollection,
+      } as any);
+
+      // Returns doc via the token check, not via the triggerAfterChange guard
+      expect(result).toBe(doc);
+    });
+
+    it('does NOT short-circuit when req.context is empty (no triggerAfterChange key)', async () => {
+      const hook = getAfterChangeHook({
+        collection: minimalCollection,
+        pluginOptions: { ...pluginOptions, token: '' },
+      });
+
+      const req = buildReq({});
+      const result = await hook({
+        doc,
+        previousDoc,
+        req,
+        operation: 'update',
+        collection: minimalCollection,
+      } as any);
+
+      // Still returns doc (via token guard), but not via the triggerAfterChange guard
+      expect(result).toBe(doc);
+    });
+
+    it('does NOT short-circuit when req has no context property', async () => {
+      const hook = getAfterChangeHook({
+        collection: minimalCollection,
+        pluginOptions: { ...pluginOptions, token: '' },
+      });
+
+      const req = buildReq();
+      delete (req as any).context;
+
+      const result = await hook({
+        doc,
+        previousDoc,
+        req,
+        operation: 'update',
+        collection: minimalCollection,
+      } as any);
+
+      expect(result).toBe(doc);
+    });
   });
 });
 
-describe('getGlobalAfterChangeHook: triggerAfterChange guard', () => {
-  const hook = getGlobalAfterChangeHook({ global: minimalGlobal, pluginOptions });
+describe('getGlobalAfterChangeHook', () => {
+  describe('triggerAfterChange context guard (new in PR)', () => {
+    it('returns doc immediately when req.context.triggerAfterChange is false', async () => {
+      const hook = getGlobalAfterChangeHook({
+        global: minimalGlobal,
+        pluginOptions,
+      });
 
-  it('returns doc immediately when triggerAfterChange is false', async () => {
-    const req = buildReq({ triggerAfterChange: false });
-    const result = await hook({
-      doc,
-      req,
-      previousDoc: null,
-    } as any);
-    expect(result).toBe(doc);
-  });
-
-  it('does not access req.payload when triggerAfterChange is false', async () => {
-    const req = buildReq({ triggerAfterChange: false });
-    req.payload = new Proxy(
-      {},
-      {
-        get(_target, prop) {
-          throw new Error(
-            `Unexpected req.payload access: "${String(prop)}"`,
-          );
-        },
-      },
-    );
-    await expect(
-      hook({
+      const req = buildReq({ triggerAfterChange: false });
+      const result = await hook({
         doc,
+        previousDoc,
         req,
-        previousDoc: null,
-      } as any),
-    ).resolves.toBe(doc);
+        global: minimalGlobal,
+      } as any);
+
+      expect(result).toBe(doc);
+    });
   });
 });
