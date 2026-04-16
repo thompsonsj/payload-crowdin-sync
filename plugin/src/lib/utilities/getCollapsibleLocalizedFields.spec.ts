@@ -154,4 +154,158 @@ describe('fn: getCollapsibleLocalizedFields', () => {
       },
     ]);
   });
+
+  it('returns empty array for row when localizedParent is false and no fields are explicitly localized', () => {
+    const global: GlobalConfig = {
+      slug: 'global',
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'nonLocalizedField',
+              type: 'text',
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(getRowLocalizedFields({ fields: global.fields })).toEqual([]);
+  });
+
+  it('returns empty array for collapsible when localizedParent is false and no fields are explicitly localized', () => {
+    const global: GlobalConfig = {
+      slug: 'global',
+      fields: [
+        {
+          label: 'Collapsible',
+          type: 'collapsible',
+          fields: [
+            {
+              name: 'nonLocalizedField',
+              type: 'text',
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(getCollapsibleLocalizedFields({ fields: global.fields })).toEqual([]);
+  });
+
+  it('filters by type json when localizedParent is true for row fields', () => {
+    const global: GlobalConfig = {
+      slug: 'global',
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'textField',
+              type: 'text',
+            },
+            {
+              name: 'richTextField',
+              type: 'richText',
+            },
+          ],
+        },
+      ],
+    };
+
+    const result = getRowLocalizedFields({
+      fields: global.fields,
+      localizedParent: true,
+      type: 'json',
+    });
+
+    expect(result).toEqual([
+      {
+        name: 'textField',
+        type: 'text',
+      },
+    ]);
+  });
+
+  it('filters by type html when localizedParent is true for collapsible fields', () => {
+    const global: GlobalConfig = {
+      slug: 'global',
+      fields: [
+        {
+          label: 'Collapsible',
+          type: 'collapsible',
+          fields: [
+            {
+              name: 'textField',
+              type: 'text',
+            },
+            {
+              name: 'richTextField',
+              type: 'richText',
+            },
+          ],
+        },
+      ],
+    };
+
+    const result = getCollapsibleLocalizedFields({
+      fields: global.fields,
+      localizedParent: true,
+      type: 'html',
+    });
+
+    expect(result).toEqual([
+      {
+        name: 'richTextField',
+        type: 'richText',
+      },
+    ]);
+  });
+
+  it('handles multiple row fields with mixed localizedParent and explicit localization', () => {
+    const global: GlobalConfig = {
+      slug: 'global',
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'explicitLocalizedField',
+              type: 'text',
+              localized: true,
+            },
+            {
+              name: 'nonLocalizedField',
+              type: 'text',
+            },
+          ],
+        },
+      ],
+    };
+
+    // Without localizedParent, only explicitly localized fields are included
+    expect(getRowLocalizedFields({ fields: global.fields })).toEqual([
+      {
+        name: 'explicitLocalizedField',
+        type: 'text',
+        localized: true,
+      },
+    ]);
+
+    // With localizedParent, all text/richText/textarea fields are included
+    expect(
+      getRowLocalizedFields({ fields: global.fields, localizedParent: true }),
+    ).toEqual([
+      {
+        name: 'explicitLocalizedField',
+        type: 'text',
+        localized: true,
+      },
+      {
+        name: 'nonLocalizedField',
+        type: 'text',
+      },
+    ]);
+  });
 });
