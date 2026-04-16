@@ -144,6 +144,7 @@ export class payloadCrowdinSyncTranslationsApi {
       doc = await this.payload.findGlobal({
         slug: collection as GlobalSlug,
         locale: this.sourceLocale,
+        depth: 0,
         req: this.req,
         draft,
       });
@@ -152,6 +153,7 @@ export class payloadCrowdinSyncTranslationsApi {
         collection: collection as CollectionSlug,
         id: documentId,
         locale: this.sourceLocale,
+        depth: 0,
         req: this.req,
         draft,
       });
@@ -188,6 +190,12 @@ export class payloadCrowdinSyncTranslationsApi {
           report[locale].latestTranslations,
         );
         if (report[locale].changed && !dryRun) {
+          // Payload expects relationship fields to be IDs (not populated objects).
+          // The translation pipeline can carry populated docs (e.g. Media) into the update payload,
+          // which then fails field validation.
+          report[locale].latestTranslations = this.sanitizeRelationshipObjects(
+            report[locale].latestTranslations,
+          );
           if (global) {
             try {
               await this.payload.updateGlobal({
@@ -283,6 +291,7 @@ export class payloadCrowdinSyncTranslationsApi {
       document = await this.payload.findGlobal({
         slug: collection as keyof Config['globals'],
         locale: locale,
+        depth: 0,
         req: this.req,
         draft,
       });
@@ -291,6 +300,7 @@ export class payloadCrowdinSyncTranslationsApi {
         collection: collection as keyof Config['collections'],
         id: doc.id,
         locale: locale,
+        depth: 0,
         req: this.req,
         draft,
       });
@@ -340,6 +350,40 @@ export class payloadCrowdinSyncTranslationsApi {
       );
       throw new Error(`${error}`);
     }
+  }
+
+  /**
+   * Convert populated relationship objects to IDs in update payloads.
+   * Primarily needed for relationship values embedded in rich text / Lexical block nodes.
+   */
+  private sanitizeRelationshipObjects(input: unknown): any {
+    if (input === null || input === undefined) return input;
+
+    if (Array.isArray(input)) {
+      return input.map((item) => this.sanitizeRelationshipObjects(item));
+    }
+
+    if (typeof input !== 'object') return input;
+
+    const obj = input as Record<string, any>;
+
+    // Heuristic: "doc-like" objects (Media, etc) should be replaced by their id.
+    if (
+      typeof obj.id === 'string' &&
+      (Object.prototype.hasOwnProperty.call(obj, 'createdAt') ||
+        Object.prototype.hasOwnProperty.call(obj, 'updatedAt') ||
+        Object.prototype.hasOwnProperty.call(obj, 'filename') ||
+        Object.prototype.hasOwnProperty.call(obj, 'mimeType') ||
+        Object.prototype.hasOwnProperty.call(obj, 'url'))
+    ) {
+      return obj.id;
+    }
+
+    const out: Record<string, any> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      out[key] = this.sanitizeRelationshipObjects(value);
+    }
+    return out;
   }
 
   /**

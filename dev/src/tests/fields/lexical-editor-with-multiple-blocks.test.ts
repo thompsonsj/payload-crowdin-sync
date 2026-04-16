@@ -18,6 +18,7 @@ let payload: Payload
 let mediaID: string
 const pluginOptions = pluginConfig()
 const mockClient = mockCrowdinClient(pluginOptions)
+const SNAPSHOT_MEDIA_ID = '65d67e6a7fb7e9426b3f9f5f'
 
 const onePixelPng = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PwYhWQAAAABJRU5ErkJggg==',
@@ -180,18 +181,28 @@ describe('Lexical editor with multiple blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(4)
       .reply(200, mockClient.createFile({}))
-    const policy = await payload.create({
+    const createdPolicy = await payload.create({
       collection: 'policies',
       data: {
         title: 'Test policy',
         content: injectImageRelationship(structuredClone(fixture), mediaID),
       },
     })
+    const policy = await payload.findByID({
+      collection: 'policies',
+      id: `${createdPolicy.id}`,
+      depth: 0,
+    })
     expect(
-      utilities.buildCrowdinHtmlObject({
-        doc: policy,
-        fields: Policies.fields,
-      }),
+      injectImageRelationship(
+        structuredClone(
+          utilities.buildCrowdinHtmlObject({
+            doc: policy,
+            fields: Policies.fields,
+          }),
+        ),
+        SNAPSHOT_MEDIA_ID,
+      ),
     ).toMatchInlineSnapshot(`
       {
         "content": {
@@ -445,12 +456,17 @@ describe('Lexical editor with multiple blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(4)
       .reply(200, mockClient.createFile({}))
-    const policy = await payload.create({
+    const createdPolicy = await payload.create({
       collection: 'policies',
       data: {
         title: 'Test policy',
         content: injectImageRelationship(structuredClone(fixture), mediaID),
       },
+    })
+    const policy = await payload.findByID({
+      collection: 'policies',
+      id: `${createdPolicy.id}`,
+      depth: 0,
     })
     const crowdinHtmlObject = utilities.buildCrowdinHtmlObject({
       doc: policy,
@@ -461,12 +477,17 @@ describe('Lexical editor with multiple blocks', () => {
       fields: Policies.fields,
     })
     expect(
-      utilities.buildPayloadUpdateObject({
-        crowdinJsonObject,
-        crowdinHtmlObject,
-        fields: Policies.fields,
-        document: policy,
-      }),
+      injectImageRelationship(
+        structuredClone(
+          utilities.buildPayloadUpdateObject({
+            crowdinJsonObject,
+            crowdinHtmlObject,
+            fields: Policies.fields,
+            document: policy,
+          }),
+        ),
+        SNAPSHOT_MEDIA_ID,
+      ),
     ).toMatchInlineSnapshot(`
       {
         "content": {
@@ -1132,8 +1153,11 @@ describe('Lexical editor with multiple blocks', () => {
       collection: 'policies',
       id: `${policy.id}`,
       locale: 'fr_FR',
+      depth: 0,
     })
-    expect(result['content']).toMatchInlineSnapshot(`
+    expect(
+      injectImageRelationship(structuredClone(result['content']), SNAPSHOT_MEDIA_ID),
+    ).toMatchInlineSnapshot(`
       {
         "root": {
           "children": [
