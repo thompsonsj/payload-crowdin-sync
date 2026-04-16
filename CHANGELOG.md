@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.21.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.20.0...source-v0.21.0) (2026-04-16)
+
+
+### Features
+
+* **row:** support nested, improve test resilience ([#331](https://github.com/thompsonsj/payload-crowdin-sync/issues/331)) ([ea6ab09](https://github.com/thompsonsj/payload-crowdin-sync/commit/ea6ab0995accf02c8bce01c51ed085de60fc2e06))
+
+
+### Bug Fixes
+
+* **packagejson:** restore plugin urls and name ([#333](https://github.com/thompsonsj/payload-crowdin-sync/issues/333)) ([568a98c](https://github.com/thompsonsj/payload-crowdin-sync/commit/568a98c7b37944ad5c8299cd00484fa68dd6b052))
+
 ## [0.20.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.19.4...source-v0.20.0) (2025-10-15)
 
 
