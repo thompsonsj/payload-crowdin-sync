@@ -315,11 +315,12 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
         crowdinFile,
       });
     }
-    // Don't delete from Crowdin
-    // await this.sourceFilesApi.deleteFile(
-    //   this.projectId,
-    //   crowdinFile.originalId as number,
-    // );
+    if (this.pluginOptions.deleteCrowdinFiles && crowdinFile.originalId) {
+      await this.sourceFilesApi.deleteFile(
+        this.projectId,
+        crowdinFile.originalId as number,
+      );
+    }
 
     const payloadFile = await this.req.payload.delete({
       collection: 'crowdin-files', // required

@@ -8,6 +8,7 @@ export const pluginConfig = (): PluginOptions => ({
   localeMap,
   sourceLocale: 'en',
   tabbedUI: true,
+  deleteCrowdinFiles: true,
   collections: [
     'categories',
     'multi-rich-text',

@@ -60,6 +60,11 @@ export interface PluginOptions {
   tabbedUI?: boolean;
   lexicalBlockFolderPrefix?: string;
   disableSelfClean?: boolean;
+  /**
+   * When true, delete source files from Crowdin during cleanup (e.g. on document delete).
+   * Default: false (keep Crowdin source files).
+   */
+  deleteCrowdinFiles?: boolean;
 }
 
 export type FieldWithName = Field & { name: string };

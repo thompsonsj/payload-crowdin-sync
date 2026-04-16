@@ -201,10 +201,12 @@ export class payloadCrowdinSyncFilesApi {
     ) {
       return;
     }
-    await this.sourceFilesApi.deleteDirectory(
-      this.projectId,
-      crowdinPayloadArticleDirectory.originalId,
-    );
+    if (this.pluginOptions.deleteCrowdinFiles) {
+      await this.sourceFilesApi.deleteDirectory(
+        this.projectId,
+        crowdinPayloadArticleDirectory.originalId,
+      );
+    }
     await this.req.payload.delete({
       collection: 'crowdin-article-directories',
       id: crowdinPayloadArticleDirectory.id,

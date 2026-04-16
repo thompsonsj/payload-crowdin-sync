@@ -154,13 +154,21 @@ export class filesApiByDocument {
       const name = this.global ? this.collectionSlug : this.document.id;
       let collectionConfig: CollectionConfig | GlobalConfig;
       try {
-        collectionConfig = getCollectionConfig(
-          this.collectionSlug,
-          this.global,
-          this.req.payload,
-        );
+        // Lexical block syncing uses an internal "mock" collection config to
+        // avoid requiring a real collection definition for derived block fields.
+        // That slug will never exist in the Payload config, so skip lookup.
+        if (this.collectionSlug !== 'mock-collection-for-lexical-blocks') {
+          collectionConfig = getCollectionConfig(
+            this.collectionSlug,
+            this.global,
+            this.req.payload,
+          );
+        }
       } catch (error) {
-        console.log(error);
+        // Avoid noisy logs for non-critical config lookup failures.
+        if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+          console.log(error);
+        }
       }
       const useAsTitle = (collectionConfig as CollectionConfig)?.admin
         ?.useAsTitle;
