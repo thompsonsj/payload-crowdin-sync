@@ -60,6 +60,10 @@ const config = buildConfig({
       localeMap,
       sourceLocale: 'en',
       tabbedUI: true,
+      lexicalBlockFolderPrefix: 'lex.',
+      // In tests we expect cleanup to delete Crowdin source files/directories.
+      // Default behavior (outside tests) is to keep Crowdin source files.
+      deleteCrowdinFiles: process.env['NODE_ENV'] === 'test',
       collections: [
         'categories',
         'multi-rich-text',
@@ -137,7 +141,7 @@ export async function initPayloadInt(
     ...(await config),
     db: databaseAdapter,
     secret: 'TEST_SECRET',
-  }
+  } as unknown as SanitizedConfig
 
   if (!initializePayload) {
     return {

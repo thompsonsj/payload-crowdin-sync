@@ -37,6 +37,12 @@ const getBeforeValidateHook: CollectionBeforeValidateHook = async ({
           equals: data?.videoId,
         },
       },
+      // Avoid reusing an active write transaction/session for uniqueness reads in tests.
+      req: {
+        ...req,
+        transactionID: undefined,
+      },
+      overrideAccess: true,
     })
 
     if (existing.totalDocs > 0) {

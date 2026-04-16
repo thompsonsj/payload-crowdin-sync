@@ -15,14 +15,67 @@ import { CrowdinArticleDirectory, Policy } from '../../payload-types'
 import { initPayloadInt } from '../helpers/initPayloadInt'
 import type { Payload } from 'payload'
 let payload: Payload
+let mediaID: string
 const pluginOptions = pluginConfig()
 const mockClient = mockCrowdinClient(pluginOptions)
+const SNAPSHOT_MEDIA_ID = '65d67e6a7fb7e9426b3f9f5f'
+
+const onePixelPng = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PwYhWQAAAABJRU5ErkJggg==',
+  'base64',
+)
+
+function injectImageRelationship(content: unknown, newMediaID: string): unknown {
+  if (Array.isArray(content)) {
+    return content.map((item) => injectImageRelationship(item, newMediaID))
+  }
+  if (!content || typeof content !== 'object') {
+    return content
+  }
+
+  const node = content as Record<string, any>
+
+  if (
+    node.type === 'block' &&
+    node.fields?.blockType === 'imageText' &&
+    typeof node.fields === 'object'
+  ) {
+    return {
+      ...node,
+      fields: {
+        ...node.fields,
+        image: newMediaID,
+      },
+    }
+  }
+
+  const out: Record<string, any> = {}
+  for (const [key, value] of Object.entries(node)) {
+    out[key] = injectImageRelationship(value, newMediaID)
+  }
+  return out
+}
 describe('Lexical editor with multiple blocks', () => {
   beforeAll(async () => {
     const initialized = await initPayloadInt()
     ;({ payload } = initialized as {
       payload: Payload
     })
+
+    const media = await payload.create({
+      collection: 'media',
+      data: {
+        alt: 'Test image',
+      },
+      file: {
+        data: onePixelPng,
+        mimetype: 'image/png',
+        name: 'test.png',
+        size: onePixelPng.length,
+      } as any,
+    })
+
+    mediaID = String(media.id)
   })
   afterEach((done) => {
     if (!nock.isDone()) {
@@ -128,18 +181,28 @@ describe('Lexical editor with multiple blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(4)
       .reply(200, mockClient.createFile({}))
-    const policy = await payload.create({
+    const createdPolicy = await payload.create({
       collection: 'policies',
       data: {
         title: 'Test policy',
-        content: fixture,
+        content: injectImageRelationship(structuredClone(fixture), mediaID),
       },
     })
+    const policy = await payload.findByID({
+      collection: 'policies',
+      id: `${createdPolicy.id}`,
+      depth: 0,
+    })
     expect(
-      utilities.buildCrowdinHtmlObject({
-        doc: policy,
-        fields: Policies.fields,
-      }),
+      injectImageRelationship(
+        structuredClone(
+          utilities.buildCrowdinHtmlObject({
+            doc: policy,
+            fields: Policies.fields,
+          }),
+        ),
+        SNAPSHOT_MEDIA_ID,
+      ),
     ).toMatchInlineSnapshot(`
       {
         "content": {
@@ -368,7 +431,7 @@ describe('Lexical editor with multiple blocks', () => {
       collection: 'policies',
       data: {
         title: 'Test policy',
-        content: fixture,
+        content: injectImageRelationship(structuredClone(fixture), mediaID),
       },
     })
     expect(
@@ -393,12 +456,17 @@ describe('Lexical editor with multiple blocks', () => {
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(4)
       .reply(200, mockClient.createFile({}))
-    const policy = await payload.create({
+    const createdPolicy = await payload.create({
       collection: 'policies',
       data: {
         title: 'Test policy',
-        content: fixture,
+        content: injectImageRelationship(structuredClone(fixture), mediaID),
       },
+    })
+    const policy = await payload.findByID({
+      collection: 'policies',
+      id: `${createdPolicy.id}`,
+      depth: 0,
     })
     const crowdinHtmlObject = utilities.buildCrowdinHtmlObject({
       doc: policy,
@@ -409,12 +477,17 @@ describe('Lexical editor with multiple blocks', () => {
       fields: Policies.fields,
     })
     expect(
-      utilities.buildPayloadUpdateObject({
-        crowdinJsonObject,
-        crowdinHtmlObject,
-        fields: Policies.fields,
-        document: policy,
-      }),
+      injectImageRelationship(
+        structuredClone(
+          utilities.buildPayloadUpdateObject({
+            crowdinJsonObject,
+            crowdinHtmlObject,
+            fields: Policies.fields,
+            document: policy,
+          }),
+        ),
+        SNAPSHOT_MEDIA_ID,
+      ),
     ).toMatchInlineSnapshot(`
       {
         "content": {
@@ -644,7 +717,7 @@ describe('Lexical editor with multiple blocks', () => {
       collection: 'policies',
       data: {
         title: 'Test policy',
-        content: fixture,
+        content: injectImageRelationship(structuredClone(fixture), mediaID),
       },
     })
     // update now that a Crowdin article directory is available
@@ -653,7 +726,7 @@ describe('Lexical editor with multiple blocks', () => {
       collection: 'policies',
       data: {
         title: 'Test policy',
-        content: fixture2,
+        content: injectImageRelationship(structuredClone(fixture2), mediaID),
       },
     })) as any
     const lexicalBlocksArticleDirectory: CrowdinArticleDirectory = (await getArticleDirectory({
@@ -681,7 +754,7 @@ describe('Lexical editor with multiple blocks', () => {
       collection: 'policies',
       data: {
         title: 'Test policy',
-        content: fixture,
+        content: injectImageRelationship(structuredClone(fixture), mediaID),
       },
     })
     // update now that a Crowdin article directory is available
@@ -743,11 +816,11 @@ describe('Lexical editor with multiple blocks', () => {
           array: [
             {
               title: 'Test sub-policy 1',
-              content: fixture,
+              content: injectImageRelationship(structuredClone(fixture), mediaID),
             },
             {
               title: 'Test sub-policy 2',
-              content: fixture,
+              content: injectImageRelationship(structuredClone(fixture), mediaID),
             },
           ],
         },
@@ -1031,7 +1104,7 @@ describe('Lexical editor with multiple blocks', () => {
       collection: 'policies',
       data: {
         title: 'Test policy',
-        content: fixture,
+        content: injectImageRelationship(structuredClone(fixture), mediaID),
       },
     })
     const crowdinFiles = await getFilesByDocumentID({ documentId: `${policy.id}`, payload })
@@ -1080,8 +1153,11 @@ describe('Lexical editor with multiple blocks', () => {
       collection: 'policies',
       id: `${policy.id}`,
       locale: 'fr_FR',
+      depth: 0,
     })
-    expect(result['content']).toMatchInlineSnapshot(`
+    expect(
+      injectImageRelationship(structuredClone(result['content']), SNAPSHOT_MEDIA_ID),
+    ).toMatchInlineSnapshot(`
       {
         "root": {
           "children": [

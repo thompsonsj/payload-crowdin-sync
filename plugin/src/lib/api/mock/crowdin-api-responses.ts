@@ -88,6 +88,7 @@ class crowdinAPIWrapper {
    */
   createFile({
     fileId = 1079,
+    revisionId = 1,
     request = {
       directoryId: 1172,
       name: 'fields',
@@ -96,6 +97,7 @@ class crowdinAPIWrapper {
     },
   }: {
     fileId?: number;
+    revisionId?: number;
     request?: SourceFilesModel.CreateFileRequest;
   }): { data: SourceFilesModel.File } {
     /*const storageId = await this.addStorage({
@@ -106,7 +108,7 @@ class crowdinAPIWrapper {
     const date = new Date().toISOString();
     const file = {
       data: {
-        revisionId: 5,
+        revisionId,
         status: 'active',
         priority: 'normal' as SourceFilesModel.Priority,
         importOptions: {},
@@ -132,14 +134,16 @@ class crowdinAPIWrapper {
 
   updateOrRestoreFile({
     fileId = 1079,
+    revisionId = 2,
   }: {
     fileId: number;
+    revisionId?: number;
     request?: SourceFilesModel.ReplaceFileFromStorageRequest;
   }): { data: SourceFilesModel.File } {
     const date = new Date().toISOString();
     const file = {
       data: {
-        revisionId: 5,
+        revisionId,
         status: 'active',
         priority: 'normal' as SourceFilesModel.Priority,
         importOptions: {},

@@ -81,6 +81,11 @@ export class filesApiByDocument {
     this.collectionSlug = collectionSlug;
     this.global = global;
     this.pluginOptions = pluginOptions;
+    // Preserve `req.transactionID` here.
+    // This class is used from within hooks where we may need to read/write the same document
+    // inside an active transaction (e.g. attach `crowdinArticleDirectory` immediately after create).
+    // Transaction stripping should be applied only to *specific committed-state reads* (e.g. uniqueness checks),
+    // not blanket-applied to all operations in this workflow.
     this.req = req;
     this.parent = parent;
     /**
@@ -149,13 +154,21 @@ export class filesApiByDocument {
       const name = this.global ? this.collectionSlug : this.document.id;
       let collectionConfig: CollectionConfig | GlobalConfig;
       try {
-        collectionConfig = getCollectionConfig(
-          this.collectionSlug,
-          this.global,
-          this.req.payload,
-        );
+        // Lexical block syncing uses an internal "mock" collection config to
+        // avoid requiring a real collection definition for derived block fields.
+        // That slug will never exist in the Payload config, so skip lookup.
+        if (this.collectionSlug !== 'mock-collection-for-lexical-blocks') {
+          collectionConfig = getCollectionConfig(
+            this.collectionSlug,
+            this.global,
+            this.req.payload,
+          );
+        }
       } catch (error) {
-        console.log(error);
+        // Avoid noisy logs for non-critical config lookup failures.
+        if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+          console.log(error);
+        }
       }
       const useAsTitle = (collectionConfig as CollectionConfig)?.admin
         ?.useAsTitle;
@@ -182,6 +195,10 @@ export class filesApiByDocument {
               crowdinArticleDirectory,
             } as never,
             req: this.req,
+            overrideAccess: true,
+            context: {
+              triggerAfterChange: false,
+            },
           });
         } else {
           await this.req.payload.update({
@@ -191,6 +208,10 @@ export class filesApiByDocument {
               crowdinArticleDirectory,
             } as never,
             req: this.req,
+            overrideAccess: true,
+            context: {
+              triggerAfterChange: false,
+            },
           });
         }
       }
@@ -219,6 +240,7 @@ export class filesApiByDocument {
         },
       },
       req: this.req,
+      overrideAccess: true,
     });
 
     if (query.totalDocs === 0) {
@@ -254,6 +276,7 @@ export class filesApiByDocument {
           },
         },
         req: this.req,
+        overrideAccess: true,
       });
     } else {
       crowdinPayloadCollectionDirectory = query.docs[0];

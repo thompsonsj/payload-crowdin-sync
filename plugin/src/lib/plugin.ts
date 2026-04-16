@@ -112,6 +112,8 @@ export const crowdinSync =
       lexicalBlockFolderPrefix: Joi.string(),
       /** Prevent the plugin deleting Payload documents it has created in response to Crowdin API responses. */
       disableSelfClean: Joi.boolean(),
+      /** Delete source files from Crowdin during cleanup. */
+      deleteCrowdinFiles: Joi.boolean(),
     });
 
     const validate = schema.validate(pluginOptions);
