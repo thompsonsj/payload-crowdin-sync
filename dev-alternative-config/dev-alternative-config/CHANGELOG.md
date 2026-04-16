@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.4.5...dev-alternative-config-v0.5.0) (2026-04-16)
+
+
+### Features
+
+* **row:** support nested, improve test resilience ([#331](https://github.com/thompsonsj/payload-crowdin-sync/issues/331)) ([ea6ab09](https://github.com/thompsonsj/payload-crowdin-sync/commit/ea6ab0995accf02c8bce01c51ed085de60fc2e06))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.39.0 to 0.40.0
+
 ## [0.4.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.4.4...dev-alternative-config-v0.4.5) (2025-10-15)
 
 
