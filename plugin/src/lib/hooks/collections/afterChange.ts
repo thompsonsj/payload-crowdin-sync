@@ -99,6 +99,12 @@ const performAfterChange = async ({
   global = false,
   pluginOptions,
 }: IPerformChange) => {
+  // Allow internal local API calls to suppress re-entry into this hook.
+  // This prevents recursive afterChange runs when we do bookkeeping updates
+  // (e.g. attaching `crowdinArticleDirectory`) as part of the Crowdin sync flow.
+  if ((req as any)?.context?.triggerAfterChange === false) {
+    return doc;
+  }
   /**
    * Abort if token not set and not in test mode
    */

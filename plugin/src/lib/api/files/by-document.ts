@@ -81,15 +81,12 @@ export class filesApiByDocument {
     this.collectionSlug = collectionSlug;
     this.global = global;
     this.pluginOptions = pluginOptions;
-    // This class performs side-effectful, long-running operations (Crowdin API + DB reads/writes).
-    // In tests (and sometimes in app code), hooks can carry `req.transactionID` from an active write.
-    // Reusing that transaction/session for nested local API calls is a common source of MongoDB
-    // transaction/session mismatch errors (especially with Mongo Memory Server / replica sets).
-    // Strip the transaction so reads operate on committed state and writes don't hold locks longer than needed.
-    this.req = {
-      ...req,
-      transactionID: undefined,
-    } as PayloadRequest;
+    // Preserve `req.transactionID` here.
+    // This class is used from within hooks where we may need to read/write the same document
+    // inside an active transaction (e.g. attach `crowdinArticleDirectory` immediately after create).
+    // Transaction stripping should be applied only to *specific committed-state reads* (e.g. uniqueness checks),
+    // not blanket-applied to all operations in this workflow.
+    this.req = req;
     this.parent = parent;
     /**
      * Create a undefined Crowdin Article Directory
@@ -190,6 +187,10 @@ export class filesApiByDocument {
               crowdinArticleDirectory,
             } as never,
             req: this.req,
+            overrideAccess: true,
+            context: {
+              triggerAfterChange: false,
+            },
           });
         } else {
           await this.req.payload.update({
@@ -199,6 +200,10 @@ export class filesApiByDocument {
               crowdinArticleDirectory,
             } as never,
             req: this.req,
+            overrideAccess: true,
+            context: {
+              triggerAfterChange: false,
+            },
           });
         }
       }
@@ -227,6 +232,7 @@ export class filesApiByDocument {
         },
       },
       req: this.req,
+      overrideAccess: true,
     });
 
     if (query.totalDocs === 0) {
@@ -262,6 +268,7 @@ export class filesApiByDocument {
           },
         },
         req: this.req,
+        overrideAccess: true,
       });
     } else {
       crowdinPayloadCollectionDirectory = query.docs[0];

@@ -303,23 +303,6 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
           req: this.req,
         });
 
-        // If we found an existing file on Crowdin (not newly created), update its content
-        // This happens when the file exists on Crowdin but wasn't in our local database
-        const wasExistingFile = crowdinFile.data.revisionId > 1;
-        if (wasExistingFile) {
-          if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
-            console.log(
-              `Updating content for existing Crowdin file "${name}" (File ID: ${crowdinFile.data.id})`,
-            );
-          }
-          await this.crowdinUpdateFile({
-            fileId: crowdinFile.data.id,
-            name,
-            fileData,
-            fileType,
-          });
-        }
-
         return payloadCrowdinFile;
       }
     }
