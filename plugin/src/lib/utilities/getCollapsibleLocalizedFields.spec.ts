@@ -124,4 +124,34 @@ describe('fn: getCollapsibleLocalizedFields', () => {
       },
     ]);
   });
+
+  it('preserves inherited localization when flattening collapsible children', () => {
+    const global: GlobalConfig = {
+      slug: 'global',
+      fields: [
+        {
+          label: 'Collapsible Field',
+          type: 'collapsible',
+          fields: [
+            {
+              name: 'textInheritedLocalizedFieldInCollapsible',
+              type: 'text',
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(
+      getCollapsibleLocalizedFields({
+        fields: global.fields,
+        localizedParent: true,
+      }),
+    ).toEqual([
+      {
+        name: 'textInheritedLocalizedFieldInCollapsible',
+        type: 'text',
+      },
+    ]);
+  });
 });

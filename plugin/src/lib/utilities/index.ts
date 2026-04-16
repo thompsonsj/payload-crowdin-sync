@@ -222,16 +222,13 @@ export const getCollapsibleLocalizedFields = ({
   localizedParent?: boolean;
   isLocalized?: IsLocalized;
 }): any[] =>
-  fields
-    .filter((field) => field.type === 'collapsible')
-    .flatMap((field) =>
-      getLocalizedFields({
-        fields: (field as CollapsibleField).fields,
-        type,
-        localizedParent,
-        isLocalized,
-      }),
-    );
+  getLocalizedFieldsByType({
+    fields,
+    containerType: 'collapsible',
+    type,
+    localizedParent,
+    isLocalized,
+  });
 
 export const getRowLocalizedFields = ({
   fields,
@@ -244,11 +241,35 @@ export const getRowLocalizedFields = ({
   localizedParent?: boolean;
   isLocalized?: IsLocalized;
 }): any[] =>
+  getLocalizedFieldsByType({
+    fields,
+    containerType: 'row',
+    type,
+    localizedParent,
+    isLocalized,
+  });
+
+const getLocalizedFieldsByType = ({
+  fields,
+  containerType,
+  type,
+  localizedParent = false,
+  isLocalized = isLocalizedField,
+}: {
+  fields: Field[];
+  containerType: 'collapsible' | 'row';
+  type?: 'json' | 'html';
+  localizedParent?: boolean;
+  isLocalized?: IsLocalized;
+}): any[] =>
   fields
-    .filter((field) => field.type === 'row')
+    .filter((field) => field.type === containerType)
     .flatMap((field) =>
       getLocalizedFields({
-        fields: (field as RowField).fields,
+        fields:
+          containerType === 'collapsible'
+            ? (field as CollapsibleField).fields
+            : (field as RowField).fields,
         type,
         localizedParent,
         isLocalized,
