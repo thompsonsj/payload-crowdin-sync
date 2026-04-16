@@ -213,6 +213,56 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       });
       // Store result on Payload CMS
       if (crowdinFile) {
+        // Check if this file already exists in Payload (might have been found on Crowdin)
+        const existingPayloadFile = await this.getFile(name);
+
+        if (existingPayloadFile) {
+          // File already exists in Payload, update it instead
+          if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+            console.log(
+              `File "${name}" already exists in Payload database. Updating instead of creating.`,
+            );
+          }
+
+          // Update the file content on Crowdin
+          await this.crowdinUpdateFile({
+            fileId: crowdinFile.data.id,
+            name,
+            fileData,
+            fileType,
+          });
+
+          // Update the Payload record
+          const payloadCrowdinFile = await this.req.payload.update({
+            collection: 'crowdin-files',
+            id: existingPayloadFile.id,
+            data: {
+              updatedAt: crowdinFile.data.updatedAt,
+              revisionId: crowdinFile.data.revisionId,
+              ...(fileType === 'json' && {
+                fileData: {
+                  json: fileData as {
+                    [k: string]: Partial<unknown>;
+                  },
+                },
+              }),
+              ...(fileType === 'html' && {
+                fileData: {
+                  html:
+                    typeof fileData === 'string'
+                      ? fileData
+                      : JSON.stringify(fileData),
+                  ...(sourceBlocks && {
+                    sourceBlocks: JSON.stringify(sourceBlocks),
+                  }),
+                },
+              }),
+            },
+            req: this.req,
+          });
+          return payloadCrowdinFile;
+        }
+
         const payloadCrowdinFile = await this.req.payload.create({
           collection: 'crowdin-files', // required
           data: {
@@ -252,6 +302,24 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
           },
           req: this.req,
         });
+
+        // If we found an existing file on Crowdin (not newly created), update its content
+        // This happens when the file exists on Crowdin but wasn't in our local database
+        const wasExistingFile = crowdinFile.data.revisionId > 1;
+        if (wasExistingFile) {
+          if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+            console.log(
+              `Updating content for existing Crowdin file "${name}" (File ID: ${crowdinFile.data.id})`,
+            );
+          }
+          await this.crowdinUpdateFile({
+            fileId: crowdinFile.data.id,
+            name,
+            fileData,
+            fileType,
+          });
+        }
+
         return payloadCrowdinFile;
       }
     }
@@ -264,10 +332,12 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
         crowdinFile,
       });
     }
-    await this.sourceFilesApi.deleteFile(
-      this.projectId,
-      crowdinFile.originalId as number,
-    );
+    // Don't delete from Crowdin
+    // await this.sourceFilesApi.deleteFile(
+    //   this.projectId,
+    //   crowdinFile.originalId as number,
+    // );
+
     const payloadFile = await this.req.payload.delete({
       collection: 'crowdin-files', // required
       id: crowdinFile.id, // required
@@ -457,7 +527,11 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     const files = await this.getFiles();
 
     for (const file of files) {
-      await this.deleteFile(file);
+      try {
+        await this.deleteFile(file);
+      } catch (error) {
+        console.warn(`Error deleting file: `, error);
+      }
     }
 
     await this.deleteArticleDirectory(this.document.id);

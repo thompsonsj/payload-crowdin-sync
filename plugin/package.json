@@ -1,5 +1,5 @@
 {
-  "name": "payload-crowdin-sync",
+  "name": "@together.agency/payload-crowdin-sync",
   "version": "0.39.0",
   "description": "Automatically upload/sync localized fields from the default locale to Crowdin. Make these fields read-only in other locales and update them using Crowdin translations.",
   "scripts": {
@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thompsonsj/payload-crowdin-sync.git"
+    "url": "git+https://github.com/Made-Together/payload-crowdin-sync.git"
   },
-  "author": "https://github.com/thompsonsj",
+  "author": "https://github.com/Made-Together",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/thompsonsj/payload-crowdin-sync/issues"
+    "url": "https://github.com/Made-Together/payload-crowdin-sync/issues"
   },
   "dependencies": {
     "tslib": "^2.3.0"
