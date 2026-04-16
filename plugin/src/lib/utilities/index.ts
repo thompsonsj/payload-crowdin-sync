@@ -201,18 +201,25 @@ export const getLocalizedFields = ({
       }),
   }),
   // recursion for collapsible field - flatten results into the returned array
-  ...getCollapsibleLocalizedFields({ fields, type, isLocalized }),
+  ...getCollapsibleLocalizedFields({
+    fields,
+    type,
+    localizedParent,
+    isLocalized,
+  }),
   // recursion for row field - flatten results into the returned array
-  ...getRowLocalizedFields({ fields, type, isLocalized }),
+  ...getRowLocalizedFields({ fields, type, localizedParent, isLocalized }),
 ];
 
 export const getCollapsibleLocalizedFields = ({
   fields,
   type,
+  localizedParent = false,
   isLocalized = isLocalizedField,
 }: {
   fields: Field[];
   type?: 'json' | 'html';
+  localizedParent?: boolean;
   isLocalized?: IsLocalized;
 }): any[] =>
   fields
@@ -221,6 +228,7 @@ export const getCollapsibleLocalizedFields = ({
       getLocalizedFields({
         fields: (field as CollapsibleField).fields,
         type,
+        localizedParent,
         isLocalized,
       }),
     );
@@ -228,10 +236,12 @@ export const getCollapsibleLocalizedFields = ({
 export const getRowLocalizedFields = ({
   fields,
   type,
+  localizedParent = false,
   isLocalized = isLocalizedField,
 }: {
   fields: Field[];
   type?: 'json' | 'html';
+  localizedParent?: boolean;
   isLocalized?: IsLocalized;
 }): any[] =>
   fields
@@ -240,6 +250,7 @@ export const getRowLocalizedFields = ({
       getLocalizedFields({
         fields: (field as RowField).fields,
         type,
+        localizedParent,
         isLocalized,
       }),
     );

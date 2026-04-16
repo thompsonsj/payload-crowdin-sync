@@ -81,7 +81,15 @@ export class filesApiByDocument {
     this.collectionSlug = collectionSlug;
     this.global = global;
     this.pluginOptions = pluginOptions;
-    this.req = req;
+    // This class performs side-effectful, long-running operations (Crowdin API + DB reads/writes).
+    // In tests (and sometimes in app code), hooks can carry `req.transactionID` from an active write.
+    // Reusing that transaction/session for nested local API calls is a common source of MongoDB
+    // transaction/session mismatch errors (especially with Mongo Memory Server / replica sets).
+    // Strip the transaction so reads operate on committed state and writes don't hold locks longer than needed.
+    this.req = {
+      ...req,
+      transactionID: undefined,
+    } as PayloadRequest;
     this.parent = parent;
     /**
      * Create a undefined Crowdin Article Directory

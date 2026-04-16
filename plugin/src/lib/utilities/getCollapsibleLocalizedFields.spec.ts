@@ -52,7 +52,7 @@ describe('fn: getCollapsibleLocalizedFields', () => {
     );
   });
 
-    it('includes only localized fields from a row field', () => {
+  it('includes only localized fields from a row field', () => {
     const global: GlobalConfig = {
       slug: 'global',
       fields: [
@@ -97,5 +97,31 @@ describe('fn: getCollapsibleLocalizedFields', () => {
     expect(getRowLocalizedFields({ fields: global.fields })).toEqual(
       expected,
     );
+  });
+
+  it('preserves inherited localization when flattening row children', () => {
+    const global: GlobalConfig = {
+      slug: 'global',
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'textInheritedLocalizedFieldInRowField',
+              type: 'text',
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(
+      getRowLocalizedFields({ fields: global.fields, localizedParent: true }),
+    ).toEqual([
+      {
+        name: 'textInheritedLocalizedFieldInRowField',
+        type: 'text',
+      },
+    ]);
   });
 });
