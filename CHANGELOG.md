@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.21.0...source-v0.22.0) (2026-04-17)
+
+
+### Features
+
+* upgrade dependencies, migrate to vitest ([#335](https://github.com/thompsonsj/payload-crowdin-sync/issues/335)) ([dda03cd](https://github.com/thompsonsj/payload-crowdin-sync/commit/dda03cd9d4fc20f3d6790642cfcf5babfbbe0f21))
+
 ## [0.21.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.20.0...source-v0.21.0) (2026-04-16)
 
 
