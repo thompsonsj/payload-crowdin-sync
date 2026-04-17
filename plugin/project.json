@@ -26,9 +26,8 @@
     },
     "test": {
       "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "command": "vitest --project plugin"
+        "command": "vitest run --project plugin"
       }
     }
   }
