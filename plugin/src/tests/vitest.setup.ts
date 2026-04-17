@@ -1,20 +1,19 @@
-import console from 'console'
+import console from 'node:console'
+import nodemailer from 'nodemailer'
+import { vi } from 'vitest'
+
+// Align with existing Jest setup used in dev installs.
 global.console = console
 
-import nodemailer from 'nodemailer'
-
-import { generateDatabaseAdapter } from './generateDatabaseAdapter.js'
-
+process.env.NODE_ENV = 'test'
 process.env.PAYLOAD_DISABLE_ADMIN = 'true'
 process.env.PAYLOAD_DROP_DATABASE = 'true'
-
 process.env.PAYLOAD_PUBLIC_CLOUD_STORAGE_ADAPTER = 's3'
-
 process.env.NODE_OPTIONS = '--no-deprecation'
 process.env.PAYLOAD_CI_DEPENDENCY_CHECKER = 'true'
 
-// Mock createTestAccount to prevent calling external services
-jest.spyOn(nodemailer, 'createTestAccount').mockImplementation(() => {
+// Prevent external service calls.
+vi.spyOn(nodemailer, 'createTestAccount').mockImplementation(() => {
   return Promise.resolve({
     imap: { host: 'imap.test.com', port: 993, secure: true },
     pass: 'testpass',
@@ -25,9 +24,3 @@ jest.spyOn(nodemailer, 'createTestAccount').mockImplementation(() => {
   })
 })
 
-if (!process.env.PAYLOAD_DATABASE) {
-  // Mutate env so we can use conditions by DB adapter in tests properly without ignoring // eslint no-jest-conditions.
-  process.env.PAYLOAD_DATABASE = 'mongodb'
-}
-
-generateDatabaseAdapter(process.env.PAYLOAD_DATABASE)

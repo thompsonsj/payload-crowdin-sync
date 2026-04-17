@@ -25,10 +25,9 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "executor": "nx:run-commands",
       "options": {
-        "jestConfig": "plugin/jest.config.ts"
+        "command": "vitest run --project plugin"
       }
     }
   }

@@ -16,12 +16,11 @@ describe('Lexical editor with blocks', () => {
       payload: Payload
     })
   })
-  afterEach((done) => {
+  afterEach(() => {
     if (!nock.isDone()) {
       throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
     }
     nock.cleanAll()
-    done()
   })
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
@@ -660,7 +659,7 @@ describe('Lexical editor with blocks', () => {
     const crowdinFiles = await getFilesByDocumentID({ documentId: `${policy.id}`, payload })
     const contentHtmlFile = crowdinFiles.find((file) => file.field === 'content')
     expect(contentHtmlFile?.fileData?.html).toMatchInlineSnapshot(
-      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p style="text-align: center;">Try it out for yourself!</p><p><br /></p><span data-block-id=6582d48f2037fb3ca72ed2cf data-block-type=highlight></span><p><br /></p>"`,
+      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code>&lt;textarea&gt;</code>!</p><p>Since it&#39;s rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p style="text-align: center;">Try it out for yourself!</p><p><br /></p><span data-block-id=6582d48f2037fb3ca72ed2cf data-block-type=highlight></span><p><br /></p>"`,
     )
   })
   it('creates HTML files for Crowdin as expected for lexical content within an array field that is embedded in a group', async () => {
@@ -717,10 +716,10 @@ describe('Lexical editor with blocks', () => {
     expect(fileOneCrowdinFiles.length).toEqual(2)
     expect(fileTwoCrowdinFiles.length).toEqual(2)
     expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(
-      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p style="text-align: center;">Try it out for yourself!</p><p><br /></p><span data-block-id=6582d48f2037fb3ca72ed2cf data-block-type=highlight></span><p><br /></p>"`,
+      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code>&lt;textarea&gt;</code>!</p><p>Since it&#39;s rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p style="text-align: center;">Try it out for yourself!</p><p><br /></p><span data-block-id=6582d48f2037fb3ca72ed2cf data-block-type=highlight></span><p><br /></p>"`,
     )
     expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(
-      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code><textarea></code>!</p><p>Since it's rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p style="text-align: center;">Try it out for yourself!</p><p><br /></p><span data-block-id=6582d48f2037fb3ca72ed2cf data-block-type=highlight></span><p><br /></p>"`,
+      `"<h2>Lexical editor content</h2><p>This is editable <strong>rich</strong> text, <em>much</em> better than a <code>&lt;textarea&gt;</code>!</p><p>Since it&#39;s rich text, you can do things like turn a selection of text <strong>bold</strong>, or add a semantically rendered block quote in the middle of the page, like this:</p><blockquote>A wise quote.</blockquote><p style="text-align: center;">Try it out for yourself!</p><p><br /></p><span data-block-id=6582d48f2037fb3ca72ed2cf data-block-type=highlight></span><p><br /></p>"`,
     )
   })
 })

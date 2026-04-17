@@ -32,12 +32,11 @@ describe('Collection: Localized Posts With Condition', () => {
       payload: Payload
     })
   })
-  afterEach((done) => {
+  afterEach(() => {
     if (!nock.isDone()) {
       throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
     }
     nock.cleanAll()
-    done()
   })
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {

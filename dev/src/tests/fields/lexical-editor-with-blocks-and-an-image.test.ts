@@ -37,12 +37,11 @@ describe('Lexical editor with blocks', () => {
       file: imageFile,
     })
   })
-  afterEach((done) => {
+  afterEach(() => {
     if (!nock.isDone()) {
       throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
     }
     nock.cleanAll()
-    done()
   })
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
@@ -518,7 +517,7 @@ describe('Lexical editor with blocks', () => {
     const crowdinFiles = await getFilesByDocumentID({ documentId: `${policy.id}`, payload })
     const contentHtmlFile = crowdinFiles.find((file) => file.field === 'content')
     expect(contentHtmlFile?.fileData?.html).toMatch(
-      `<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=${media.id} data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>`,
+      `<p>What happens if a block doesn&#39;t have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=${media.id} data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>`,
     )
   })
   it('creates HTML files for Crowdin as expected for lexical content within an array field that is embedded in a group', async () => {
@@ -575,10 +574,10 @@ describe('Lexical editor with blocks', () => {
     expect(fileOneCrowdinFiles.length).toEqual(0)
     expect(fileTwoCrowdinFiles.length).toEqual(0)
     expect(htmlFileOne?.fileData?.html).toMatch(
-      `<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=${media.id} data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>`,
+      `<p>What happens if a block doesn&#39;t have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=${media.id} data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>`,
     )
     expect(htmlFileTwo?.fileData?.html).toMatch(
-      `<p>What happens if a block doesn't have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=${media.id} data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>`,
+      `<p>What happens if a block doesn&#39;t have any localized fields?</p><span data-block-id=678564c06ec4a6f1fcf6a623 data-block-type=cookieTable></span><p>For example - a block that only contains a select field, which is included twice for good measure!</p><span data-block-id=678564926ec4a6f1fcf6a622 data-block-type=cookieTable></span><p>Also, can we include images and expect those to be included in the final version?</p><p><br /></p><span data-block-id=${media.id} data-relation-to=media data-block-type="pcsUpload"></span><p>Some final paragraph text - for good measure (overused phrase at this point).</p>`,
     )
   })
 })
