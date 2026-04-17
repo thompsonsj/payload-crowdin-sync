@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.6.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.6.0...dev-alternative-config-v0.6.1) (2026-04-17)
+
+
+### Bug Fixes
+
+* **tsconfig:** type fixes and implement ci check ([#337](https://github.com/thompsonsj/payload-crowdin-sync/issues/337)) ([6f4e06a](https://github.com/thompsonsj/payload-crowdin-sync/commit/6f4e06a3ff7677f551f51ef8c778a21ec4901e54))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.41.0 to 0.41.1
+
 ## [0.6.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.5.0...dev-alternative-config-v0.6.0) (2026-04-17)
 
 
