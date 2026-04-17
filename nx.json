@@ -6,7 +6,7 @@
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
     },
-    "nx:run-commands": {
+    "test": {
       "cache": true
     },
     "@nx/eslint:lint": {
