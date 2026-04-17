@@ -1,6 +1,6 @@
 {
   "name": "@payload-crowdin-sync/dev-alternative-config",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A blank template to get started with Payload 3.0",
   "license": "MIT",
   "type": "module",
@@ -16,7 +16,7 @@
     "prettier": "npx prettier . --write"
   },
   "dependencies": {
-    "payload-crowdin-sync": "0.40.0",
+    "payload-crowdin-sync": "0.41.0",
     "tslib": "^2.3.0"
   }
 }

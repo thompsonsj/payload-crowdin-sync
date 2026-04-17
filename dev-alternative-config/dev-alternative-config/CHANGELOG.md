@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.6.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.5.0...dev-alternative-config-v0.6.0) (2026-04-17)
+
+
+### Features
+
+* upgrade dependencies, migrate to vitest ([#335](https://github.com/thompsonsj/payload-crowdin-sync/issues/335)) ([dda03cd](https://github.com/thompsonsj/payload-crowdin-sync/commit/dda03cd9d4fc20f3d6790642cfcf5babfbbe0f21))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.40.0 to 0.41.0
+
 ## [0.5.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.4.5...dev-alternative-config-v0.5.0) (2026-04-16)
 
 
