@@ -28,7 +28,7 @@ export const SlateTableConverter: SlateNodeConverter = {
         canContainParagraphs: false,
         converters,
         parentNodeType: 'table',
-        slateNodes: slateNode.children,
+        slateNodes: slateNode.children ?? [],
       }),
     } as const as SerializedTableNode;
   },
@@ -44,7 +44,7 @@ export const SlateTableRowConverter: SlateNodeConverter = {
         canContainParagraphs: false,
         converters,
         parentNodeType: 'tablerow',
-        slateNodes: slateNode.children,
+        slateNodes: slateNode.children ?? [],
       }),
     } as const as SerializedTableRowNode;
   },
@@ -61,7 +61,7 @@ export const SlateTableCellConverter: SlateNodeConverter = {
         canContainParagraphs: false,
         converters,
         parentNodeType: 'tablecell',
-        slateNodes: slateNode.children,
+        slateNodes: slateNode.children ?? [],
       }),
     } as const as SerializedTableCellNode;
   },

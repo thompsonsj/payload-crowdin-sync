@@ -62,7 +62,7 @@ export default buildConfig({
         'posts',
         {
           slug: 'localized-posts-with-condition',
-          condition: ({ doc }) => doc.translateWithCrowdin,
+          condition: ({ doc }: { doc: any }) => doc.translateWithCrowdin,
         },
         'tags',
         'users',

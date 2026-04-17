@@ -141,18 +141,25 @@ export class filesApiByDocument {
           collectionSlug: this.global ? 'globals' : this.collectionSlug,
         });
 
-      const parent = isCrowdinArticleDirectory(this.parent)
-        ? this.parent
-        : this.parent &&
-          ((await this.req.payload.findByID({
-            collection: 'crowdin-article-directories',
-            id: this.parent,
-            req: this.req,
-          })) as CrowdinArticleDirectory);
+      const parent =
+        isCrowdinArticleDirectory(this.parent) ? this.parent : undefined;
+      const parentId =
+        typeof this.parent === 'string' && this.parent.length > 0
+          ? this.parent
+          : undefined;
+      const resolvedParent =
+        parent ??
+        (parentId
+          ? ((await this.req.payload.findByID({
+              collection: 'crowdin-article-directories',
+              id: parentId,
+              req: this.req,
+            })) as CrowdinArticleDirectory)
+          : undefined);
 
       // Create article directory on Crowdin
       const name = this.global ? this.collectionSlug : this.document.id;
-      let collectionConfig: CollectionConfig | GlobalConfig;
+      let collectionConfig: CollectionConfig | GlobalConfig | undefined;
       try {
         // Lexical block syncing uses an internal "mock" collection config to
         // avoid requiring a real collection definition for derived block fields.
@@ -170,11 +177,11 @@ export class filesApiByDocument {
           console.log(error);
         }
       }
-      const useAsTitle = (collectionConfig as CollectionConfig)?.admin
-        ?.useAsTitle;
+      const useAsTitle = (collectionConfig as CollectionConfig | undefined)
+        ?.admin?.useAsTitle;
 
       crowdinPayloadArticleDirectory = await this.crowdinFindOrCreateDirectory({
-        parent,
+        parent: resolvedParent,
         crowdinPayloadCollectionDirectory,
         name,
         useAsTitle,
@@ -282,7 +289,7 @@ export class filesApiByDocument {
       crowdinPayloadCollectionDirectory = query.docs[0];
     }
 
-    return crowdinPayloadCollectionDirectory;
+    return crowdinPayloadCollectionDirectory as CrowdinCollectionDirectory;
   }
 
   /**

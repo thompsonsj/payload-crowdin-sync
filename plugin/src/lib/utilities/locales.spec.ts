@@ -11,17 +11,17 @@ const localeMap = {
   },
 };
 describe('fn: getOtherLocales', () => {
-  const fixtures = [
+  const fixtures: [string, string[]][] = [
     ['da_DK', ['de_DE', 'fr_FR']],
     ['de_DE', ['da_DK', 'fr_FR']],
     ['fr_FR', ['da_DK', 'de_DE']],
     ['', ['da_DK', 'de_DE', 'fr_FR']],
   ];
-  describe.each(fixtures)(`%s`, (string, result) => {
-    it(`${string} is excluded in returned locales`, () => {
+  describe.each(fixtures)(`%s`, (locale, result) => {
+    it(`${locale} is excluded in returned locales`, () => {
       expect(
         getOtherLocales({
-          locale: string as string,
+          locale: locale as string,
           localeMap,
         }),
       ).toEqual(result);

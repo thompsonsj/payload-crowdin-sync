@@ -38,6 +38,9 @@ export const getReviewFieldsEndpoint = ({
               .collectionSlug,
         global,
       );
+      if (!collectionConfig) {
+        return Response.error();
+      }
       const response = {
         fields: collectionConfig.fields,
         localizedFields: getLocalizedFields({

@@ -23,7 +23,7 @@ export const getCollectionConfig = (
   collection: string,
   global: boolean,
   payload: Payload,
-): CollectionConfig | GlobalConfig => {
+): CollectionConfig | GlobalConfig | undefined => {
   let collectionConfig:
     | SanitizedGlobalConfig
     | SanitizedCollectionConfig
@@ -116,7 +116,7 @@ export async function getLexicalFieldArticleDirectories({
 }) {
   const where =
     parent === undefined
-      ? {}
+      ? undefined
       : {
           parent: {
             equals: isCrowdinArticleDirectory(parent) ? parent?.id : parent,

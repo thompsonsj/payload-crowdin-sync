@@ -48,6 +48,9 @@ export const syncTranslations = ({
 
   // This is the function that is run when the task is invoked
   handler: async ({ input, req }) => {
+    if (!input) {
+      throw new Error('Task input is required');
+    }
     const result = await updatePayloadTranslation({
       articleDirectoryId: input.articleDirectoryId,
       pluginOptions,

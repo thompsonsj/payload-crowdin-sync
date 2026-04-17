@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -19,9 +20,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@payload-config": ["./src/payload.config.ts"],
-      "payload-crowdin-sync": ["./../plugin/src/index.ts"]
+      "@/*": ["src/*"],
+      "@payload-config": ["src/payload.config.ts"],
+      "payload-crowdin-sync": ["../plugin/src/index.ts"]
     },
     "target": "ES2022"
   },
