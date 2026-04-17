@@ -45,6 +45,8 @@ const config = {
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       '<rootDir>/test/helpers/mocks/fileMock.js',
     '^(\\.{1,2}/.*)\\.js$': '$1',
+    // Real `file-type` is ESM-only and pulls deps Jest won't parse; see mock header.
+    '^file-type$': '<rootDir>/test/helpers/mocks/file-type.js',
   },
   testEnvironment: 'node',
   moduleFileExtensions: ['ts', 'js', 'html'],

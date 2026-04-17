@@ -284,7 +284,7 @@ describe('fn: containsLocalizedFields: true tests', () => {
     ];
     expect(containsLocalizedFields({ fields })).toEqual(true);
   });
-  describe('extract rich text localized fields', () => {
+  it('extract rich text localized fields', () => {
     const fields: Field[] = [
       {
         name: 'simpleLocalizedField',
@@ -339,9 +339,9 @@ describe('fn: containsLocalizedFields: true tests', () => {
           },
         ],
       },
-    ];
-    expect(containsLocalizedFields({ fields })).toEqual(true);
-  });
+    ]
+    expect(containsLocalizedFields({ fields })).toEqual(true)
+  })
   it('returns nested json fields in a group inside an array', () => {
     const linkField: Field = {
       name: 'link',
@@ -639,7 +639,7 @@ describe('fn: containsLocalizedFields: false tests', () => {
       expect(containsLocalizedFields({ fields })).toEqual(false);
     });
   });
-  describe('extract rich text localized fields', () => {
+  it('extract rich text localized fields', () => {
     const fields: Field[] = [
       {
         name: 'simpleLocalizedField',

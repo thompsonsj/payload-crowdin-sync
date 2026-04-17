@@ -20,12 +20,10 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "dev-alternative-config/src/tests/jest.config.js",
-        "forceExit": true,
-        "detectOpenHandles": true
+        "command": "vitest --project dev-alternative-config"
       }
     }
   }

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Global: localized-nav builds a Crowdin JSON object as expected 1`] = `
+exports[`Global: localized-nav > builds a Crowdin JSON object as expected 1`] = `
 {
   "items": {
     "68ddb03a9432e06617d52103": {
@@ -13,7 +13,7 @@ exports[`Global: localized-nav builds a Crowdin JSON object as expected 1`] = `
 }
 `;
 
-exports[`Global: localized-nav builds a Crowdin JSON object as expected for a draft 1`] = `
+exports[`Global: localized-nav > builds a Crowdin JSON object as expected for a draft 1`] = `
 {
   "items": {
     "68ddb03a9432e06617d52103": {
@@ -29,7 +29,7 @@ exports[`Global: localized-nav builds a Crowdin JSON object as expected for a dr
 }
 `;
 
-exports[`Global: localized-nav builds a Payload update object as expected 1`] = `
+exports[`Global: localized-nav > builds a Payload update object as expected 1`] = `
 {
   "items": [
     {
@@ -44,7 +44,7 @@ exports[`Global: localized-nav builds a Payload update object as expected 1`] = 
 }
 `;
 
-exports[`Global: localized-nav publishes in fr_FR with a translation from Crowdin 1`] = `
+exports[`Global: localized-nav > publishes in fr_FR with a translation from Crowdin 1`] = `
 [
   {
     "id": "68ddb03a9432e06617d52103",
@@ -57,7 +57,7 @@ exports[`Global: localized-nav publishes in fr_FR with a translation from Crowdi
 ]
 `;
 
-exports[`Global: localized-nav saves draft in fr_FR with a translation from Crowdin 1`] = `
+exports[`Global: localized-nav > saves draft in fr_FR with a translation from Crowdin 1`] = `
 [
   {
     "id": "68ddb03a9432e06617d52103",
@@ -70,7 +70,7 @@ exports[`Global: localized-nav saves draft in fr_FR with a translation from Crow
 ]
 `;
 
-exports[`Global: localized-nav saves draft in fr_FR with a translation from Crowdin from a source draft version 1`] = `
+exports[`Global: localized-nav > saves draft in fr_FR with a translation from Crowdin from a source draft version 1`] = `
 [
   {
     "id": "68ddb03a9432e06617d52103",

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Collection: Policies: Lexical Relationship builds a Crowdin HTML object as expected 1`] = `
+exports[`Collection: Policies: Lexical Relationship > builds a Crowdin HTML object as expected 1`] = `
 {
   "content": {
     "root": {
@@ -88,13 +88,13 @@ exports[`Collection: Policies: Lexical Relationship builds a Crowdin HTML object
 }
 `;
 
-exports[`Collection: Policies: Lexical Relationship builds a Crowdin JSON object as expected 1`] = `
+exports[`Collection: Policies: Lexical Relationship > builds a Crowdin JSON object as expected 1`] = `
 {
   "title": "Test policy",
 }
 `;
 
-exports[`Collection: Policies: Lexical Relationship builds a Payload update object as expected 1`] = `
+exports[`Collection: Policies: Lexical Relationship > builds a Payload update object as expected 1`] = `
 {
   "content": {
     "root": {
@@ -183,9 +183,9 @@ exports[`Collection: Policies: Lexical Relationship builds a Payload update obje
 }
 `;
 
-exports[`Collection: Policies: Lexical Relationship creates an HTML file for Crowdin as expected 1`] = `"<p>Paragraph before YouTube video.</p><span data-block-id=671a9003910b067fc9bafa92 data-relation-to=youtube-videos data-block-type="pcsRelationship"></span><p>Paragraph after YouTube video.</p>"`;
+exports[`Collection: Policies: Lexical Relationship > creates an HTML file for Crowdin as expected 1`] = `"<p>Paragraph before YouTube video.</p><span data-block-id=671a9003910b067fc9bafa92 data-relation-to=youtube-videos data-block-type="pcsRelationship"></span><p>Paragraph after YouTube video.</p>"`;
 
-exports[`Collection: Policies: Lexical Relationship updates the Payload document with a translation from Crowdin 1`] = `
+exports[`Collection: Policies: Lexical Relationship > updates the Payload document with a translation from Crowdin 1`] = `
 {
   "root": {
     "children": [
