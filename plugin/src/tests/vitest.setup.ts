@@ -5,7 +5,7 @@ import { vi } from 'vitest'
 // Align with existing Jest setup used in dev installs.
 global.console = console
 
-process.env.NODE_ENV = 'test'
+Object.assign(process.env, { NODE_ENV: 'test' })
 process.env.PAYLOAD_DISABLE_ADMIN = 'true'
 process.env.PAYLOAD_DROP_DATABASE = 'true'
 process.env.PAYLOAD_PUBLIC_CLOUD_STORAGE_ADAPTER = 's3'

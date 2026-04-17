@@ -1,14 +1,3 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "jsx": "preserve",
-    "skipLibCheck": true,
-    "declaration": true,
-    "declarationMap": true
-  },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules"]
+  "extends": "./tsconfig.build.json"
 }

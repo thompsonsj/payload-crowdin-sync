@@ -22,6 +22,7 @@
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@payload-crowdin-sync-nx/dev": ["dev/src/index.ts"],

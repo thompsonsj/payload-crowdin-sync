@@ -29,7 +29,7 @@ export const getCollectionConfig = (
     | SanitizedCollectionConfig
     | undefined;
   if (!collection && !global) {
-    return undefined;
+    throw new Error('Collection slug is required when global is false');
   }
   if (global) {
     collectionConfig = payload.config.globals.find(
@@ -116,7 +116,7 @@ export async function getLexicalFieldArticleDirectories({
 }) {
   const where =
     parent === undefined
-      ? {}
+      ? undefined
       : {
           parent: {
             equals: isCrowdinArticleDirectory(parent) ? parent?.id : parent,

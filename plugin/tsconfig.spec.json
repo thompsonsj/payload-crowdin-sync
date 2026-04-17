@@ -1,13 +1,14 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../dist/out-tsc",
-    "module": "esnext",
+    "noEmit": true,
     "types": ["vitest/globals", "node"]
   },
   "include": [
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
-    "src/**/*.d.ts"
-  ]
+    "src/**/*.d.ts",
+    "src/tests/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
 }

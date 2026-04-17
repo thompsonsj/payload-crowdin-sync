@@ -401,6 +401,11 @@ export class payloadCrowdinSyncTranslationsApi {
     } catch (error) {
       console.log(error);
     }
+    if (!collectionConfig) {
+      throw new Error(
+        `Collection ${collection} not found in payload config (global=${String(global)})`,
+      );
+    }
 
     const localizedFields = collectionConfig
       ? getLocalizedFields({

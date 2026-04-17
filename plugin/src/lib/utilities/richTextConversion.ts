@@ -55,15 +55,16 @@ export const convertLexicalToHtml = async (
   const blockSlugs = getLexicalBlockFields(editorConfig)?.blocks.map(
     (block) => block.slug,
   );
-  const blockConvertors =
-    blockSlugs?.reduce((acc, slug) => {
-      acc[slug] = ({ node }) => {
-        const blockId = node.fields.id;
-        const blockType = node.fields.blockType;
-        return `<span data-block-id=${blockId} data-block-type=${blockType}></span>`;
-      };
-      return acc;
-    }, {}) || {};
+  const blockConvertors = (blockSlugs ?? []).reduce<
+    Record<string, ({ node }: { node: any }) => string>
+  >((acc, slug) => {
+    acc[slug] = ({ node }) => {
+      const blockId = node.fields.id;
+      const blockType = node.fields.blockType;
+      return `<span data-block-id=${blockId} data-block-type=${blockType}></span>`;
+    };
+    return acc;
+  }, {});
 
   /**
    * This is a custom HTML converter for the Upload node type.
