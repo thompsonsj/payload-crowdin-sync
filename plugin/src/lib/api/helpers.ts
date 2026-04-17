@@ -23,13 +23,13 @@ export const getCollectionConfig = (
   collection: string,
   global: boolean,
   payload: Payload,
-): CollectionConfig | GlobalConfig => {
+): CollectionConfig | GlobalConfig | undefined => {
   let collectionConfig:
     | SanitizedGlobalConfig
     | SanitizedCollectionConfig
     | undefined;
   if (!collection && !global) {
-    throw new Error('Collection slug is required when global is false');
+    return undefined;
   }
   if (global) {
     collectionConfig = payload.config.globals.find(

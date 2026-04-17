@@ -274,7 +274,7 @@ export class payloadCrowdinSyncTranslationsApi {
   getCollectionConfig(
     collection: string,
     global: boolean,
-  ): CollectionConfig | GlobalConfig {
+  ): CollectionConfig | GlobalConfig | undefined {
     return getCollectionConfig(collection, global, this.payload);
   }
 
@@ -402,9 +402,7 @@ export class payloadCrowdinSyncTranslationsApi {
       console.log(error);
     }
     if (!collectionConfig) {
-      throw new Error(
-        `Collection ${collection} not found in payload config (global=${String(global)})`,
-      );
+      return { message: 'no localized fields' };
     }
 
     const localizedFields = collectionConfig
