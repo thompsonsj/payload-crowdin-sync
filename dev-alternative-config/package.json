@@ -1,6 +1,6 @@
 {
   "name": "@payload-crowdin-sync/dev-alternative-config",
-  "version": "0.2.7",
+  "version": "0.6.1",
   "description": "A blank template to get started with Payload 3.0",
   "license": "MIT",
   "type": "module",
@@ -12,10 +12,11 @@
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
-    "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "prettier": "npx prettier . --write"
   },
   "dependencies": {
-    "payload-crowdin-sync": "0.34.2",
+    "payload-crowdin-sync": "0.41.1",
     "tslib": "^2.3.0"
   }
 }

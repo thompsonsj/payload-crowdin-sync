@@ -1,17 +1,34 @@
 import { PluginOptions } from '../../index';
-import { payloadCrowdinSyncFilesApi } from ".";
+import { payloadCrowdinSyncFilesApi } from '.';
 import { CrowdinArticleDirectory, CrowdinFile } from '../../payload-types';
-import { BlocksField as BlockField, CollectionConfig, Document, GlobalConfig, PayloadRequest, RichTextField } from 'payload';
+import {
+  BlocksField as BlockField,
+  CollectionConfig,
+  Document,
+  Field,
+  GlobalConfig,
+  PayloadRequest,
+  RichTextField,
+} from 'payload';
 
 import { isEmpty } from 'es-toolkit/compat';
+import { getFile, getFiles } from '../helpers';
+import { Descendant } from 'slate';
 import {
-  getFile,
-  getFiles
-} from "../helpers";
-import { Descendant } from "slate";
-import { buildCrowdinHtmlObject, buildCrowdinJsonObject, findField, reLocalizeField } from '../../utilities';
-import { convertLexicalToHtml, convertSlateToHtml } from '../../utilities/richTextConversion'
-import { extractLexicalBlockContent, getLexicalBlockFields, getLexicalEditorConfig } from '../../utilities/lexical';
+  buildCrowdinHtmlObject,
+  buildCrowdinJsonObject,
+  findField,
+  reLocalizeField,
+} from '../../utilities';
+import {
+  convertLexicalToHtml,
+  convertSlateToHtml,
+} from '../../utilities/richTextConversion';
+import {
+  extractLexicalBlockContent,
+  getLexicalBlockFields,
+  getLexicalEditorConfig,
+} from '../../utilities/lexical';
 import { filesApiByDocument } from './by-document';
 import { CollectionSlug, GlobalSlug } from 'payload';
 
@@ -20,39 +37,43 @@ type FileData = string | object;
 interface IupdateOrCreateFile {
   name: string;
   fileData: FileData;
-  fileType: "html" | "json";
-  sourceBlocks?: unknown[]
+  fileType: 'html' | 'json';
+  sourceBlocks?: unknown[];
 }
 
 export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesApi {
-  document: Document
-  articleDirectory: CrowdinArticleDirectory
-  collectionSlug: CollectionSlug | "globals";
+  document: Document;
+  articleDirectory: CrowdinArticleDirectory;
+  collectionSlug: CollectionSlug | 'globals';
   global?: boolean;
 
-  constructor({
-    document,
-    articleDirectory,
-    collectionSlug,
-    global,
-  }: {
-    document: Document,
-    articleDirectory: CrowdinArticleDirectory,
-    collectionSlug:  CollectionSlug | "globals",
-    global: boolean,
-  }, pluginOptions: PluginOptions, req: PayloadRequest) {
+  constructor(
+    {
+      document,
+      articleDirectory,
+      collectionSlug,
+      global,
+    }: {
+      document: Document;
+      articleDirectory: CrowdinArticleDirectory;
+      collectionSlug: CollectionSlug | 'globals';
+      global: boolean;
+    },
+    pluginOptions: PluginOptions,
+    req: PayloadRequest,
+  ) {
     super(pluginOptions, req);
-    this.document = document
-    this.articleDirectory = articleDirectory
-    this.collectionSlug = collectionSlug
-    this.global = global
+    this.document = document;
+    this.articleDirectory = articleDirectory;
+    this.collectionSlug = collectionSlug;
+    this.global = global;
   }
 
   /**
    * getFile
-   * 
-   * Retrieve a CrowdinFile associated with this document by name. 
-   * 
+   *
+   * Retrieve a CrowdinFile associated with this document by name.
+   *
    * @param name file name
    * @returns CrowdinFile
    */
@@ -62,9 +83,9 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
 
   /**
    * getFiles
-   * 
-   * Retrieve all CrowdinFile types associated with this document. 
-   * 
+   *
+   * Retrieve all CrowdinFile types associated with this document.
+   *
    * @returns CrowdinFile[]
    */
   async getFiles(): Promise<CrowdinFile[]> {
@@ -121,7 +142,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     fileData,
     fileType,
     sourceBlocks,
-  }: {crowdinFile: CrowdinFile} & IupdateOrCreateFile) {
+  }: { crowdinFile: CrowdinFile } & IupdateOrCreateFile) {
     if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
       console.log('updateFile', {
         crowdinFile,
@@ -129,7 +150,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
         fileData,
         fileType,
         sourceBlocks,
-      })
+      });
     }
     // Update file on Crowdin
     const updatedCrowdinFile = await this.crowdinUpdateFile({
@@ -140,16 +161,28 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     });
 
     await this.req.payload.update({
-      collection: "crowdin-files", // required
+      collection: 'crowdin-files', // required
       id: crowdinFile.id,
       data: {
         // required
         updatedAt: updatedCrowdinFile.data.updatedAt,
         revisionId: updatedCrowdinFile.data.revisionId,
-        ...(fileType === "json" && { fileData: { json: (fileData as {
-          [k: string]: Partial<unknown>;
-        }) }}),
-        ...(fileType === "html" && { fileData: { html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData), ...(sourceBlocks && { sourceBlocks: JSON.stringify(sourceBlocks) }) } }),
+        ...(fileType === 'json' && {
+          fileData: {
+            json: fileData as {
+              [k: string]: Partial<unknown>;
+            },
+          },
+        }),
+        ...(fileType === 'html' && {
+          fileData: {
+            html:
+              typeof fileData === 'string'
+                ? fileData
+                : JSON.stringify(fileData),
+            ...(sourceBlocks && { sourceBlocks: JSON.stringify(sourceBlocks) }),
+          },
+        }),
       },
       req: this.req,
     });
@@ -167,10 +200,10 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
         fileData,
         fileType,
         sourceBlocks,
-      })
+      });
     }
     // Create file on Crowdin
-    const originalId = this.articleDirectory.originalId
+    const originalId = this.articleDirectory.originalId;
     if (originalId) {
       const crowdinFile = await this.crowdinCreateFile({
         directoryId: originalId,
@@ -180,8 +213,58 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       });
       // Store result on Payload CMS
       if (crowdinFile) {
+        // Check if this file already exists in Payload (might have been found on Crowdin)
+        const existingPayloadFile = await this.getFile(name);
+
+        if (existingPayloadFile) {
+          // File already exists in Payload, update it instead
+          if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+            console.log(
+              `File "${name}" already exists in Payload database. Updating instead of creating.`,
+            );
+          }
+
+          // Update the file content on Crowdin
+          await this.crowdinUpdateFile({
+            fileId: crowdinFile.data.id,
+            name,
+            fileData,
+            fileType,
+          });
+
+          // Update the Payload record
+          const payloadCrowdinFile = await this.req.payload.update({
+            collection: 'crowdin-files',
+            id: existingPayloadFile.id,
+            data: {
+              updatedAt: crowdinFile.data.updatedAt,
+              revisionId: crowdinFile.data.revisionId,
+              ...(fileType === 'json' && {
+                fileData: {
+                  json: fileData as {
+                    [k: string]: Partial<unknown>;
+                  },
+                },
+              }),
+              ...(fileType === 'html' && {
+                fileData: {
+                  html:
+                    typeof fileData === 'string'
+                      ? fileData
+                      : JSON.stringify(fileData),
+                  ...(sourceBlocks && {
+                    sourceBlocks: JSON.stringify(sourceBlocks),
+                  }),
+                },
+              }),
+            },
+            req: this.req,
+          });
+          return payloadCrowdinFile;
+        }
+
         const payloadCrowdinFile = await this.req.payload.create({
-          collection: "crowdin-files", // required
+          collection: 'crowdin-files', // required
           data: {
             // required
             title: name,
@@ -198,31 +281,66 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
             name: `${name}.${fileType}`,
             type: fileType,
             path: crowdinFile.data.path,
-            ...(fileType === "json" && { fileData: { json: (fileData as {
-              [k: string]: Partial<unknown>;
-            }) } }),
-            ...(fileType === "html" && { fileData: { html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData), ...(sourceBlocks && { sourceBlocks: JSON.stringify(sourceBlocks) })} }),
+            ...(fileType === 'json' && {
+              fileData: {
+                json: fileData as {
+                  [k: string]: Partial<unknown>;
+                },
+              },
+            }),
+            ...(fileType === 'html' && {
+              fileData: {
+                html:
+                  typeof fileData === 'string'
+                    ? fileData
+                    : JSON.stringify(fileData),
+                ...(sourceBlocks && {
+                  sourceBlocks: JSON.stringify(sourceBlocks),
+                }),
+              },
+            }),
           },
           req: this.req,
         });
+
+        // If we found an existing file on Crowdin (not newly created), update its content
+        // This happens when the file exists on Crowdin but wasn't in our local database
+        const wasExistingFile = crowdinFile.data.revisionId > 1;
+        if (wasExistingFile) {
+          if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+            console.log(
+              `Updating content for existing Crowdin file "${name}" (File ID: ${crowdinFile.data.id})`,
+            );
+          }
+          await this.crowdinUpdateFile({
+            fileId: crowdinFile.data.id,
+            name,
+            fileData,
+            fileType,
+          });
+        }
+
         return payloadCrowdinFile;
       }
     }
-    return
+    return;
   }
 
   async deleteFile(crowdinFile: CrowdinFile) {
     if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
       console.log('deleteFile', {
         crowdinFile,
-      })
+      });
     }
-    await this.sourceFilesApi.deleteFile(
-      this.projectId,
-      crowdinFile.originalId as number
-    );
+    if (this.pluginOptions.deleteCrowdinFiles && crowdinFile.originalId) {
+      await this.sourceFilesApi.deleteFile(
+        this.projectId,
+        crowdinFile.originalId as number,
+      );
+    }
+
     const payloadFile = await this.req.payload.delete({
-      collection: "crowdin-files", // required
+      collection: 'crowdin-files', // required
       id: crowdinFile.id, // required
       req: this.req,
     });
@@ -231,17 +349,17 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
 
   async createOrUpdateJsonFile({
     fileData,
-    fileName = "fields",
+    fileName = 'fields',
     req,
   }: {
-    fileData: FileData,
-    fileName?: string,
-    req?: PayloadRequest
+    fileData: FileData;
+    fileName?: string;
+    req?: PayloadRequest;
   }) {
     await this.createOrUpdateFile({
       name: fileName,
       fileData,
-      fileType: "json",
+      fileType: 'json',
     });
   }
 
@@ -255,23 +373,27 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     collection: CollectionConfig | GlobalConfig;
   }) {
     // brittle check for Lexical value - improve this detection. Type check? Anything from Payload to indicate the type?
-    let blockContent, blockConfig: BlockField | undefined
-    const isLexical = Object.prototype.hasOwnProperty.call(value, "root")
-    
+    let blockContent, blockConfig: BlockField | undefined;
+    const isLexical = Object.prototype.hasOwnProperty.call(value, 'root');
+
     if (isLexical) {
       const field = findField({
         dotNotation: name,
         fields: collection.fields,
-        filterLocalizedFields: collection.slug === 'mock-collection-for-lexical-blocks' ? false : true,
-      }) as RichTextField
+        filterLocalizedFields:
+          collection.slug === 'mock-collection-for-lexical-blocks'
+            ? false
+            : true,
+      }) as RichTextField;
 
-      const editorConfig = getLexicalEditorConfig(field)
+      const editorConfig = getLexicalEditorConfig(field);
 
       if (editorConfig) {
-        const html = await convertLexicalToHtml(value, editorConfig)
+        const html = await convertLexicalToHtml(value, editorConfig);
         // no need to detect change - this has already been done on the field's JSON object
-        blockContent = value && extractLexicalBlockContent(value.root)
-        blockConfig = editorConfig && getLexicalBlockFields(editorConfig)
+        blockContent = value && extractLexicalBlockContent(value.root);
+        blockConfig = editorConfig && getLexicalBlockFields(editorConfig);
+
         if (blockContent && blockContent.length > 0 && blockConfig) {
           await this.createLexicalBlocks({
             collection,
@@ -279,30 +401,33 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
             blockConfig,
             name,
             req: this.req,
-          })
+          });
         }
         await this.createOrUpdateFile({
           name: name,
           fileData: html,
-          fileType: "html",
+          fileType: 'html',
           ...(!isEmpty(blockContent) && {
-            sourceBlocks: blockContent
+            sourceBlocks: blockContent,
           }),
         });
       } else {
-        const html = "<span>lexical configuration not found</span>"
+        const html = '<span>lexical configuration not found</span>';
         await this.createOrUpdateFile({
           name: name,
           fileData: html,
-          fileType: "html",
+          fileType: 'html',
         });
       }
     } else {
-      const html = convertSlateToHtml(value, this.pluginOptions.slateToHtmlConfig)
+      const html = convertSlateToHtml(
+        value,
+        this.pluginOptions.slateToHtmlConfig,
+      );
       await this.createOrUpdateFile({
         name: name,
         fileData: html,
-        fileType: "html",
+        fileType: 'html',
       });
     }
   }
@@ -314,91 +439,100 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     name,
     req,
   }: {
-    collection: CollectionConfig | GlobalConfig
-    blockContent: unknown[]
-    blockConfig: BlockField
-    name: string
-    req: PayloadRequest
-  }) {    
+    collection: CollectionConfig | GlobalConfig;
+    blockContent: unknown[];
+    blockConfig: BlockField;
+    name: string;
+    req: PayloadRequest;
+  }) {
     // directory name must be unique from file names - Crowdin API
-    const folderName = `${this.pluginOptions.lexicalBlockFolderPrefix}${name}`
+    const folderName = `${this.pluginOptions.lexicalBlockFolderPrefix}${name}`;
     /**
      * Initialize Crowdin client sourceFilesApi
      */
-    const apiByDocument = new filesApiByDocument(
-      {
-        document: {
-          // Lexical field name used for documentId
-          id: folderName,
-          // Friendly name for directory
-          title: name,
-        },
-        collectionSlug: collection.slug as CollectionSlug | GlobalSlug,
-        global: false,
-        pluginOptions: this.pluginOptions,
-        req,
-        // Important: Identify that this article directory has a parent - logic changes for non-top-level directories.
-        parent: this.articleDirectory,
+    const apiByDocument = new filesApiByDocument({
+      document: {
+        // Lexical field name used for documentId
+        id: folderName,
+        // Friendly name for directory
+        title: name,
       },
-    );
+      collectionSlug: collection.slug as CollectionSlug | GlobalSlug,
+      global: false,
+      pluginOptions: this.pluginOptions,
+      req,
+      // Important: Identify that this article directory has a parent - logic changes for non-top-level directories.
+      parent: this.articleDirectory,
+    });
 
-    const filesApi = await apiByDocument.get()
-      const fieldName = `blocks`
-      const currentCrowdinJsonData = buildCrowdinJsonObject({
-        doc: {
-          [fieldName]: blockContent,
+    /**
+     * Here's the issue, the code pauses/stops here.
+     */
+    const filesApi = await apiByDocument.get();
+    const fieldName = `blocks`;
+    const currentCrowdinJsonData = buildCrowdinJsonObject({
+      doc: {
+        [fieldName]: blockContent,
+      },
+      fields: [
+        {
+          name: fieldName,
+          type: 'blocks',
+          localized: true,
+          blocks: blockConfig.blocks,
         },
-        fields: [
-          {
-            name: fieldName,
-            type: 'blocks',
-            blocks: blockConfig.blocks,
-          }
-        ],
-        isLocalized: reLocalizeField, // ignore localized attribute
-      });
-      const currentCrowdinHtmlData = buildCrowdinHtmlObject({
-        doc: {
-          [fieldName]: blockContent,
+      ],
+      isLocalized: reLocalizeField, // ignore localized attribute
+    });
+    const currentCrowdinHtmlData = buildCrowdinHtmlObject({
+      doc: {
+        [fieldName]: blockContent,
+      },
+      fields: [
+        {
+          name: fieldName,
+          type: 'blocks',
+          localized: true,
+          blocks: blockConfig.blocks,
         },
-        fields: [
-          {
-            name: fieldName,
-            type: 'blocks',
-            blocks: blockConfig.blocks,
-          }
-        ],
-        isLocalized: reLocalizeField, // ignore localized attribute
-      });
-
+      ],
+      isLocalized: reLocalizeField, // ignore localized attribute
+    });
     await filesApi.createOrUpdateJsonFile({
       fileData: currentCrowdinJsonData,
       fileName: fieldName,
       req,
     });
-    await Promise.allSettled(Object.keys(currentCrowdinHtmlData).map(async (name) => {
-      await filesApi.createOrUpdateHtmlFile({
-        name,
-        value: currentCrowdinHtmlData[name] as Descendant[],
-        collection: {
-          slug: 'mock-collection-for-lexical-blocks',
-          fields: [
-            {
-              name: fieldName,
-              type: 'blocks',
-              blocks: blockConfig ? blockConfig.blocks : [],
-            }
-          ],
-        },
-      });
-    }));
+    await Promise.allSettled(
+      Object.keys(currentCrowdinHtmlData).map(async (name) => {
+        await filesApi.createOrUpdateHtmlFile({
+          name,
+          value: currentCrowdinHtmlData[name] as Descendant[],
+          collection: {
+            slug: 'mock-collection-for-lexical-blocks',
+            fields: [
+              {
+                name: fieldName,
+                type: 'blocks',
+                localized: true,
+                blocks: blockConfig ? blockConfig.blocks : [],
+              },
+            ],
+          },
+        });
+      }),
+    );
   }
 
   async deleteFilesAndDirectory() {
     const files = await this.getFiles();
 
     for (const file of files) {
-      await this.deleteFile(file);
+      try {
+        await this.deleteFile(file);
+      } catch (error) {
+        console.warn(`Error deleting file: `, error);
+      }
     }
 
     await this.deleteArticleDirectory(this.document.id);

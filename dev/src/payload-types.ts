@@ -6,10 +6,66 @@
  * and re-run `payload generate:types` to regenerate this file.
  */
 
+/**
+ * Supported timezones in IANA format.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "supportedTimezones".
+ */
+export type SupportedTimezones =
+  | 'Pacific/Midway'
+  | 'Pacific/Niue'
+  | 'Pacific/Honolulu'
+  | 'Pacific/Rarotonga'
+  | 'America/Anchorage'
+  | 'Pacific/Gambier'
+  | 'America/Los_Angeles'
+  | 'America/Tijuana'
+  | 'America/Denver'
+  | 'America/Phoenix'
+  | 'America/Chicago'
+  | 'America/Guatemala'
+  | 'America/New_York'
+  | 'America/Bogota'
+  | 'America/Caracas'
+  | 'America/Santiago'
+  | 'America/Buenos_Aires'
+  | 'America/Sao_Paulo'
+  | 'Atlantic/South_Georgia'
+  | 'Atlantic/Azores'
+  | 'Atlantic/Cape_Verde'
+  | 'Europe/London'
+  | 'Europe/Berlin'
+  | 'Africa/Lagos'
+  | 'Europe/Athens'
+  | 'Africa/Cairo'
+  | 'Europe/Moscow'
+  | 'Asia/Riyadh'
+  | 'Asia/Dubai'
+  | 'Asia/Baku'
+  | 'Asia/Karachi'
+  | 'Asia/Tashkent'
+  | 'Asia/Calcutta'
+  | 'Asia/Dhaka'
+  | 'Asia/Almaty'
+  | 'Asia/Jakarta'
+  | 'Asia/Bangkok'
+  | 'Asia/Shanghai'
+  | 'Asia/Singapore'
+  | 'Asia/Tokyo'
+  | 'Asia/Seoul'
+  | 'Australia/Brisbane'
+  | 'Australia/Sydney'
+  | 'Pacific/Guam'
+  | 'Pacific/Noumea'
+  | 'Pacific/Auckland'
+  | 'Pacific/Fiji';
+
 export interface Config {
   auth: {
     users: UserAuthOperations;
   };
+  blocks: {};
   collections: {
     categories: Category;
     'multi-rich-text': MultiRichText;
@@ -21,6 +77,8 @@ export interface Config {
     'localized-posts-with-condition': LocalizedPostsWithCondition;
     tags: Tag;
     users: User;
+    'youtube-videos': YoutubeVideo;
+    'video-thumbnails': VideoThumbnail;
     'crowdin-files': CrowdinFile;
     'crowdin-collection-directories': CrowdinCollectionDirectory;
     'crowdin-article-directories': CrowdinArticleDirectory;
@@ -41,6 +99,8 @@ export interface Config {
     'localized-posts-with-condition': LocalizedPostsWithConditionSelect<false> | LocalizedPostsWithConditionSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    'youtube-videos': YoutubeVideosSelect<false> | YoutubeVideosSelect<true>;
+    'video-thumbnails': VideoThumbnailsSelect<false> | VideoThumbnailsSelect<true>;
     'crowdin-files': CrowdinFilesSelect<false> | CrowdinFilesSelect<true>;
     'crowdin-collection-directories': CrowdinCollectionDirectoriesSelect<false> | CrowdinCollectionDirectoriesSelect<true>;
     'crowdin-article-directories': CrowdinArticleDirectoriesSelect<false> | CrowdinArticleDirectoriesSelect<true>;
@@ -317,6 +377,13 @@ export interface User {
   hash?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
   password?: string | null;
 }
 /**
@@ -463,6 +530,113 @@ export interface NestedFieldCollection {
             blockName?: string | null;
             blockType: 'testBlockArrayOfRichText';
           }
+        | {
+            content?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlockLexical';
+          }
+      )[]
+    | null;
+  layoutTwo?:
+    | (
+        | {
+            textField?: string | null;
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            textareaField?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlock';
+          }
+        | {
+            textField?: string | null;
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            textareaField?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlockNonLocalized';
+          }
+        | {
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlockRichText';
+          }
+        | {
+            textField?: string | null;
+            richTextField?:
+              | {
+                  [k: string]: unknown;
+                }[]
+              | null;
+            textareaField?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlockMixed';
+          }
+        | {
+            title?: string | null;
+            messages?:
+              | {
+                  title?: string | null;
+                  message?:
+                    | {
+                        [k: string]: unknown;
+                      }[]
+                    | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'testBlockArrayOfRichText';
+          }
+        | {
+            content?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'basicBlockLexical';
+          }
       )[]
     | null;
   group?: {
@@ -489,7 +663,7 @@ export interface NestedFieldCollection {
                 root: {
                   type: string;
                   children: {
-                    type: string;
+                    type: any;
                     version: number;
                     [k: string]: unknown;
                   }[];
@@ -539,7 +713,7 @@ export interface Policy {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -558,7 +732,7 @@ export interface Policy {
             root: {
               type: string;
               children: {
-                type: string;
+                type: any;
                 version: number;
                 [k: string]: unknown;
               }[];
@@ -635,6 +809,70 @@ export interface LocalizedPostsWithCondition {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "youtube-videos".
+ */
+export interface YoutubeVideo {
+  id: string;
+  /**
+   * YouTube video URL or video ID.
+   */
+  videoId: string;
+  thumbnail?: (string | null) | VideoThumbnail;
+  title?: string | null;
+  aspectRatio?: number | null;
+  width?: number | null;
+  height?: number | null;
+  thumbnailUrl?: string | null;
+  oembed?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "video-thumbnails".
+ */
+export interface VideoThumbnail {
+  id: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    widescreen?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -774,6 +1012,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: string | User;
+      } | null)
+    | ({
+        relationTo: 'youtube-videos';
+        value: string | YoutubeVideo;
+      } | null)
+    | ({
+        relationTo: 'video-thumbnails';
+        value: string | VideoThumbnail;
       } | null)
     | ({
         relationTo: 'crowdin-files';
@@ -1001,6 +1247,72 @@ export interface NestedFieldCollectionSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        basicBlockLexical?:
+          | T
+          | {
+              content?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  layoutTwo?:
+    | T
+    | {
+        basicBlock?:
+          | T
+          | {
+              textField?: T;
+              richTextField?: T;
+              textareaField?: T;
+              id?: T;
+              blockName?: T;
+            };
+        basicBlockNonLocalized?:
+          | T
+          | {
+              textField?: T;
+              richTextField?: T;
+              textareaField?: T;
+              id?: T;
+              blockName?: T;
+            };
+        basicBlockRichText?:
+          | T
+          | {
+              richTextField?: T;
+              id?: T;
+              blockName?: T;
+            };
+        basicBlockMixed?:
+          | T
+          | {
+              textField?: T;
+              richTextField?: T;
+              textareaField?: T;
+              id?: T;
+              blockName?: T;
+            };
+        testBlockArrayOfRichText?:
+          | T
+          | {
+              title?: T;
+              messages?:
+                | T
+                | {
+                    title?: T;
+                    message?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        basicBlockLexical?:
+          | T
+          | {
+              content?: T;
+              id?: T;
+              blockName?: T;
+            };
       };
   group?:
     | T
@@ -1121,6 +1433,70 @@ export interface UsersSelect<T extends boolean = true> {
   hash?: T;
   loginAttempts?: T;
   lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "youtube-videos_select".
+ */
+export interface YoutubeVideosSelect<T extends boolean = true> {
+  videoId?: T;
+  thumbnail?: T;
+  title?: T;
+  aspectRatio?: T;
+  width?: T;
+  height?: T;
+  thumbnailUrl?: T;
+  oembed?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "video-thumbnails_select".
+ */
+export interface VideoThumbnailsSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        widescreen?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1311,6 +1687,7 @@ export interface LocalizedNav {
    */
   syncAllTranslations?: boolean | null;
   crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1405,6 +1782,7 @@ export interface LocalizedNavSelect<T extends boolean = true> {
   syncTranslations?: T;
   syncAllTranslations?: T;
   crowdinArticleDirectory?: T;
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

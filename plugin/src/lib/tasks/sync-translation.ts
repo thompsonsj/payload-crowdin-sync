@@ -1,8 +1,12 @@
-import { TaskConfig } from "payload"
-import { updatePayloadTranslation } from "../api/helpers"
-import { PluginOptions } from "../types"
+import { TaskConfig } from 'payload';
+import { updatePayloadTranslation } from '../api/helpers';
+import { PluginOptions } from '../types';
 
-export const syncTranslations = ({ pluginOptions }: { pluginOptions: PluginOptions}): TaskConfig<'crowdinSyncTranslations'> => ({
+export const syncTranslations = ({
+  pluginOptions,
+}: {
+  pluginOptions: PluginOptions;
+}): TaskConfig<'crowdinSyncTranslations'> => ({
   // Configure this task to automatically retry
   // up to two times
   retries: 2,
@@ -44,6 +48,9 @@ export const syncTranslations = ({ pluginOptions }: { pluginOptions: PluginOptio
 
   // This is the function that is run when the task is invoked
   handler: async ({ input, req }) => {
+    if (!input) {
+      throw new Error('Task input is required');
+    }
     const result = await updatePayloadTranslation({
       articleDirectoryId: input.articleDirectoryId,
       pluginOptions,
@@ -52,14 +59,14 @@ export const syncTranslations = ({ pluginOptions }: { pluginOptions: PluginOptio
       excludeLocales: input.excludeLocales,
       dryRun: false,
       req,
-    })
+    });
     if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
-      console.log(result)
+      console.log(result);
     }
     return {
       output: {
         result,
       },
-    }
+    };
   },
-})
+});

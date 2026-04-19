@@ -1,4 +1,4 @@
-import { PluginOptions } from "../../types";
+import { PluginOptions } from '../../types';
 
 export const pluginOptions: PluginOptions = {
   projectId: 323731,
@@ -7,11 +7,11 @@ export const pluginOptions: PluginOptions = {
   organization: '',
   localeMap: {
     de_DE: {
-      crowdinId: "de",
+      crowdinId: 'de',
     },
     fr_FR: {
-      crowdinId: "fr",
+      crowdinId: 'fr',
     },
   },
-  sourceLocale: "en",
+  sourceLocale: 'en',
 };

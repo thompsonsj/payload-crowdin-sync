@@ -1,38 +1,38 @@
-import type { Block, Field } from "payload";
-import { basicLocalizedFields } from "./basic-localized-fields.fixture";
-import dot from "dot-object";
+import type { Block, Field } from 'payload';
+import { basicLocalizedFields } from './basic-localized-fields.fixture';
+import dot from 'dot-object';
 
 const BasicBlockTextFields: Block = {
-  slug: "basicBlock", // required
+  slug: 'basicBlock', // required
   fields: basicLocalizedFields,
 };
 
 const BasicBlockRichTextField: Block = {
-  slug: "basicBlockRichText", // required
+  slug: 'basicBlockRichText', // required
   fields: [
     {
-      name: "richTextField",
-      type: "richText",
+      name: 'richTextField',
+      type: 'richText',
       localized: true,
     },
   ],
 };
 
 const BasicBlockMixedFields: Block = {
-  slug: "basicBlockMixed", // required
+  slug: 'basicBlockMixed', // required
   fields: [
     ...basicLocalizedFields,
     {
-      name: "richTextField",
-      type: "richText",
+      name: 'richTextField',
+      type: 'richText',
       localized: true,
     },
   ],
 };
 
 export const field: Field = {
-  name: "blocksField",
-  type: "blocks",
+  name: 'blocksField',
+  type: 'blocks',
   blocks: [
     BasicBlockTextFields,
     BasicBlockRichTextField,
@@ -42,99 +42,99 @@ export const field: Field = {
 
 export const fieldDocValue = [
   {
-    textField: "Text field content in basicBlock at layout index 0",
-    textareaField: "Textarea field content in basicBlock at layout index 0",
-    id: "63ea42b06ff825cddad3c133",
-    blockType: "basicBlock",
+    textField: 'Text field content in basicBlock at layout index 0',
+    textareaField: 'Textarea field content in basicBlock at layout index 0',
+    id: '63ea42b06ff825cddad3c133',
+    blockType: 'basicBlock',
   },
   {
     richTextField: [
       {
-        type: "h1",
+        type: 'h1',
         children: [
           {
-            text: "Rich text content in ",
+            text: 'Rich text content in ',
           },
           {
-            text: "basicBlockRichText",
+            text: 'basicBlockRichText',
             bold: true,
           },
           {
-            text: " layout at index 1.",
+            text: ' layout at index 1.',
           },
         ],
       },
       {
         children: [
           {
-            text: "An extra paragraph for good measure.",
+            text: 'An extra paragraph for good measure.',
           },
         ],
       },
     ],
-    id: "63d169d3d9dfd46d37c649e4",
-    blockType: "basicBlockRichText",
+    id: '63d169d3d9dfd46d37c649e4',
+    blockType: 'basicBlockRichText',
   },
   {
-    textField: "Text field content in basicBlock at layout index 2",
-    textareaField: "Textarea field content in basicBlock at layout index 2",
-    id: "63ea373fb725d8a50646952e",
-    blockType: "basicBlock",
+    textField: 'Text field content in basicBlock at layout index 2',
+    textareaField: 'Textarea field content in basicBlock at layout index 2',
+    id: '63ea373fb725d8a50646952e',
+    blockType: 'basicBlock',
   },
   {
     richTextField: [
       {
         children: [
           {
-            text: "Rich text content in basicBlockRichText layout at index 3.",
+            text: 'Rich text content in basicBlockRichText layout at index 3.',
           },
         ],
       },
     ],
-    id: "63ea3e7fb725d8a50646956a",
-    blockType: "basicBlockRichText",
+    id: '63ea3e7fb725d8a50646956a',
+    blockType: 'basicBlockRichText',
   },
   {
-    textField: "Text field content in basicBlockMixed at layout index 4",
+    textField: 'Text field content in basicBlockMixed at layout index 4',
     textareaField:
-      "Textarea field content in basicBlockMixed at layout index 4",
+      'Textarea field content in basicBlockMixed at layout index 4',
     richTextField: [
       {
         children: [
           {
-            text: "Rich text content in basicBlockMixed layout at index 4.",
+            text: 'Rich text content in basicBlockMixed layout at index 4.',
           },
         ],
       },
     ],
-    id: "63ea40106ff825cddad3c10b",
-    blockType: "basicBlockMixed",
+    id: '63ea40106ff825cddad3c10b',
+    blockType: 'basicBlockMixed',
   },
 ];
 
 export const fieldJsonCrowdinObject = (prefix?: string) => {
   const value = {
     blocksField: {
-      "63ea42b06ff825cddad3c133": {
+      '63ea42b06ff825cddad3c133': {
         basicBlock: {
-          textField: "Text field content in basicBlock at layout index 0",
+          textField: 'Text field content in basicBlock at layout index 0',
           textareaField:
-            "Textarea field content in basicBlock at layout index 0",
+            'Textarea field content in basicBlock at layout index 0',
         },
       },
-      "63ea373fb725d8a50646952e": {
+      '63ea373fb725d8a50646952e': {
         basicBlock: {
-          textField: "Text field content in basicBlock at layout index 2",
+          textField: 'Text field content in basicBlock at layout index 2',
           textareaField:
-            "Textarea field content in basicBlock at layout index 2",
+            'Textarea field content in basicBlock at layout index 2',
         },
       },
 
-      "63ea40106ff825cddad3c10b": {
+      '63ea40106ff825cddad3c10b': {
         basicBlockMixed: {
-          textField: "Text field content in basicBlockMixed at layout index 4",
+          textField: 'Text field content in basicBlockMixed at layout index 4',
           textareaField:
-            "Textarea field content in basicBlockMixed at layout index 4",
+            'Textarea field content in basicBlockMixed at layout index 4',
         },
       },
     },
@@ -149,49 +149,49 @@ export const fieldJsonCrowdinObject = (prefix?: string) => {
 
 export const fieldHtmlCrowdinObject = (prefix?: string) => ({
   [`${
-    prefix || ""
+    prefix || ''
   }blocksField.63d169d3d9dfd46d37c649e4.basicBlockRichText.richTextField`]: [
     {
-      type: "h1",
+      type: 'h1',
       children: [
         {
-          text: "Rich text content in ",
+          text: 'Rich text content in ',
         },
         {
-          text: "basicBlockRichText",
+          text: 'basicBlockRichText',
           bold: true,
         },
         {
-          text: " layout at index 1.",
+          text: ' layout at index 1.',
         },
       ],
     },
     {
       children: [
         {
-          text: "An extra paragraph for good measure.",
+          text: 'An extra paragraph for good measure.',
         },
       ],
     },
   ],
   [`${
-    prefix || ""
+    prefix || ''
   }blocksField.63ea3e7fb725d8a50646956a.basicBlockRichText.richTextField`]: [
     {
       children: [
         {
-          text: "Rich text content in basicBlockRichText layout at index 3.",
+          text: 'Rich text content in basicBlockRichText layout at index 3.',
         },
       ],
     },
   ],
   [`${
-    prefix || ""
+    prefix || ''
   }blocksField.63ea40106ff825cddad3c10b.basicBlockMixed.richTextField`]: [
     {
       children: [
         {
-          text: "Rich text content in basicBlockMixed layout at index 4.",
+          text: 'Rich text content in basicBlockMixed layout at index 4.',
         },
       ],
     },

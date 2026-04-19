@@ -5,7 +5,6 @@ import {
   buildPayloadUpdateObject,
   getLocalizedFields,
 } from '../..';
-
 describe('book demo collection snapshots', () => {
   const doc = {
     hero: {
@@ -99,7 +98,6 @@ describe('book demo collection snapshots', () => {
     doc,
     fields: localizedFields,
   });
-
   it('getLocalizedFields', () => {
     expect(getLocalizedFields({ fields })).toMatchInlineSnapshot(`
       [
@@ -166,7 +164,6 @@ describe('book demo collection snapshots', () => {
       ]
     `);
   });
-
   it('buildCrowdinJsonObject', () => {
     expect(crowdinJsonObject).toMatchInlineSnapshot(`
       {
@@ -191,7 +188,6 @@ describe('book demo collection snapshots', () => {
       }
     `);
   });
-
   it('buildCrowdinHtmlObject', () => {
     expect(crowdinHtmlObject).toMatchInlineSnapshot(`
       {
@@ -225,7 +221,6 @@ describe('book demo collection snapshots', () => {
       }
     `);
   });
-
   it('buildPayloadUpdateObject', () => {
     const docTranslations = buildPayloadUpdateObject({
       crowdinJsonObject,

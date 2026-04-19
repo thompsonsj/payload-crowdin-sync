@@ -1,28 +1,26 @@
-import { PluginOptions } from "../../types";
+import { PluginOptions } from '../../types';
 import {
   getArticleDirectory,
   getFileByDocumentID,
   getFilesByDocumentID,
-} from "../helpers";
+} from '../helpers';
 
-import { CrowdinArticleDirectory } from '../../payload-types'
-import { PayloadRequest } from "payload";
+import { CrowdinArticleDirectory } from '../../payload-types';
+import { PayloadRequest } from 'payload';
 
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+import * as crowdin from '@crowdin/crowdin-api-client';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const crowdin = require('@crowdin/crowdin-api-client');
 import {
+  Client,
   Credentials,
   SourceFiles,
   UploadStorage,
-} from "@crowdin/crowdin-api-client";
+} from '@crowdin/crowdin-api-client';
 
 interface IcreateOrUpdateFile {
   name: string;
   fileData: string | object;
-  fileType: "html" | "json";
+  fileType: 'html' | 'json';
 }
 
 interface IcreateFile extends IcreateOrUpdateFile {
@@ -49,7 +47,9 @@ export class payloadCrowdinSyncFilesApi {
     if (pluginOptions.organization) {
       credentials.organization = pluginOptions.organization;
     }
-    const { sourceFilesApi, uploadStorageApi } = new crowdin.default(credentials);
+    const { sourceFilesApi, uploadStorageApi } = new Client(
+      credentials,
+    );
     this.projectId = pluginOptions.projectId;
     this.directoryId = pluginOptions.directoryId;
     this.sourceFilesApi = sourceFilesApi;
@@ -67,7 +67,6 @@ export class payloadCrowdinSyncFilesApi {
     const storage = await this.uploadStorageApi.addStorage(
       name,
       fileData,
-      fileType
     );
     //const file = await sourceFilesApi.deleteFile(projectId, 1161)
     const file = await this.sourceFilesApi.updateOrRestoreFile(
@@ -75,9 +74,41 @@ export class payloadCrowdinSyncFilesApi {
       fileId,
       {
         storageId: storage.data.id,
-      }
+      },
     );
     return file;
+  }
+
+  /**
+   * Find an existing file on Crowdin by name and directory
+   *
+   * @param fileName - Full file name with extension (e.g., 'fields.json')
+   * @param directoryId - Crowdin directory ID to search in
+   * @returns The file if found, otherwise undefined
+   */
+  protected async crowdinFindFileByName(
+    fileName: string,
+    directoryId: number,
+  ) {
+    try {
+      // List all files in the directory
+      const response = await this.sourceFilesApi.listProjectFiles(
+        this.projectId,
+        {
+          directoryId,
+        },
+      );
+
+      // Find the file with matching name
+      const file = response.data.find((f) => f.data.name === fileName);
+      return file;
+    } catch (error) {
+      console.error(
+        `Error finding file ${fileName} in directory ${directoryId}:`,
+        error,
+      );
+      return undefined;
+    }
   }
 
   protected async crowdinCreateFile({
@@ -89,10 +120,10 @@ export class payloadCrowdinSyncFilesApi {
     const storage = await this.uploadStorageApi.addStorage(
       name,
       fileData,
-      fileType
     );
+    const fullFileName = `${name}.${fileType}`;
     const options = {
-      name: `${name}.${fileType}`,
+      name: fullFileName,
       title: name,
       storageId: storage.data.id,
       directoryId,
@@ -101,49 +132,103 @@ export class payloadCrowdinSyncFilesApi {
     try {
       const file = await this.sourceFilesApi.createFile(
         this.projectId,
-        options
+        options,
       );
       return file;
-    } catch (error) {
-      console.error(error, options);
+    } catch (error: any) {
+      // Check if this is a "name must be unique" error
+      const isNameConflictError =
+        error?.error?.errors?.some(
+          (e: any) =>
+            e?.error?.key === 'file.name.is_already_exists' ||
+            e?.error?.key === 'file.name' ||
+            String(error).includes('Name must be unique'),
+        ) || String(error).includes('Name must be unique');
+
+      if (isNameConflictError) {
+        console.log(
+          `File "${fullFileName}" already exists on Crowdin in directory ${directoryId}. Attempting to find and sync existing file...`,
+        );
+
+        // Try to find the existing file on Crowdin
+        const existingFile = await this.crowdinFindFileByName(
+          fullFileName,
+          directoryId,
+        );
+        if (existingFile) {
+          console.log(
+            `Found existing file on Crowdin. File ID: ${existingFile.data.id}`,
+          );
+          // Return the existing file so it can be synced to the local database
+          (existingFile as any)._payloadCrowdinSyncWasExisting = true;
+          return existingFile;
+        } else {
+          console.error(
+            `Could not find existing file "${fullFileName}" on Crowdin despite name conflict error.`,
+            error,
+            options,
+          );
+        }
+      } else {
+        console.error(error, options);
+      }
+
+      return;
     }
-    return
   }
 
-  async getArticleDirectory(documentId: string): Promise<CrowdinArticleDirectory | undefined> {
-    const result = await getArticleDirectory({
-      documentId,
-      payload: this.req.payload,
-      req: this.req
-    });
+  async getArticleDirectory(
+    documentId: string,
+  ): Promise<CrowdinArticleDirectory | undefined> {
+    let result = undefined;
+    try {
+      result = await getArticleDirectory({
+        documentId,
+        payload: this.req.payload,
+        req: this.req,
+      });
+    } catch (error) {
+      console.log(error);
+    }
     return result as CrowdinArticleDirectory | undefined;
   }
 
   async deleteArticleDirectory(documentId: string) {
-    const crowdinPayloadArticleDirectory = await this.getArticleDirectory(
-      documentId
-    );
-    if (!crowdinPayloadArticleDirectory || !crowdinPayloadArticleDirectory.originalId) {
-      return
+    const crowdinPayloadArticleDirectory =
+      await this.getArticleDirectory(documentId);
+    if (
+      !crowdinPayloadArticleDirectory ||
+      !crowdinPayloadArticleDirectory.originalId
+    ) {
+      return;
     }
-    await this.sourceFilesApi.deleteDirectory(
-      this.projectId,
-      crowdinPayloadArticleDirectory.originalId
-    );
+    if (this.pluginOptions.deleteCrowdinFiles) {
+      await this.sourceFilesApi.deleteDirectory(
+        this.projectId,
+        crowdinPayloadArticleDirectory.originalId,
+      );
+    }
     await this.req.payload.delete({
-      collection: "crowdin-article-directories",
+      collection: 'crowdin-article-directories',
       id: crowdinPayloadArticleDirectory.id,
       req: this.req,
     });
   }
 
   async getFileByDocumentID(name: string, documentId: string) {
-    const result = await getFileByDocumentID(name, documentId, this.req.payload);
+    const result = await getFileByDocumentID(
+      name,
+      documentId,
+      this.req.payload,
+    );
     return result;
   }
 
   async getFilesByDocumentID(documentId: string) {
-    const result = await getFilesByDocumentID({documentId, payload: this.req.payload});
+    const result = await getFilesByDocumentID({
+      documentId,
+      payload: this.req.payload,
+    });
     return result;
   }
 }

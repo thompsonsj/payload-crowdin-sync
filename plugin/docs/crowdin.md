@@ -100,7 +100,6 @@ When a localized field is changed, a file is created/updated in the `crowdin-fil
 - A new `crowdin-article-directories` document is created for each block and is stored within the parent folder on Crowdin. See [`crowdin-article-directories` children](#crowdin-article-directories-children).
 - The `documentId` of the `crowdin-files` document is a string containing dot notation pointing to the `richText` field.
 
-
 ## Payload collection slug change
 
 If you change the slug of a Payload CMS collection, translations will no longer work. This is to be expected - the underlying config of Payload CMS has changed such that the plugin no longer has the correct reference to the collection.

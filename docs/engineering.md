@@ -15,6 +15,16 @@ Rationale:
 - Remove the need for richTextBlockFieldNameSeparator. the use of this led to field names that don't exist.
 - Logical - fields in blocks are easier to treat as a new 'document' rather than continuing to name them with increasing long field names to describe where they are nested.
 
+### Lexical blocks article directory
+
+Within an article directory (represented by a document in the `CrowdinArticleDirectories` collection), a folder is created for blocks within a Lexical field. This folder is named by combining the `lexicalBlockFolderPrefix` plugin option and the Lexical field name.
+
+e.g. `lex.content`.
+
+These block collections are treated as 'sub-articles', meaning that plugin logic is reused to parse Lexical field blocks as if they were top-level articles (documents in a Payload collection).
+
+Such folders on Crowdin are also referenced using documents in the `CrowdinArticleDirectories` collection. Lexical blocks article directories will have an id that corresponds to the Crowdin folder name (e.g. `lex.content`) and a parent relationship to another document in the `CrowdinArticleDirectories` collection.
+
 ### Source Lexical block content
 
 Lexical block content from the source locale (e.g. `en`) is merged back into Lexical block translations.

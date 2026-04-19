@@ -2,10 +2,10 @@ import {
   Credentials,
   CrowdinError,
   Translations,
-} from "@crowdin/crowdin-api-client";
-import { Payload } from "payload";
-import { CrowdinHtmlObject, PluginOptions } from "../types";
-import deepEqual from "deep-equal";
+} from '@crowdin/crowdin-api-client';
+import { Payload } from 'payload';
+import { CrowdinHtmlObject, PluginOptions } from '../types';
+import deepEqual from 'deep-equal';
 import type {
   BlocksField as BlockField,
   CollectionConfig,
@@ -15,7 +15,7 @@ import type {
   GlobalSlug,
   PayloadRequest,
   RichTextField,
-} from "payload";
+} from 'payload';
 import {
   getLocalizedFields,
   getFieldSlugs,
@@ -24,30 +24,38 @@ import {
   buildPayloadUpdateObject,
   getLocalizedRequiredFields,
   findField,
-} from "../utilities";
+} from '../utilities';
 import {
   convertHtmlToLexical,
-  convertHtmlToSlate
-} from '../utilities/richTextConversion'
+  convertHtmlToSlate,
+} from '../utilities/richTextConversion';
 
-import { Config, CrowdinFile } from "../payload-types";
-import { getCollectionConfig, getFile, getFileByDocumentID, getFiles, getFilesByDocumentID, getLexicalFieldArticleDirectory } from "./helpers";
-import { getLexicalBlockFields, getLexicalEditorConfig } from "../utilities/lexical";
-import { getRelationshipId } from "../utilities/payload";
-import { merge } from "es-toolkit";
+import { Config, CrowdinFile } from '../payload-types';
+import {
+  getCollectionConfig,
+  getFile,
+  getFileByDocumentID,
+  getFiles,
+  getFilesByDocumentID,
+  getLexicalFieldArticleDirectory,
+} from './helpers';
+import {
+  getLexicalBlockFields,
+  getLexicalEditorConfig,
+} from '../utilities/lexical';
+import { getRelationshipId } from '../utilities/payload';
+import { merge } from 'es-toolkit';
 import { isEmpty } from 'es-toolkit/compat';
 
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+import { Client } from '@crowdin/crowdin-api-client';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const crowdin = require('@crowdin/crowdin-api-client');
 
 interface IgetLatestDocumentTranslation {
   collection: string;
   doc: any;
   locale: string;
   global?: boolean;
+  draft?: boolean;
 }
 
 interface IgetCurrentDocumentTranslation {
@@ -55,6 +63,7 @@ interface IgetCurrentDocumentTranslation {
   collection: string;
   locale: string;
   global?: boolean;
+  draft?: boolean;
 }
 
 interface IgetTranslation {
@@ -65,7 +74,7 @@ interface IgetTranslation {
   collection?: CollectionConfig | GlobalConfig;
   /** Pass crowdinArticleDirectoryId to retrieve `crowdin-files` documents with a parent (i.e. Lexical field blocks) */
   crowdinArticleDirectoryId?: string;
-  fields?: Field[]
+  fields?: Field[];
 }
 
 interface IupdateTranslation {
@@ -83,19 +92,25 @@ export class payloadCrowdinSyncTranslationsApi {
   directoryId?: number;
   payload: Payload;
   req?: PayloadRequest;
-  localeMap: PluginOptions["localeMap"];
-  sourceLocale: PluginOptions["sourceLocale"];
-  htmlToSlateConfig: PluginOptions["htmlToSlateConfig"];
-  lexicalBlockFolderPrefix: PluginOptions["lexicalBlockFolderPrefix"];
-  disableSelfClean?: PluginOptions["disableSelfClean"];
+  localeMap: PluginOptions['localeMap'];
+  sourceLocale: PluginOptions['sourceLocale'];
+  htmlToSlateConfig: PluginOptions['htmlToSlateConfig'];
+  lexicalBlockFolderPrefix: PluginOptions['lexicalBlockFolderPrefix'];
+  disableSelfClean?: PluginOptions['disableSelfClean'];
 
-  constructor(pluginOptions: PluginOptions, payload: Payload, req?: PayloadRequest) {
+  constructor(
+    pluginOptions: PluginOptions,
+    payload: Payload,
+    req?: PayloadRequest,
+  ) {
     // credentials
     const credentials: Credentials = {
       token: pluginOptions.token,
       organization: pluginOptions.organization,
     };
-    const { translationsApi } = new crowdin.default(credentials);
+
+    const { translationsApi } = new Client(credentials);
+
     this.projectId = pluginOptions.projectId;
     this.directoryId = pluginOptions.directoryId;
     this.translationsApi = translationsApi;
@@ -103,9 +118,10 @@ export class payloadCrowdinSyncTranslationsApi {
     this.req = req;
     this.localeMap = pluginOptions.localeMap;
     this.sourceLocale = pluginOptions.sourceLocale;
-    this.htmlToSlateConfig = pluginOptions.htmlToSlateConfig
-    this.disableSelfClean = pluginOptions.disableSelfClean
-    this.lexicalBlockFolderPrefix = pluginOptions.lexicalBlockFolderPrefix || ``
+    this.htmlToSlateConfig = pluginOptions.htmlToSlateConfig;
+    this.disableSelfClean = pluginOptions.disableSelfClean;
+    this.lexicalBlockFolderPrefix =
+      pluginOptions.lexicalBlockFolderPrefix || ``;
   }
 
   async updateTranslation({
@@ -128,97 +144,123 @@ export class payloadCrowdinSyncTranslationsApi {
       doc = await this.payload.findGlobal({
         slug: collection as GlobalSlug,
         locale: this.sourceLocale,
+        depth: 0,
         req: this.req,
+        draft,
       });
     } else {
       doc = await this.payload.findByID({
         collection: collection as CollectionSlug,
         id: documentId,
         locale: this.sourceLocale,
+        depth: 0,
         req: this.req,
+        draft,
       });
     }
     const report: { [key: string]: any } = {};
     let index = 1;
     for (const locale of Object.keys(this.localeMap)) {
       if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
-        console.log(`updateTranslation loop ${index++} of ${Object.keys(this.localeMap).length} for ${documentId} in ${collection} for ${locale}`)
+        console.log(
+          `updateTranslation loop ${index++} of ${Object.keys(this.localeMap).length} for ${documentId} in ${collection} for ${locale}`,
+        );
       }
-      if (!excludeLocales.includes(locale)) {report[locale] = {};
-      report[locale].draft = draft,
-      report[locale].currentTranslations =
-        await this.getCurrentDocumentTranslation({
-          doc: doc,
-          collection: collection,
-          locale: locale,
-          global,
-        });
-      report[locale].latestTranslations =
-        await this.getLatestDocumentTranslation({
-          collection: collection,
-          doc: doc,
-          locale: locale,
-          global,
-        });
-      report[locale].changed = !deepEqual(
-        report[locale].currentTranslations,
-        report[locale].latestTranslations
-      );
-      if (report[locale].changed && !dryRun) {
-        if (global) {
-          try {
-            await this.payload.updateGlobal({
-              slug: collection as keyof Config["globals"],
-              locale: locale,
-              draft,
-              data: {
-                ...report[locale].latestTranslations,
-                // error on update without the following line.
-                // see https://github.com/thompsonsj/payload-crowdin-sync/pull/13/files#r1209271660
-                crowdinArticleDirectory: ((doc as any)["crowdinArticleDirectory"]).id,
-              },
-              req: this.req,
-            });
-          } catch (error) {
-            console.log(
-              'updateTranslation',
-              {
-                documentId,
-                collection,
-                dryRun,
-                global,
+      if (!excludeLocales.includes(locale)) {
+        report[locale] = {};
+        report[locale].draft = draft;
+        report[locale].currentTranslations =
+          await this.getCurrentDocumentTranslation({
+            doc: doc,
+            collection: collection,
+            locale: locale,
+            global,
+            draft,
+          });
+        report[locale].latestTranslations =
+          await this.getLatestDocumentTranslation({
+            collection: collection,
+            doc: doc,
+            locale: locale,
+            global,
+            draft,
+          });
+        report[locale].changed = !deepEqual(
+          report[locale].currentTranslations,
+          report[locale].latestTranslations,
+        );
+        if (report[locale].changed && !dryRun) {
+          // Payload expects relationship fields to be IDs (not populated objects).
+          // The translation pipeline can carry populated docs (e.g. Media) into the update payload,
+          // which then fails field validation.
+          report[locale].latestTranslations = this.sanitizeRelationshipObjects(
+            report[locale].latestTranslations,
+          );
+          if (global) {
+            try {
+              await this.payload.updateGlobal({
+                slug: collection as keyof Config['globals'],
+                locale: locale,
                 draft,
-                excludeLocales,
-              },
-              'error',
-              error
-            );
-          }
-        } else {
-          try {
-            await this.payload.update({
-              collection: collection  as keyof Config["collections"],
-              locale: locale,
-              id: documentId,
-              draft,
-              data: report[locale].latestTranslations,
-              req: this.req,
-              overrideLock: true,
-            });
-          } catch (error) {
-            console.log(
-              'updateTranslation',
-              {
-                documentId,
-                collection,
-                dryRun,
-                global,
+                data: {
+                  ...report[locale].latestTranslations,
+                  // error on update without the following line.
+                  // see https://github.com/thompsonsj/payload-crowdin-sync/pull/13/files#r1209271660
+                  crowdinArticleDirectory: (doc as any)[
+                    'crowdinArticleDirectory'
+                  ].id,
+                },
+                req: this.req,
+                context: {
+                  // set a flag to prevent from running again
+                  triggerAfterChange: false,
+                },
+              });
+            } catch (error) {
+              console.log(
+                'updateTranslation',
+                {
+                  documentId,
+                  collection,
+                  dryRun,
+                  global,
+                  draft,
+                  excludeLocales,
+                },
+                'error',
+                error,
+              );
+            }
+          } else {
+            try {
+              await this.payload.update({
+                collection: collection as keyof Config['collections'],
+                locale: locale,
+                id: documentId,
                 draft,
-                excludeLocales,
-              },
-              'error',
-              error
-            );}
+                data: report[locale].latestTranslations,
+                req: this.req,
+                overrideLock: true,
+                context: {
+                  // set a flag to prevent from running again
+                  triggerAfterChange: false,
+                },
+              });
+            } catch (error) {
+              console.log(
+                'updateTranslation',
+                {
+                  documentId,
+                  collection,
+                  dryRun,
+                  global,
+                  draft,
+                  excludeLocales,
+                },
+                'error',
+                error,
+              );
+            }
           }
         }
       }
@@ -231,14 +273,9 @@ export class payloadCrowdinSyncTranslationsApi {
 
   getCollectionConfig(
     collection: string,
-    global: boolean
-  ): CollectionConfig | GlobalConfig {
-
-    return getCollectionConfig(
-      collection,
-      global,
-      this.payload,
-    );
+    global: boolean,
+  ): CollectionConfig | GlobalConfig | undefined {
+    return getCollectionConfig(collection, global, this.payload);
   }
 
   async getCurrentDocumentTranslation({
@@ -246,29 +283,41 @@ export class payloadCrowdinSyncTranslationsApi {
     collection,
     locale,
     global = false,
+    draft = false,
   }: IgetCurrentDocumentTranslation) {
     // get document
     let document: any;
     if (global) {
       document = await this.payload.findGlobal({
-        slug: collection as keyof Config["globals"],
+        slug: collection as keyof Config['globals'],
         locale: locale,
+        depth: 0,
         req: this.req,
+        draft,
       });
     } else {
       document = await this.payload.findByID({
-        collection: collection as keyof Config["collections"],
+        collection: collection as keyof Config['collections'],
         id: doc.id,
         locale: locale,
+        depth: 0,
         req: this.req,
+        draft,
       });
     }
 
-    const collectionConfig = this.getCollectionConfig(collection, global);
+    let collectionConfig = undefined;
+    try {
+      collectionConfig = this.getCollectionConfig(collection, global);
+    } catch (error) {
+      console.log(error);
+    }
 
-    const localizedFields = getLocalizedFields({
-      fields: collectionConfig.fields,
-    });
+    const localizedFields = collectionConfig
+      ? getLocalizedFields({
+          fields: collectionConfig.fields,
+        })
+      : [];
 
     // build crowdin json object
     const crowdinJsonObject = buildCrowdinJsonObject({
@@ -297,10 +346,44 @@ export class payloadCrowdinSyncTranslationsApi {
           global,
         },
         'error',
-        error
+        error,
       );
       throw new Error(`${error}`);
     }
+  }
+
+  /**
+   * Convert populated relationship objects to IDs in update payloads.
+   * Primarily needed for relationship values embedded in rich text / Lexical block nodes.
+   */
+  private sanitizeRelationshipObjects(input: unknown): any {
+    if (input === null || input === undefined) return input;
+
+    if (Array.isArray(input)) {
+      return input.map((item) => this.sanitizeRelationshipObjects(item));
+    }
+
+    if (typeof input !== 'object') return input;
+
+    const obj = input as Record<string, any>;
+
+    // Heuristic: "doc-like" objects (Media, etc) should be replaced by their id.
+    if (
+      typeof obj.id === 'string' &&
+      (Object.prototype.hasOwnProperty.call(obj, 'createdAt') ||
+        Object.prototype.hasOwnProperty.call(obj, 'updatedAt') ||
+        Object.prototype.hasOwnProperty.call(obj, 'filename') ||
+        Object.prototype.hasOwnProperty.call(obj, 'mimeType') ||
+        Object.prototype.hasOwnProperty.call(obj, 'url'))
+    ) {
+      return obj.id;
+    }
+
+    const out: Record<string, any> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      out[key] = this.sanitizeRelationshipObjects(value);
+    }
+    return out;
   }
 
   /**
@@ -312,14 +395,24 @@ export class payloadCrowdinSyncTranslationsApi {
     locale,
     global = false,
   }: IgetLatestDocumentTranslation) {
-    const collectionConfig = this.getCollectionConfig(collection, global);
+    let collectionConfig = undefined;
+    try {
+      collectionConfig = this.getCollectionConfig(collection, global);
+    } catch (error) {
+      console.log(error);
+    }
+    if (!collectionConfig) {
+      return { message: 'no localized fields' };
+    }
 
-    const localizedFields = getLocalizedFields({
-      fields: collectionConfig.fields,
-    });
+    const localizedFields = collectionConfig
+      ? getLocalizedFields({
+          fields: collectionConfig.fields,
+        })
+      : [];
 
     if (!localizedFields) {
-      return { message: "no localized fields" };
+      return { message: 'no localized fields' };
     }
 
     let docTranslations: { [key: string]: any } = {};
@@ -327,15 +420,18 @@ export class payloadCrowdinSyncTranslationsApi {
     const crowdinJsonObject =
       (await this.getTranslation({
         documentId: global ? collectionConfig.slug : doc.id,
-        fieldName: "fields",
+        fieldName: 'fields',
         locale: locale,
       })) || {};
     if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
-      console.log('getLatestDocumentTranslation: crowdinJsonObject', crowdinJsonObject)
+      console.log(
+        'getLatestDocumentTranslation: crowdinJsonObject',
+        crowdinJsonObject,
+      );
     }
     // add html fields
     const localizedHtmlFields = await this.getHtmlFieldSlugs(
-      global ? collectionConfig.slug : doc.id
+      global ? collectionConfig.slug : doc.id,
     );
     const crowdinHtmlObject: CrowdinHtmlObject = {};
     for (const field of localizedHtmlFields) {
@@ -348,7 +444,10 @@ export class payloadCrowdinSyncTranslationsApi {
       });
     }
     if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
-      console.log('getLatestDocumentTranslation: crowdinHtmlObject', JSON.stringify(crowdinHtmlObject))
+      console.log(
+        'getLatestDocumentTranslation: crowdinHtmlObject',
+        JSON.stringify(crowdinHtmlObject),
+      );
     }
     docTranslations = buildPayloadUpdateObject({
       crowdinJsonObject,
@@ -358,38 +457,50 @@ export class payloadCrowdinSyncTranslationsApi {
     });
 
     // Add required fields if not present
-    const requiredFieldSlugs = getFieldSlugs(
-      getLocalizedRequiredFields(collectionConfig)
-    );
-    if (requiredFieldSlugs.length > 0) {
-      const currentTranslations = await this.getCurrentDocumentTranslation({
-        doc: doc,
-        collection: collection,
-        locale: locale,
-        global,
-      });
-      requiredFieldSlugs.forEach((slug) => {
-        if (!Object.prototype.hasOwnProperty.call(docTranslations, slug)) {
-          docTranslations[slug] = currentTranslations[slug];
-        }
-      });
+    if (collectionConfig) {
+      const requiredFieldSlugs = getFieldSlugs(
+        getLocalizedRequiredFields(collectionConfig),
+      );
+      if (requiredFieldSlugs.length > 0) {
+        const currentTranslations = await this.getCurrentDocumentTranslation({
+          doc: doc,
+          collection: collection,
+          locale: locale,
+          global,
+        });
+        requiredFieldSlugs.forEach((slug) => {
+          if (!Object.prototype.hasOwnProperty.call(docTranslations, slug)) {
+            docTranslations[slug] = currentTranslations[slug];
+          }
+        });
+      }
     }
     return docTranslations;
   }
 
   async getHtmlFieldSlugs(documentId: string): Promise<string[]> {
-    const files = await getFilesByDocumentID({documentId, payload: this.payload, req: this.req});
+    const files = await getFilesByDocumentID({
+      documentId,
+      payload: this.payload,
+      req: this.req,
+    });
     const slugs = files
-    .filter((file) => file.type === "html")
-    .map((file) => `${file.field}`)
+      .filter((file) => file.type === 'html')
+      .map((file) => `${file.field}`);
     return slugs;
   }
 
-  async getHtmlFieldSlugsByArticleDirectory(parentCrowdinArticleDirectoryId?: string): Promise<string[]> {
-    const files = await getFiles(`${parentCrowdinArticleDirectoryId}`, this.payload, this.req) as CrowdinFile[];
+  async getHtmlFieldSlugsByArticleDirectory(
+    parentCrowdinArticleDirectoryId?: string,
+  ): Promise<string[]> {
+    const files = (await getFiles(
+      `${parentCrowdinArticleDirectoryId}`,
+      this.payload,
+      this.req,
+    )) as CrowdinFile[];
     const slugs = files
-    .filter((file) => file.type === "html")
-    .map((file) => `${file.field}`)
+      .filter((file) => file.type === 'html')
+      .map((file) => `${file.field}`);
     return slugs;
   }
 
@@ -400,8 +511,32 @@ export class payloadCrowdinSyncTranslationsApi {
    * * returns all json fields if fieldName is 'fields'
    */
   // TODO refactor out fields override - replace `collection` with `fields`
-  async getTranslation({ documentId, fieldName, locale, collection, crowdinArticleDirectoryId, fields }: IgetTranslation) {
-    const file = (typeof crowdinArticleDirectoryId === 'string' ? await getFile(fieldName, crowdinArticleDirectoryId, this.payload) : await getFileByDocumentID(fieldName, `${documentId}`, this.payload, this.req)) as CrowdinFile;
+  async getTranslation({
+    documentId,
+    fieldName,
+    locale,
+    collection,
+    crowdinArticleDirectoryId,
+    fields,
+  }: IgetTranslation) {
+
+    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+      console.log('lib/api/translations@getTranslation arguments', { documentId, fieldName, locale, collection, crowdinArticleDirectoryId, fields });
+    }
+
+    const file = (
+      typeof crowdinArticleDirectoryId === 'string'
+        ? await getFile(fieldName, crowdinArticleDirectoryId, this.payload)
+        : await getFileByDocumentID(
+            fieldName,
+            `${documentId}`,
+            this.payload,
+            this.req,
+          )
+    ) as CrowdinFile;
+    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+      console.log('lib/api/translations@getTranslation file', file);
+    }
     // it is possible a file doesn't exist yet - e.g. an article with localized text fields that contains an empty html field.
     if (!file) {
       return;
@@ -409,76 +544,93 @@ export class payloadCrowdinSyncTranslationsApi {
     try {
       const response = await this.buildTranslationFile({
         file,
-        locale
-      })
+        locale,
+      });
       if (!response) {
-        return
+        if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+          console.log('lib/api/translations@getTranslation no response from buildTranslationFile');
+        }
+        return;
       }
+
       const data = await this.getFileDataFromUrl(response.data.url);
-      if (file.type === "html") {
-        const allFields = collection ? collection.fields : fields
+      if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+        console.log('lib/api/translations@getTranslation data', data);
+      }
+
+      if (file.type === 'html') {
+        const allFields = collection ? collection.fields : fields;
         if (allFields) {
           const field = findField({
             dotNotation: fieldName,
             fields: allFields,
             // do not filter out localized fields if lexical block fields
-            filterLocalizedFields:!(crowdinArticleDirectoryId),
-          }) as RichTextField
-          const editorConfig = getLexicalEditorConfig(field)
+            filterLocalizedFields: !crowdinArticleDirectoryId,
+          }) as RichTextField;
+          const editorConfig = getLexicalEditorConfig(field);
           // isLexical?
           if (editorConfig) {
             // retrieve the article directory created for this lexical block
-            const lexicalFieldCrowdinArticleDirectory = await getLexicalFieldArticleDirectory({
-              payload: this.payload,
-              parent: file.crowdinArticleDirectory,
-              name: `${this.lexicalBlockFolderPrefix}${fieldName}`,
-              req: this.req,
-            })
-            const lexicalFieldCrowdinArticleDirectoryId = getRelationshipId(lexicalFieldCrowdinArticleDirectory as any)
+            const lexicalFieldCrowdinArticleDirectory =
+              await getLexicalFieldArticleDirectory({
+                payload: this.payload,
+                parent: file.crowdinArticleDirectory,
+                name: `${this.lexicalBlockFolderPrefix}${fieldName}`,
+                req: this.req,
+              });
+            const lexicalFieldCrowdinArticleDirectoryId = getRelationshipId(
+              lexicalFieldCrowdinArticleDirectory as any,
+            );
 
             // get translations here and pass it to convertHtmlToLexical
             // easier than passing `payload` and `pluginOptions` to create a new instance of the class we are in right now - keep convertHtmlToLexical focussed.
-            const blockConfig = getLexicalBlockFields(editorConfig)
+            const blockConfig = getLexicalBlockFields(editorConfig);
 
-            const blockTranslations = blockConfig && lexicalFieldCrowdinArticleDirectoryId ? await this.getBlockTranslations({
-              blockConfig,
-              file,
-              locale,
-              crowdinArticleDirectoryId: lexicalFieldCrowdinArticleDirectoryId,
-            }) : null
+            const blockTranslations =
+              blockConfig && lexicalFieldCrowdinArticleDirectoryId
+                ? await this.getBlockTranslations({
+                    blockConfig,
+                    file,
+                    locale,
+                    crowdinArticleDirectoryId:
+                      lexicalFieldCrowdinArticleDirectoryId,
+                  })
+                : null;
 
-            return convertHtmlToLexical(data, editorConfig, blockTranslations) || {
-              "root": {
-                  "type": "root",
-                  "format": "",
-                  "indent": 0,
-                  "version": 1,
-                  "children": [
-                      {
-                          "children": [
-                              {
-                                  "detail": 0,
-                                  "format": 0,
-                                  "mode": "normal",
-                                  "style": "",
-                                  "text": "lexical configuration not found",
-                                  "type": "text",
-                                  "version": 1
-                              }
-                          ],
-                          "direction": "ltr",
-                          "format": "",
-                          "indent": 0,
-                          "type": "quote",
-                          "version": 1
-                      }
+            return (
+              convertHtmlToLexical(data, blockTranslations) || {
+                root: {
+                  type: 'root',
+                  format: '',
+                  indent: 0,
+                  version: 1,
+                  children: [
+                    {
+                      children: [
+                        {
+                          detail: 0,
+                          format: 0,
+                          mode: 'normal',
+                          style: '',
+                          text: 'lexical configuration not found',
+                          type: 'text',
+                          version: 1,
+                        },
+                      ],
+                      direction: 'ltr',
+                      format: '',
+                      indent: 0,
+                      type: 'quote',
+                      version: 1,
+                    },
                   ],
-                  "direction": "ltr"
+                  direction: 'ltr',
+                },
               }
-            }
+            );
           }
         }
-        return convertHtmlToSlate(data, this.htmlToSlateConfig)
+        return convertHtmlToSlate(data, this.htmlToSlateConfig);
       } else {
         return JSON.parse(data);
       }
@@ -491,43 +643,45 @@ export class payloadCrowdinSyncTranslationsApi {
           locale,
           collection: collection?.slug,
           crowdinArticleDirectoryId,
-          fields
+          fields,
         },
         'error',
-        error
+        error,
       );
     }
   }
 
   private async buildTranslationFile({
     file,
-    locale
+    locale,
   }: {
-    file: CrowdinFile,
-    locale: string
+    file: CrowdinFile;
+    locale: string;
   }) {
+    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+      console.log('lib/api/translations@buildTranslationFile arguments', { file, locale });
+    }
     try {
       const response = await this.translationsApi.buildProjectFileTranslation(
         this.projectId,
         file.originalId as number,
         {
           targetLanguageId: this.localeMap[locale].crowdinId,
-        }
+        },
       );
-      return response
-    }
-    catch (error: unknown) {
+      return response;
+    } catch (error: unknown) {
       if (this.disableSelfClean) {
-        return undefined
+        return undefined;
       }
       if (error instanceof CrowdinError && error.code === 404) {
         await this.payload.delete({
           id: file.id,
-          collection: "crowdin-files",
+          collection: 'crowdin-files',
           req: this.req,
-        })
+        });
       }
-      return undefined
+      return undefined;
     }
   }
 
@@ -537,33 +691,33 @@ export class payloadCrowdinSyncTranslationsApi {
     file,
     crowdinArticleDirectoryId,
   }: {
-    blockConfig: BlockField | undefined,
-    file: CrowdinFile,
-    locale: string,
-    crowdinArticleDirectoryId: string,
+    blockConfig: BlockField | undefined;
+    file: CrowdinFile;
+    locale: string;
+    crowdinArticleDirectoryId: string;
   }) {
     // link with plugin/src/lib/api/files/document.ts - store as variable?
-    const fieldName = `blocks`
+    const fieldName = `blocks`;
     // find a way to `getTranslation` or getPayloadTranslation` for the subfolder.
     // add ability to pass `fields` and `crowdinArticleDirectory` to `getTranslation`. That will do it.
     if (!blockConfig) {
-      return
+      return;
     }
-    const fields: Field[] = [
-      blockConfig,
-    ]
+    const fields: Field[] = [blockConfig];
     let docTranslations: { [key: string]: any } = {};
     // add json fields
     const crowdinJsonObject =
       (await this.getTranslation({
         // field name in dot notation is the 'id' for getTranslation
         documentId: fieldName,
-        fieldName: "blocks",
+        fieldName: 'blocks',
         locale: locale,
         crowdinArticleDirectoryId,
       })) || {};
     // add html fields
-    const localizedHtmlFields = await this.getHtmlFieldSlugsByArticleDirectory(crowdinArticleDirectoryId);
+    const localizedHtmlFields = await this.getHtmlFieldSlugsByArticleDirectory(
+      crowdinArticleDirectoryId,
+    );
     const crowdinHtmlObject: CrowdinHtmlObject = {};
     for (const field of localizedHtmlFields) {
       // need to get the field definition here somehow?
@@ -580,12 +734,12 @@ export class payloadCrowdinSyncTranslationsApi {
       crowdinJsonObject,
       crowdinHtmlObject,
       fields,
-      isLocalized: (field) => !!(field),
+      isLocalized: (field) => !!field,
     });
 
     // merge non-localized fields back in
     if (!isEmpty(file.fileData?.sourceBlocks)) {
-      const sourceBlocks = JSON.parse(`${file.fileData?.sourceBlocks}`) || []
+      const sourceBlocks = JSON.parse(`${file.fileData?.sourceBlocks}`) || [];
 
       // build a source translation crowdinJsonObject
       const sourceCrowdinJsonObject = buildCrowdinJsonObject({
@@ -593,21 +747,21 @@ export class payloadCrowdinSyncTranslationsApi {
           blocks: sourceBlocks,
         },
         fields,
-        isLocalized: (field) => !!(field),
-      })
+        isLocalized: (field) => !!field,
+      });
       // convert source translation crowdinJsonObject to payloadUpdateObject
       // we are only interested in merging back json fields - otherwise html fields will deep merge creating hybrid rich text content containing both translations
       // this is why a 'sourceCrowdinHtmlObject' is not built
       const sourcePayloadUpdateObject = buildPayloadUpdateObject({
         crowdinJsonObject: sourceCrowdinJsonObject,
         fields,
-        isLocalized: (field) => !!(field),
-      })
+        isLocalized: (field) => !!field,
+      });
 
-      return merge(sourcePayloadUpdateObject, docTranslations)
+      return merge(sourcePayloadUpdateObject, docTranslations);
     }
 
-    return docTranslations
+    return docTranslations;
   }
 
   private async getFileDataFromUrl(url: string) {
@@ -631,7 +785,7 @@ export class payloadCrowdinSyncTranslationsApi {
   restoreIdAndBlockType = (
     document: any,
     translations: any,
-    key = "layout"
+    key = 'layout',
   ) => {
     if (Object.prototype.hasOwnProperty.call(translations, key)) {
       translations[key] = translations[key].map(
@@ -639,7 +793,7 @@ export class payloadCrowdinSyncTranslationsApi {
           ...block,
           id: document[key][index].id,
           blockType: document[key][index].blockType,
-        })
+        }),
       );
     }
     return translations;

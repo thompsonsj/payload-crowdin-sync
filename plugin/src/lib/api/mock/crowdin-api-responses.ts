@@ -1,10 +1,9 @@
-import { PluginOptions } from "../../types";
+import { PluginOptions } from '../../types';
 import {
-  ResponseObject,
   SourceFilesModel,
   UploadStorageModel,
   TranslationsModel,
-} from "@crowdin/crowdin-api-client";
+} from '@crowdin/crowdin-api-client';
 
 /*
   Crowdin Service mock
@@ -32,21 +31,17 @@ class crowdinAPIWrapper {
     this.branchId = 4;
   }
 
-  async listFileRevisions(projectId: number, fileId: number) {
-    return await Promise.resolve(1).then(() => undefined);
-  }
-
   createDirectory({
     id,
     request = {
       directoryId: 1179,
-      name: "post id",
-      title: "undefined",
-    }
+      name: 'post id',
+      title: 'undefined',
+    },
   }: {
     /** Mock the id of the object returned in the response */
-    id?: number
-    request?: SourceFilesModel.CreateDirectoryRequest
+    id?: number;
+    request?: SourceFilesModel.CreateDirectoryRequest;
   }): { data: SourceFilesModel.Directory } {
     const date = new Date().toISOString();
     return {
@@ -56,10 +51,10 @@ class crowdinAPIWrapper {
         branchId: this.branchId,
         directoryId: request.directoryId || 1179,
         name: request.name,
-        title: request.title || "undefined",
-        exportPattern: "**",
-        priority: "normal",
-        path: "",
+        title: request.title || 'undefined',
+        exportPattern: '**',
+        priority: 'normal',
+        path: '',
         createdAt: date,
         updatedAt: date,
       },
@@ -68,10 +63,10 @@ class crowdinAPIWrapper {
 
   /**
    * Add Storage
-   * 
+   *
    * No parameters are required for mocks. The plugin
    * uses a storage id returned by the API only.
-   * 
+   *
    * @see https://developer.crowdin.com/api/v2/#operation/api.storages.post
    */
   addStorage(): { data: UploadStorageModel.Storage } {
@@ -84,72 +79,26 @@ class crowdinAPIWrapper {
     return storage;
   }
 
-  async deleteFile(projectId: number, fileId: number): Promise<void> {
-    await Promise.resolve(1).then(() => undefined);
-  }
-
-  async deleteDirectory(projectId: number, directoryId: number): Promise<void> {
-    await Promise.resolve(1).then(() => undefined);
-  }
-
   /**
    * createFile
-   * 
+   *
    * No parameters required - plugin will prefer arguments
    * passed to the function that creates the Crowdin
    * file and Payload document freferencing that file.
    */
-  createFile(
-    {
-      fileId = 1079,
-      request = {
-        directoryId: 1172,
-        name: "fields",
-        storageId: 5432,
-        type: "json",
-    }
-  }: {
-      fileId?: number,
-      request?: SourceFilesModel.CreateFileRequest
-    }
-  ): { data: SourceFilesModel.File } {
-    /*const storageId = await this.addStorage({
-      name,
-      fileData,
-      fileType,
-    })*/
-    const date = new Date().toISOString();
-    const file = {
-      data: {
-        revisionId: 5,
-        status: "active",
-        priority: "normal" as SourceFilesModel.Priority,
-        importOptions: {} as any,
-        exportOptions: {} as any,
-        excludedTargetLanguages: [],
-        createdAt: date,
-        updatedAt: date,
-        id: fileId,
-        projectId: this.projectId,
-        branchId: this.branchId,
-        directoryId: request.directoryId || 1172,
-        name: request.name || "fields",
-        title: request.name || "fields",
-        type: request.type || "json",
-        path: `/policies/security-and-privacy/${request.name  || "fields"}`,
-        parserVersion: 3,
-        context: "",
-      },
-    };
-    return file;
-  }
-
-  updateOrRestoreFile({
+  createFile({
     fileId = 1079,
-    request
+    revisionId = 1,
+    request = {
+      directoryId: 1172,
+      name: 'fields',
+      storageId: 5432,
+      type: 'json',
+    },
   }: {
-    fileId: number,
-    request?: SourceFilesModel.ReplaceFileFromStorageRequest
+    fileId?: number;
+    revisionId?: number;
+    request?: SourceFilesModel.CreateFileRequest;
   }): { data: SourceFilesModel.File } {
     /*const storageId = await this.addStorage({
       name,
@@ -159,11 +108,46 @@ class crowdinAPIWrapper {
     const date = new Date().toISOString();
     const file = {
       data: {
-        revisionId: 5,
-        status: "active",
-        priority: "normal" as SourceFilesModel.Priority,
-        importOptions: {} as any,
-        exportOptions: {} as any,
+        revisionId,
+        status: 'active',
+        priority: 'normal' as SourceFilesModel.Priority,
+        importOptions: {},
+        exportOptions: {},
+        excludedTargetLanguages: [],
+        createdAt: date,
+        updatedAt: date,
+        id: fileId,
+        projectId: this.projectId,
+        branchId: this.branchId,
+        directoryId: request.directoryId || 1172,
+        name: request.name || 'fields',
+        title: request.name || 'fields',
+        type: request.type || 'json',
+        path: `/policies/security-and-privacy/${request.name || 'fields'}`,
+        parserVersion: 3,
+        context: '',
+        fields: []
+      },
+    };
+    return file;
+  }
+
+  updateOrRestoreFile({
+    fileId = 1079,
+    revisionId = 2,
+  }: {
+    fileId: number;
+    revisionId?: number;
+    request?: SourceFilesModel.ReplaceFileFromStorageRequest;
+  }): { data: SourceFilesModel.File } {
+    const date = new Date().toISOString();
+    const file = {
+      data: {
+        revisionId,
+        status: 'active',
+        priority: 'normal' as SourceFilesModel.Priority,
+        importOptions: {},
+        exportOptions: {},
         excludedTargetLanguages: [],
         createdAt: date,
         updatedAt: date,
@@ -171,12 +155,13 @@ class crowdinAPIWrapper {
         projectId: this.projectId,
         branchId: this.branchId,
         directoryId: this.directoryId as number,
-        name: "file",
-        title: "file",
-        type: "html",
+        name: 'file',
+        title: 'file',
+        type: 'html',
         path: `/policies/security-and-privacy/file.filetype`,
         parserVersion: 3,
-        context: "",
+        context: '',
+        fields: []
       },
     };
     return file;
@@ -184,17 +169,18 @@ class crowdinAPIWrapper {
 
   buildProjectFileTranslation({
     url,
-    request
+    request,
   }: {
-      url?: string
-      request?: TranslationsModel.BuildProjectFileTranslationRequest
-    }
-  ): { data: TranslationsModel.BuildProjectFileTranslationResponse } {
+    url?: string;
+    request?: TranslationsModel.BuildProjectFileTranslationRequest;
+  }): { data: TranslationsModel.BuildProjectFileTranslationResponse } {
     const date = new Date().toISOString();
     return {
       data: {
-        etag: "string",
-        url: url || `https://api.crowdin.com/api/v2/projects/1/translations/builds/1/download?targetLanguageId=${request?.targetLanguageId || 'unknown'}`,
+        etag: 'string',
+        url:
+          url ||
+          `https://api.crowdin.com/api/v2/projects/1/translations/builds/1/download?targetLanguageId=${request?.targetLanguageId || 'unknown'}`,
         expireIn: date,
       },
     };

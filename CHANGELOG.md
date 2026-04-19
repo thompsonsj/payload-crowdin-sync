@@ -1,5 +1,151 @@
 # Changelog
 
+## [0.22.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.22.0...source-v0.22.1) (2026-04-17)
+
+
+### Bug Fixes
+
+* **tsconfig:** type fixes and implement ci check ([#337](https://github.com/thompsonsj/payload-crowdin-sync/issues/337)) ([6f4e06a](https://github.com/thompsonsj/payload-crowdin-sync/commit/6f4e06a3ff7677f551f51ef8c778a21ec4901e54))
+
+## [0.22.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.21.0...source-v0.22.0) (2026-04-17)
+
+
+### Features
+
+* upgrade dependencies, migrate to vitest ([#335](https://github.com/thompsonsj/payload-crowdin-sync/issues/335)) ([dda03cd](https://github.com/thompsonsj/payload-crowdin-sync/commit/dda03cd9d4fc20f3d6790642cfcf5babfbbe0f21))
+
+## [0.21.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.20.0...source-v0.21.0) (2026-04-16)
+
+
+### Features
+
+* **row:** support nested, improve test resilience ([#331](https://github.com/thompsonsj/payload-crowdin-sync/issues/331)) ([ea6ab09](https://github.com/thompsonsj/payload-crowdin-sync/commit/ea6ab0995accf02c8bce01c51ed085de60fc2e06))
+
+
+### Bug Fixes
+
+* **packagejson:** restore plugin urls and name ([#333](https://github.com/thompsonsj/payload-crowdin-sync/issues/333)) ([568a98c](https://github.com/thompsonsj/payload-crowdin-sync/commit/568a98c7b37944ad5c8299cd00484fa68dd6b052))
+
+## [0.20.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.19.4...source-v0.20.0) (2025-10-15)
+
+
+### Features
+
+* **richtextconversion:** support relationship lexical node type ([#324](https://github.com/thompsonsj/payload-crowdin-sync/issues/324)) ([4a2ef01](https://github.com/thompsonsj/payload-crowdin-sync/commit/4a2ef01ac4d7b1f02f7ee35f44b2f8c13abbfd7e))
+
+## [0.19.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.19.3...source-v0.19.4) (2025-10-03)
+
+
+### Bug Fixes
+
+* **crowdinapiresponse:** revise data structures/types ([#319](https://github.com/thompsonsj/payload-crowdin-sync/issues/319)) ([f421660](https://github.com/thompsonsj/payload-crowdin-sync/commit/f421660f0f1e52d0b19bb25cd9f553e744a41cd0))
+
+## [0.19.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.19.2...source-v0.19.3) (2025-10-02)
+
+
+### Bug Fixes
+
+* **translations:** sync translation from draft to draft ([#315](https://github.com/thompsonsj/payload-crowdin-sync/issues/315)) ([6a3898a](https://github.com/thompsonsj/payload-crowdin-sync/commit/6a3898ab40a6c943a5fb678238c099747379a8e8))
+
+## [0.19.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.19.1...source-v0.19.2) (2025-08-08)
+
+
+### Bug Fixes
+
+* **bydocument:** nested lexical fields source translation ([#309](https://github.com/thompsonsj/payload-crowdin-sync/issues/309)) ([71c5648](https://github.com/thompsonsj/payload-crowdin-sync/commit/71c5648feeb05ce065395efed1efda0ac18af038))
+
+## [0.19.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.19.0...source-v0.19.1) (2025-07-30)
+
+
+### Bug Fixes
+
+* **pluginfields:** unset crowdinArticleDirectory on duplicate ([#294](https://github.com/thompsonsj/payload-crowdin-sync/issues/294)) ([2e97237](https://github.com/thompsonsj/payload-crowdin-sync/commit/2e9723777e85f7cda57318feba3a87822841a802))
+
+## [0.19.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.18.1...source-v0.19.0) (2025-07-18)
+
+
+### Features
+
+* **richtextconversion:** support text formatting ([#303](https://github.com/thompsonsj/payload-crowdin-sync/issues/303)) ([379dc9d](https://github.com/thompsonsj/payload-crowdin-sync/commit/379dc9dcfd3b882092caf6ef8be5bdde0d5048d4))
+
+## [0.18.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.18.0...source-v0.18.1) (2025-07-09)
+
+
+### Bug Fixes
+
+* **richtextconversion:** remove the table wrapper div added to HTML ([#300](https://github.com/thompsonsj/payload-crowdin-sync/issues/300)) ([cd0022b](https://github.com/thompsonsj/payload-crowdin-sync/commit/cd0022b024a57171de8771d55edc99357f736769))
+
+## [0.18.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.17.2...source-v0.18.0) (2025-07-09)
+
+
+### Features
+
+* **richtextconversion:** support lexical table feature ([#295](https://github.com/thompsonsj/payload-crowdin-sync/issues/295)) ([5efdd19](https://github.com/thompsonsj/payload-crowdin-sync/commit/5efdd192c58bcf0ac9ff9d92bc38ae6025593a8d))
+
+## [0.17.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.17.1...source-v0.17.2) (2025-06-09)
+
+
+### Bug Fixes
+
+* **islocalized:** always exclude blockName ([#292](https://github.com/thompsonsj/payload-crowdin-sync/issues/292)) ([7fa17ed](https://github.com/thompsonsj/payload-crowdin-sync/commit/7fa17ed757dc7911b03072b2011edd68e1dffbb3))
+
+## [0.17.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.17.0...source-v0.17.1) (2025-05-13)
+
+
+### Bug Fixes
+
+* **getlocalizedfields:** respect exclude prop on group fields ([#290](https://github.com/thompsonsj/payload-crowdin-sync/issues/290)) ([c8fbf78](https://github.com/thompsonsj/payload-crowdin-sync/commit/c8fbf78d23b435d32e2289314ac1a21216a008a8))
+
+## [0.17.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.16.2...source-v0.17.0) (2025-05-12)
+
+
+### Features
+
+* **utilities:** support fields in tab in localized parent ([#288](https://github.com/thompsonsj/payload-crowdin-sync/issues/288)) ([0c80382](https://github.com/thompsonsj/payload-crowdin-sync/commit/0c8038256fe87e414c1ab1e05888a7dd28e4bba4))
+
+## [0.16.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.16.1...source-v0.16.2) (2025-05-02)
+
+
+### Bug Fixes
+
+* **richtextconversion:** pass upload value id not block id ([#286](https://github.com/thompsonsj/payload-crowdin-sync/issues/286)) ([dcebac7](https://github.com/thompsonsj/payload-crowdin-sync/commit/dcebac7931f40aa8e65dbfabb585a1bfad839398))
+
+## [0.16.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.16.0...source-v0.16.1) (2025-05-01)
+
+
+### Bug Fixes
+
+* **bydocument:** check lexical blocks article directory exists ([#283](https://github.com/thompsonsj/payload-crowdin-sync/issues/283)) ([4bc32b8](https://github.com/thompsonsj/payload-crowdin-sync/commit/4bc32b8eaf4a12863c54a636f1f8f91717f7332f))
+* **releaseplease:** use automatic token ([#284](https://github.com/thompsonsj/payload-crowdin-sync/issues/284)) ([db6e946](https://github.com/thompsonsj/payload-crowdin-sync/commit/db6e946a4c9dfce08757984997ab7d4945358c07))
+
+## [0.16.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.15.5...source-v0.16.0) (2025-04-29)
+
+
+### Features
+
+* **lexical:** update lexical html fn, load translation restore uploads ([#281](https://github.com/thompsonsj/payload-crowdin-sync/issues/281)) ([f694df0](https://github.com/thompsonsj/payload-crowdin-sync/commit/f694df03b747d0b9742370e9be1503ea482df324))
+
+## [0.15.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.15.4...source-v0.15.5) (2025-04-16)
+
+
+### Bug Fixes
+
+* **pluginfields:** sync translations prevent infinite loop ([#275](https://github.com/thompsonsj/payload-crowdin-sync/issues/275)) ([a543486](https://github.com/thompsonsj/payload-crowdin-sync/commit/a543486c66bed367d519ab00dcd002aadb9f035f))
+
+## [0.15.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.15.3...source-v0.15.4) (2025-03-27)
+
+
+### Bug Fixes
+
+* **packagejson:** remove main entry ([#273](https://github.com/thompsonsj/payload-crowdin-sync/issues/273)) ([2eda1fd](https://github.com/thompsonsj/payload-crowdin-sync/commit/2eda1fd318279960a41a256a15e9c9bf8e07353a))
+
+## [0.15.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.15.2...source-v0.15.3) (2025-03-26)
+
+
+### Bug Fixes
+
+* **pluginfields:** sync all translations infinite loop ([#271](https://github.com/thompsonsj/payload-crowdin-sync/issues/271)) ([5f318d6](https://github.com/thompsonsj/payload-crowdin-sync/commit/5f318d65ec787cfa2f0cc8d90be8071d9e800a5c))
+
 ## [0.15.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.15.1...source-v0.15.2) (2025-03-26)
 
 

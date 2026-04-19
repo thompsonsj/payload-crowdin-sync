@@ -10,8 +10,5 @@
       process.env.MONGODB_MEMORY_SERVER_URI ||
       process.env.DATABASE_URI ||
       'mongodb://127.0.0.1/payloadtests',
-    collation: {
-      strength: 1,
-    },
   })
   

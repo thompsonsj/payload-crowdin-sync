@@ -1,5 +1,10 @@
-import type { RichTextField } from 'payload';
-import { BlocksFeature, BoldFeature as BoldTextFeature, lexicalEditor, LinkFeature } from '@payloadcms/richtext-lexical'
+import type { RichTextField } from 'payload'
+import {
+  BlocksFeature,
+  BoldFeature as BoldTextFeature,
+  lexicalEditor,
+  LinkFeature,
+} from '@payloadcms/richtext-lexical'
 import { SlateToLexicalFeature } from '@payloadcms/richtext-lexical/migrate'
 
 export const lexicalEditorWithBlocks: RichTextField = {
@@ -17,8 +22,8 @@ export const lexicalEditorWithBlocks: RichTextField = {
             imageAltText: 'Text',
             fields: [
               {
-                name: "heading",
-                type: "group",
+                name: 'heading',
+                type: 'group',
                 fields: [
                   {
                     name: 'title',
@@ -28,16 +33,12 @@ export const lexicalEditorWithBlocks: RichTextField = {
                     name: 'preTitle',
                     type: 'text',
                   },
-                ]
+                ],
               },
               {
-                name: "color",
-                type: "select",
-                options: [
-                  'gray',
-                  'yellow',
-                  'green'
-                ],
+                name: 'color',
+                type: 'select',
+                options: ['gray', 'yellow', 'green'],
                 admin: {
                   isClearable: true,
                 },
@@ -47,16 +48,13 @@ export const lexicalEditorWithBlocks: RichTextField = {
                 type: 'richText',
                 localized: false,
                 editor: lexicalEditor({
-                  features: () => [
-                    BoldTextFeature(),
-                    LinkFeature({}),
-                  ]
+                  features: () => [BoldTextFeature(), LinkFeature({})],
                 }),
               },
-            ]
-          }
+            ],
+          },
         ],
-      })
+      }),
     ],
   }),
 }

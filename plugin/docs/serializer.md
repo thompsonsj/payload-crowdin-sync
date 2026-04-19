@@ -10,7 +10,7 @@ There are some scenarios where you may wish to customise the configuration of th
 This can be done through the plugin configuration. The default options are made available for convenience. The default configuration is completely replace when passing the configuration, so take care to extend the default configuration if you only want to customise some options.
 
 ```ts
-import { crowdinSync, payloadHtmlToSlateConfig, payloadSlateToHtmlConfig } from 'payload-crowdin-sync'
+import { crowdinSync, payloadHtmlToSlateConfig, payloadSlateToHtmlConfig } from 'payload-crowdin-sync';
 
 export default buildConfig({
   plugins: [
@@ -21,23 +21,23 @@ export default buildConfig({
       organization: process.env.CROWDIN_ORGANIZATION,
       localeMap: {
         de_DE: {
-          crowdinId: "de",
+          crowdinId: 'de',
         },
         fr_FR: {
-          crowdinId: "fr",
+          crowdinId: 'fr',
         },
       },
-      sourceLocale: "en",
+      sourceLocale: 'en',
       slateToHtmlConfig: {
         ...payloadSlateToHtmlConfig,
         elementMap: {
           ...payloadSlateToHtmlConfig.elementMap,
-          table: "table",
-          ["table-row"]: "tr",
-          ["table-cell"]: "td",
-          ["table-header"]: "thead",
-          ["table-header-cell"]: "th",
-          ["table-body"]: "tbody",
+          table: 'table',
+          ['table-row']: 'tr',
+          ['table-cell']: 'td',
+          ['table-header']: 'thead',
+          ['table-header-cell']: 'th',
+          ['table-body']: 'tbody',
         },
       },
     }),

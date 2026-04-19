@@ -1,7 +1,6 @@
 import { slateEditor } from '@payloadcms/richtext-slate';
 import type { Block, CollectionConfig, Field, GlobalConfig } from 'payload';
 import { getLocalizedFields } from '.';
-
 describe('fn: getLocalizedFields', () => {
   describe('basic field types', () => {
     it('includes a text field', () => {
@@ -14,7 +13,6 @@ describe('fn: getLocalizedFields', () => {
       ];
       expect(getLocalizedFields({ fields })).toEqual(fields);
     });
-
     it('excludes a localized text field based on the admin description', () => {
       const fields: Field[] = [
         {
@@ -39,7 +37,6 @@ describe('fn: getLocalizedFields', () => {
         },
       ]);
     });
-
     it('excludes a localized text field based on the custom field property', () => {
       const fields: Field[] = [
         {
@@ -54,8 +51,8 @@ describe('fn: getLocalizedFields', () => {
           custom: {
             crowdinSync: {
               disable: true,
-            }
-          }
+            },
+          },
         },
       ];
       expect(getLocalizedFields({ fields })).toEqual([
@@ -66,7 +63,6 @@ describe('fn: getLocalizedFields', () => {
         },
       ]);
     });
-
     it('includes a richText field', () => {
       const fields: Field[] = [
         {
@@ -77,7 +73,6 @@ describe('fn: getLocalizedFields', () => {
       ];
       expect(getLocalizedFields({ fields })).toEqual(fields);
     });
-
     it('includes a textarea field', () => {
       const fields: Field[] = [
         {
@@ -89,7 +84,6 @@ describe('fn: getLocalizedFields', () => {
       expect(getLocalizedFields({ fields })).toEqual(fields);
     });
   });
-
   describe('include fields from groups and arrays', () => {
     const mixedFieldCollection: Field[] = [
       {
@@ -127,7 +121,6 @@ describe('fn: getLocalizedFields', () => {
         options: ['one', 'two'],
       },
     ];
-
     const localizedFieldCollection: Field[] = [
       {
         name: 'textLocalizedField',
@@ -145,7 +138,6 @@ describe('fn: getLocalizedFields', () => {
         localized: true,
       },
     ];
-
     it('includes localized fields from a group field', () => {
       const fields: Field[] = [
         ...mixedFieldCollection,
@@ -165,7 +157,6 @@ describe('fn: getLocalizedFields', () => {
       ];
       expect(getLocalizedFields({ fields })).toEqual(expected);
     });
-
     it('includes localized fields from an array field', () => {
       const fields: Field[] = [
         ...mixedFieldCollection,
@@ -185,7 +176,6 @@ describe('fn: getLocalizedFields', () => {
       ];
       expect(getLocalizedFields({ fields })).toEqual(expected);
     });
-
     it('includes localized fields from an array with a localization setting on the array field', () => {
       const fields: Field[] = [
         ...mixedFieldCollection,
@@ -238,7 +228,123 @@ describe('fn: getLocalizedFields', () => {
       ];
       expect(getLocalizedFields({ fields })).toEqual(expected);
     });
-
+    it('includes localized fields within a tab from an array with a localization setting on the array field', () => {
+      /**
+       * Note that the localized prop is added to fields in this case.
+       */
+      const fields: Field[] = [
+        ...mixedFieldCollection,
+        {
+          name: 'arrayField',
+          type: 'array',
+          localized: true,
+          fields: [
+            {
+              type: 'tabs',
+              tabs: [
+                {
+                  label: 'Text',
+                  fields: [
+                    {
+                      name: 'title',
+                      type: 'text',
+                    },
+                    {
+                      name: 'text',
+                      type: 'text',
+                    },
+                    {
+                      name: 'textarea',
+                      type: 'textarea',
+                    },
+                    {
+                      name: 'select',
+                      type: 'select',
+                      options: ['one', 'two'],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ];
+      const expected = [
+        ...localizedFieldCollection,
+        {
+          name: 'arrayField',
+          type: 'array',
+          localized: true,
+          fields: [
+            {
+              localized: true,
+              name: 'title',
+              type: 'text',
+            },
+            {
+              localized: true,
+              name: 'text',
+              type: 'text',
+            },
+            {
+              localized: true,
+              name: 'textarea',
+              type: 'textarea',
+            },
+          ],
+        },
+      ];
+      expect(getLocalizedFields({ fields })).toEqual(expected);
+    });
+    it('excludes localized fields within a tab from an array with a localization setting on the array field and the "exclude" custom property', () => {
+      /**
+       * Note that the localized prop is added to fields in this case.
+       */
+      const fields: Field[] = [
+        ...mixedFieldCollection,
+        {
+          name: 'arrayField',
+          type: 'array',
+          localized: true,
+          custom: {
+            crowdinSync: {
+              disable: true,
+            },
+          },
+          fields: [
+            {
+              type: 'tabs',
+              tabs: [
+                {
+                  label: 'Text',
+                  fields: [
+                    {
+                      name: 'title',
+                      type: 'text',
+                    },
+                    {
+                      name: 'text',
+                      type: 'text',
+                    },
+                    {
+                      name: 'textarea',
+                      type: 'textarea',
+                    },
+                    {
+                      name: 'select',
+                      type: 'select',
+                      options: ['one', 'two'],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ];
+      const expected = [...localizedFieldCollection];
+      expect(getLocalizedFields({ fields })).toEqual(expected);
+    });
     it('includes localized fields from an array inside a collapsible field where the top-level field group only contains collapsible fields', () => {
       const fields: Field[] = [
         {
@@ -262,7 +368,6 @@ describe('fn: getLocalizedFields', () => {
       ];
       expect(getLocalizedFields({ fields })).toEqual(expected);
     });
-
     /**
      * * help ensure no errors during version 0 development
      * * mitigate against errors if a new field type is introduced by Payload CMS
@@ -318,7 +423,6 @@ describe('fn: getLocalizedFields', () => {
       ];
       expect(getLocalizedFields({ fields: global.fields })).toEqual(expected);
     });
-
     it('includes localized fields from a group field with a localization setting on the group field', () => {
       const fields: Field[] = [
         ...mixedFieldCollection,
@@ -372,7 +476,6 @@ describe('fn: getLocalizedFields', () => {
       ];
       expect(getLocalizedFields({ fields })).toEqual(expected);
     });
-
     it('includes localized fields from a blocks field', () => {
       const TestBlock: Block = {
         slug: 'text',
@@ -462,7 +565,6 @@ describe('fn: getLocalizedFields', () => {
       expect(getLocalizedFields({ fields: global.fields })).toEqual(expected);
     });
   });
-
   it('extract rich text localized fields', () => {
     const global: GlobalConfig = {
       slug: 'global',
@@ -552,10 +654,9 @@ describe('fn: getLocalizedFields', () => {
       },
     ];
     expect(getLocalizedFields({ fields: global.fields, type: 'html' })).toEqual(
-      expected
+      expected,
     );
   });
-
   it('returns nested json fields in a group inside an array', () => {
     const linkField: Field = {
       name: 'link',
@@ -644,7 +745,6 @@ describe('fn: getLocalizedFields', () => {
     });
     expect(jsonFields).toEqual(expected);
   });
-
   describe('empty tests', () => {
     it('ignore non-localized group field', () => {
       const fields: Field[] = [
@@ -677,10 +777,8 @@ describe('fn: getLocalizedFields', () => {
           ],
         },
       ];
-
       expect(getLocalizedFields({ fields })).toEqual([]);
     });
-
     it('ignore non-localized array field', () => {
       const fields: Field[] = [
         {
@@ -714,7 +812,6 @@ describe('fn: getLocalizedFields', () => {
       ];
       expect(getLocalizedFields({ fields })).toEqual([]);
     });
-
     it('ignore non-localized fields from an array inside a collapsible field where the top-level field group only contains collapsible fields', () => {
       const fields: Field[] = [
         {
@@ -745,7 +842,6 @@ describe('fn: getLocalizedFields', () => {
       ];
       expect(getLocalizedFields({ fields })).toEqual([]);
     });
-
     /**
      * * help ensure no errors during version 0 development
      * * mitigate against errors if a new field type is introduced by Payload CMS
@@ -793,104 +889,102 @@ describe('fn: getLocalizedFields', () => {
       };
       expect(getLocalizedFields({ fields: global.fields })).toEqual([]);
     });
-
     /**
-     * blocks not supported yet
-    it ("includes localized fields from a blocks field", () => {
-      const TestBlock: Block = {
-        slug: 'text',
-        imageAltText: 'Text',
-        fields: [
-          {
-            name: 'title',
-            type: 'text',
-            localized: true,
-          },
-          {
-            name: 'text',
-            type: 'richText',
-            localized: true,
-          },
-          {
-            name: 'select',
-            type: 'select',
-            localized: true,
-            options: [
-              'one',
-              'two'
+         * blocks not supported yet
+        it ("includes localized fields from a blocks field", () => {
+          const TestBlock: Block = {
+            slug: 'text',
+            imageAltText: 'Text',
+            fields: [
+              {
+                name: 'title',
+                type: 'text',
+                localized: true,
+              },
+              {
+                name: 'text',
+                type: 'richText',
+                localized: true,
+              },
+              {
+                name: 'select',
+                type: 'select',
+                localized: true,
+                options: [
+                  'one',
+                  'two'
+                ]
+              },
             ]
-          },
-        ]
-      }
-      const TestBlockLocalizedFieldsOnly: Block = {
-        slug: 'text',
-        imageAltText: 'Text',
-        fields: [
-          {
-            name: 'title',
-            type: 'text',
-            localized: true,
-          },
-          {
-            name: 'text',
-            type: 'richText',
-            localized: true,
-          },
-        ]
-      }
-      const global: GlobalConfig = {
-        slug: "global",
-        fields: [
-          {
-            name: 'simpleLocalizedField',
-            type: 'text',
-            localized: true,
-          },
-          {
-            name: 'simpleNonLocalizedField',
-            type: 'text',
-          },
-          {
-            name: 'blocksField',
-            type: 'blocks',
-            blocks: [
-              TestBlock
+          }
+          const TestBlockLocalizedFieldsOnly: Block = {
+            slug: 'text',
+            imageAltText: 'Text',
+            fields: [
+              {
+                name: 'title',
+                type: 'text',
+                localized: true,
+              },
+              {
+                name: 'text',
+                type: 'richText',
+                localized: true,
+              },
             ]
-          },
-        ]
-      }
-      const expected = [
-        {
-          name: 'simpleLocalizedField',
-          type: 'text',
-          localized: true,
-        },
-        {
-          name: 'blocksField',
-          type: 'blocks',
-          blocks: [
+          }
+          const global: GlobalConfig = {
+            slug: "global",
+            fields: [
+              {
+                name: 'simpleLocalizedField',
+                type: 'text',
+                localized: true,
+              },
+              {
+                name: 'simpleNonLocalizedField',
+                type: 'text',
+              },
+              {
+                name: 'blocksField',
+                type: 'blocks',
+                blocks: [
+                  TestBlock
+                ]
+              },
+            ]
+          }
+          const expected = [
             {
-              fields: [
+              name: 'simpleLocalizedField',
+              type: 'text',
+              localized: true,
+            },
+            {
+              name: 'blocksField',
+              type: 'blocks',
+              blocks: [
                 {
-                  name: 'title',
-                  type: 'text',
-                  localized: true,
-                },
-                {
-                  name: 'text',
-                  type: 'richText',
-                  localized: true,
-                },
+                  fields: [
+                    {
+                      name: 'title',
+                      type: 'text',
+                      localized: true,
+                    },
+                    {
+                      name: 'text',
+                      type: 'richText',
+                      localized: true,
+                    },
+                  ]
+                }
               ]
-            }
+            },
           ]
-        },
-      ]
-      expect(getLocalizedFields(global.fields)).toEqual(expected)
-    })
-    */
+          expect(getLocalizedFields(global.fields)).toEqual(expected)
+        })
+        */
   });
-
   /**
    * @see https://github.com/payloadcms/plugin-seo
    *
@@ -906,13 +1000,13 @@ describe('fn: getLocalizedFields', () => {
         type: 'group',
         fields: [
           /**{
-            "name": "overview",
-            "label": "Overview",
-            "type": "ui",
-            "admin": {
-              "components": {}
-            }
-          },*/
+                      "name": "overview",
+                      "label": "Overview",
+                      "type": "ui",
+                      "admin": {
+                        "components": {}
+                      }
+                    },*/
           {
             name: 'title',
             type: 'text',
@@ -930,17 +1024,16 @@ describe('fn: getLocalizedFields', () => {
             },
           },
           /**{
-            "name": "preview",
-            "label": "Preview",
-            "type": "ui",
-            "admin": {
-              "components": {}
-            }
-          }**/
+                      "name": "preview",
+                      "label": "Preview",
+                      "type": "ui",
+                      "admin": {
+                        "components": {}
+                      }
+                    }**/
         ],
       },
     ];
-
     it('includes payloadcms/plugin-seo localized fields if there are no localized fields on the collection/global', () => {
       const nonLocalizedFieldCollection: Field[] = [
         {
@@ -983,7 +1076,6 @@ describe('fn: getLocalizedFields', () => {
         },
       ]);
     });
-
     it('includes payloadcms/plugin-seo localized fields if there are localized fields on the collection/global', () => {
       const localizedFieldCollection: Field[] = [
         {
@@ -1046,7 +1138,6 @@ describe('fn: getLocalizedFields', () => {
         ]
       `);
     });
-
     it('includes payloadcms/plugin-seo localized fields if there are localized fields within tabs on the collection/global', () => {
       const localizedFieldCollection: Field[] = [
         {

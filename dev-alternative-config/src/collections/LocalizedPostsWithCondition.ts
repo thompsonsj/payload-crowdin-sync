@@ -1,10 +1,10 @@
-import type { CollectionConfig } from "payload";
+import type { CollectionConfig } from 'payload'
 
 const LocalizedPostsWithCondition: CollectionConfig = {
-  slug: "localized-posts-with-condition",
+  slug: 'localized-posts-with-condition',
   admin: {
-    defaultColumns: ["title", "author", "category", "tags", "status"],
-    useAsTitle: "title",
+    defaultColumns: ['title', 'author', 'category', 'tags', 'status'],
+    useAsTitle: 'title',
   },
   access: {
     read: () => true,
@@ -14,58 +14,58 @@ const LocalizedPostsWithCondition: CollectionConfig = {
   },
   fields: [
     {
-      name: "title",
-      type: "text",
+      name: 'title',
+      type: 'text',
       localized: true,
     },
     {
-      name: "translateWithCrowdin",
-      type: "checkbox",
+      name: 'translateWithCrowdin',
+      type: 'checkbox',
     },
     {
-      name: "author",
-      type: "relationship",
-      relationTo: "users",
+      name: 'author',
+      type: 'relationship',
+      relationTo: 'users',
     },
     {
-      name: "publishedDate",
-      type: "date",
+      name: 'publishedDate',
+      type: 'date',
     },
     {
-      name: "category",
-      type: "relationship",
-      relationTo: "categories",
+      name: 'category',
+      type: 'relationship',
+      relationTo: 'categories',
     },
     {
-      name: "tags",
-      type: "relationship",
-      relationTo: "tags",
+      name: 'tags',
+      type: 'relationship',
+      relationTo: 'tags',
       hasMany: true,
     },
     {
-      name: "content",
-      type: "richText",
+      name: 'content',
+      type: 'richText',
       localized: true,
     },
     {
-      name: "status",
-      type: "select",
+      name: 'status',
+      type: 'select',
       options: [
         {
-          value: "draft",
-          label: "Draft",
+          value: 'draft',
+          label: 'Draft',
         },
         {
-          value: "published",
-          label: "Published",
+          value: 'published',
+          label: 'Published',
         },
       ],
-      defaultValue: "draft",
+      defaultValue: 'draft',
       admin: {
-        position: "sidebar",
+        position: 'sidebar',
       },
     },
   ],
-};
+}
 
-export default LocalizedPostsWithCondition;
+export default LocalizedPostsWithCondition

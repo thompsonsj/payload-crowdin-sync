@@ -1,14 +1,14 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../dist/out-tsc",
-    "module": "esnext",
-    "types": ["jest", "node"],
+    "noEmit": true,
+    "types": ["vitest/globals", "node", "nodemailer"]
   },
   "include": [
-    "jest.config.ts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.d.ts",
-  ]
+    "src/tests/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
 }

@@ -1,5 +1,210 @@
 # Changelog
 
+## [0.6.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.6.0...dev-alternative-config-v0.6.1) (2026-04-17)
+
+
+### Bug Fixes
+
+* **tsconfig:** type fixes and implement ci check ([#337](https://github.com/thompsonsj/payload-crowdin-sync/issues/337)) ([6f4e06a](https://github.com/thompsonsj/payload-crowdin-sync/commit/6f4e06a3ff7677f551f51ef8c778a21ec4901e54))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.41.0 to 0.41.1
+
+## [0.6.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.5.0...dev-alternative-config-v0.6.0) (2026-04-17)
+
+
+### Features
+
+* upgrade dependencies, migrate to vitest ([#335](https://github.com/thompsonsj/payload-crowdin-sync/issues/335)) ([dda03cd](https://github.com/thompsonsj/payload-crowdin-sync/commit/dda03cd9d4fc20f3d6790642cfcf5babfbbe0f21))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.40.0 to 0.41.0
+
+## [0.5.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.4.5...dev-alternative-config-v0.5.0) (2026-04-16)
+
+
+### Features
+
+* **row:** support nested, improve test resilience ([#331](https://github.com/thompsonsj/payload-crowdin-sync/issues/331)) ([ea6ab09](https://github.com/thompsonsj/payload-crowdin-sync/commit/ea6ab0995accf02c8bce01c51ed085de60fc2e06))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.39.0 to 0.40.0
+
+## [0.4.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.4.4...dev-alternative-config-v0.4.5) (2025-10-15)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.38.4 to 0.39.0
+
+## [0.4.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.4.3...dev-alternative-config-v0.4.4) (2025-10-03)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.38.3 to 0.38.4
+
+## [0.4.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.4.2...dev-alternative-config-v0.4.3) (2025-10-02)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.38.2 to 0.38.3
+
+## [0.4.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.4.1...dev-alternative-config-v0.4.2) (2025-08-08)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.38.1 to 0.38.2
+
+## [0.4.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.4.0...dev-alternative-config-v0.4.1) (2025-07-30)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.38.0 to 0.38.1
+
+## [0.4.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.3.7...dev-alternative-config-v0.4.0) (2025-07-18)
+
+
+### Features
+
+* **richtextconversion:** support text formatting ([#303](https://github.com/thompsonsj/payload-crowdin-sync/issues/303)) ([379dc9d](https://github.com/thompsonsj/payload-crowdin-sync/commit/379dc9dcfd3b882092caf6ef8be5bdde0d5048d4))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.37.1 to 0.38.0
+
+## [0.3.7](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.3.6...dev-alternative-config-v0.3.7) (2025-07-09)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.37.0 to 0.37.1
+
+## [0.3.6](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.3.5...dev-alternative-config-v0.3.6) (2025-07-09)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.36.2 to 0.37.0
+
+## [0.3.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.3.4...dev-alternative-config-v0.3.5) (2025-06-09)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.36.1 to 0.36.2
+
+## [0.3.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.3.3...dev-alternative-config-v0.3.4) (2025-05-13)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.36.0 to 0.36.1
+
+## [0.3.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.3.2...dev-alternative-config-v0.3.3) (2025-05-12)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.35.2 to 0.36.0
+
+## [0.3.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.3.1...dev-alternative-config-v0.3.2) (2025-05-02)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.35.1 to 0.35.2
+
+## [0.3.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.3.0...dev-alternative-config-v0.3.1) (2025-05-01)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.35.0 to 0.35.1
+
+## [0.3.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.2.10...dev-alternative-config-v0.3.0) (2025-04-29)
+
+
+### Features
+
+* **lexical:** update lexical html fn, load translation restore uploads ([#281](https://github.com/thompsonsj/payload-crowdin-sync/issues/281)) ([f694df0](https://github.com/thompsonsj/payload-crowdin-sync/commit/f694df03b747d0b9742370e9be1503ea482df324))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.34.5 to 0.35.0
+
+## [0.2.10](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.2.9...dev-alternative-config-v0.2.10) (2025-04-16)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.34.4 to 0.34.5
+
+## [0.2.9](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.2.8...dev-alternative-config-v0.2.9) (2025-03-27)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.34.3 to 0.34.4
+
+## [0.2.8](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.2.7...dev-alternative-config-v0.2.8) (2025-03-26)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.34.2 to 0.34.3
+
 ## [0.2.7](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-alternative-config-v0.2.6...dev-alternative-config-v0.2.7) (2025-03-26)
 
 

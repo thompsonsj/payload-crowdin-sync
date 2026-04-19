@@ -3,6 +3,7 @@
   "$schema": "../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "plugin/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
@@ -10,7 +11,7 @@
       "options": {
         "outputPath": "dist/plugin",
         "main": "plugin/src/index.ts",
-        "tsConfig": "plugin/tsconfig.json",
+        "tsConfig": "plugin/tsconfig.build.json",
         "assets": ["plugin/*.md"],
         "updateBuildableProjectDepsInPackageJson": true
       }
@@ -24,12 +25,10 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "executor": "nx:run-commands",
       "options": {
-        "jestConfig": "plugin/jest.config.ts"
+        "command": "vitest run --project plugin"
       }
     }
-  },
-  "tags": []
+  }
 }

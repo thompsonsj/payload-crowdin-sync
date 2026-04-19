@@ -1,5 +1,255 @@
 # Changelog
 
+## [0.37.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.37.0...dev-v0.37.1) (2026-04-17)
+
+
+### Bug Fixes
+
+* **tsconfig:** type fixes and implement ci check ([#337](https://github.com/thompsonsj/payload-crowdin-sync/issues/337)) ([6f4e06a](https://github.com/thompsonsj/payload-crowdin-sync/commit/6f4e06a3ff7677f551f51ef8c778a21ec4901e54))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.41.0 to 0.41.1
+
+## [0.37.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.36.0...dev-v0.37.0) (2026-04-17)
+
+
+### Features
+
+* upgrade dependencies, migrate to vitest ([#335](https://github.com/thompsonsj/payload-crowdin-sync/issues/335)) ([dda03cd](https://github.com/thompsonsj/payload-crowdin-sync/commit/dda03cd9d4fc20f3d6790642cfcf5babfbbe0f21))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.40.0 to 0.41.0
+
+## [0.36.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.35.0...dev-v0.36.0) (2026-04-16)
+
+
+### Features
+
+* **row:** support nested, improve test resilience ([#331](https://github.com/thompsonsj/payload-crowdin-sync/issues/331)) ([ea6ab09](https://github.com/thompsonsj/payload-crowdin-sync/commit/ea6ab0995accf02c8bce01c51ed085de60fc2e06))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.39.0 to 0.40.0
+
+## [0.35.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.34.4...dev-v0.35.0) (2025-10-15)
+
+
+### Features
+
+* **richtextconversion:** support relationship lexical node type ([#324](https://github.com/thompsonsj/payload-crowdin-sync/issues/324)) ([4a2ef01](https://github.com/thompsonsj/payload-crowdin-sync/commit/4a2ef01ac4d7b1f02f7ee35f44b2f8c13abbfd7e))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.38.4 to 0.39.0
+
+## [0.34.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.34.3...dev-v0.34.4) (2025-10-03)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.38.3 to 0.38.4
+
+## [0.34.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.34.2...dev-v0.34.3) (2025-10-02)
+
+
+### Bug Fixes
+
+* **translations:** sync translation from draft to draft ([#315](https://github.com/thompsonsj/payload-crowdin-sync/issues/315)) ([6a3898a](https://github.com/thompsonsj/payload-crowdin-sync/commit/6a3898ab40a6c943a5fb678238c099747379a8e8))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.38.2 to 0.38.3
+
+## [0.34.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.34.1...dev-v0.34.2) (2025-08-08)
+
+
+### Bug Fixes
+
+* **bydocument:** nested lexical fields source translation ([#309](https://github.com/thompsonsj/payload-crowdin-sync/issues/309)) ([71c5648](https://github.com/thompsonsj/payload-crowdin-sync/commit/71c5648feeb05ce065395efed1efda0ac18af038))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.38.1 to 0.38.2
+
+## [0.34.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.34.0...dev-v0.34.1) (2025-07-30)
+
+
+### Bug Fixes
+
+* **pluginfields:** unset crowdinArticleDirectory on duplicate ([#294](https://github.com/thompsonsj/payload-crowdin-sync/issues/294)) ([2e97237](https://github.com/thompsonsj/payload-crowdin-sync/commit/2e9723777e85f7cda57318feba3a87822841a802))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.38.0 to 0.38.1
+
+## [0.34.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.33.1...dev-v0.34.0) (2025-07-18)
+
+
+### Features
+
+* **richtextconversion:** support text formatting ([#303](https://github.com/thompsonsj/payload-crowdin-sync/issues/303)) ([379dc9d](https://github.com/thompsonsj/payload-crowdin-sync/commit/379dc9dcfd3b882092caf6ef8be5bdde0d5048d4))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.37.1 to 0.38.0
+
+## [0.33.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.33.0...dev-v0.33.1) (2025-07-09)
+
+
+### Bug Fixes
+
+* **richtextconversion:** remove the table wrapper div added to HTML ([#300](https://github.com/thompsonsj/payload-crowdin-sync/issues/300)) ([cd0022b](https://github.com/thompsonsj/payload-crowdin-sync/commit/cd0022b024a57171de8771d55edc99357f736769))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.37.0 to 0.37.1
+
+## [0.33.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.32.5...dev-v0.33.0) (2025-07-09)
+
+
+### Features
+
+* **richtextconversion:** support lexical table feature ([#295](https://github.com/thompsonsj/payload-crowdin-sync/issues/295)) ([5efdd19](https://github.com/thompsonsj/payload-crowdin-sync/commit/5efdd192c58bcf0ac9ff9d92bc38ae6025593a8d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.36.2 to 0.37.0
+
+## [0.32.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.32.4...dev-v0.32.5) (2025-06-09)
+
+
+### Bug Fixes
+
+* **islocalized:** always exclude blockName ([#292](https://github.com/thompsonsj/payload-crowdin-sync/issues/292)) ([7fa17ed](https://github.com/thompsonsj/payload-crowdin-sync/commit/7fa17ed757dc7911b03072b2011edd68e1dffbb3))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.36.1 to 0.36.2
+
+## [0.32.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.32.3...dev-v0.32.4) (2025-05-13)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.36.0 to 0.36.1
+
+## [0.32.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.32.2...dev-v0.32.3) (2025-05-12)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.35.2 to 0.36.0
+
+## [0.32.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.32.1...dev-v0.32.2) (2025-05-02)
+
+
+### Bug Fixes
+
+* **richtextconversion:** pass upload value id not block id ([#286](https://github.com/thompsonsj/payload-crowdin-sync/issues/286)) ([dcebac7](https://github.com/thompsonsj/payload-crowdin-sync/commit/dcebac7931f40aa8e65dbfabb585a1bfad839398))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.35.1 to 0.35.2
+
+## [0.32.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.32.0...dev-v0.32.1) (2025-05-01)
+
+
+### Bug Fixes
+
+* **bydocument:** check lexical blocks article directory exists ([#283](https://github.com/thompsonsj/payload-crowdin-sync/issues/283)) ([4bc32b8](https://github.com/thompsonsj/payload-crowdin-sync/commit/4bc32b8eaf4a12863c54a636f1f8f91717f7332f))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.35.0 to 0.35.1
+
+## [0.32.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.31.6...dev-v0.32.0) (2025-04-29)
+
+
+### Features
+
+* **lexical:** update lexical html fn, load translation restore uploads ([#281](https://github.com/thompsonsj/payload-crowdin-sync/issues/281)) ([f694df0](https://github.com/thompsonsj/payload-crowdin-sync/commit/f694df03b747d0b9742370e9be1503ea482df324))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.34.5 to 0.35.0
+
+## [0.31.6](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.31.5...dev-v0.31.6) (2025-04-16)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.34.4 to 0.34.5
+
+## [0.31.5](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.31.4...dev-v0.31.5) (2025-03-27)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.34.3 to 0.34.4
+
+## [0.31.4](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.31.3...dev-v0.31.4) (2025-03-26)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.34.2 to 0.34.3
+
 ## [0.31.3](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.31.2...dev-v0.31.3) (2025-03-26)
 
 

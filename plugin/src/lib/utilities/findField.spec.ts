@@ -1,14 +1,13 @@
 import BookDemo from './tests/inline-snapshots/collections/BookDemo';
 import { findField } from '.';
 import type { Block, Field } from 'payload';
-
 describe('fn: findField', () => {
   it('finds a top-level field', () => {
     expect(
       findField({
         dotNotation: 'logoTitle',
         fields: BookDemo.fields,
-      })
+      }),
     ).toMatchInlineSnapshot(`
       {
         "localized": true,
@@ -18,13 +17,12 @@ describe('fn: findField', () => {
       }
     `);
   });
-
   it('finds a field nested in a group', () => {
     expect(
       findField({
         dotNotation: 'form.title',
         fields: BookDemo.fields,
-      })
+      }),
     ).toMatchInlineSnapshot(`
       {
         "editor": [Function],
@@ -33,13 +31,12 @@ describe('fn: findField', () => {
       }
     `);
   });
-
   it('finds a field nested in an array in a group', () => {
     expect(
       findField({
         dotNotation: 'form.content.items.6474baaf73b854f4d464e38f.text',
         fields: BookDemo.fields,
-      })
+      }),
     ).toMatchInlineSnapshot(`
       {
         "name": "text",
@@ -47,7 +44,6 @@ describe('fn: findField', () => {
       }
     `);
   });
-
   it('finds a block field definition', () => {
     const TestBlockOne: Block = {
       slug: 'testBlockOne',
@@ -70,7 +66,6 @@ describe('fn: findField', () => {
         },
       ],
     };
-
     const TestBlockTwo: Block = {
       slug: 'testBlockTwo',
       fields: [
@@ -81,7 +76,6 @@ describe('fn: findField', () => {
         },
       ],
     };
-
     const fields: Field[] = [
       {
         name: 'title',
@@ -101,12 +95,11 @@ describe('fn: findField', () => {
         blocks: [TestBlockOne, TestBlockTwo],
       },
     ];
-
     expect(
       findField({
         dotNotation: 'blocksField.6474baaf73b854f4d464e38f.testBlockTwo.url',
         fields,
-      })
+      }),
     ).toMatchInlineSnapshot(`
       {
         "localized": true,
