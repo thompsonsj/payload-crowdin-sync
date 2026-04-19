@@ -1,5 +1,11 @@
-import { isCrowdinActive } from './helpers';
+import {
+  findRootArticleDirectoryPolymorphic,
+  getArticleDirectory,
+  isCrowdinActive,
+} from './helpers';
 import { pluginOptions } from './mock/plugin-options';
+import type { Payload } from 'payload';
+
 describe('Helper: isCrowdinActive', () => {
   const doc = {
     id: '638641358b1a140462752076',
@@ -96,5 +102,72 @@ describe('Helper: isCrowdinActive', () => {
       },
     });
     expect(active).toBeFalsy();
+  });
+});
+
+describe('findRootArticleDirectoryPolymorphic / getArticleDirectory rootLookup', () => {
+  it('finds a global root row by globalSlug', async () => {
+    const doc = { id: 'dir-global-1' };
+    const payload = {
+      find: vi.fn().mockResolvedValue({ docs: [doc], totalDocs: 1 }),
+    } as unknown as Payload;
+
+    const result = await findRootArticleDirectoryPolymorphic({
+      payload,
+      documentId: 'localized-nav',
+      rootLookup: { collectionSlug: 'localized-nav', global: true },
+    });
+
+    expect(result).toBe(doc);
+    expect(payload.find).toHaveBeenCalledWith(
+      expect.objectContaining({
+        collection: 'crowdin-article-directories',
+        where: { globalSlug: { equals: 'localized-nav' } },
+      }),
+    );
+  });
+
+  it('finds a collection root row by collectionDocument', async () => {
+    const doc = { id: 'dir-col-1' };
+    const payload = {
+      find: vi.fn().mockResolvedValue({ docs: [doc], totalDocs: 1 }),
+    } as unknown as Payload;
+
+    const result = await findRootArticleDirectoryPolymorphic({
+      payload,
+      documentId: 'abc123',
+      rootLookup: { collectionSlug: 'posts', global: false },
+    });
+
+    expect(result).toBe(doc);
+    expect(payload.find).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          and: [
+            { 'collectionDocument.value': { equals: 'abc123' } },
+            { 'collectionDocument.relationTo': { equals: 'posts' } },
+          ],
+        },
+      }),
+    );
+  });
+
+  it('getArticleDirectory uses polymorphic match before name when rootLookup is set', async () => {
+    const polyDoc = { id: 'from-poly', name: 'other-name' };
+    const payload = {
+      find: vi
+        .fn()
+        .mockResolvedValueOnce({ docs: [polyDoc], totalDocs: 1 }),
+    } as unknown as Payload;
+
+    const result = await getArticleDirectory({
+      documentId: 'doc-1',
+      payload,
+      allowEmpty: true,
+      rootLookup: { collectionSlug: 'posts', global: false },
+    });
+
+    expect(result).toBe(polyDoc);
+    expect(payload.find).toHaveBeenCalledTimes(1);
   });
 });

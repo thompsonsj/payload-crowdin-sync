@@ -146,9 +146,11 @@ export class payloadCrowdinSyncFilesApi {
         ) || String(error).includes('Name must be unique');
 
       if (isNameConflictError) {
-        console.log(
-          `File "${fullFileName}" already exists on Crowdin in directory ${directoryId}. Attempting to find and sync existing file...`,
-        );
+        if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+          console.log(
+            `File "${fullFileName}" already exists on Crowdin in directory ${directoryId}. Attempting to find and sync existing file...`,
+          );
+        }
 
         // Try to find the existing file on Crowdin
         const existingFile = await this.crowdinFindFileByName(
@@ -156,19 +158,20 @@ export class payloadCrowdinSyncFilesApi {
           directoryId,
         );
         if (existingFile) {
-          console.log(
-            `Found existing file on Crowdin. File ID: ${existingFile.data.id}`,
-          );
+          if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+            console.log(
+              `Found existing file on Crowdin. File ID: ${existingFile.data.id}`,
+            );
+          }
           // Return the existing file so it can be synced to the local database
           (existingFile as any)._payloadCrowdinSyncWasExisting = true;
           return existingFile;
-        } else {
-          console.error(
-            `Could not find existing file "${fullFileName}" on Crowdin despite name conflict error.`,
-            error,
-            options,
-          );
         }
+        console.error(
+          `Could not find existing file "${fullFileName}" on Crowdin despite name conflict error.`,
+          error,
+          options,
+        );
       } else {
         console.error(error, options);
       }
@@ -188,7 +191,7 @@ export class payloadCrowdinSyncFilesApi {
         req: this.req,
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
     return result as CrowdinArticleDirectory | undefined;
   }

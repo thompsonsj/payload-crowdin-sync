@@ -101,7 +101,7 @@ const performAfterChange = async ({
 }: IPerformChange) => {
   // Allow internal local API calls to suppress re-entry into this hook.
   // This prevents recursive afterChange runs when we do bookkeeping updates
-  // (e.g. attaching `crowdinArticleDirectory`) as part of the Crowdin sync flow.
+  // (e.g. backfilling polymorphic links on `crowdin-article-directories`) as part of the Crowdin sync flow.
   if ((req as any)?.context?.triggerAfterChange === false) {
     return doc;
   }

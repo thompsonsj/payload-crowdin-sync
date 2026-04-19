@@ -45,6 +45,108 @@ export const getCollectionConfig = (
   return collectionConfig;
 };
 
+/** Resolve a root `crowdin-article-directories` row via polymorphic metadata (not Lexical child rows). */
+export type ArticleDirectoryRootLookup = {
+  collectionSlug: string;
+  global: boolean;
+};
+
+/**
+ * Find root article directory using `globalSlug` or `collectionDocument` on `crowdin-article-directories`.
+ */
+export async function findRootArticleDirectoryPolymorphic({
+  payload,
+  req,
+  documentId,
+  rootLookup,
+}: {
+  payload: Payload;
+  req?: PayloadRequest;
+  /** For collections: the Payload document id. For globals: typically the global slug (same as `rootLookup.collectionSlug`). */
+  documentId: string;
+  rootLookup: ArticleDirectoryRootLookup;
+}): Promise<CrowdinArticleDirectory | undefined> {
+  if (rootLookup.global) {
+    const r = await payload.find({
+      collection: 'crowdin-article-directories',
+      where: {
+        globalSlug: { equals: rootLookup.collectionSlug },
+      },
+      limit: 1,
+      req,
+      overrideAccess: true,
+    });
+    return r.docs[0] as CrowdinArticleDirectory | undefined;
+  }
+  const r = await payload.find({
+    collection: 'crowdin-article-directories',
+    where: {
+      and: [
+        { 'collectionDocument.value': { equals: documentId } },
+        { 'collectionDocument.relationTo': { equals: rootLookup.collectionSlug } },
+      ],
+    },
+    limit: 1,
+    req,
+    overrideAccess: true,
+  });
+  return r.docs[0] as CrowdinArticleDirectory | undefined;
+}
+
+/**
+ * Ensure a root article directory row has polymorphic metadata for installs that still only have a legacy `crowdinArticleDirectory` id on the source document.
+ */
+export async function ensureArticleDirectoryPolymorphicLink({
+  payload,
+  req,
+  articleDirectory,
+  documentId,
+  collectionSlug,
+  global,
+}: {
+  payload: Payload;
+  req?: PayloadRequest;
+  articleDirectory: CrowdinArticleDirectory;
+  documentId: string;
+  collectionSlug: string;
+  global: boolean;
+}): Promise<boolean> {
+  const hasCollection =
+    !global &&
+    Boolean(
+      articleDirectory.collectionDocument &&
+        typeof articleDirectory.collectionDocument === 'object' &&
+        (articleDirectory.collectionDocument as { value?: string }).value,
+    );
+  const hasGlobal =
+    global &&
+    typeof articleDirectory.globalSlug === 'string' &&
+    articleDirectory.globalSlug.length > 0;
+  if (hasCollection || hasGlobal) {
+    return false;
+  }
+  await payload.update({
+    collection: 'crowdin-article-directories',
+    id: articleDirectory.id,
+    data: {
+      ...(global
+        ? { globalSlug: collectionSlug }
+        : {
+            collectionDocument: {
+              value: documentId,
+              relationTo: collectionSlug,
+            },
+          }),
+    } as never,
+    req,
+    overrideAccess: true,
+    context: {
+      triggerAfterChange: false,
+    },
+  });
+  return true;
+}
+
 /**
  * Retrieve the Crowdin article directory for a given document ID.
  *
@@ -61,41 +163,68 @@ export async function getArticleDirectory({
   allowEmpty,
   parent,
   req,
+  rootLookup,
 }: {
   documentId: string;
   payload: Payload;
   allowEmpty?: boolean;
   parent?: CrowdinArticleDirectory | null | string;
   req?: PayloadRequest;
+  /** When resolving a root directory (no `parent`), try polymorphic fields before the legacy `name` lookup. */
+  rootLookup?: ArticleDirectoryRootLookup;
 }) {
+  if (parent !== undefined) {
+    const crowdinPayloadArticleDirectory = await payload.find({
+      collection: 'crowdin-article-directories',
+      where: {
+        name: {
+          equals: documentId,
+        },
+        parent: {
+          equals: isCrowdinArticleDirectory(parent) ? parent?.id : parent,
+        },
+      },
+      req,
+    });
+    if (crowdinPayloadArticleDirectory.totalDocs === 0 && !allowEmpty) {
+      console.error(
+        `No article directory found for document ${documentId} (lexical / child directory).`,
+      );
+      throw new Error(
+        'This article does not have a corresponding entry in the crowdin-article-directories collection.',
+      );
+    }
+    return crowdinPayloadArticleDirectory.docs[0];
+  }
+
+  if (rootLookup) {
+    const polymorphic = await findRootArticleDirectoryPolymorphic({
+      payload,
+      req,
+      documentId,
+      rootLookup,
+    });
+    if (polymorphic) {
+      return polymorphic;
+    }
+  }
+
   const crowdinPayloadArticleDirectory = await payload.find({
     collection: 'crowdin-article-directories',
     where: {
       name: {
         equals: documentId,
       },
-      ...(
-        parent !== undefined
-          ? {
-              parent: {
-                equals: isCrowdinArticleDirectory(parent) ? parent?.id : parent,
-              },
-            }
-          : {}
-      ),
     },
     req,
   });
   if (crowdinPayloadArticleDirectory.totalDocs === 0 && !allowEmpty) {
-    // a thrown error won't be reported in an api call, so console.log it as well.
-    console.log(`No article directory found for document ${documentId}`);
+    console.error(`No article directory found for document ${documentId}`);
     throw new Error(
       'This article does not have a corresponding entry in the crowdin-article-directories collection.',
     );
   }
-  return crowdinPayloadArticleDirectory
-    ? crowdinPayloadArticleDirectory.docs[0]
-    : undefined;
+  return crowdinPayloadArticleDirectory.docs[0];
 }
 
 /**
@@ -223,6 +352,7 @@ export async function getFileByDocumentID(
   documentId: string,
   payload: Payload,
   req?: PayloadRequest,
+  rootLookup?: ArticleDirectoryRootLookup,
 ): Promise<CrowdinFile> {
   let articleDirectory = undefined;
   try {
@@ -230,9 +360,10 @@ export async function getFileByDocumentID(
       documentId,
       payload,
       req,
+      rootLookup,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
   return getFile(name, `${articleDirectory?.id}`, payload, req);
 }
@@ -249,11 +380,13 @@ export async function getFilesByDocumentID({
   payload,
   parent,
   req,
+  rootLookup,
 }: {
   documentId: string;
   payload: Payload;
   parent?: CrowdinArticleDirectory;
   req?: PayloadRequest;
+  rootLookup?: ArticleDirectoryRootLookup;
 }): Promise<CrowdinFile[]> {
   let articleDirectory = undefined;
   try {
@@ -263,9 +396,10 @@ export async function getFilesByDocumentID({
       allowEmpty: false,
       parent,
       req,
+      rootLookup,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
   if (!articleDirectory) {
     // tests call this function to make sure files are deleted
@@ -326,16 +460,39 @@ export async function updatePayloadTranslation({
     payload,
     req,
   );
+  const collectionDoc = articleDirectory.collectionDocument as
+    | { value?: string; relationTo?: string }
+    | undefined
+    | null;
+  const polymorphicDocId =
+    collectionDoc &&
+    typeof collectionDoc === 'object' &&
+    typeof collectionDoc.value === 'string'
+      ? collectionDoc.value
+      : undefined;
+  const polymorphicRelation =
+    collectionDoc &&
+    typeof collectionDoc === 'object' &&
+    typeof collectionDoc.relationTo === 'string'
+      ? collectionDoc.relationTo
+      : undefined;
+
   try {
     const translations = await translationsApi.updateTranslation({
-      documentId: !global ? (articleDirectory['name'] as string) : ``,
+      documentId: !global
+        ? polymorphicDocId || (articleDirectory['name'] as string)
+        : ``,
       collection: global
-        ? (articleDirectory['name'] as string)
-        : ((
-            articleDirectory[
-              'crowdinCollectionDirectory'
-            ] as CrowdinCollectionDirectory
-          )?.collectionSlug as string),
+        ? String(articleDirectory.globalSlug || articleDirectory.name || '')
+        : String(
+            polymorphicRelation ||
+              ((
+                articleDirectory[
+                  'crowdinCollectionDirectory'
+                ] as CrowdinCollectionDirectory
+              )?.collectionSlug as string) ||
+              '',
+          ),
       global,
       draft,
       dryRun,
@@ -349,7 +506,7 @@ export async function updatePayloadTranslation({
       ...translations,
     };
   } catch (error) {
-    console.log(
+    console.error(
       'updatePayloadTranslation',
       {
         articleDirectoryId,
@@ -358,7 +515,6 @@ export async function updatePayloadTranslation({
         dryRun,
         excludeLocales,
       },
-      'error',
       error,
     );
     return {

@@ -113,6 +113,13 @@ export interface CrowdinArticleDirectory {
   id: string;
   excludeLocales?: ('de_DE' | 'fr_FR')[] | null;
   name?: string | null;
+  /** Polymorphic link to the synced Payload document (root article rows only). */
+  collectionDocument?: {
+    relationTo: string;
+    value: string | unknown;
+  } | null;
+  /** Global slug for root article rows when the article maps to a Payload global. */
+  globalSlug?: string | null;
   crowdinCollectionDirectory?: (string | null) | CrowdinCollectionDirectory;
   crowdinFiles?: (string | CrowdinFile)[] | null;
   parent?: (string | null) | CrowdinArticleDirectory;

@@ -13,7 +13,11 @@ import type {
 } from 'payload';
 import { toWords } from 'payload';
 import { payloadCrowdinSyncDocumentFilesApi } from './document';
-import { getCollectionConfig } from '../helpers';
+import {
+  ensureArticleDirectoryPolymorphicLink,
+  findRootArticleDirectoryPolymorphic,
+  getCollectionConfig,
+} from '../helpers';
 
 import * as crowdin from '@crowdin/crowdin-api-client';
 
@@ -124,32 +128,17 @@ export class filesApiByDocument {
   async findOrCreateArticleDirectory(): Promise<CrowdinArticleDirectory> {
     let crowdinPayloadArticleDirectory: CrowdinArticleDirectory | undefined;
 
-    if (this.global) {
-      const result = await this.req.payload.find({
-        collection: 'crowdin-article-directories',
-        where: {
-          globalSlug: { equals: this.collectionSlug },
-        },
-        req: this.req,
-        overrideAccess: true,
-      });
-      if (result.totalDocs > 0) {
-        crowdinPayloadArticleDirectory = result.docs[0] as CrowdinArticleDirectory;
-      }
-    } else {
-      const result = await this.req.payload.find({
-        collection: 'crowdin-article-directories',
-        where: {
-          'collectionDocument.value': { equals: this.document.id },
-          'collectionDocument.relationTo': { equals: this.collectionSlug },
-        },
-        req: this.req,
-        overrideAccess: true,
-      });
-      if (result.totalDocs > 0) {
-        crowdinPayloadArticleDirectory = result.docs[0] as CrowdinArticleDirectory;
-      }
-    }
+    crowdinPayloadArticleDirectory = await findRootArticleDirectoryPolymorphic({
+      payload: this.req.payload,
+      req: this.req,
+      documentId: this.global
+        ? (this.collectionSlug as string)
+        : this.document.id,
+      rootLookup: {
+        collectionSlug: this.collectionSlug as string,
+        global: this.global,
+      },
+    });
 
     if (!crowdinPayloadArticleDirectory && this.document.crowdinArticleDirectory) {
       // Legacy: directory id stored on the synced document (plus in-place population).
@@ -221,6 +210,17 @@ export class filesApiByDocument {
 
       // Canonical link lives on crowdin-article-directories (collectionDocument / globalSlug).
       // Do not write crowdinArticleDirectory back onto the source document or global.
+    }
+
+    if (crowdinPayloadArticleDirectory && !this.parent) {
+      await ensureArticleDirectoryPolymorphicLink({
+        payload: this.req.payload,
+        req: this.req,
+        articleDirectory: crowdinPayloadArticleDirectory,
+        documentId: this.document.id,
+        collectionSlug: this.collectionSlug as string,
+        global: this.global,
+      });
     }
 
     this.articleDirectory = crowdinPayloadArticleDirectory;
@@ -419,9 +419,11 @@ export class filesApiByDocument {
           ) || String(createError).includes('Name must be unique');
 
         if (isNameConflictError) {
-          console.log(
-            `Directory "${name}" already exists on Crowdin in parent directory ${parentDirectoryId}. Attempting to find and sync existing directory...`,
-          );
+          if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+            console.log(
+              `Directory "${name}" already exists on Crowdin in parent directory ${parentDirectoryId}. Attempting to find and sync existing directory...`,
+            );
+          }
 
           // Try to find the existing directory on Crowdin
           const existingCrowdinDirectory =
@@ -432,9 +434,11 @@ export class filesApiByDocument {
           }
 
           if (existingCrowdinDirectory) {
-            console.log(
-              `Found existing directory on Crowdin. Directory ID: ${existingCrowdinDirectory.data.id}`,
-            );
+            if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+              console.log(
+                `Found existing directory on Crowdin. Directory ID: ${existingCrowdinDirectory.data.id}`,
+              );
+            }
 
             // Check if it already exists in Payload (might have been created by another process)
             if (parent) {

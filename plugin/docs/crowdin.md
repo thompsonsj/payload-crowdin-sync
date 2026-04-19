@@ -70,6 +70,8 @@ Three new collections are created.
 
 For each document in a collection that contains localized fields, an additonal field is added: `crowdinArticleDirectory`. This is a one-to-one relationship with an article created in the `crowdin-article-directories` collection.
 
+The plugin also stores a canonical link on each root `crowdin-article-directories` document using the polymorphic `collectionDocument` field (collections) or the `globalSlug` field (globals). The `crowdinArticleDirectory` value on your documents may still be present for older installs; it is optional for resolution and can be removed after you run a backfill. Import `backfillArticleDirectoryPolymorphicLinks` from `payload-crowdin-sync` and call it once with your Payload instance (for example from `onInit` in development, or from a one-off script) to copy legacy ids into `collectionDocument` / `globalSlug` on the Crowdin article directory rows.
+
 To completely uninstall the plugin, delete the three collections and delete the `crowdinArticleDirectory` field from any of your localized documents as appropriate.
 
 ### `crowdin-collection-directories`

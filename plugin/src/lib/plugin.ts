@@ -119,10 +119,7 @@ export const crowdinSync =
     const validate = schema.validate(pluginOptions);
 
     if (validate.error) {
-      console.log(
-        'Payload Crowdin Sync option validation errors:',
-        validate.error,
-      );
+      console.warn('Payload Crowdin Sync option validation errors:', validate.error);
     }
 
     // option defaults
