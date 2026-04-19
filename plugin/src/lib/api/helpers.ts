@@ -393,7 +393,7 @@ export async function getFilesByDocumentID({
     articleDirectory = await getArticleDirectory({
       documentId: `${documentId}`,
       payload,
-      allowEmpty: false,
+      allowEmpty: true,
       parent,
       req,
       rootLookup,
