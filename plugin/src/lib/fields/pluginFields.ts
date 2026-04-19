@@ -14,14 +14,57 @@ const crowdinArticleDirectoryField: Field = {
   type: 'relationship',
   relationTo: 'crowdin-article-directories',
   hasMany: false,
-  hooks: {
-    // ensure crowdinArticleDirectory is not copied to a duplicated document
-    beforeDuplicate: [() => null],
-  },
   /*admin: {
     readOnly: true,
     disabled: true,
   },*/
+  hooks: {
+    // ensure crowdinArticleDirectory is not copied to a duplicated document
+    beforeDuplicate: [() => null],
+    beforeChange: [
+      ({ siblingData }) => {
+        // ensures data is not stored in DB
+        delete siblingData['crowdinArticleDirectory'];
+      },
+    ],
+    afterRead: [
+      async ({ data, req, global, collection }) => {
+        if (!data?.id) {
+          return;
+        }
+        let result;
+        if (global?.slug) {
+          result = await req.payload.find({
+            collection: 'crowdin-article-directories',
+            where: {
+              globalSlug: { equals: global.slug },
+            },
+            req,
+          });
+        } else if (collection?.slug) {
+          result = await req.payload.find({
+            collection: 'crowdin-article-directories',
+            where: {
+              'collectionDocument.value': { equals: data.id },
+              'collectionDocument.relationTo': { equals: collection.slug },
+            },
+            req,
+          });
+        } else {
+          result = await req.payload.find({
+            collection: 'crowdin-article-directories',
+            where: {
+              'collectionDocument.value': { equals: data.id },
+            },
+            req,
+          });
+        }
+        if (result.totalDocs > 0) {
+          return result.docs[0];
+        }
+      },
+    ],
+  }
 };
 
 export const pluginCollectionOrGlobalFields = ({

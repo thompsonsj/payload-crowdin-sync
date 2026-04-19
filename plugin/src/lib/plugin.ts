@@ -119,10 +119,7 @@ export const crowdinSync =
     const validate = schema.validate(pluginOptions);
 
     if (validate.error) {
-      console.log(
-        'Payload Crowdin Sync option validation errors:',
-        validate.error,
-      );
+      console.warn('Payload Crowdin Sync option validation errors:', validate.error);
     }
 
     // option defaults
@@ -214,6 +211,24 @@ export const crowdinSync =
             {
               type: 'tabs',
               tabs: [
+                {
+                  label: 'Document',
+                  fields: [
+                    {
+                      name: 'collectionDocument',
+                      type: 'relationship',
+                      relationTo: (config.collections || []).map(
+                        (collection) => collection.slug,
+                      ),
+                      hasMany: false,
+                    },
+                    {
+                      // can't create global relationships - see https://github.com/payloadcms/payload/discussions/2100
+                      name: 'globalSlug',
+                      type: 'text',
+                    },
+                  ],
+                },
                 {
                   label: 'Options',
                   fields: crowdinArticleDirectoryFields({ pluginOptions }),

@@ -14,6 +14,7 @@ import {
   getLexicalFieldArticleDirectory,
   getLexicalFieldArticleDirectories,
 } from './api/helpers';
+import { backfillArticleDirectoryPolymorphicLinks } from './migrations/backfillArticleDirectoryPolymorphicLinks';
 // translations api
 import { payloadCrowdinSyncTranslationsApi } from './api/translations';
 import { getLocalizedFields } from './utilities';
@@ -47,4 +48,8 @@ export {
   getLexicalFieldArticleDirectory,
   getLexicalFieldArticleDirectories,
   getRelationshipId,
+  backfillArticleDirectoryPolymorphicLinks,
 };
+
+export type { ArticleDirectoryRootLookup } from './api/helpers';
+export type { BackfillArticleDirectoryLinksResult } from './migrations/backfillArticleDirectoryPolymorphicLinks';
