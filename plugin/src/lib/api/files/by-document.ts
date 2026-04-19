@@ -14,7 +14,6 @@ import type {
 import { toWords } from 'payload';
 import { payloadCrowdinSyncDocumentFilesApi } from './document';
 import {
-  ensureArticleDirectoryPolymorphicLink,
   findRootArticleDirectoryPolymorphic,
   getCollectionConfig,
 } from '../helpers';
@@ -158,69 +157,99 @@ export class filesApiByDocument {
           collectionSlug: this.global ? 'globals' : this.collectionSlug,
         });
 
-      const parent =
-        isCrowdinArticleDirectory(this.parent) ? this.parent : undefined;
-      const parentId =
-        typeof this.parent === 'string' && this.parent.length > 0
-          ? this.parent
-          : undefined;
-      const resolvedParent =
-        parent ??
-        (parentId
-          ? ((await this.req.payload.findByID({
-              collection: 'crowdin-article-directories',
-              id: parentId,
-              req: this.req,
-            })) as CrowdinArticleDirectory)
-          : undefined);
-
-      // Create article directory on Crowdin
-      const name = this.global ? this.collectionSlug : this.document.id;
-      let collectionConfig: CollectionConfig | GlobalConfig | undefined;
-      try {
-        // Lexical block syncing uses an internal "mock" collection config to
-        // avoid requiring a real collection definition for derived block fields.
-        // That slug will never exist in the Payload config, so skip lookup.
-        if (this.collectionSlug !== 'mock-collection-for-lexical-blocks') {
-          collectionConfig = getCollectionConfig(
-            this.collectionSlug,
-            this.global,
-            this.req.payload,
-          );
-        }
-      } catch (error) {
-        // Avoid noisy logs for non-critical config lookup failures.
-        if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
-          console.log(error);
+      if (!this.parent) {
+        if (this.global) {
+          const existingGlobalRoot = await this.req.payload.find({
+            collection: 'crowdin-article-directories',
+            where: {
+              name: { equals: this.collectionSlug as string },
+            },
+            limit: 1,
+            req: this.req,
+            overrideAccess: true,
+          });
+          if (existingGlobalRoot.docs[0]) {
+            crowdinPayloadArticleDirectory =
+              existingGlobalRoot.docs[0] as CrowdinArticleDirectory;
+          }
+        } else if (crowdinPayloadCollectionDirectory?.id) {
+          const existingCollectionRoot = await this.req.payload.find({
+            collection: 'crowdin-article-directories',
+            where: {
+              and: [
+                { name: { equals: `${this.document.id}` } },
+                {
+                  crowdinCollectionDirectory: {
+                    equals: crowdinPayloadCollectionDirectory.id,
+                  },
+                },
+              ],
+            },
+            limit: 1,
+            req: this.req,
+            overrideAccess: true,
+          });
+          if (existingCollectionRoot.docs[0]) {
+            crowdinPayloadArticleDirectory =
+              existingCollectionRoot.docs[0] as CrowdinArticleDirectory;
+          }
         }
       }
-      const useAsTitle = (collectionConfig as CollectionConfig | undefined)
-        ?.admin?.useAsTitle;
-
-      crowdinPayloadArticleDirectory = await this.crowdinFindOrCreateDirectory({
-        parent: resolvedParent,
-        crowdinPayloadCollectionDirectory,
-        name,
-        useAsTitle,
-      });
 
       if (!crowdinPayloadArticleDirectory) {
-        throw new Error('Crowdin article directory not found');
+        const parent =
+          isCrowdinArticleDirectory(this.parent) ? this.parent : undefined;
+        const parentId =
+          typeof this.parent === 'string' && this.parent.length > 0
+            ? this.parent
+            : undefined;
+        const resolvedParent =
+          parent ??
+          (parentId
+            ? ((await this.req.payload.findByID({
+                collection: 'crowdin-article-directories',
+                id: parentId,
+                req: this.req,
+              })) as CrowdinArticleDirectory)
+            : undefined);
+
+        // Create article directory on Crowdin
+        const name = this.global ? this.collectionSlug : this.document.id;
+        let collectionConfig: CollectionConfig | GlobalConfig | undefined;
+        try {
+          // Lexical block syncing uses an internal "mock" collection config to
+          // avoid requiring a real collection definition for derived block fields.
+          // That slug will never exist in the Payload config, so skip lookup.
+          if (this.collectionSlug !== 'mock-collection-for-lexical-blocks') {
+            collectionConfig = getCollectionConfig(
+              this.collectionSlug,
+              this.global,
+              this.req.payload,
+            );
+          }
+        } catch (error) {
+          // Avoid noisy logs for non-critical config lookup failures.
+          if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+            console.log(error);
+          }
+        }
+        const useAsTitle = (collectionConfig as CollectionConfig | undefined)
+          ?.admin?.useAsTitle;
+
+        crowdinPayloadArticleDirectory = await this.crowdinFindOrCreateDirectory({
+          parent: resolvedParent,
+          crowdinPayloadCollectionDirectory,
+          name,
+          useAsTitle,
+        });
+
+        if (!crowdinPayloadArticleDirectory) {
+          throw new Error('Crowdin article directory not found');
+        }
+
+        // Canonical link lives on crowdin-article-directories (collectionDocument / globalSlug).
+        // Do not write crowdinArticleDirectory back onto the source document or global.
       }
-
-      // Canonical link lives on crowdin-article-directories (collectionDocument / globalSlug).
-      // Do not write crowdinArticleDirectory back onto the source document or global.
-    }
-
-    if (crowdinPayloadArticleDirectory && !this.parent) {
-      await ensureArticleDirectoryPolymorphicLink({
-        payload: this.req.payload,
-        req: this.req,
-        articleDirectory: crowdinPayloadArticleDirectory,
-        documentId: this.document.id,
-        collectionSlug: this.collectionSlug as string,
-        global: this.global,
-      });
     }
 
     this.articleDirectory = crowdinPayloadArticleDirectory;
@@ -513,16 +542,10 @@ export class filesApiByDocument {
           ...(this.global && !parent && {
             globalSlug: this.collectionSlug as string,
           }),
-          ...(!this.global && !parent && {
-            collectionDocument: {
-              value: this.document.id,
-              relationTo: this.collectionSlug,
-            },
-          }),
         },
         req: this.req,
       });
-      return result as CrowdinArticleDirectory;
+      return result as CrowdinArticleDirectory
     } catch (error) {
       console.error(error);
     }

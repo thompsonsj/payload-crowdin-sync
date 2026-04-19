@@ -152,6 +152,7 @@ export async function initPayloadInt(
   console.log('starting payload')
 
   const payload = await getPayload({ config: payloadConfig })
+
   // console.log('initializing rest client')
   // const restClient = new NextRESTClient(payload.config)
   console.log('initPayloadInt done')

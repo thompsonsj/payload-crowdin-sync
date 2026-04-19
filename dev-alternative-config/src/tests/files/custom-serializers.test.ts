@@ -1,7 +1,12 @@
 import { getFilesByDocumentID } from 'payload-crowdin-sync'
 import { CrowdinFile } from '../../payload-types'
-import nock from 'nock'
 import { mockCrowdinClient } from 'payload-crowdin-sync'
+import {
+  assertCrowdinNocksDone,
+  cleanCrowdinNocks,
+  CROWDIN_API_ORIGIN,
+} from '../../../../dev/src/tests/helpers/crowdin-nock'
+import nock from 'nock'
 import { pluginConfig } from '../helpers/plugin-config'
 import { initPayloadInt } from '../helpers/initPayloadInt'
 import type { Payload } from 'payload'
@@ -21,11 +26,11 @@ describe('Files - custom serializer', () => {
       payload: Payload
     })
   })
+  beforeEach(() => {
+    cleanCrowdinNocks()
+  })
   afterEach(() => {
-    if (!nock.isDone()) {
-      throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
-    }
-    nock.cleanAll()
+    assertCrowdinNocksDone()
   })
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
@@ -34,18 +39,27 @@ describe('Files - custom serializer', () => {
   })
   describe('fn: updateTranslation', () => {
     it('updates the Crowdin article directory with html for a `richText` field', async () => {
-      const fileId = 92
-      nock('https://api.crowdin.com')
-        .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-        .twice()
-        .reply(200, mockClient.createDirectory({}))
+      const contentFileId = 92
+      const { projectId } = pluginOptions
+      // Only `content` is set (no title/text in JSON) — the plugin may skip `fields.json`
+      // and upload `content.html` only after the two Crowdin directories.
+      nock(CROWDIN_API_ORIGIN)
+        .post(`/api/v2/projects/${projectId}/directories`)
+        .reply(200, mockClient.createDirectory({ id: 1170 }))
+        .post(`/api/v2/projects/${projectId}/directories`)
+        .reply(200, mockClient.createDirectory({ id: 1169 }))
         .post(`/api/v2/storages`)
         .reply(200, mockClient.addStorage())
-        .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+        .post(`/api/v2/projects/${projectId}/files`)
         .reply(
           200,
           mockClient.createFile({
-            fileId,
+            fileId: contentFileId,
+            request: {
+              name: 'content',
+              storageId: 5678,
+              type: 'html',
+            },
           }),
         )
       const post = await payload.create({
