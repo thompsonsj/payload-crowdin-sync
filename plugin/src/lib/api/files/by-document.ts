@@ -246,9 +246,6 @@ export class filesApiByDocument {
         if (!crowdinPayloadArticleDirectory) {
           throw new Error('Crowdin article directory not found');
         }
-
-        // Canonical link lives on crowdin-article-directories (collectionDocument / globalSlug).
-        // Do not write crowdinArticleDirectory back onto the source document or global.
       }
     }
 
@@ -285,14 +282,41 @@ export class filesApiByDocument {
           `Creating collection directory on Crowdin: ${collectionSlug}`,
         );
       }
-      const crowdinDirectory = await this.sourceFilesApi.createDirectory(
-        this.projectId,
-        {
-          directoryId: this.directoryId,
-          name: collectionSlug,
-          title: toWords(collectionSlug), // is this transformed value available on the collection object?
-        },
-      );
+      let crowdinDirectory: ResponseObject<SourceFilesModel.Directory> | undefined;
+      try {
+        crowdinDirectory = await this.sourceFilesApi.createDirectory(
+          this.projectId,
+          {
+            directoryId: this.directoryId,
+            name: collectionSlug,
+            title: toWords(collectionSlug), // is this transformed value available on the collection object?
+          },
+        );
+      } catch (createError: any) {
+        // In integration tests, the Crowdin collection directory can already exist in the remote mock
+        // (or multiple test files may race to create it). If Crowdin rejects due to name uniqueness,
+        // recover by fetching the existing directory and continuing.
+        const isNameConflictError =
+          createError?.error?.errors?.some(
+            (e: any) =>
+              e?.error?.key === 'directory.name.is_already_exists' ||
+              e?.error?.key === 'directory.name' ||
+              String(createError).includes('Name must be unique'),
+          ) || String(createError).includes('Name must be unique');
+
+        if (!isNameConflictError) {
+          throw createError;
+        }
+
+        const existingOnCrowdin = await this.crowdinFindDirectoryByName(
+          collectionSlug,
+          this.directoryId as number,
+        );
+        if (!existingOnCrowdin) {
+          throw createError;
+        }
+        crowdinDirectory = existingOnCrowdin;
+      }
 
       // Store result in Payload CMS
       crowdinPayloadCollectionDirectory = await this.req.payload.create({

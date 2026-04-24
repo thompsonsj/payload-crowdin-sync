@@ -50,6 +50,39 @@ const crowdinArticleDirectoryField: Field = {
             },
             req,
           });
+
+          // Backwards compatibility: some installs still link root directories by `name`
+          // plus `crowdinCollectionDirectory` instead of `collectionDocument`.
+          if (result.totalDocs === 0) {
+            const collectionDirectory = await req.payload.find({
+              collection: 'crowdin-collection-directories',
+              where: {
+                collectionSlug: { equals: collection.slug },
+              },
+              limit: 1,
+              req,
+              overrideAccess: true,
+            });
+            const collectionDirectoryId = collectionDirectory.docs[0]?.id;
+            if (collectionDirectoryId) {
+              result = await req.payload.find({
+                collection: 'crowdin-article-directories',
+                where: {
+                  and: [
+                    { name: { equals: data.id } },
+                    {
+                      crowdinCollectionDirectory: {
+                        equals: collectionDirectoryId,
+                      },
+                    },
+                  ],
+                },
+                limit: 1,
+                req,
+                overrideAccess: true,
+              });
+            }
+          }
         } else {
           result = await req.payload.find({
             collection: 'crowdin-article-directories',
