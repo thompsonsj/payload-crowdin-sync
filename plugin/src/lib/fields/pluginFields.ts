@@ -32,6 +32,30 @@ const crowdinArticleDirectoryField: Field = {
         if (!data?.id) {
           return;
         }
+
+        // If this read happens during an internal bookkeeping update, skip the lookup.
+        if ((req as any)?.context?.triggerAfterChange === false) {
+          return;
+        }
+
+        // If already present (populated), short-circuit.
+        const existing = (data as any)?.crowdinArticleDirectory;
+        if (existing && typeof existing === 'object') {
+          return existing;
+        }
+
+        // Request-scoped memoization to avoid repeated DB round-trips per document.
+        const slugKey = collection?.slug || global?.slug;
+        if (!slugKey) {
+          return;
+        }
+        const cacheKey = `${slugKey}:${data.id}`;
+        const ctx = ((req as any).context ||= {});
+        const cache: Record<string, any> = (ctx._crowdinArticleDirectoryCache ||= {});
+        if (Object.prototype.hasOwnProperty.call(cache, cacheKey)) {
+          return cache[cacheKey];
+        }
+
         let result;
         if (global?.slug) {
           result = await req.payload.find({
@@ -92,9 +116,9 @@ const crowdinArticleDirectoryField: Field = {
             req,
           });
         }
-        if (result.totalDocs > 0) {
-          return result.docs[0];
-        }
+        const resolved = result?.totalDocs > 0 ? result.docs[0] : undefined;
+        cache[cacheKey] = resolved;
+        return resolved;
       },
     ],
   }
