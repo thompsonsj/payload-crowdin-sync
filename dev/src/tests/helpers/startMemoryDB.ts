@@ -1,8 +1,8 @@
-import { MongoMemoryReplSet } from 'mongodb-memory-server'
+import { MongoMemoryServer } from 'mongodb-memory-server'
 
 declare global {
   // eslint-disable-next-line no-var
-  var _mongoMemoryServer: MongoMemoryReplSet | undefined
+  var _mongoMemoryServer: MongoMemoryServer | undefined
 }
 
 const start = async () => {
@@ -18,16 +18,17 @@ const start = async () => {
     (!process.env.PAYLOAD_DATABASE || process.env.PAYLOAD_DATABASE === 'mongodb') &&
     !global._mongoMemoryServer
   ) {
-    const db = await MongoMemoryReplSet.create({
-      replSet: {
-        count: 3,
-        dbName: 'payloadmemory',
+    const db = await MongoMemoryServer.create({
+      instance: {
+        dbName: 'payloadmemory_dev',
+        // Prevent very short lock timeouts under load.
+        args: ['--setParameter', 'maxTransactionLockRequestTimeoutMillis=2000'],
       },
     })
 
     global._mongoMemoryServer = db
 
-    process.env.MONGODB_MEMORY_SERVER_URI = `${global._mongoMemoryServer.getUri()}&retryWrites=true`
+    process.env.MONGODB_MEMORY_SERVER_URI = `${global._mongoMemoryServer.getUri()}&retryWrites=true&w=1`
   }
 }
 

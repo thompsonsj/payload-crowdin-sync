@@ -2,6 +2,7 @@ import nock from 'nock'
 import { mockCrowdinClient } from 'payload-crowdin-sync'
 import { pluginConfig } from '../helpers/plugin-config'
 import { initPayloadInt } from '../helpers/initPayloadInt'
+import { assertCrowdinNocksDone, cleanCrowdinNocks } from '../helpers/crowdin-nock'
 import type { Payload } from 'payload'
 import { CrowdinArticleDirectory } from '@/payload-types'
 let payload: Payload
@@ -32,11 +33,11 @@ describe('Collection: Localized Posts With Condition', () => {
       payload: Payload
     })
   })
+  beforeEach(() => {
+    cleanCrowdinNocks()
+  })
   afterEach(() => {
-    if (!nock.isDone()) {
-      throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
-    }
-    nock.cleanAll()
+    assertCrowdinNocksDone()
   })
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
