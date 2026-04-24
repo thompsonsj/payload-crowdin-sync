@@ -144,8 +144,8 @@ describe('pluginFields - crowdinArticleDirectory afterRead', () => {
 
     // two different cache keys → two separate lookups
     // collection miss: 2 finds (article-directories + collection-directories)
-    // global miss: 1 find (article-directories by globalSlug)
-    expect(find).toHaveBeenCalledTimes(3)
+    // global miss: 2 finds (article-directories by globalSlug, then legacy name fallback)
+    expect(find).toHaveBeenCalledTimes(4)
   })
 })
 

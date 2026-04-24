@@ -65,6 +65,20 @@ const crowdinArticleDirectoryField: Field = {
             },
             req,
           });
+
+          // Backwards compatibility: some installs link global root directories by `name`
+          // rather than `globalSlug`.
+          if (result.totalDocs === 0) {
+            result = await req.payload.find({
+              collection: 'crowdin-article-directories',
+              where: {
+                name: { equals: global.slug },
+              },
+              limit: 1,
+              req,
+              overrideAccess: true,
+            });
+          }
         } else if (collection?.slug) {
           result = await req.payload.find({
             collection: 'crowdin-article-directories',
