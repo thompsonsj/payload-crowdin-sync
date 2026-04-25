@@ -64,6 +64,7 @@ const crowdinArticleDirectoryField: Field = {
               globalSlug: { equals: global.slug },
             },
             req,
+            overrideAccess: true,
           });
 
           // Backwards compatibility: some installs link global root directories by `name`
@@ -87,6 +88,7 @@ const crowdinArticleDirectoryField: Field = {
               'collectionDocument.relationTo': { equals: collection.slug },
             },
             req,
+            overrideAccess: true,
           });
 
           // Backwards compatibility: some installs still link root directories by `name`
@@ -122,13 +124,9 @@ const crowdinArticleDirectoryField: Field = {
             }
           }
         } else {
-          result = await req.payload.find({
-            collection: 'crowdin-article-directories',
-            where: {
-              'collectionDocument.value': { equals: data.id },
-            },
-            req,
-          });
+          // Without a collection/global slug we cannot safely resolve a polymorphic link.
+          // Avoid a loose lookup by value that could collide across collections.
+          return;
         }
         const resolved = result?.totalDocs > 0 ? result.docs[0] : undefined;
         cache[cacheKey] = resolved;
