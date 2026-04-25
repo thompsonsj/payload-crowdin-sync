@@ -1,5 +1,8 @@
 # slateToDom configuration
 
+For full `slate-serializers` documentation and runnable examples, see
+[slate-serializers — docs & demos](https://thompsonsj.github.io/slate-serializers-demo/).
+
 ## elementMap
 
 Describe how Slate JSON **node types** are mapped to HTML element tags.

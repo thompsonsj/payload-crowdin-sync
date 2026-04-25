@@ -1,5 +1,8 @@
 # htmlToSlate configuration
 
+For full `slate-serializers` documentation and runnable examples, see
+[slate-serializers — docs & demos](https://thompsonsj.github.io/slate-serializers-demo/).
+
 ## elementTags
 
 Describe how HTML element tags are mapped to Slate JSON nodes.

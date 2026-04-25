@@ -207,7 +207,13 @@ Use an object to define a condition that activates Crowdin based on the document
 
 ### `slateToHtmlConfig`
 
-Pass a custom config for the `slateToHtml` serializer used to convert Payload CMS Slate JSON to HTML for Crowdin translation. See [Serializer configuration](./serializer.md).
+Controls how **Payload Slate richText** values are converted to HTML before being uploaded to Crowdin.
+
+- **Default behavior**: if you do not provide this option, the plugin uses `payloadSlateToHtmlConfig` from `@slate-serializers/html` (a Payload-oriented preset).
+- **When to customize**: if you have custom Slate node types/marks (or want to tweak table/link/image output).
+- **More docs & examples**: see [slate-serializers — docs & demos](https://thompsonsj.github.io/slate-serializers-demo/).
+
+If you provide `slateToHtmlConfig`, it fully replaces the default preset (so you’ll typically want to start from the Payload preset and extend it).
 
 ```js
 {
@@ -215,14 +221,54 @@ Pass a custom config for the `slateToHtml` serializer used to convert Payload CM
 }
 ```
 
+Example: extend the default Payload preset to add/override element mappings.
+
+```ts
+import { payloadSlateToHtmlConfig } from '@slate-serializers/html'
+
+crowdinSync({
+  // ...
+  slateToHtmlConfig: {
+    ...payloadSlateToHtmlConfig,
+    elementMap: {
+      ...payloadSlateToHtmlConfig.elementMap,
+      // example customization:
+      ['table-row']: 'tr',
+    },
+  },
+})
+```
+
 ### `htmlToSlateConfig`
 
-Pass a custom config for the `htmlToSlate` serializer used to conver HTML to Payload CMS Slate JSON when retrieving Crowdin translation. See [Serializer configuration](./serializer.md).
+Controls how translated HTML downloaded from Crowdin is converted back into **Payload Slate richText** JSON.
+
+- **Default behavior**: if you do not provide this option, the plugin uses `payloadHtmlToSlateConfig` from `@slate-serializers/html`.
+- **When to customize**: if you emit custom HTML from your `slateToHtmlConfig` (or need custom parsing for attributes/styles).
+- **More docs & examples**: see [slate-serializers — docs & demos](https://thompsonsj.github.io/slate-serializers-demo/).
 
 ```js
 {
   htmlToSlateConfig: undefined,
 }
+```
+
+Example: extend the default Payload preset to add/override tag handling.
+
+```ts
+import { payloadHtmlToSlateConfig } from '@slate-serializers/html'
+
+crowdinSync({
+  // ...
+  htmlToSlateConfig: {
+    ...payloadHtmlToSlateConfig,
+    elementTags: {
+      ...payloadHtmlToSlateConfig.elementTags,
+      // example customization:
+      h1: () => ({ type: 'heading-one' }),
+    },
+  },
+})
 ```
 
 ### `pluginCollectionAccess`
