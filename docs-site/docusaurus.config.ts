@@ -53,8 +53,6 @@ const config: Config = {
   ],
 
   themeConfig: {
-    // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
     colorMode: {
       respectPrefersColorScheme: true,
     },
@@ -80,26 +78,7 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Intro',
-              to: '/docs/intro',
-            },
-          ],
-        },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'GitHub',
-              href: `https://github.com/${organizationName}/${projectName}`,
-            },
-          ],
-        },
-      ],
+      links: [],
       copyright: `Copyright © ${new Date().getFullYear()} Payload Crowdin Sync. Built with Docusaurus.`,
     },
     prism: {
