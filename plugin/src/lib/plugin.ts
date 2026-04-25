@@ -67,6 +67,49 @@ export const crowdinSync =
   (config: Config): Config => {
     const initFunctions: (() => void)[] = [];
 
+    const syncedCollectionSlugs: string[] = (() => {
+      if (!pluginOptions.collections) return [];
+      const allowed = new Set(
+        pluginOptions.collections.map((c) =>
+          isCollectionOrGlobalConfigObject(c) ? c.slug : c,
+        ),
+      );
+      return (config.collections || [])
+        .map((c) => c.slug)
+        .filter((slug) => allowed.has(slug));
+    })();
+
+    const syncedGlobalSlugs: string[] = (() => {
+      if (!pluginOptions.globals) return [];
+      return pluginOptions.globals.map((g) =>
+        isCollectionOrGlobalConfigObject(g) ? g.slug : g,
+      );
+    })();
+
+    const documentTabFields: any[] = [
+      ...(syncedCollectionSlugs.length > 0
+        ? [
+            {
+              name: 'collectionDocument',
+              type: 'relationship',
+              relationTo: syncedCollectionSlugs,
+              hasMany: false,
+            },
+          ]
+        : []),
+      ...(syncedGlobalSlugs.length > 0
+        ? [
+            {
+              // can't create global relationships - see https://github.com/payloadcms/payload/discussions/2100
+              name: 'globalSlug',
+              type: 'select',
+              options: syncedGlobalSlugs,
+              hasMany: false,
+            },
+          ]
+        : []),
+    ];
+
     // schema validation
     const schema = Joi.object({
       projectId: Joi.number().required(),
@@ -211,24 +254,14 @@ export const crowdinSync =
             {
               type: 'tabs',
               tabs: [
-                {
-                  label: 'Document',
-                  fields: [
-                    {
-                      name: 'collectionDocument',
-                      type: 'relationship',
-                      relationTo: (config.collections || []).map(
-                        (collection) => collection.slug,
-                      ),
-                      hasMany: false,
-                    },
-                    {
-                      // can't create global relationships - see https://github.com/payloadcms/payload/discussions/2100
-                      name: 'globalSlug',
-                      type: 'text',
-                    },
-                  ],
-                },
+                ...(documentTabFields.length > 0
+                  ? [
+                      {
+                        label: 'Document',
+                        fields: documentTabFields,
+                      },
+                    ]
+                  : []),
                 {
                   label: 'Options',
                   fields: crowdinArticleDirectoryFields({ pluginOptions }),
