@@ -117,6 +117,10 @@ export class payloadCrowdinSyncFilesApi {
     fileType,
     directoryId,
   }: IcreateFile) {
+    const verbose =
+      /^(1|true|yes|on)$/i.test(
+        String(process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE || '').trim(),
+      );
     const storage = await this.uploadStorageApi.addStorage(
       name,
       fileData,
@@ -146,7 +150,7 @@ export class payloadCrowdinSyncFilesApi {
         ) || String(error).includes('Name must be unique');
 
       if (isNameConflictError) {
-        if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+        if (verbose) {
           console.log(
             `File "${fullFileName}" already exists on Crowdin in directory ${directoryId}. Attempting to find and sync existing file...`,
           );
@@ -158,7 +162,7 @@ export class payloadCrowdinSyncFilesApi {
           directoryId,
         );
         if (existingFile) {
-          if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+          if (verbose) {
             console.log(
               `Found existing file on Crowdin. File ID: ${existingFile.data.id}`,
             );
