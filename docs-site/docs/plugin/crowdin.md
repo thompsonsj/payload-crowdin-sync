@@ -23,7 +23,7 @@ Files can be uploaded to a specific directory by setting the `directoryId` optio
 
 ## Rich text fields
 
-For ease-of-editing in Crowdin, the underlying editor object is converted to HTML. When translated HTML is synced back into Payload, it is converted back to an apporpriate object.
+For ease-of-editing in Crowdin, the underlying editor object is converted to HTML. When translated HTML is synced back into Payload, it is converted back to an appropriate object.
 
 Each `richText` field has its own Crowdin file. e.g. `content.html`.
 
