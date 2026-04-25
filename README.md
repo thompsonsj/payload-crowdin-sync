@@ -1,5 +1,31 @@
 # Payload Crowdin Sync
 
+Monorepo containing:
+
+- **`payload-crowdin-sync` plugin** (published to npm)
+- **integration test Payload installs** (`dev/`, `dev-alternative-config/`)
+- **documentation site** (`docs-site/`)
+
+## Docs
+
+- **Documentation site**: `https://thompsonsj.github.io/payload-crowdin-sync/`
+- **Plugin on npm**: `https://www.npmjs.com/package/payload-crowdin-sync`
+
+## Development
+
+```bash
+npm install
+npm run test
+```
+
+Docs site:
+
+```bash
+npm run docs:serve
+```
+
+# Payload Crowdin Sync
+
 Automatically upload/sync localized fields from the default locale to Crowdin. Make these fields read-only in other locales and update them using Crowdin translations.
 
 - Plugin docs: [plugin/README.md](plugin/README.md)
