@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.38.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.37.1...dev-v0.38.0) (2026-04-25)
+
+
+### Features
+
+* store doc relationships on CrowdinArticleDirectory ([#270](https://github.com/thompsonsj/payload-crowdin-sync/issues/270)) ([a71c626](https://github.com/thompsonsj/payload-crowdin-sync/commit/a71c62681affd25c44c6dbc518d4454fe5373b73))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.41.1 to 0.42.0
+
 ## [0.37.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.37.0...dev-v0.37.1) (2026-04-17)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.22.1...source-v0.23.0) (2026-04-25)
+
+
+### Features
+
+* store doc relationships on CrowdinArticleDirectory ([#270](https://github.com/thompsonsj/payload-crowdin-sync/issues/270)) ([a71c626](https://github.com/thompsonsj/payload-crowdin-sync/commit/a71c62681affd25c44c6dbc518d4454fe5373b73))
+
 ## [0.22.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.22.0...source-v0.22.1) (2026-04-17)
 
 
