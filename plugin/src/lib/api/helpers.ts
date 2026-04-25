@@ -136,19 +136,18 @@ export async function ensureArticleDirectoryPolymorphicLink({
   if (hasCollection || hasGlobal) {
     return false;
   }
+  const data: Partial<CrowdinArticleDirectory> = global
+    ? { globalSlug: collectionSlug }
+    : {
+        collectionDocument: {
+          value: documentId,
+          relationTo: collectionSlug,
+        },
+      };
   await payload.update({
     collection: 'crowdin-article-directories',
     id: articleDirectory.id,
-    data: {
-      ...(global
-        ? { globalSlug: collectionSlug }
-        : {
-            collectionDocument: {
-              value: documentId,
-              relationTo: collectionSlug,
-            },
-          }),
-    } as never,
+    data,
     req,
     overrideAccess: true,
     context: {
