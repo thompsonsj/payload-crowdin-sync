@@ -409,7 +409,7 @@ A JSON object is returned that allows you to review what will be updated in the 
 - `translations`
   - `<locale>` e.g. `es_ES`
     - `currentTranslations` all current localized fields and values.
-    - `currentTranslations` localized fields populated with values from Crowdin.
+    - `latestTranslations` localized fields populated with values from Crowdin.
     - `changed` boolean to indicate whether any changes have been made in Crowdin.
 
 ##### Update

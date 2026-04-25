@@ -44,7 +44,7 @@ Plugin test coverage is not 100%, but seeks to cover as many use cases as possib
 
 - Testing various field configurations for a collection.
 - Using `nock` to intercept calls to the Crowdin API and ensure the right calls are being made.
-- Unit tests to cover as many caes as possible for the supporting functions, which include a lot of recursion.
+- Unit tests to cover as many cases as possible for the supporting functions, which include a lot of recursion.
 
 ### Jest
 
