@@ -271,6 +271,19 @@ crowdinSync({
 })
 ```
 
+### Serializer config reference (condensed)
+
+The plugin config surface is intentionally small: you can override `slateToHtmlConfig` and `htmlToSlateConfig`, but the underlying serializer libraries have many knobs.
+
+If you need to go deeper (custom tags/attributes/styles, whitespace filtering, DOM transforms), start here:
+
+- **Full docs & runnable examples**: [slate-serializers — docs & demos](https://thompsonsj.github.io/slate-serializers-demo/)
+
+Common places to look in the `slate-serializers` docs:
+
+- **`slateToDom`** (used under the hood by `slateToHtml`): `elementMap`, `elementTransforms`, `markMap`, `markTransforms`
+- **`htmlToSlate`**: `elementTags`, `elementStyleMap`, `htmlPreProcessString`, `filterWhitespaceNodes`
+
 ### `pluginCollectionAccess`
 
 `access` collection config to pass to all the Crowdin collections created by this plugin.
