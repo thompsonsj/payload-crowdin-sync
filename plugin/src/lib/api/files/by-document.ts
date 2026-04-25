@@ -310,7 +310,7 @@ export class filesApiByDocument {
 
         const existingOnCrowdin = await this.crowdinFindDirectoryByName(
           collectionSlug,
-          this.directoryId as number,
+          this.directoryId,
         );
         if (!existingOnCrowdin) {
           throw createError;
@@ -385,8 +385,11 @@ export class filesApiByDocument {
    */
   async crowdinFindDirectoryByName(
     name: string,
-    parentDirectoryId: number,
+    parentDirectoryId: number | undefined,
   ): Promise<ResponseObject<SourceFilesModel.Directory> | undefined> {
+    if (typeof parentDirectoryId !== 'number') {
+      return undefined;
+    }
     try {
       // List all directories in the parent directory
       const response = await this.sourceFilesApi.listProjectDirectories(
