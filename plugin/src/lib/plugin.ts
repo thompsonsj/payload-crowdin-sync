@@ -80,10 +80,17 @@ export const crowdinSync =
     })();
 
     const syncedGlobalSlugs: string[] = (() => {
-      if (!pluginOptions.globals) return [];
-      return pluginOptions.globals.map((g) =>
-        isCollectionOrGlobalConfigObject(g) ? g.slug : g,
+      // If `pluginOptions.globals` is undefined, treat all globals as eligible
+      // (mirrors the behavior of `collectionOrGlobalConfigActive`).
+      if (!pluginOptions.globals) {
+        return (config.globals || []).map((g) => g.slug);
+      }
+      const allowed = new Set(
+        pluginOptions.globals.map((g) =>
+          isCollectionOrGlobalConfigObject(g) ? g.slug : g,
+        ),
       );
+      return (config.globals || []).map((g) => g.slug).filter((slug) => allowed.has(slug));
     })();
 
     const documentTabFields: any[] = [
