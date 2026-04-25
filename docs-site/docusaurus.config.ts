@@ -49,7 +49,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: `https://github.com/${organizationName}/${projectName}/tree/main/`,
+          editUrl: `https://github.com/${organizationName}/${projectName}/tree/main/docs-site/`,
         },
         blog: false,
         sitemap: {
