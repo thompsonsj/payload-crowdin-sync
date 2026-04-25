@@ -67,6 +67,56 @@ export const crowdinSync =
   (config: Config): Config => {
     const initFunctions: (() => void)[] = [];
 
+    const syncedCollectionSlugs: string[] = (() => {
+      if (!pluginOptions.collections) return [];
+      const allowed = new Set(
+        pluginOptions.collections.map((c) =>
+          isCollectionOrGlobalConfigObject(c) ? c.slug : c,
+        ),
+      );
+      return (config.collections || [])
+        .map((c) => c.slug)
+        .filter((slug) => allowed.has(slug));
+    })();
+
+    const syncedGlobalSlugs: string[] = (() => {
+      // If `pluginOptions.globals` is undefined, treat all globals as eligible
+      // (mirrors the behavior of `collectionOrGlobalConfigActive`).
+      if (!pluginOptions.globals) {
+        return (config.globals || []).map((g) => g.slug);
+      }
+      const allowed = new Set(
+        pluginOptions.globals.map((g) =>
+          isCollectionOrGlobalConfigObject(g) ? g.slug : g,
+        ),
+      );
+      return (config.globals || []).map((g) => g.slug).filter((slug) => allowed.has(slug));
+    })();
+
+    const documentTabFields: any[] = [
+      ...(syncedCollectionSlugs.length > 0
+        ? [
+            {
+              name: 'collectionDocument',
+              type: 'relationship',
+              relationTo: syncedCollectionSlugs,
+              hasMany: false,
+            },
+          ]
+        : []),
+      ...(syncedGlobalSlugs.length > 0
+        ? [
+            {
+              // can't create global relationships - see https://github.com/payloadcms/payload/discussions/2100
+              name: 'globalSlug',
+              type: 'select',
+              options: syncedGlobalSlugs,
+              hasMany: false,
+            },
+          ]
+        : []),
+    ];
+
     // schema validation
     const schema = Joi.object({
       projectId: Joi.number().required(),
@@ -119,10 +169,7 @@ export const crowdinSync =
     const validate = schema.validate(pluginOptions);
 
     if (validate.error) {
-      console.log(
-        'Payload Crowdin Sync option validation errors:',
-        validate.error,
-      );
+      console.warn('Payload Crowdin Sync option validation errors:', validate.error);
     }
 
     // option defaults
@@ -214,6 +261,14 @@ export const crowdinSync =
             {
               type: 'tabs',
               tabs: [
+                ...(documentTabFields.length > 0
+                  ? [
+                      {
+                        label: 'Document',
+                        fields: documentTabFields,
+                      },
+                    ]
+                  : []),
                 {
                   label: 'Options',
                   fields: crowdinArticleDirectoryFields({ pluginOptions }),

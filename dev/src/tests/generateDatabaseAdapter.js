@@ -10,7 +10,10 @@ export const allDatabaseAdapters = {
   import { mongooseAdapter } from '@payloadcms/db-mongodb'
 
   export const databaseAdapter = mongooseAdapter({
-    ensureIndexes: true,
+    // In integration tests we frequently drop/recreate DBs and start multiple
+    // Payload instances. Automatic index builds can cause transient catalog
+    // change errors in Mongo (especially in in-memory replica sets).
+    ensureIndexes: false,
     url:
       process.env.MONGODB_MEMORY_SERVER_URI ||
       process.env.DATABASE_URI ||

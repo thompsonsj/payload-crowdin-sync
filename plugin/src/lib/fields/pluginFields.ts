@@ -14,14 +14,126 @@ const crowdinArticleDirectoryField: Field = {
   type: 'relationship',
   relationTo: 'crowdin-article-directories',
   hasMany: false,
-  hooks: {
-    // ensure crowdinArticleDirectory is not copied to a duplicated document
-    beforeDuplicate: [() => null],
-  },
   /*admin: {
     readOnly: true,
     disabled: true,
   },*/
+  hooks: {
+    // ensure crowdinArticleDirectory is not copied to a duplicated document
+    beforeDuplicate: [() => null],
+    beforeChange: [
+      ({ siblingData }) => {
+        // ensures data is not stored in DB
+        delete siblingData['crowdinArticleDirectory'];
+      },
+    ],
+    afterRead: [
+      async ({ data, req, global, collection }) => {
+        if (!data?.id) {
+          return;
+        }
+
+        // If this read happens during an internal bookkeeping update, skip the lookup.
+        if ((req as any)?.context?.triggerAfterChange === false) {
+          return;
+        }
+
+        // If already present (populated), short-circuit.
+        const existing = (data as any)?.crowdinArticleDirectory;
+        if (existing && typeof existing === 'object') {
+          return existing;
+        }
+
+        // Request-scoped memoization to avoid repeated DB round-trips per document.
+        const slugKey = collection?.slug || global?.slug;
+        if (!slugKey) {
+          return;
+        }
+        const cacheKey = `${slugKey}:${data.id}`;
+        const ctx = ((req as any).context ||= {});
+        const cache: Record<string, any> = (ctx._crowdinArticleDirectoryCache ||= {});
+        if (Object.prototype.hasOwnProperty.call(cache, cacheKey)) {
+          return cache[cacheKey];
+        }
+
+        let result;
+        if (global?.slug) {
+          result = await req.payload.find({
+            collection: 'crowdin-article-directories',
+            where: {
+              globalSlug: { equals: global.slug },
+            },
+            req,
+            overrideAccess: true,
+          });
+
+          // Backwards compatibility: some installs link global root directories by `name`
+          // rather than `globalSlug`.
+          if (result.totalDocs === 0) {
+            result = await req.payload.find({
+              collection: 'crowdin-article-directories',
+              where: {
+                name: { equals: global.slug },
+              },
+              limit: 1,
+              req,
+              overrideAccess: true,
+            });
+          }
+        } else if (collection?.slug) {
+          result = await req.payload.find({
+            collection: 'crowdin-article-directories',
+            where: {
+              'collectionDocument.value': { equals: data.id },
+              'collectionDocument.relationTo': { equals: collection.slug },
+            },
+            req,
+            overrideAccess: true,
+          });
+
+          // Backwards compatibility: some installs still link root directories by `name`
+          // plus `crowdinCollectionDirectory` instead of `collectionDocument`.
+          if (result.totalDocs === 0) {
+            const collectionDirectory = await req.payload.find({
+              collection: 'crowdin-collection-directories',
+              where: {
+                collectionSlug: { equals: collection.slug },
+              },
+              limit: 1,
+              req,
+              overrideAccess: true,
+            });
+            const collectionDirectoryId = collectionDirectory.docs[0]?.id;
+            if (collectionDirectoryId) {
+              result = await req.payload.find({
+                collection: 'crowdin-article-directories',
+                where: {
+                  and: [
+                    { name: { equals: data.id } },
+                    {
+                      crowdinCollectionDirectory: {
+                        equals: collectionDirectoryId,
+                      },
+                    },
+                  ],
+                },
+                limit: 1,
+                req,
+                overrideAccess: true,
+              });
+            }
+          }
+        } else {
+          // Without a collection/global slug we cannot safely resolve a polymorphic link.
+          // Avoid a loose lookup by value that could collide across collections.
+          return;
+        }
+        const resolved = result?.totalDocs > 0 ? result.docs[0] : undefined;
+        cache[cacheKey] = resolved;
+        return resolved;
+      },
+    ],
+  }
 };
 
 export const pluginCollectionOrGlobalFields = ({

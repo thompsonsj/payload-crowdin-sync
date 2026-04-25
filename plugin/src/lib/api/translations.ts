@@ -70,6 +70,7 @@ interface IgetTranslation {
   documentId: string;
   fieldName: string;
   locale: string;
+  /** When resolving files for a root document/global, enables polymorphic `crowdin-article-directories` lookup. */
   global?: boolean;
   collection?: CollectionConfig | GlobalConfig;
   /** Pass crowdinArticleDirectoryId to retrieve `crowdin-files` documents with a parent (i.e. Lexical field blocks) */
@@ -204,11 +205,6 @@ export class payloadCrowdinSyncTranslationsApi {
                 draft,
                 data: {
                   ...report[locale].latestTranslations,
-                  // error on update without the following line.
-                  // see https://github.com/thompsonsj/payload-crowdin-sync/pull/13/files#r1209271660
-                  crowdinArticleDirectory: (doc as any)[
-                    'crowdinArticleDirectory'
-                  ].id,
                 },
                 req: this.req,
                 context: {
@@ -217,7 +213,7 @@ export class payloadCrowdinSyncTranslationsApi {
                 },
               });
             } catch (error) {
-              console.log(
+              console.error(
                 'updateTranslation',
                 {
                   documentId,
@@ -227,7 +223,6 @@ export class payloadCrowdinSyncTranslationsApi {
                   draft,
                   excludeLocales,
                 },
-                'error',
                 error,
               );
             }
@@ -247,7 +242,7 @@ export class payloadCrowdinSyncTranslationsApi {
                 },
               });
             } catch (error) {
-              console.log(
+              console.error(
                 'updateTranslation',
                 {
                   documentId,
@@ -257,7 +252,6 @@ export class payloadCrowdinSyncTranslationsApi {
                   draft,
                   excludeLocales,
                 },
-                'error',
                 error,
               );
             }
@@ -310,7 +304,7 @@ export class payloadCrowdinSyncTranslationsApi {
     try {
       collectionConfig = this.getCollectionConfig(collection, global);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
 
     const localizedFields = collectionConfig
@@ -337,7 +331,7 @@ export class payloadCrowdinSyncTranslationsApi {
       });
       return docTranslations;
     } catch (error) {
-      console.log(
+      console.error(
         'getCurrentDocumentTranslation',
         {
           doc,
@@ -345,7 +339,6 @@ export class payloadCrowdinSyncTranslationsApi {
           locale,
           global,
         },
-        'error',
         error,
       );
       throw new Error(`${error}`);
@@ -399,7 +392,7 @@ export class payloadCrowdinSyncTranslationsApi {
     try {
       collectionConfig = this.getCollectionConfig(collection, global);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
     if (!collectionConfig) {
       return { message: 'no localized fields' };
@@ -422,6 +415,8 @@ export class payloadCrowdinSyncTranslationsApi {
         documentId: global ? collectionConfig.slug : doc.id,
         fieldName: 'fields',
         locale: locale,
+        collection: collectionConfig,
+        global,
       })) || {};
     if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
       console.log(
@@ -432,6 +427,7 @@ export class payloadCrowdinSyncTranslationsApi {
     // add html fields
     const localizedHtmlFields = await this.getHtmlFieldSlugs(
       global ? collectionConfig.slug : doc.id,
+      { collection: collectionConfig, global },
     );
     const crowdinHtmlObject: CrowdinHtmlObject = {};
     for (const field of localizedHtmlFields) {
@@ -441,6 +437,7 @@ export class payloadCrowdinSyncTranslationsApi {
         fieldName: field,
         locale: locale,
         collection: collectionConfig,
+        global,
       });
     }
     if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
@@ -478,11 +475,24 @@ export class payloadCrowdinSyncTranslationsApi {
     return docTranslations;
   }
 
-  async getHtmlFieldSlugs(documentId: string): Promise<string[]> {
+  async getHtmlFieldSlugs(
+    documentId: string,
+    options?: {
+      collection?: CollectionConfig | GlobalConfig;
+      global?: boolean;
+    },
+  ): Promise<string[]> {
+    const rootLookup =
+      options?.collection &&
+      typeof options.global === 'boolean' &&
+      typeof options.collection.slug === 'string'
+        ? { collectionSlug: options.collection.slug, global: options.global }
+        : undefined;
     const files = await getFilesByDocumentID({
       documentId,
       payload: this.payload,
       req: this.req,
+      rootLookup,
     });
     const slugs = files
       .filter((file) => file.type === 'html')
@@ -518,11 +528,26 @@ export class payloadCrowdinSyncTranslationsApi {
     collection,
     crowdinArticleDirectoryId,
     fields,
+    global,
   }: IgetTranslation) {
-
     if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
-      console.log('lib/api/translations@getTranslation arguments', { documentId, fieldName, locale, collection, crowdinArticleDirectoryId, fields });
+      console.log('lib/api/translations@getTranslation arguments', {
+        documentId,
+        fieldName,
+        locale,
+        collection,
+        crowdinArticleDirectoryId,
+        fields,
+        global,
+      });
     }
+
+    const rootLookup =
+      collection &&
+      typeof global === 'boolean' &&
+      typeof collection.slug === 'string'
+        ? { collectionSlug: collection.slug, global }
+        : undefined;
 
     const file = (
       typeof crowdinArticleDirectoryId === 'string'
@@ -532,6 +557,7 @@ export class payloadCrowdinSyncTranslationsApi {
             `${documentId}`,
             this.payload,
             this.req,
+            rootLookup,
           )
     ) as CrowdinFile;
     if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
@@ -635,7 +661,7 @@ export class payloadCrowdinSyncTranslationsApi {
         return JSON.parse(data);
       }
     } catch (error) {
-      console.log(
+      console.error(
         'getTranslation',
         {
           documentId,
@@ -645,7 +671,6 @@ export class payloadCrowdinSyncTranslationsApi {
           crowdinArticleDirectoryId,
           fields,
         },
-        'error',
         error,
       );
     }

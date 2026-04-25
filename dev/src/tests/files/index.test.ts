@@ -6,6 +6,12 @@ import {
   mockCrowdinClient,
 } from 'payload-crowdin-sync'
 import nock from 'nock'
+import {
+  assertCrowdinNocksDone,
+  cleanCrowdinNocks,
+  CROWDIN_API_ORIGIN,
+  nockLocalizedPostsDocumentCreate,
+} from '../helpers/crowdin-nock'
 import { pluginConfig } from '../helpers/plugin-config'
 import { initPayloadInt } from '../helpers/initPayloadInt'
 import type { Payload } from 'payload'
@@ -28,11 +34,11 @@ describe(`Crowdin file create, update and delete`, () => {
       payload: Payload
     })
   })
+  beforeEach(() => {
+    cleanCrowdinNocks()
+  })
   afterEach(() => {
-    if (!nock.isDone()) {
-      throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
-    }
-    nock.cleanAll()
+    assertCrowdinNocksDone()
   })
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {
@@ -41,24 +47,10 @@ describe(`Crowdin file create, update and delete`, () => {
   })
   describe(`Collection: ${'localized-posts'}`, () => {
     it('updates the `fields` file for a new article', async () => {
-      nock('https://api.crowdin.com')
-        .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-        .reply(200, mockClient.createDirectory({}))
-        .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-        .reply(200, mockClient.createDirectory({}))
-        .post(`/api/v2/storages`)
-        .reply(200, mockClient.addStorage())
-        .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
-        .reply(
-          200,
-          mockClient.createFile({
-            request: {
-              name: 'fields',
-              storageId: 5678,
-              type: 'json',
-            },
-          }),
-        )
+      nockLocalizedPostsDocumentCreate(pluginOptions, mockClient, {
+        directoryPosts: 2,
+        includeContentHtml: false,
+      })
       const post = await payload.create({
         collection: 'localized-posts',
         data: { title: 'Test post' },
@@ -68,23 +60,11 @@ describe(`Crowdin file create, update and delete`, () => {
     })
     it('updates the `fields` file if a text field has changed', async () => {
       const fileId = 34
-      nock('https://api.crowdin.com')
-        .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-        .reply(200, mockClient.createDirectory({}))
-        .post(`/api/v2/storages`)
-        .reply(200, mockClient.addStorage())
-        .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
-        .reply(
-          200,
-          mockClient.createFile({
-            fileId,
-            request: {
-              name: 'fields',
-              storageId: 5678,
-              type: 'json',
-            },
-          }),
-        )
+      nockLocalizedPostsDocumentCreate(pluginOptions, mockClient, {
+        directoryPosts: 1,
+        includeContentHtml: false,
+        fieldsFileId: fileId,
+      })
         .post(`/api/v2/storages`)
         .reply(200, mockClient.addStorage())
         .put(`/api/v2/projects/${pluginOptions.projectId}/files/${fileId}`)
@@ -106,7 +86,7 @@ describe(`Crowdin file create, update and delete`, () => {
   })
   describe(`Collection: ${'nested-field-collection'}`, () => {
     it('does not create files for empty localized fields', async () => {
-      nock('https://api.crowdin.com')
+      nock(CROWDIN_API_ORIGIN)
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .reply(200, mockClient.createDirectory({}))
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
@@ -125,7 +105,7 @@ describe(`Crowdin file create, update and delete`, () => {
       expect(crowdinFiles.length).toEqual(0)
     })
     it('creates files containing fieldType content', async () => {
-      nock('https://api.crowdin.com')
+      nock(CROWDIN_API_ORIGIN)
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .reply(200, mockClient.createDirectory({}))
         .post(`/api/v2/storages`)
@@ -164,7 +144,7 @@ describe(`Crowdin file create, update and delete`, () => {
         })
     })
     it('creates files containing `array` fieldType content', async () => {
-      nock('https://api.crowdin.com')
+      nock(CROWDIN_API_ORIGIN)
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .reply(200, mockClient.createDirectory({}))
         .post(`/api/v2/storages`)
@@ -224,7 +204,7 @@ describe(`Crowdin file create, update and delete`, () => {
       expect(crowdinFiles.find((file) => file.name === 'fields.json')).toBeDefined()
     })
     it('creates files containing `blocks` fieldType content', async () => {
-      nock('https://api.crowdin.com')
+      nock(CROWDIN_API_ORIGIN)
         .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
         .reply(200, mockClient.createDirectory({}))
         .post(`/api/v2/storages`)
@@ -334,21 +314,14 @@ describe(`Crowdin file create, update and delete`, () => {
     })
     it('deletes the `fields` file when an existing article is deleted', async () => {
       const fileId = 78
-      nock('https://api.crowdin.com')
-        .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-        .reply(200, mockClient.createDirectory({}))
-        .post(`/api/v2/storages`)
-        .reply(200, mockClient.addStorage())
-        .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
-        .reply(
-          200,
-          mockClient.createFile({
-            fileId,
-          }),
-        )
+      nockLocalizedPostsDocumentCreate(pluginOptions, mockClient, {
+        directoryPosts: 1,
+        includeContentHtml: false,
+        fieldsFileId: fileId,
+      })
         .delete(`/api/v2/projects/${pluginOptions.projectId}/files/${fileId}`)
         .reply(204)
-        .delete(`/api/v2/projects/${pluginOptions.projectId}/directories/${1169}`)
+        .delete(`/api/v2/projects/${pluginOptions.projectId}/directories/1169`)
         .reply(204)
       const post = await payload.create({
         collection: 'localized-posts',
@@ -368,21 +341,14 @@ describe(`Crowdin file create, update and delete`, () => {
     })
     it('deletes the collection Crowdin article directory when an existing article is deleted', async () => {
       const fileId = 634
-      nock('https://api.crowdin.com')
-        .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
-        .reply(200, mockClient.createDirectory({}))
-        .post(`/api/v2/storages`)
-        .reply(200, mockClient.addStorage())
-        .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
-        .reply(
-          200,
-          mockClient.createFile({
-            fileId,
-          }),
-        )
+      nockLocalizedPostsDocumentCreate(pluginOptions, mockClient, {
+        directoryPosts: 1,
+        includeContentHtml: false,
+        fieldsFileId: fileId,
+      })
         .delete(`/api/v2/projects/${pluginOptions.projectId}/files/${fileId}`)
         .reply(204)
-        .delete(`/api/v2/projects/${pluginOptions.projectId}/directories/${1169}`)
+        .delete(`/api/v2/projects/${pluginOptions.projectId}/directories/1169`)
         .reply(204)
       const post = await payload.create({
         collection: 'localized-posts',

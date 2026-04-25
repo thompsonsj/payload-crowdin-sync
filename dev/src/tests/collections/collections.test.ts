@@ -7,6 +7,7 @@ import {
 import nock from 'nock'
 import { pluginConfig } from '../helpers/plugin-config'
 import { initPayloadInt } from '../helpers/initPayloadInt'
+import { assertCrowdinNocksDone, cleanCrowdinNocks } from '../helpers/crowdin-nock'
 import type { Payload } from 'payload'
 let payload: Payload
 /**
@@ -36,11 +37,11 @@ describe('Collections', () => {
       payload: Payload
     })
   })
+  beforeEach(() => {
+    cleanCrowdinNocks()
+  })
   afterEach(() => {
-    if (!nock.isDone()) {
-      throw new Error(`Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`)
-    }
-    nock.cleanAll()
+    assertCrowdinNocksDone()
   })
   afterAll(async () => {
     if (typeof payload.db.destroy === 'function') {

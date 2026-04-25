@@ -13,7 +13,10 @@ import type {
 } from 'payload';
 import { toWords } from 'payload';
 import { payloadCrowdinSyncDocumentFilesApi } from './document';
-import { getCollectionConfig } from '../helpers';
+import {
+  findRootArticleDirectoryPolymorphic,
+  getCollectionConfig,
+} from '../helpers';
 
 import * as crowdin from '@crowdin/crowdin-api-client';
 
@@ -122,11 +125,22 @@ export class filesApiByDocument {
 
   /** this is where the problem lies? */
   async findOrCreateArticleDirectory(): Promise<CrowdinArticleDirectory> {
-    let crowdinPayloadArticleDirectory;
-    if (this.document.crowdinArticleDirectory) {
-      // Update not possible. Article name needs to be updated manually on Crowdin.
-      // The name of the directory is Crowdin specific helper text to give
-      // context to translators.
+    let crowdinPayloadArticleDirectory: CrowdinArticleDirectory | undefined;
+
+    crowdinPayloadArticleDirectory = await findRootArticleDirectoryPolymorphic({
+      payload: this.req.payload,
+      req: this.req,
+      documentId: this.global
+        ? (this.collectionSlug as string)
+        : this.document.id,
+      rootLookup: {
+        collectionSlug: this.collectionSlug as string,
+        global: this.global,
+      },
+    });
+
+    if (!crowdinPayloadArticleDirectory && this.document.crowdinArticleDirectory) {
+      // Legacy: directory id stored on the synced document (plus in-place population).
       // See https://developer.crowdin.com/api/v2/#operation/api.projects.directories.getMany
       crowdinPayloadArticleDirectory = this.document.crowdinArticleDirectory.id
         ? this.document.crowdinArticleDirectory
@@ -135,91 +149,102 @@ export class filesApiByDocument {
             id: this.document.crowdinArticleDirectory,
             req: this.req,
           })) as unknown);
-    } else {
+    }
+
+    if (!crowdinPayloadArticleDirectory) {
       const crowdinPayloadCollectionDirectory =
         await this.findOrCreateCollectionDirectory({
           collectionSlug: this.global ? 'globals' : this.collectionSlug,
         });
 
-      const parent =
-        isCrowdinArticleDirectory(this.parent) ? this.parent : undefined;
-      const parentId =
-        typeof this.parent === 'string' && this.parent.length > 0
-          ? this.parent
-          : undefined;
-      const resolvedParent =
-        parent ??
-        (parentId
-          ? ((await this.req.payload.findByID({
-              collection: 'crowdin-article-directories',
-              id: parentId,
-              req: this.req,
-            })) as CrowdinArticleDirectory)
-          : undefined);
-
-      // Create article directory on Crowdin
-      const name = this.global ? this.collectionSlug : this.document.id;
-      let collectionConfig: CollectionConfig | GlobalConfig | undefined;
-      try {
-        // Lexical block syncing uses an internal "mock" collection config to
-        // avoid requiring a real collection definition for derived block fields.
-        // That slug will never exist in the Payload config, so skip lookup.
-        if (this.collectionSlug !== 'mock-collection-for-lexical-blocks') {
-          collectionConfig = getCollectionConfig(
-            this.collectionSlug,
-            this.global,
-            this.req.payload,
-          );
-        }
-      } catch (error) {
-        // Avoid noisy logs for non-critical config lookup failures.
-        if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
-          console.log(error);
-        }
-      }
-      const useAsTitle = (collectionConfig as CollectionConfig | undefined)
-        ?.admin?.useAsTitle;
-
-      crowdinPayloadArticleDirectory = await this.crowdinFindOrCreateDirectory({
-        parent: resolvedParent,
-        crowdinPayloadCollectionDirectory,
-        name,
-        useAsTitle,
-      });
-
-      // Store result in Payload CMS
-      if (!crowdinPayloadArticleDirectory) {
-        throw new Error('Crowdin article directory not found');
-      }
-      const crowdinArticleDirectory = crowdinPayloadArticleDirectory.id;
-
-      // Associate result with document
       if (!this.parent) {
         if (this.global) {
-          await this.req.payload.updateGlobal({
-            slug: this.collectionSlug as GlobalSlug,
-            data: {
-              crowdinArticleDirectory,
-            } as never,
+          const existingGlobalRoot = await this.req.payload.find({
+            collection: 'crowdin-article-directories',
+            where: {
+              name: { equals: this.collectionSlug as string },
+            },
+            limit: 1,
             req: this.req,
             overrideAccess: true,
-            context: {
-              triggerAfterChange: false,
-            },
           });
-        } else {
-          await this.req.payload.update({
-            collection: this.collectionSlug as CollectionSlug,
-            id: this.document.id,
-            data: {
-              crowdinArticleDirectory,
-            } as never,
+          if (existingGlobalRoot.docs[0]) {
+            crowdinPayloadArticleDirectory =
+              existingGlobalRoot.docs[0] as CrowdinArticleDirectory;
+          }
+        } else if (crowdinPayloadCollectionDirectory?.id) {
+          const existingCollectionRoot = await this.req.payload.find({
+            collection: 'crowdin-article-directories',
+            where: {
+              and: [
+                { name: { equals: `${this.document.id}` } },
+                {
+                  crowdinCollectionDirectory: {
+                    equals: crowdinPayloadCollectionDirectory.id,
+                  },
+                },
+              ],
+            },
+            limit: 1,
             req: this.req,
             overrideAccess: true,
-            context: {
-              triggerAfterChange: false,
-            },
           });
+          if (existingCollectionRoot.docs[0]) {
+            crowdinPayloadArticleDirectory =
+              existingCollectionRoot.docs[0] as CrowdinArticleDirectory;
+          }
+        }
+      }
+
+      if (!crowdinPayloadArticleDirectory) {
+        const parent =
+          isCrowdinArticleDirectory(this.parent) ? this.parent : undefined;
+        const parentId =
+          typeof this.parent === 'string' && this.parent.length > 0
+            ? this.parent
+            : undefined;
+        const resolvedParent =
+          parent ??
+          (parentId
+            ? ((await this.req.payload.findByID({
+                collection: 'crowdin-article-directories',
+                id: parentId,
+                req: this.req,
+              })) as CrowdinArticleDirectory)
+            : undefined);
+
+        // Create article directory on Crowdin
+        const name = this.global ? this.collectionSlug : this.document.id;
+        let collectionConfig: CollectionConfig | GlobalConfig | undefined;
+        try {
+          // Lexical block syncing uses an internal "mock" collection config to
+          // avoid requiring a real collection definition for derived block fields.
+          // That slug will never exist in the Payload config, so skip lookup.
+          if (this.collectionSlug !== 'mock-collection-for-lexical-blocks') {
+            collectionConfig = getCollectionConfig(
+              this.collectionSlug,
+              this.global,
+              this.req.payload,
+            );
+          }
+        } catch (error) {
+          // Avoid noisy logs for non-critical config lookup failures.
+          if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+            console.log(error);
+          }
+        }
+        const useAsTitle = (collectionConfig as CollectionConfig | undefined)
+          ?.admin?.useAsTitle;
+
+        crowdinPayloadArticleDirectory = await this.crowdinFindOrCreateDirectory({
+          parent: resolvedParent,
+          crowdinPayloadCollectionDirectory,
+          name,
+          useAsTitle,
+        });
+
+        if (!crowdinPayloadArticleDirectory) {
+          throw new Error('Crowdin article directory not found');
         }
       }
     }
@@ -257,14 +282,41 @@ export class filesApiByDocument {
           `Creating collection directory on Crowdin: ${collectionSlug}`,
         );
       }
-      const crowdinDirectory = await this.sourceFilesApi.createDirectory(
-        this.projectId,
-        {
-          directoryId: this.directoryId,
-          name: collectionSlug,
-          title: toWords(collectionSlug), // is this transformed value available on the collection object?
-        },
-      );
+      let crowdinDirectory: ResponseObject<SourceFilesModel.Directory> | undefined;
+      try {
+        crowdinDirectory = await this.sourceFilesApi.createDirectory(
+          this.projectId,
+          {
+            directoryId: this.directoryId,
+            name: collectionSlug,
+            title: toWords(collectionSlug), // is this transformed value available on the collection object?
+          },
+        );
+      } catch (createError: any) {
+        // In integration tests, the Crowdin collection directory can already exist in the remote mock
+        // (or multiple test files may race to create it). If Crowdin rejects due to name uniqueness,
+        // recover by fetching the existing directory and continuing.
+        const isNameConflictError =
+          createError?.error?.errors?.some(
+            (e: any) =>
+              e?.error?.key === 'directory.name.is_already_exists' ||
+              e?.error?.key === 'directory.name' ||
+              String(createError).includes('Name must be unique'),
+          ) || String(createError).includes('Name must be unique');
+
+        if (!isNameConflictError) {
+          throw createError;
+        }
+
+        const existingOnCrowdin = await this.crowdinFindDirectoryByName(
+          collectionSlug,
+          this.directoryId,
+        );
+        if (!existingOnCrowdin) {
+          throw createError;
+        }
+        crowdinDirectory = existingOnCrowdin;
+      }
 
       // Store result in Payload CMS
       crowdinPayloadCollectionDirectory = await this.req.payload.create({
@@ -333,8 +385,11 @@ export class filesApiByDocument {
    */
   async crowdinFindDirectoryByName(
     name: string,
-    parentDirectoryId: number,
+    parentDirectoryId: number | undefined,
   ): Promise<ResponseObject<SourceFilesModel.Directory> | undefined> {
+    if (typeof parentDirectoryId !== 'number') {
+      return undefined;
+    }
     try {
       // List all directories in the parent directory
       const response = await this.sourceFilesApi.listProjectDirectories(
@@ -420,9 +475,11 @@ export class filesApiByDocument {
           ) || String(createError).includes('Name must be unique');
 
         if (isNameConflictError) {
-          console.log(
-            `Directory "${name}" already exists on Crowdin in parent directory ${parentDirectoryId}. Attempting to find and sync existing directory...`,
-          );
+          if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+            console.log(
+              `Directory "${name}" already exists on Crowdin in parent directory ${parentDirectoryId}. Attempting to find and sync existing directory...`,
+            );
+          }
 
           // Try to find the existing directory on Crowdin
           const existingCrowdinDirectory =
@@ -433,9 +490,11 @@ export class filesApiByDocument {
           }
 
           if (existingCrowdinDirectory) {
-            console.log(
-              `Found existing directory on Crowdin. Directory ID: ${existingCrowdinDirectory.data.id}`,
-            );
+            if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+              console.log(
+                `Found existing directory on Crowdin. Directory ID: ${existingCrowdinDirectory.data.id}`,
+              );
+            }
 
             // Check if it already exists in Payload (might have been created by another process)
             if (parent) {
@@ -507,10 +566,13 @@ export class filesApiByDocument {
           ...(parent && {
             parent: parent.id,
           }),
+          ...(this.global && !parent && {
+            globalSlug: this.collectionSlug as string,
+          }),
         },
         req: this.req,
       });
-      return result as CrowdinArticleDirectory;
+      return result as CrowdinArticleDirectory
     } catch (error) {
       console.error(error);
     }
