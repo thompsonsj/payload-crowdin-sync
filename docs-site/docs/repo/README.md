@@ -1,37 +1,11 @@
 # Payload Crowdin Sync
 
-Monorepo containing:
-
-- **`payload-crowdin-sync` plugin** (published to npm)
-- **integration test Payload installs** (`dev/`, `dev-alternative-config/`)
-- **documentation site** (`docs-site/`)
-
-## Docs
-
-- **Documentation site**: `https://thompsonsj.github.io/payload-crowdin-sync/`
-- **Plugin on npm**: `https://www.npmjs.com/package/payload-crowdin-sync`
-
-## Development
-
-```bash
-npm install
-npm run test
-```
-
-Docs site:
-
-```bash
-npm run docs:serve
-```
-
-# Payload Crowdin Sync
-
 Automatically upload/sync localized fields from the default locale to Crowdin. Make these fields read-only in other locales and update them using Crowdin translations.
 
-- Plugin docs: [plugin/README.md](plugin/README.md)
-- Payload test installation: [dev](dev)
-- Payload test installation (alternative config): [dev-alternative-config](dev-alternative-config)
-- NX generated docs: [docs/nx.md](docs/nx.md)
+- Plugin docs: [`plugin/README.md`](../plugin/README.md)
+- Payload test installation: [`dev/`](https://github.com/thompsonsj/payload-crowdin-sync/tree/main/dev)
+- Payload test installation (alternative config): [`dev-alternative-config/`](https://github.com/thompsonsj/payload-crowdin-sync/tree/main/dev-alternative-config)
+- NX generated docs: [`repo/nx.md`](./nx.md)
 
 ## Quick start
 
@@ -67,11 +41,11 @@ export default buildConfig({
 
 On save draft or publish, content from [localized fields](https://payloadcms.com/docs/configuration/localization) in [Collections](https://payloadcms.com/docs/configuration/collections) and/or [globals](https://payloadcms.com/docs/configuration/globals) is organised into directories and files within a `Payload CMS` directory (configurable) in your Crowdin project.
 
-<img width="1000" alt="Screenshot 2024-02-06 at 22 02 38" src="https://github.com/thompsonsj/payload-crowdin-sync/assets/44806974/2c31050d-fee4-4275-bca2-7e4b48743999">
+<img width="1000" alt="Screenshot 2024-02-06 at 22 02 38" src="https://github.com/thompsonsj/payload-crowdin-sync/assets/44806974/2c31050d-fee4-4275-bca2-7e4b48743999" />
 
 To load translations into Payload CMS, check the `Sync all translations` checkbox on a given collection document/global and save draft (loads translations as draft) or publish.
 
-<img width="766" alt="Screenshot 2024-02-06 at 22 08 48" src="https://github.com/thompsonsj/payload-crowdin-sync/assets/44806974/2aa9c493-7792-422f-bf8d-a91c23893682">
+<img width="766" alt="Screenshot 2024-02-06 at 22 08 48" src="https://github.com/thompsonsj/payload-crowdin-sync/assets/44806974/2aa9c493-7792-422f-bf8d-a91c23893682" />
 
 ## Monorepo scripts
 

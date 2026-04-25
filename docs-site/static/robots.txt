@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# GitHub Pages serves the site at a basePath; the sitemap is still reachable at this relative path.
+Sitemap: sitemap.xml
+

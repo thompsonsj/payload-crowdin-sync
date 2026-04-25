@@ -1,0 +1,24 @@
+{
+  "name": "docs-site",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "docs-site",
+  "projectType": "application",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run start",
+        "cwd": "docs-site"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/build"],
+      "options": {
+        "command": "npm run build",
+        "cwd": "docs-site"
+      }
+    }
+  }
+}
+

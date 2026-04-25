@@ -2,6 +2,17 @@
   "name": "payload-crowdin-sync",
   "version": "0.41.1",
   "description": "Automatically upload/sync localized fields from the default locale to Crowdin. Make these fields read-only in other locales and update them using Crowdin translations.",
+  "keywords": [
+    "payload",
+    "payloadcms",
+    "payload-plugin",
+    "crowdin",
+    "localization",
+    "i18n",
+    "translations",
+    "cms"
+  ],
+  "homepage": "https://thompsonsj.github.io/payload-crowdin-sync/",
   "scripts": {
     "prettier": "npx prettier . --write"
   },

@@ -1,8 +1,12 @@
 # Engineering decisions
 
+## Whitespace
+
+This section documents how the plugin handles whitespace normalization when converting between Slate/Lexical structures and HTML.
+
 ## Lexical block fields
 
-The `createOrUpdateHtmlFile` method of the [`payloadCrowdinSyncDocumentFilesApi`](plugin/src/lib/api/files/document.ts) reads the collection config to determine whether the underlying field uses the [Slate editor](https://payloadcms.com/docs/rich-text/slate) or the [Lexical editor](https://payloadcms.com/docs/rich-text/lexical).
+The `createOrUpdateHtmlFile` method of the [`payloadCrowdinSyncDocumentFilesApi`](https://github.com/thompsonsj/payload-crowdin-sync/blob/main/plugin/src/lib/api/files/document.ts) reads the collection config to determine whether the underlying field uses the [Slate editor](https://payloadcms.com/docs/rich-text/slate) or the [Lexical editor](https://payloadcms.com/docs/rich-text/lexical).
 
 If Lexical, blocks embedded within the editor are supported.
 

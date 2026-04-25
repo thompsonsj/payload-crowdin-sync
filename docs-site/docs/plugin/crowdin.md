@@ -23,7 +23,7 @@ Files can be uploaded to a specific directory by setting the `directoryId` optio
 
 ## Rich text fields
 
-For ease-of-editing in Crowdin, the underlying editor object is converted to HTML. When translated HTML is synced back into Payload, it is converted back to an apporpriate object.
+For ease-of-editing in Crowdin, the underlying editor object is converted to HTML. When translated HTML is synced back into Payload, it is converted back to an appropriate object.
 
 Each `richText` field has its own Crowdin file. e.g. `content.html`.
 
@@ -53,8 +53,7 @@ const fields: Field[] = [
 #### Blocks are not localized
 
 One key difference between regular localized documents and the imaginary localized documents created for Lexical field blocks is that there is no way to identify which fields are localized and which fields are not.
-
-Cureently, this approach only supports non-localized fields. This is because these blocks live within a Lexical field that may or may not localized, and therefore it doesn't make sense for blocks within a localized field to also be localized - there will be an entirely different field with different block instances in different locales.
+Currently, this approach only supports non-localized fields. This is because these blocks live within a Lexical field that may or may not be localized, and therefore it doesn't make sense for blocks within a localized field to also be localized - there will be an entirely different field with different block instances in different locales.
 
 ## Text fields
 
@@ -68,7 +67,7 @@ Three new collections are created.
 - `crowdin-article-directories`
 - `crowdin-files`
 
-For each document in a collection that contains localized fields, an additonal field is added: `crowdinArticleDirectory`. This is a one-to-one relationship with an article created in the `crowdin-article-directories` collection.
+For each document in a collection that contains localized fields, an additional field is added: `crowdinArticleDirectory`. This is a one-to-one relationship with an article created in the `crowdin-article-directories` collection.
 
 The plugin also stores a canonical link on each root `crowdin-article-directories` document using the polymorphic `collectionDocument` field (collections) or the `globalSlug` field (globals). The `crowdinArticleDirectory` value on your documents may still be present for older installs; it is optional for resolution and can be removed after you run a backfill. Import `backfillArticleDirectoryPolymorphicLinks` from `payload-crowdin-sync` and call it once with your Payload instance (for example from `onInit` in development, or from a one-off script) to copy legacy ids into `collectionDocument` / `globalSlug` on the Crowdin article directory rows.
 
@@ -84,7 +83,7 @@ A `crowdin-article-directories` document represents a folder created on Crowdin 
 
 #### `crowdin-article-directories` children
 
-`crowdin-article-directories` can also have a one-to-one relationship with each other through the `parent` field. These directories are created within parent diretories to contain translations for blocks within a Lexical `richText` field.
+`crowdin-article-directories` can also have a one-to-one relationship with each other through the `parent` field. These directories are created within parent directories to contain translations for blocks within a Lexical `richText` field.
 
 `crowdin-article-directories` documents created for Lexical blocks have the following differences:
 
