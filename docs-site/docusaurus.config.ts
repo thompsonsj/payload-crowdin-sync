@@ -66,8 +66,16 @@ const config: Config = {
   ],
 
   headTags: [
-    // Lightweight “LLM discoverability” convention. Served at `/<baseUrl>/llms.txt`.
-    {tagName: 'link', attributes: {rel: 'alternate', type: 'text/plain', href: 'llms.txt', title: 'llms.txt'}},
+    // Lightweight "LLM discoverability" convention. Served at `<baseUrl>llms.txt`.
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'alternate',
+        type: 'text/plain',
+        href: `${isGitHubPages ? `/${projectName}` : ''}/llms.txt`,
+        title: 'llms.txt',
+      },
+    },
   ],
 
   themeConfig: {
