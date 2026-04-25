@@ -53,8 +53,7 @@ const fields: Field[] = [
 #### Blocks are not localized
 
 One key difference between regular localized documents and the imaginary localized documents created for Lexical field blocks is that there is no way to identify which fields are localized and which fields are not.
-Currently, this approach only supports non-localized fields. This is because these blocks live within a Lexical field that may or may not localized, and therefore it doesn't make sense for blocks within a localized field to also be localized - there will be an entirely different field with different block instances in different locales.
-Cureently, this approach only supports non-localized fields. This is because these blocks live within a Lexical field that may or may not localized, and therefore it doesn't make sense for blocks within a localized field to also be localized - there will be an entirely different field with different block instances in different locales.
+Currently, this approach only supports non-localized fields. This is because these blocks live within a Lexical field that may or may not be localized, and therefore it doesn't make sense for blocks within a localized field to also be localized - there will be an entirely different field with different block instances in different locales.
 
 ## Text fields
 

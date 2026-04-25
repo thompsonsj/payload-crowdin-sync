@@ -50,7 +50,7 @@ export default buildConfig({
 
 ## Database changes
 
-This plugin add three collections to your database:
+This plugin adds three collections to your database:
 
 - `crowdin-files`
 - `crowdin-article-directories`
