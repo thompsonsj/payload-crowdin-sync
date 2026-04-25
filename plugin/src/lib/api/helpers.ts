@@ -111,12 +111,23 @@ export async function ensureArticleDirectoryPolymorphicLink({
   collectionSlug: string;
   global: boolean;
 }): Promise<boolean> {
+  const collectionDocument =
+    articleDirectory.collectionDocument &&
+    typeof articleDirectory.collectionDocument === 'object'
+      ? (articleDirectory.collectionDocument as {
+          value?: unknown;
+          relationTo?: unknown;
+        })
+      : undefined;
+
   const hasCollection =
     !global &&
     Boolean(
-      articleDirectory.collectionDocument &&
-        typeof articleDirectory.collectionDocument === 'object' &&
-        (articleDirectory.collectionDocument as { value?: string }).value,
+      collectionDocument &&
+        typeof collectionDocument.value === 'string' &&
+        collectionDocument.value.length > 0 &&
+        typeof collectionDocument.relationTo === 'string' &&
+        collectionDocument.relationTo.length > 0,
     );
   const hasGlobal =
     global &&
