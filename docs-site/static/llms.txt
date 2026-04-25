@@ -1,0 +1,25 @@
+# Payload Crowdin Sync — LLM entrypoint
+#
+# This file is intended for tools/agents that ingest documentation repositories.
+# It points to the highest-signal pages in this docs site.
+
+## What is this?
+`payload-crowdin-sync` is a Payload CMS plugin that syncs localized fields to Crowdin and loads translations back into Payload.
+
+## Canonical docs
+- /docs/intro
+- /docs/plugin
+
+## Plugin reference
+- /docs/plugin/README
+- /docs/plugin/crowdin
+- /docs/plugin/serializer
+
+## Engineering / repo notes
+- /docs/repo/README
+- /docs/repo/engineering
+
+## External references
+- https://www.npmjs.com/package/payload-crowdin-sync
+- https://thompsonsj.github.io/slate-serializers-demo/
+

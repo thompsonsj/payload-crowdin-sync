@@ -12,6 +12,7 @@ const config: Config = {
   title: 'Payload Crowdin Sync',
   tagline: 'Sync Payload localized fields with Crowdin.',
   favicon: 'img/favicon.ico',
+  trailingSlash: false,
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -36,6 +37,12 @@ const config: Config = {
     locales: ['en'],
   },
 
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'throw',
+    },
+  },
+
   presets: [
     [
       'classic',
@@ -45,6 +52,12 @@ const config: Config = {
           editUrl: `https://github.com/${organizationName}/${projectName}/tree/main/`,
         },
         blog: false,
+        sitemap: {
+          // Helps search engines discover all pages (GitHub Pages is static).
+          changefreq: 'weekly',
+          priority: 0.5,
+          filename: 'sitemap.xml',
+        },
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -52,7 +65,24 @@ const config: Config = {
     ],
   ],
 
+  headTags: [
+    // Lightweight “LLM discoverability” convention. Served at `/<baseUrl>/llms.txt`.
+    {tagName: 'link', attributes: {rel: 'alternate', type: 'text/plain', href: 'llms.txt', title: 'llms.txt'}},
+  ],
+
   themeConfig: {
+    metadata: [
+      {
+        name: 'keywords',
+        content:
+          'payload,payloadcms,crowdin,localization,i18n,translations,payload-plugin,lexical,slate',
+      },
+      {
+        name: 'description',
+        content:
+          'Documentation for the payload-crowdin-sync plugin: sync Payload localized fields to Crowdin and load translations back into Payload.',
+      },
+    ],
     colorMode: {
       respectPrefersColorScheme: true,
     },
@@ -72,6 +102,11 @@ const config: Config = {
         {
           href: `https://github.com/${organizationName}/${projectName}`,
           label: 'GitHub',
+          position: 'right',
+        },
+        {
+          href: `https://www.npmjs.com/package/payload-crowdin-sync`,
+          label: 'npm',
           position: 'right',
         },
       ],
