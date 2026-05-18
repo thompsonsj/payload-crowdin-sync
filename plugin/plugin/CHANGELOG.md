@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.42.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.41.1...payload-crowdin-sync-v0.42.0) (2026-05-18)
+
+
+### Features
+
+* store doc relationships on CrowdinArticleDirectory ([#270](https://github.com/thompsonsj/payload-crowdin-sync/issues/270)) ([a71c626](https://github.com/thompsonsj/payload-crowdin-sync/commit/a71c62681affd25c44c6dbc518d4454fe5373b73))
+
+
+### Bug Fixes
+
+* **bydocument:** article directory not found prevents delete ([#341](https://github.com/thompsonsj/payload-crowdin-sync/issues/341)) ([2c9bbbb](https://github.com/thompsonsj/payload-crowdin-sync/commit/2c9bbbb204b0bf6ab71d6d2cd57803da3eca5dd9))
+
 ## [0.41.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.41.0...payload-crowdin-sync-v0.41.1) (2026-04-17)
 
 
