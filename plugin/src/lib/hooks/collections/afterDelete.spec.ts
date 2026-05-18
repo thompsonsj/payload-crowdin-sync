@@ -97,8 +97,7 @@ describe('getAfterDeleteHook', () => {
   });
 
   it('returns doc without cleanup when token is unset outside test mode', async () => {
-    const previousNodeEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = 'development';
+    vi.stubEnv('NODE_ENV', 'development');
 
     const hook = getAfterDeleteHook({
       collection: minimalCollection,
@@ -114,6 +113,6 @@ describe('getAfterDeleteHook', () => {
     expect(result).toBe(doc);
     expect(deleteCrowdinAssetsIfPresent).not.toHaveBeenCalled();
 
-    process.env.NODE_ENV = previousNodeEnv;
+    vi.unstubAllEnvs();
   });
 });
