@@ -12,9 +12,12 @@ import type {
   PayloadRequest,
 } from 'payload';
 import { toWords } from 'payload';
-import { payloadCrowdinSyncDocumentFilesApi } from './document';
+import {
+  payloadCrowdinSyncDocumentFilesApi,
+} from './document';
 import {
   findRootArticleDirectoryPolymorphic,
+  getArticleDirectory,
   getCollectionConfig,
 } from '../helpers';
 
@@ -117,13 +120,92 @@ export class filesApiByDocument {
     );
   }
 
+  /**
+   * Resolve an existing article directory without creating one.
+   * Used on delete so orphaned `crowdinArticleDirectory` refs do not block removal.
+   */
+  async resolveExistingArticleDirectory(): Promise<
+    CrowdinArticleDirectory | undefined
+  > {
+    const documentId = this.global
+      ? (this.collectionSlug as string)
+      : this.document.id;
+
+    let crowdinPayloadArticleDirectory =
+      await findRootArticleDirectoryPolymorphic({
+        payload: this.req.payload,
+        req: this.req,
+        documentId,
+        rootLookup: {
+          collectionSlug: this.collectionSlug as string,
+          global: this.global,
+        },
+      });
+
+    if (!crowdinPayloadArticleDirectory && this.document.crowdinArticleDirectory) {
+      const ref = this.document.crowdinArticleDirectory;
+      if (isCrowdinArticleDirectory(ref) || ref?.id) {
+        crowdinPayloadArticleDirectory = ref as CrowdinArticleDirectory;
+      } else {
+        try {
+          crowdinPayloadArticleDirectory = (await this.req.payload.findByID({
+            collection: 'crowdin-article-directories',
+            id: ref,
+            req: this.req,
+          })) as CrowdinArticleDirectory;
+        } catch {
+          // Orphaned reference — nothing to clean up on Crowdin.
+        }
+      }
+    }
+
+    if (!crowdinPayloadArticleDirectory) {
+      crowdinPayloadArticleDirectory = (await getArticleDirectory({
+        documentId,
+        payload: this.req.payload,
+        req: this.req,
+        allowEmpty: true,
+        rootLookup: {
+          collectionSlug: this.collectionSlug as string,
+          global: this.global,
+        },
+      })) as CrowdinArticleDirectory | undefined;
+    }
+
+    return crowdinPayloadArticleDirectory;
+  }
+
+  /**
+   * Remove Crowdin files and the article directory when one exists.
+   * Skips cleanup when no directory is found (including orphaned refs).
+   */
+  async deleteCrowdinAssetsIfPresent(): Promise<void> {
+    const articleDirectory = await this.resolveExistingArticleDirectory();
+    if (!articleDirectory) {
+      return;
+    }
+
+    this.articleDirectory = articleDirectory;
+    const filesApi = new payloadCrowdinSyncDocumentFilesApi(
+      {
+        document: this.document,
+        articleDirectory: this.articleDirectory,
+        collectionSlug: this.collectionSlug,
+        global: this.global,
+      },
+      this.pluginOptions,
+      this.req,
+    );
+
+    await filesApi.deleteFilesAndDirectory();
+  }
+
   async assertArticleDirectoryProvided() {
     if (!this.articleDirectory || this.articleDirectory.id === `undefined`) {
       this.articleDirectory = await this.findOrCreateArticleDirectory();
     }
   }
 
-  /** this is where the problem lies? */
   async findOrCreateArticleDirectory(): Promise<CrowdinArticleDirectory> {
     let crowdinPayloadArticleDirectory: CrowdinArticleDirectory | undefined;
 

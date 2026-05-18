@@ -215,6 +215,7 @@ export const crowdinSync =
                 afterDelete: [
                   ...(existingCollection.hooks?.afterDelete || []),
                   getAfterDeleteHook({
+                    collection: existingCollection,
                     pluginOptions,
                   }),
                 ],
