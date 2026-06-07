@@ -41,6 +41,13 @@ interface IupdateOrCreateFile {
   sourceBlocks?: unknown[];
 }
 
+export interface IpayloadCrowdinSyncDocumentFilesApiOptions {
+  document: Document;
+  articleDirectory: CrowdinArticleDirectory;
+  collectionSlug: CollectionSlug | 'globals';
+  global?: boolean;
+}
+
 export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesApi {
   document: Document;
   articleDirectory: CrowdinArticleDirectory;
@@ -53,12 +60,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       articleDirectory,
       collectionSlug,
       global,
-    }: {
-      document: Document;
-      articleDirectory: CrowdinArticleDirectory;
-      collectionSlug: CollectionSlug | 'globals';
-      global: boolean;
-    },
+    }: IpayloadCrowdinSyncDocumentFilesApiOptions,
     pluginOptions: PluginOptions,
     req: PayloadRequest,
   ) {
