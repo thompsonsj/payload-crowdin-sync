@@ -43,7 +43,7 @@ Constructor signatures reference the interface. This gives a single place to upd
 
 ---
 
-### 3. Split `getTranslation()` into strategy methods
+### 3. Split `getTranslation()` into strategy methods ✅
 
 **Problem:** `translations.ts:getTranslation()` is 154 lines handling four distinct cases in one method:
 1. JSON fields via Crowdin API
@@ -98,3 +98,23 @@ Constructor signatures reference the interface. This gives a single place to upd
 ## Future: adapter pattern
 
 Once items 3 and 4 are complete, the translation strategies (`getJsonTranslation`, `getSlateTranslation`, `getLexicalTranslation`) and the files layer (`createOrUpdateFile`, etc.) can be extracted behind interfaces, making it possible to implement a Phrase or Lokalise adapter that satisfies the same contracts without touching the orchestration layer.
+
+---
+
+## Completed work
+
+### Item 3 — split `getTranslation()` into strategy methods
+
+`translations.ts:getTranslation()` reduced from 154 lines to ~55. The dispatcher now resolves the file, fetches data from Crowdin, then calls one of:
+
+- `getJsonTranslation(data)` — `JSON.parse`, returns object
+- `getSlateTranslation(data)` — `convertHtmlToSlate` wrapper
+- `getLexicalTranslation({ data, file, fieldName, locale, editorConfig })` — resolves the lexical article directory, fetches block translations, calls `convertHtmlToLexical` with the Lexical fallback root on empty result
+
+All three are private. `getLexicalTranslation` takes `NonNullable<ReturnType<typeof getLexicalEditorConfig>>` so the caller's truthiness guard is enforced at the type level.
+
+### Items 1 & 2 — name conflict extraction + constructor interfaces
+
+- `files/index.ts` — added exported `isCrowdinNameConflictError(error)` covering `file.name.*`, `directory.name.*`, and the plain-string `'Name must be unique'` fallback. All three previous inline copies replaced.
+- `files/by-document.ts` — `IfilesApiByDocumentOptions` (exported); constructor signature updated.
+- `files/document.ts` — `IpayloadCrowdinSyncDocumentFilesApiOptions` (exported); constructor signature updated.
