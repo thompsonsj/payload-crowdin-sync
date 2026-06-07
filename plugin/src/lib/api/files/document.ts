@@ -45,7 +45,7 @@ export interface IpayloadCrowdinSyncDocumentFilesApiOptions {
   document: Document;
   articleDirectory: CrowdinArticleDirectory;
   collectionSlug: CollectionSlug | 'globals';
-  global: boolean;
+  global?: boolean;
 }
 
 export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesApi {
