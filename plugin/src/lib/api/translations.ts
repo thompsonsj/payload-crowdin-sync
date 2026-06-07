@@ -515,10 +515,10 @@ export class payloadCrowdinSyncTranslationsApi {
   }
 
   /**
-   * Retrieve translations for a document field name
+   * Retrieve translations for a document field name.
    *
-   * * returns Slate object for html fields
-   * * returns all json fields if fieldName is 'fields'
+   * Resolves the Crowdin file, fetches the translated content, then dispatches
+   * to the appropriate format strategy: JSON, Slate HTML, or Lexical HTML.
    */
   // TODO refactor out fields override - replace `collection` with `fields`
   async getTranslation({
@@ -568,10 +568,7 @@ export class payloadCrowdinSyncTranslationsApi {
       return;
     }
     try {
-      const response = await this.buildTranslationFile({
-        file,
-        locale,
-      });
+      const response = await this.buildTranslationFile({ file, locale });
       if (!response) {
         if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
           console.log('lib/api/translations@getTranslation no response from buildTranslationFile');
@@ -594,72 +591,14 @@ export class payloadCrowdinSyncTranslationsApi {
             filterLocalizedFields: !crowdinArticleDirectoryId,
           }) as RichTextField;
           const editorConfig = getLexicalEditorConfig(field);
-          // isLexical?
           if (editorConfig) {
-            // retrieve the article directory created for this lexical block
-            const lexicalFieldCrowdinArticleDirectory =
-              await getLexicalFieldArticleDirectory({
-                payload: this.payload,
-                parent: file.crowdinArticleDirectory,
-                name: `${this.lexicalBlockFolderPrefix}${fieldName}`,
-                req: this.req,
-              });
-            const lexicalFieldCrowdinArticleDirectoryId = getRelationshipId(
-              lexicalFieldCrowdinArticleDirectory as any,
-            );
-
-            // get translations here and pass it to convertHtmlToLexical
-            // easier than passing `payload` and `pluginOptions` to create a new instance of the class we are in right now - keep convertHtmlToLexical focussed.
-            const blockConfig = getLexicalBlockFields(editorConfig);
-
-            const blockTranslations =
-              blockConfig && lexicalFieldCrowdinArticleDirectoryId
-                ? await this.getBlockTranslations({
-                    blockConfig,
-                    file,
-                    locale,
-                    crowdinArticleDirectoryId:
-                      lexicalFieldCrowdinArticleDirectoryId,
-                  })
-                : null;
-
-            return (
-              convertHtmlToLexical(data, blockTranslations) || {
-                root: {
-                  type: 'root',
-                  format: '',
-                  indent: 0,
-                  version: 1,
-                  children: [
-                    {
-                      children: [
-                        {
-                          detail: 0,
-                          format: 0,
-                          mode: 'normal',
-                          style: '',
-                          text: 'lexical configuration not found',
-                          type: 'text',
-                          version: 1,
-                        },
-                      ],
-                      direction: 'ltr',
-                      format: '',
-                      indent: 0,
-                      type: 'quote',
-                      version: 1,
-                    },
-                  ],
-                  direction: 'ltr',
-                },
-              }
-            );
+            return this.getLexicalTranslation({ data, file, fieldName, locale, editorConfig });
           }
         }
-        return convertHtmlToSlate(data, this.htmlToSlateConfig);
-      } else {
-        return JSON.parse(data);
+        return this.getSlateTranslation(data);
       }
+
+      return this.getJsonTranslation(data);
     } catch (error) {
       console.error(
         'getTranslation',
@@ -674,6 +613,82 @@ export class payloadCrowdinSyncTranslationsApi {
         error,
       );
     }
+  }
+
+  private getJsonTranslation(data: string): object {
+    return JSON.parse(data);
+  }
+
+  private getSlateTranslation(data: string) {
+    return convertHtmlToSlate(data, this.htmlToSlateConfig);
+  }
+
+  private async getLexicalTranslation({
+    data,
+    file,
+    fieldName,
+    locale,
+    editorConfig,
+  }: {
+    data: string;
+    file: CrowdinFile;
+    fieldName: string;
+    locale: string;
+    editorConfig: NonNullable<ReturnType<typeof getLexicalEditorConfig>>;
+  }) {
+    const lexicalFieldCrowdinArticleDirectory =
+      await getLexicalFieldArticleDirectory({
+        payload: this.payload,
+        parent: file.crowdinArticleDirectory,
+        name: `${this.lexicalBlockFolderPrefix}${fieldName}`,
+        req: this.req,
+      });
+    const lexicalFieldCrowdinArticleDirectoryId = getRelationshipId(
+      lexicalFieldCrowdinArticleDirectory as any,
+    );
+
+    const blockConfig = getLexicalBlockFields(editorConfig);
+    const blockTranslations =
+      blockConfig && lexicalFieldCrowdinArticleDirectoryId
+        ? await this.getBlockTranslations({
+            blockConfig,
+            file,
+            locale,
+            crowdinArticleDirectoryId: lexicalFieldCrowdinArticleDirectoryId,
+          })
+        : null;
+
+    return (
+      convertHtmlToLexical(data, blockTranslations) || {
+        root: {
+          type: 'root',
+          format: '',
+          indent: 0,
+          version: 1,
+          children: [
+            {
+              children: [
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: 'lexical configuration not found',
+                  type: 'text',
+                  version: 1,
+                },
+              ],
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              type: 'quote',
+              version: 1,
+            },
+          ],
+          direction: 'ltr',
+        },
+      }
+    );
   }
 
   private async buildTranslationFile({

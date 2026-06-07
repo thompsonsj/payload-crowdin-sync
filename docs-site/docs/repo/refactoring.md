@@ -43,7 +43,7 @@ Constructor signatures reference the interface. This gives a single place to upd
 
 ---
 
-### 3. Split `getTranslation()` into strategy methods
+### 3. Split `getTranslation()` into strategy methods ✅
 
 **Problem:** `translations.ts:getTranslation()` is 154 lines handling four distinct cases in one method:
 1. JSON fields via Crowdin API
