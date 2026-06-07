@@ -4,7 +4,7 @@ This document describes the planned refactoring of `plugin/src/lib/api`. The goa
 
 ## Context
 
-The `api/` directory has four main areas:
+The `api/` directory has five main areas:
 
 | File | Role |
 |------|------|
