@@ -12,6 +12,7 @@ import type {
   PayloadRequest,
 } from 'payload';
 import { toWords } from 'payload';
+import { isCrowdinNameConflictError } from '.';
 import {
   payloadCrowdinSyncDocumentFilesApi,
 } from './document';
@@ -33,6 +34,16 @@ import {
 
 interface IfindOrCreateCollectionDirectory {
   collectionSlug: CollectionSlug | 'globals';
+}
+
+export interface IfilesApiByDocumentOptions {
+  document: Document;
+  collectionSlug: CollectionSlug | GlobalSlug;
+  global: boolean;
+  pluginOptions: PluginOptions;
+  req: PayloadRequest;
+  /** Lexical field blocks use their own CrowdinArticleDirectory. */
+  parent?: CrowdinArticleDirectory['parent'];
 }
 
 /**
@@ -65,15 +76,7 @@ export class filesApiByDocument {
     pluginOptions,
     req,
     parent,
-  }: {
-    document: Document;
-    collectionSlug: CollectionSlug | GlobalSlug;
-    global: boolean;
-    pluginOptions: PluginOptions;
-    req: PayloadRequest;
-    /** Lexical field blocks use their own CrowdinArticleDirectory. */
-    parent?: CrowdinArticleDirectory['parent'];
-  }) {
+  }: IfilesApiByDocumentOptions) {
     // credentials
     const credentials: Credentials = {
       token: pluginOptions.token,
@@ -378,15 +381,7 @@ export class filesApiByDocument {
         // In integration tests, the Crowdin collection directory can already exist in the remote mock
         // (or multiple test files may race to create it). If Crowdin rejects due to name uniqueness,
         // recover by fetching the existing directory and continuing.
-        const isNameConflictError =
-          createError?.error?.errors?.some(
-            (e: any) =>
-              e?.error?.key === 'directory.name.is_already_exists' ||
-              e?.error?.key === 'directory.name' ||
-              String(createError).includes('Name must be unique'),
-          ) || String(createError).includes('Name must be unique');
-
-        if (!isNameConflictError) {
+        if (!isCrowdinNameConflictError(createError)) {
           throw createError;
         }
 
@@ -547,16 +542,7 @@ export class filesApiByDocument {
         });
         return result as CrowdinArticleDirectory;
       } catch (createError: any) {
-        // Check if this is a "name must be unique" error
-        const isNameConflictError =
-          createError?.error?.errors?.some(
-            (e: any) =>
-              e?.error?.key === 'directory.name.is_already_exists' ||
-              e?.error?.key === 'directory.name' ||
-              String(createError).includes('Name must be unique'),
-          ) || String(createError).includes('Name must be unique');
-
-        if (isNameConflictError) {
+        if (isCrowdinNameConflictError(createError)) {
           if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
             console.log(
               `Directory "${name}" already exists on Crowdin in parent directory ${parentDirectoryId}. Attempting to find and sync existing directory...`,

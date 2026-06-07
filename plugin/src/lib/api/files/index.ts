@@ -17,6 +17,23 @@ import {
   UploadStorage,
 } from '@crowdin/crowdin-api-client';
 
+/**
+ * Returns true when a Crowdin API error indicates a name uniqueness conflict on
+ * either a file (`file.name.*`) or a directory (`directory.name.*`).
+ */
+export function isCrowdinNameConflictError(error: unknown): boolean {
+  return (
+    (error as any)?.error?.errors?.some(
+      (e: any) =>
+        e?.error?.key === 'file.name.is_already_exists' ||
+        e?.error?.key === 'file.name' ||
+        e?.error?.key === 'directory.name.is_already_exists' ||
+        e?.error?.key === 'directory.name' ||
+        String(error).includes('Name must be unique'),
+    ) || String(error).includes('Name must be unique')
+  );
+}
+
 interface IcreateOrUpdateFile {
   name: string;
   fileData: string | object;
@@ -140,16 +157,7 @@ export class payloadCrowdinSyncFilesApi {
       );
       return file;
     } catch (error: any) {
-      // Check if this is a "name must be unique" error
-      const isNameConflictError =
-        error?.error?.errors?.some(
-          (e: any) =>
-            e?.error?.key === 'file.name.is_already_exists' ||
-            e?.error?.key === 'file.name' ||
-            String(error).includes('Name must be unique'),
-        ) || String(error).includes('Name must be unique');
-
-      if (isNameConflictError) {
+      if (isCrowdinNameConflictError(error)) {
         if (verbose) {
           console.log(
             `File "${fullFileName}" already exists on Crowdin in directory ${directoryId}. Attempting to find and sync existing file...`,
