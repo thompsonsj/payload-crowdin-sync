@@ -4,7 +4,7 @@ name: PR title
 # This matters because PRs are squash-merged, making the title the commit message on main.
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, edited, synchronize, reopened]
 
 permissions:
