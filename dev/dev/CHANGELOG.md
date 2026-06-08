@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.38.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.38.0...dev-v0.38.1) (2026-06-08)
+
+
+### Bug Fixes
+
+* **plugin:** collections: undefined causes QueryError on page load ([#342](https://github.com/thompsonsj/payload-crowdin-sync/issues/342)) ([#348](https://github.com/thompsonsj/payload-crowdin-sync/issues/348)) ([97169ca](https://github.com/thompsonsj/payload-crowdin-sync/commit/97169ca1fe4df81658cc991bbd7ee0cd71bf5199))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.42.0 to 0.42.1
+
 ## [0.38.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.37.1...dev-v0.38.0) (2026-05-18)
 
 
