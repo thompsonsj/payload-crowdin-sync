@@ -1,0 +1,167 @@
+name: PR labels — backfill
+
+# Run once manually to apply type + area labels to all existing PRs.
+# Trigger: Actions tab → "PR labels — backfill" → Run workflow.
+# Labels are created automatically if absent (unlike pr-labels.yml which
+# requires them to exist first).
+
+on:
+  workflow_dispatch:
+    inputs:
+      state:
+        description: "PR state to backfill (open | closed | all)"
+        required: false
+        default: "all"
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (needed to read labeler.yml path definitions)
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Backfill type + area labels on existing PRs (add-only)
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const state = '${{ inputs.state }}' || 'all';
+
+            // ── Type label definitions (mirrors pr-labels.yml) ────────────────
+            const typeLabelDefs = [
+              { name: 'type: feature',  color: '0075ca', description: 'New feature or request' },
+              { name: 'type: fix',      color: 'd73a4a', description: 'Bug fix' },
+              { name: 'type: docs',     color: '0052cc', description: 'Documentation only' },
+              { name: 'type: test',     color: 'bfd4f2', description: 'Test additions or changes' },
+              { name: 'type: refactor', color: 'e4e669', description: 'Code refactoring without behaviour change' },
+              { name: 'type: perf',     color: 'f9d0c4', description: 'Performance improvement' },
+              { name: 'type: deps',     color: 'c5def5', description: 'Dependency update' },
+              { name: 'type: chore',    color: 'ffffff', description: 'Maintenance and housekeeping' },
+              { name: 'type: build',    color: 'fef2c0', description: 'Build system or tooling' },
+              { name: 'type: ci',       color: 'e99695', description: 'CI/CD changes' },
+            ];
+
+            // ── Area label definitions (mirrors labeler.yml) ──────────────────
+            const areaLabelDefs = [
+              { name: 'area: plugin',            color: '1d76db', description: 'Plugin source code' },
+              { name: 'area: test-installation', color: '0e8a16', description: 'Dev app test installation' },
+              { name: 'area: tests',             color: 'bfd4f2', description: 'Test files' },
+              { name: 'area: docs',              color: '0052cc', description: 'Documentation' },
+              { name: 'area: ci',                color: 'e99695', description: 'CI/CD config' },
+              { name: 'area: deps',              color: 'c5def5', description: 'Dependencies' },
+            ];
+
+            // ── Type rules (mirrors pr-labels.yml) ────────────────────────────
+            const typeRules = [
+              { re: /^feat(\(.+\))?:/i,               label: 'type: feature' },
+              { re: /^fix(\(.+\))?:/i,                label: 'type: fix' },
+              { re: /^docs(\(.+\))?:/i,               label: 'type: docs' },
+              { re: /^test(\(.+\))?:/i,               label: 'type: test' },
+              { re: /^refactor(\(.+\))?:/i,           label: 'type: refactor' },
+              { re: /^perf(\(.+\))?:/i,               label: 'type: perf' },
+              { re: /^chore\(\s*deps(-dev)?\s*\):/i,  label: 'type: deps' },
+              { re: /^chore(\(.+\))?:/i,              label: 'type: chore' },
+              { re: /^build(\(.+\))?:/i,              label: 'type: build' },
+              { re: /^ci(\(.+\))?:/i,                 label: 'type: ci' },
+            ];
+
+            // ── Area rules (mirrors labeler.yml) ──────────────────────────────
+            const areaRules = [
+              {
+                label: 'area: plugin',
+                globs: [/^plugin\/src\/lib\//],
+              },
+              {
+                label: 'area: test-installation',
+                globs: [
+                  /^dev\//,
+                  /^dev-alternative-config\//,
+                ],
+              },
+              {
+                label: 'area: tests',
+                globs: [/\.(spec|test)\.(ts|tsx)$/],
+              },
+              {
+                label: 'area: docs',
+                globs: [
+                  /^docs-site\//,
+                  /\.md$/,
+                ],
+              },
+              {
+                label: 'area: ci',
+                globs: [/^\.github\//],
+              },
+              {
+                label: 'area: deps',
+                globs: [
+                  /(^|\/)package\.json$/,
+                  /(^|\/)package-lock\.json$/,
+                ],
+              },
+            ];
+
+            // ── Ensure all labels exist ───────────────────────────────────────
+            for (const def of [...typeLabelDefs, ...areaLabelDefs]) {
+              try {
+                await github.rest.issues.createLabel({ owner, repo, ...def });
+              } catch (e) {
+                if (e.status !== 422) throw e; // 422 = already exists
+              }
+            }
+
+            // ── Page through all PRs ──────────────────────────────────────────
+            let page = 1;
+            let processed = 0;
+
+            while (true) {
+              const { data: prs } = await github.rest.pulls.list({
+                owner, repo, state, per_page: 100, page,
+              });
+              if (prs.length === 0) break;
+
+              for (const pr of prs) {
+                const candidates = [];
+
+                // Type labels from PR title
+                for (const { re, label } of typeRules) {
+                  if (re.test(pr.title)) candidates.push(label);
+                }
+
+                // Area labels from changed files
+                const { data: files } = await github.rest.pulls.listFiles({
+                  owner, repo, pull_number: pr.number, per_page: 100,
+                });
+                const filenames = files.map(f => f.filename);
+
+                for (const { label, globs } of areaRules) {
+                  if (filenames.some(f => globs.some(g => g.test(f)))) {
+                    candidates.push(label);
+                  }
+                }
+
+                const toAdd = [...new Set(candidates)];
+
+                if (toAdd.length > 0) {
+                  core.info(`PR #${pr.number} "${pr.title}" → ${toAdd.join(', ')}`);
+                  await github.rest.issues.addLabels({
+                    owner, repo, issue_number: pr.number,
+                    labels: toAdd,
+                  });
+                } else {
+                  core.info(`PR #${pr.number} "${pr.title}" → no labels matched`);
+                }
+
+                processed++;
+              }
+
+              page++;
+            }
+
+            core.info(`Done. Processed ${processed} PRs.`);
