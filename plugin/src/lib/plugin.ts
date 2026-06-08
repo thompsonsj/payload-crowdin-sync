@@ -68,7 +68,7 @@ export const crowdinSync =
     const initFunctions: (() => void)[] = [];
 
     const syncedCollectionSlugs: string[] = (() => {
-      if (!pluginOptions.collections) return [];
+      if (!pluginOptions.collections) return (config.collections || []).map((c) => c.slug);
       const allowed = new Set(
         pluginOptions.collections.map((c) =>
           isCollectionOrGlobalConfigObject(c) ? c.slug : c,
