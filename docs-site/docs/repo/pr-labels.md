@@ -29,7 +29,7 @@ Applied by the `actions/github-script` step in `.github/workflows/pr-labels.yml`
 | `type: test` | `test:` |
 | `type: refactor` | `refactor:` |
 | `type: perf` | `perf:` |
-| `type: deps` | `chore(deps):` |
+| `type: deps` | `chore(deps):`, `chore(deps-dev):` |
 | `type: chore` | `chore:` |
 | `type: build` | `build:` |
 | `type: ci` | `ci:` |
