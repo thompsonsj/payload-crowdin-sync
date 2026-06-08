@@ -72,7 +72,7 @@ Constructor signatures reference the interface. This gives a single place to upd
 
 ---
 
-### 5. Decompose `findOrCreateArticleDirectory()` and `createFile()`
+### 5. Decompose `findOrCreateArticleDirectory()` and `createFile()` ✅
 
 **Problem:**
 - `by-document.ts:findOrCreateArticleDirectory()` — 128 lines, four nested lookup strategies

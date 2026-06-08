@@ -197,135 +197,121 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     sourceBlocks,
   }: IupdateOrCreateFile) {
     if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
-      console.log('createFile', {
+      console.log('createFile', { name, fileData, fileType, sourceBlocks });
+    }
+
+    const originalId = this.articleDirectory.originalId;
+    if (!originalId) return;
+
+    const crowdinFile = await this.crowdinCreateFile({
+      directoryId: originalId,
+      name,
+      fileData,
+      fileType,
+    });
+    if (!crowdinFile) return;
+
+    const existingPayloadFile = await this.getFile(name);
+    if (existingPayloadFile) {
+      return this.syncExistingPayloadFile({
+        existingPayloadFile,
+        crowdinFileData: crowdinFile.data,
         name,
         fileData,
         fileType,
         sourceBlocks,
       });
     }
-    // Create file on Crowdin
-    const originalId = this.articleDirectory.originalId;
-    if (originalId) {
-      const crowdinFile = await this.crowdinCreateFile({
-        directoryId: originalId,
-        name,
-        fileData,
-        fileType,
-      });
-      // Store result on Payload CMS
-      if (crowdinFile) {
-        // Check if this file already exists in Payload (might have been found on Crowdin)
-        const existingPayloadFile = await this.getFile(name);
 
-        if (existingPayloadFile) {
-          // File already exists in Payload, update it instead
-          if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
-            console.log(
-              `File "${name}" already exists in Payload database. Updating instead of creating.`,
-            );
-          }
-
-          // Update the file content on Crowdin
-          await this.crowdinUpdateFile({
-            fileId: crowdinFile.data.id,
-            name,
-            fileData,
-            fileType,
-          });
-
-          // Update the Payload record
-          const payloadCrowdinFile = await this.req.payload.update({
-            collection: 'crowdin-files',
-            id: existingPayloadFile.id,
-            data: {
-              updatedAt: crowdinFile.data.updatedAt,
-              revisionId: crowdinFile.data.revisionId,
-              ...(fileType === 'json' && {
-                fileData: {
-                  json: fileData as {
-                    [k: string]: Partial<unknown>;
-                  },
-                },
-              }),
-              ...(fileType === 'html' && {
-                fileData: {
-                  html:
-                    typeof fileData === 'string'
-                      ? fileData
-                      : JSON.stringify(fileData),
-                  ...(sourceBlocks && {
-                    sourceBlocks: JSON.stringify(sourceBlocks),
-                  }),
-                },
-              }),
-            },
-            req: this.req,
-          });
-          return payloadCrowdinFile;
-        }
-
-        const payloadCrowdinFile = await this.req.payload.create({
-          collection: 'crowdin-files', // required
-          data: {
-            // required
-            title: name,
-            field: name,
-            crowdinArticleDirectory: this.articleDirectory.id,
-            reference: {
-              createdAt: crowdinFile.data.createdAt,
-              updatedAt: crowdinFile.data.updatedAt,
-              projectId: crowdinFile.data.projectId,
-            },
-            originalId: crowdinFile.data.id,
-            directoryId: crowdinFile.data.directoryId,
-            revisionId: crowdinFile.data.revisionId,
-            name: `${name}.${fileType}`,
-            type: fileType,
-            path: crowdinFile.data.path,
-            ...(fileType === 'json' && {
-              fileData: {
-                json: fileData as {
-                  [k: string]: Partial<unknown>;
-                },
-              },
-            }),
-            ...(fileType === 'html' && {
-              fileData: {
-                html:
-                  typeof fileData === 'string'
-                    ? fileData
-                    : JSON.stringify(fileData),
-                ...(sourceBlocks && {
-                  sourceBlocks: JSON.stringify(sourceBlocks),
-                }),
-              },
-            }),
+    const payloadCrowdinFile = await this.req.payload.create({
+      collection: 'crowdin-files',
+      data: {
+        title: name,
+        field: name,
+        crowdinArticleDirectory: this.articleDirectory.id,
+        reference: {
+          createdAt: crowdinFile.data.createdAt,
+          updatedAt: crowdinFile.data.updatedAt,
+          projectId: crowdinFile.data.projectId,
+        },
+        originalId: crowdinFile.data.id,
+        directoryId: crowdinFile.data.directoryId,
+        revisionId: crowdinFile.data.revisionId,
+        name: `${name}.${fileType}`,
+        type: fileType,
+        path: crowdinFile.data.path,
+        ...(fileType === 'json' && {
+          fileData: { json: fileData as { [k: string]: Partial<unknown> } },
+        }),
+        ...(fileType === 'html' && {
+          fileData: {
+            html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData),
+            ...(sourceBlocks && { sourceBlocks: JSON.stringify(sourceBlocks) }),
           },
-          req: this.req,
-        });
+        }),
+      },
+      req: this.req,
+    });
 
-        // If we found an existing file on Crowdin (not newly created), update its content
-        // This happens when the file exists on Crowdin but wasn't in our local database
-        const wasExistingFile = crowdinFile.data.revisionId > 1;
-        if (wasExistingFile) {
-          if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
-            console.log(
-              `Updating content for existing Crowdin file "${name}" (File ID: ${crowdinFile.data.id})`,
-            );
-          }
-          await this.crowdinUpdateFile({
-            fileId: crowdinFile.data.id,
-            name,
-            fileData,
-            fileType,
-          });
-        }
-
-        return payloadCrowdinFile;
+    // File exists on Crowdin but was missing from our database — push current content.
+    if (crowdinFile.data.revisionId > 1) {
+      if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+        console.log(
+          `Updating content for existing Crowdin file "${name}" (File ID: ${crowdinFile.data.id})`,
+        );
       }
+      const updatedCrowdinFile = await this.crowdinUpdateFile({ fileId: crowdinFile.data.id, name, fileData, fileType });
+      await this.req.payload.update({
+        collection: 'crowdin-files',
+        id: payloadCrowdinFile.id,
+        data: {
+          updatedAt: updatedCrowdinFile.data.updatedAt,
+          revisionId: updatedCrowdinFile.data.revisionId,
+        },
+        req: this.req,
+      });
     }
-    return;
+
+    return payloadCrowdinFile;
+  }
+
+  private async syncExistingPayloadFile({
+    existingPayloadFile,
+    crowdinFileData,
+    name,
+    fileData,
+    fileType,
+    sourceBlocks,
+  }: {
+    existingPayloadFile: CrowdinFile;
+    crowdinFileData: { id: number; updatedAt: string; revisionId: number };
+    name: string;
+    fileData: FileData;
+    fileType: 'html' | 'json';
+    sourceBlocks?: unknown[];
+  }) {
+    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+      console.log(`File "${name}" already exists in Payload database. Updating instead of creating.`);
+    }
+    const updatedCrowdinFile = await this.crowdinUpdateFile({ fileId: crowdinFileData.id, name, fileData, fileType });
+    return this.req.payload.update({
+      collection: 'crowdin-files',
+      id: existingPayloadFile.id,
+      data: {
+        updatedAt: updatedCrowdinFile.data.updatedAt,
+        revisionId: updatedCrowdinFile.data.revisionId,
+        ...(fileType === 'json' && {
+          fileData: { json: fileData as { [k: string]: Partial<unknown> } },
+        }),
+        ...(fileType === 'html' && {
+          fileData: {
+            html: typeof fileData === 'string' ? fileData : JSON.stringify(fileData),
+            ...(sourceBlocks && { sourceBlocks: JSON.stringify(sourceBlocks) }),
+          },
+        }),
+      },
+      req: this.req,
+    });
   }
 
   async deleteFile(crowdinFile: CrowdinFile) {
