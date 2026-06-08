@@ -40,4 +40,4 @@ Applied by the `actions/github-script` step in `.github/workflows/pr-labels.yml`
 
 Allowed types: `feat`, `fix`, `docs`, `test`, `refactor`, `perf`, `chore`, `build`, `ci`.
 
-Scopes are optional. When provided they should match a known area (`plugin`, `test-installation`, `tests`, `docs`, `ci`, `deps`) or a code-level scope used in the commit history (`bydocument`, `translations`, `helpers`, `migrations`).
+Scopes are optional and free-form — use anything that helps identify what changed (a filename, function name, area, etc.). Examples: `ci(github):`, `fix(bydocument):`, `refactor(translations):`.

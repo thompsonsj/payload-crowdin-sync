@@ -28,19 +28,6 @@ jobs:
             chore
             build
             ci
-          # Scopes are optional but if present must match a known area.
-          # Keep in sync with labeler.yml area labels.
-          scopes: |
-            plugin
-            test-installation
-            tests
-            docs
-            ci
-            deps
-            bydocument
-            translations
-            helpers
-            migrations
           requireScope: false
           subjectPattern: ^.+$
           subjectPatternError: |
