@@ -260,7 +260,16 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
           `Updating content for existing Crowdin file "${name}" (File ID: ${crowdinFile.data.id})`,
         );
       }
-      await this.crowdinUpdateFile({ fileId: crowdinFile.data.id, name, fileData, fileType });
+      const updatedCrowdinFile = await this.crowdinUpdateFile({ fileId: crowdinFile.data.id, name, fileData, fileType });
+      await this.req.payload.update({
+        collection: 'crowdin-files',
+        id: payloadCrowdinFile.id,
+        data: {
+          updatedAt: updatedCrowdinFile.data.updatedAt,
+          revisionId: updatedCrowdinFile.data.revisionId,
+        },
+        req: this.req,
+      });
     }
 
     return payloadCrowdinFile;
@@ -284,13 +293,13 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
       console.log(`File "${name}" already exists in Payload database. Updating instead of creating.`);
     }
-    await this.crowdinUpdateFile({ fileId: crowdinFileData.id, name, fileData, fileType });
+    const updatedCrowdinFile = await this.crowdinUpdateFile({ fileId: crowdinFileData.id, name, fileData, fileType });
     return this.req.payload.update({
       collection: 'crowdin-files',
       id: existingPayloadFile.id,
       data: {
-        updatedAt: crowdinFileData.updatedAt,
-        revisionId: crowdinFileData.revisionId,
+        updatedAt: updatedCrowdinFile.data.updatedAt,
+        revisionId: updatedCrowdinFile.data.revisionId,
         ...(fileType === 'json' && {
           fileData: { json: fileData as { [k: string]: Partial<unknown> } },
         }),
