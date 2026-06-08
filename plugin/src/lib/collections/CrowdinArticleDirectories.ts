@@ -22,6 +22,8 @@ const CrowdinArticleDirectories: CollectionConfig = {
       type: 'text',
       admin: {
         readOnly: true,
+        description:
+          'Stores the Crowdin directory name. For collection documents this is the Payload document ID; for globals this is the global slug. Use the globalSlug field to query for globals — name is overloaded.',
       },
     },
     /* Internal fields  */

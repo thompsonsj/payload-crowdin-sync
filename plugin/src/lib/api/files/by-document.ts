@@ -291,7 +291,7 @@ export class filesApiByDocument {
     if (this.global) {
       const result = await this.req.payload.find({
         collection: 'crowdin-article-directories',
-        where: { name: { equals: this.collectionSlug as string } },
+        where: { globalSlug: { equals: this.collectionSlug as string } },
         limit: 1,
         req: this.req,
         overrideAccess: true,
