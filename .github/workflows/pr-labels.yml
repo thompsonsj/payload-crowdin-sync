@@ -1,0 +1,77 @@
+name: PR labels
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Apply area labels (path-based)
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/labeler.yml
+
+      - name: Apply type labels (PR title / conventional commits)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const title = context.payload.pull_request.title || '';
+
+            // Type label definitions — created on first use if absent.
+            const typeLabelDefs = [
+              { name: 'type: feature',  color: '0075ca', description: 'New feature or request' },
+              { name: 'type: fix',      color: 'd73a4a', description: 'Bug fix' },
+              { name: 'type: docs',     color: '0052cc', description: 'Documentation only' },
+              { name: 'type: test',     color: 'bfd4f2', description: 'Test additions or changes' },
+              { name: 'type: refactor', color: 'e4e669', description: 'Code refactoring without behaviour change' },
+              { name: 'type: perf',     color: 'f9d0c4', description: 'Performance improvement' },
+              { name: 'type: deps',     color: 'c5def5', description: 'Dependency update' },
+              { name: 'type: chore',    color: 'ffffff', description: 'Maintenance and housekeeping' },
+              { name: 'type: build',    color: 'fef2c0', description: 'Build system or tooling' },
+              { name: 'type: ci',       color: 'e99695', description: 'CI/CD changes' },
+            ];
+
+            const rules = [
+              { re: /^feat(\(.+\))?:/i,               label: 'type: feature' },
+              { re: /^fix(\(.+\))?:/i,                label: 'type: fix' },
+              { re: /^docs(\(.+\))?:/i,               label: 'type: docs' },
+              { re: /^test(\(.+\))?:/i,               label: 'type: test' },
+              { re: /^refactor(\(.+\))?:/i,           label: 'type: refactor' },
+              { re: /^perf(\(.+\))?:/i,               label: 'type: perf' },
+              { re: /^chore\(\s*deps(-dev)?\s*\):/i,  label: 'type: deps' },
+              { re: /^chore(\(.+\))?:/i,              label: 'type: chore' },
+              { re: /^build(\(.+\))?:/i,              label: 'type: build' },
+              { re: /^ci(\(.+\))?:/i,                 label: 'type: ci' },
+            ];
+
+            const matched = rules.filter(r => r.re.test(title)).map(r => r.label);
+            if (matched.length === 0) {
+              core.info(`No type label matched PR title: "${title}"`);
+              return;
+            }
+
+            // Ensure matched labels exist before applying them.
+            for (const label of matched) {
+              const def = typeLabelDefs.find(d => d.name === label);
+              if (!def) continue;
+              try {
+                await github.rest.issues.createLabel({ owner, repo, ...def });
+              } catch (e) {
+                if (e.status !== 422) throw e; // 422 = already exists
+              }
+            }
+
+            await github.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number: context.payload.pull_request.number,
+              labels: [...new Set(matched)],
+            });
