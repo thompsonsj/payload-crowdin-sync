@@ -1,0 +1,38 @@
+# Auto-label PRs based on changed file paths.
+# Used by .github/workflows/pr-labels.yml (actions/labeler).
+
+"area: plugin":
+  - changed-files:
+      - any-glob-to-any-file:
+          - plugin/src/lib/**
+
+"area: test-installation":
+  - changed-files:
+      - any-glob-to-any-file:
+          - dev/**
+          - dev-alternative-config/**
+
+"area: tests":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.spec.ts"
+          - "**/*.test.ts"
+          - "**/*.spec.tsx"
+          - "**/*.test.tsx"
+
+"area: docs":
+  - changed-files:
+      - any-glob-to-any-file:
+          - docs-site/**
+          - "**/*.md"
+
+"area: ci":
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**
+
+"area: deps":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/package.json"
+          - "**/package-lock.json"
