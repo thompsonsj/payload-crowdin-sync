@@ -9,9 +9,14 @@ on:
   workflow_dispatch:
     inputs:
       state:
-        description: "PR state to backfill (open | closed | all)"
+        description: "PR state to backfill"
         required: false
         default: "all"
+        type: choice
+        options:
+          - all
+          - open
+          - closed
 
 permissions:
   contents: read
@@ -22,15 +27,15 @@ jobs:
   backfill:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout (needed to read labeler.yml path definitions)
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-
       - name: Backfill type + area labels on existing PRs (add-only)
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        env:
+          PR_STATE: ${{ inputs.state }}
         with:
           script: |
             const { owner, repo } = context.repo;
-            const state = '${{ inputs.state }}' || 'all';
+            const VALID_STATES = new Set(['open', 'closed', 'all']);
+            const state = VALID_STATES.has(process.env.PR_STATE) ? process.env.PR_STATE : 'all';
 
             // ── Type label definitions (mirrors pr-labels.yml) ────────────────
             const typeLabelDefs = [
@@ -134,11 +139,10 @@ jobs:
                   if (re.test(pr.title)) candidates.push(label);
                 }
 
-                // Area labels from changed files
-                const { data: files } = await github.rest.pulls.listFiles({
+                // Area labels from changed files (paginated — PRs can exceed 100 files)
+                const filenames = await github.paginate(github.rest.pulls.listFiles, {
                   owner, repo, pull_number: pr.number, per_page: 100,
-                });
-                const filenames = files.map(f => f.filename);
+                }, res => res.data.map(f => f.filename));
 
                 for (const { label, globs } of areaRules) {
                   if (filenames.some(f => globs.some(g => g.test(f)))) {
