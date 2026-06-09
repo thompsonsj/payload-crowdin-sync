@@ -45,7 +45,7 @@ interface FieldTraversalVisitor<T> {
 
 ---
 
-### 2. Consolidate identical type guard bodies in `types.ts` and `utilities/payload.ts`
+### 2. Consolidate identical type guard bodies in `types.ts` and `utilities/payload.ts` ✅
 
 **Files:** `plugin/src/lib/types.ts:73–83`, `plugin/src/lib/utilities/payload.ts:3–7`
 
@@ -103,7 +103,7 @@ const createSyncAfterChangeHook = (mode: SyncMode, pluginOptions: PluginOptions)
 
 ---
 
-### 4. Remove unused `initFunctions` in `plugin.ts`
+### 4. Remove unused `initFunctions` in `plugin.ts` ✅
 
 **File:** `plugin/src/lib/plugin.ts:68` and `plugin/src/lib/plugin.ts:331`
 
@@ -115,7 +115,7 @@ const createSyncAfterChangeHook = (mode: SyncMode, pluginOptions: PluginOptions)
 
 ---
 
-### 5. Extract `documentTabFields` builder from `plugin.ts`
+### 5. Extract `documentTabFields` builder from `plugin.ts` ✅
 
 **File:** `plugin/src/lib/plugin.ts:96–118`
 
@@ -162,7 +162,21 @@ A comment in the source already flags this: `"find a better way to do this - blo
 
 ## Completed work
 
-*(none yet — all items above are pending)*
+### Items 2, 4, 5 — type guard consolidation, `initFunctions` removal, `buildDocumentTabFields` extraction
+
+**Item 5 — `buildDocumentTabFields`:**
+- New file `plugin/src/lib/fields/documentTabFields.ts` exports `buildDocumentTabFields(syncedCollectionSlugs, syncedGlobalSlugs): Field[]`
+- Return type is `Field[]` (was `any[]`)
+- 15 unit tests in `fields/documentTabFields.spec.ts` covering empty inputs, each field's type/properties, and combined behaviour
+- `plugin.ts` now imports and calls the function instead of inlining the conditional array spread
+
+**Item 4 — `initFunctions` removed:**
+- Deleted declaration (`const initFunctions: (() => void)[] = []`) and the no-op `initFunctions.forEach` call in `onInit`
+- Existing `plugin.spec.ts` suite confirms no regression
+
+**Item 2 — type guard consolidation:**
+- `isCrowdinArticleDirectory` and `isCrowdinCollectionDirectory` in `types.ts` now delegate to `isNotString` from `utilities/payload.ts`
+- 20 unit tests in `types.spec.ts` pin the shared behaviour and include an explicit parity assertion against `isNotString` to prevent future divergence
 
 ---
 

@@ -1,4 +1,5 @@
 import type { CollectionConfig, Field } from 'payload';
+import { isNotString } from './utilities/payload';
 import {
   type SlateToHtmlConfig,
   type HtmlToSlateConfig,
@@ -72,12 +73,8 @@ export type FieldWithName = Field & { name: string };
 // Type checkers
 export const isCrowdinArticleDirectory = (
   val: CrowdinArticleDirectory | string | undefined | null,
-): val is CrowdinArticleDirectory => {
-  return val !== undefined && val !== null && typeof val !== 'string';
-};
+): val is CrowdinArticleDirectory => isNotString(val);
 
 export const isCrowdinCollectionDirectory = (
   val: CrowdinCollectionDirectory | string | undefined | null,
-): val is CrowdinCollectionDirectory => {
-  return val !== undefined && val !== null && typeof val !== 'string';
-};
+): val is CrowdinCollectionDirectory => isNotString(val);
