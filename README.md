@@ -88,7 +88,11 @@ npm run test
 
 ### Release
 
-Build the plugin, change to the plugin directory and run `npm publish`.
+Releases are managed by [release-please](https://github.com/googleapis/release-please). When a release PR is merged to `main`, the [`release-please` workflow](.github/workflows/release-please.yml) builds and publishes `payload-crowdin-sync` to npm via [trusted publishing (OIDC)](https://docs.npmjs.com/trusted-publishers/).
+
+One-time npm setup (package maintainer): on [npmjs.com](https://www.npmjs.com/package/payload-crowdin-sync) → **Settings** → **Trusted publishing**, add a GitHub Actions publisher for repository `thompsonsj/payload-crowdin-sync` and workflow filename `release-please.yml`. After verifying automated publishes work, revoke the `NPM_TOKEN` repository secret.
+
+Manual publish remains available as a fallback:
 
 ```
 npm run release
