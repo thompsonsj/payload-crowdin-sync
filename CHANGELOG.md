@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.23.1...source-v0.23.2) (2026-06-10)
+
+
+### Bug Fixes
+
+* **releaseplease:** automate npm publish via trusted publishing ([#59](https://github.com/thompsonsj/payload-crowdin-sync/issues/59)) ([#354](https://github.com/thompsonsj/payload-crowdin-sync/issues/354)) ([32523ec](https://github.com/thompsonsj/payload-crowdin-sync/commit/32523ec5105cc8908fc974ec1e13de5279d91611))
+
 ## [0.23.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.23.0...source-v0.23.1) (2026-06-08)
 
 
