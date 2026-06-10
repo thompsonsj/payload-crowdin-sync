@@ -12,33 +12,33 @@ name: release-please
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      plugin_release_created: ${{ steps.release.outputs['plugin--release_created'] }}
+      plugin_version: ${{ steps.release.outputs['plugin--version'] }}
     steps:
-      - uses: google-github-actions/release-please-action@v4
+      - uses: google-github-actions/release-please-action@e4dc86ba9405554aeba3c6bb2d169500e7d3b4ee # v4
+        id: release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
-      # The logic below handles the npm publication:
-      - name: Checkout Repository
-        if: ${{ steps.release.outputs.releases_created }}
-        uses: actions/checkout@v2
-      - name: Setup Node
-        uses: actions/setup-node@v1
-        if: ${{ steps.release.outputs.releases_created }}
-        with:
-          node-version: 16
-          registry-url: 'https://registry.npmjs.org'
-      - name: Build Packages
-        if: ${{ steps.release.outputs.releases_created }}
-        run: |
-          npm install
-          nx build plugin
 
-      # Release Please has already incremented versions and published tags, so we just
-      # need to publish all unpublished versions to NPM here
-      # See: https://github.com/lerna/lerna/tree/main/commands/publish#bump-from-package
-      - name: Publish to NPM
-        if: ${{ steps.release.outputs.releases_created }}
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-        run: nx publish plugin
+  publish:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.plugin_release_created == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24.x
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - run: npm ci
+      - run: npx nx run plugin:build
+      - name: Publish to npm
+        working-directory: dist/plugin
+        run: npm publish --access public
