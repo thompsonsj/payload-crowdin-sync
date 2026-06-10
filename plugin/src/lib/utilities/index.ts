@@ -1,11 +1,21 @@
 import type {
+  ArrayField,
   Block,
   CollapsibleField,
   CollectionConfig,
   Field,
   GlobalConfig,
+  GroupField,
   RowField
 } from 'payload';
+import {
+  fieldIsArrayType,
+  fieldIsBlockType,
+  fieldIsGroupType,
+  fieldIsID,
+  fieldShouldBeLocalized,
+  tabHasName,
+} from 'payload/shared';
 import deepEqual from 'deep-equal';
 import { FieldWithName, type CrowdinHtmlObject } from '../types';
 
@@ -15,12 +25,15 @@ import dot from 'dot-object';
 
 const localizedFieldTypes = ['richText', 'text', 'textarea'];
 
-const nestedFieldTypes = ['array', 'group', 'blocks'];
-
 type IsLocalized = (field: Field, localizedParent?: boolean) => boolean;
 
-export const containsNestedFields = (field: Field) =>
-  nestedFieldTypes.includes(field.type);
+export const containsNestedFields = (field: Field): boolean =>
+  fieldIsGroupType(field) || fieldIsArrayType(field) || fieldIsBlockType(field);
+
+const isCrowdinNestedDataField = (
+  field: Field,
+): field is GroupField | ArrayField =>
+  fieldIsGroupType(field) || fieldIsArrayType(field);
 
 export const findField = ({
   dotNotation,
@@ -43,7 +56,7 @@ export const findField = ({
     return undefined;
   }
   for (const field of localizedFields) {
-    if (field.type === 'group' && keys.length > 1) {
+    if (fieldIsGroupType(field) && keys.length > 1) {
       const dotNotation = keys.slice(1).join(`.`);
       const search = findField({
         dotNotation,
@@ -54,7 +67,7 @@ export const findField = ({
         return search;
       }
     }
-    if (field.type === 'array' && keys.length > 2) {
+    if (fieldIsArrayType(field) && keys.length > 2) {
       const dotNotation = keys.slice(2).join(`.`);
       const search = findField({
         dotNotation,
@@ -65,7 +78,7 @@ export const findField = ({
         return search;
       }
     }
-    if (field.type === 'blocks' && keys.length > 3) {
+    if (fieldIsBlockType(field) && keys.length > 3) {
       const dotNotation = keys.slice(3).join(`.`);
       const blockType = keys[2];
       // find the block definition
@@ -119,7 +132,7 @@ export const getLocalizedFields = ({
     // exclude group, array and block fields with no localized fields
     // TODO: find a better way to do this - block, array and group logic is duplicated, and this filter needs to be compatible with field extraction logic later in this function
     .filter((field) => {
-      if (field.type === 'group' || field.type === 'array') {
+      if (isCrowdinNestedDataField(field)) {
         return containsLocalizedFields({
           fields: field.fields,
           type,
@@ -127,7 +140,7 @@ export const getLocalizedFields = ({
           isLocalized,
         });
       }
-      if (field.type === 'blocks') {
+      if (fieldIsBlockType(field)) {
         return field.blocks.find((block) =>
           containsLocalizedFields({
             fields: block.fields,
@@ -141,7 +154,7 @@ export const getLocalizedFields = ({
     })
     // recursion for group, array and blocks field
     .map((field) => {
-      if (field.type === 'group' || field.type === 'array') {
+      if (isCrowdinNestedDataField(field)) {
         return {
           ...field,
           fields: getLocalizedFields({
@@ -152,7 +165,7 @@ export const getLocalizedFields = ({
           }),
         };
       }
-      if (field.type === 'blocks') {
+      if (fieldIsBlockType(field)) {
         const blocks = field.blocks
           .map((block: Block) => {
             if (
@@ -294,7 +307,7 @@ export const convertTabs = ({
         const flattenedFields = field.tabs.reduce((tabFields, tab) => {
           return [
             ...tabFields,
-            'name' in tab
+            tabHasName(tab)
               ? ({
                   type: 'group',
                   name: tab.name,
@@ -342,8 +355,17 @@ export const getFieldSlugs = (fields: FieldWithName[]): string[] =>
     )
     .map((field: FieldWithName) => field.name);
 
-const hasLocalizedProp = (field: Field) =>
-  'localized' in field && field.localized;
+/**
+ * Crowdin treats children as syncable when a localized group/array/blocks parent
+ * sets localizedParent, even if the child lacks localized: true. Payload's
+ * fieldShouldBeLocalized uses the opposite rule for DB locale inheritance.
+ */
+const hasCrowdinLocalizationFlag = (
+  field: Field,
+  localizedParent = false,
+) =>
+  localizedParent ||
+  fieldShouldBeLocalized({ field, parentIsLocalized: localizedParent });
 
 /**
  * Is Localized Field
@@ -351,11 +373,11 @@ const hasLocalizedProp = (field: Field) =>
  * Note that `id` should be excluded - it is a `text` field that is added by Payload CMS.
  * Note that `blockName` should be excluded - it is a `text` field that is added by Payload CMS and is not localized.
  */
-export const isLocalizedField = (field: Field, addLocalizedProp = false) =>
-  (hasLocalizedProp(field) || addLocalizedProp) &&
+export const isLocalizedField = (field: Field, localizedParent = false) =>
+  hasCrowdinLocalizationFlag(field, localizedParent) &&
   (localizedFieldTypes.includes(field.type) || containsNestedFields(field)) &&
   !excludeBasedOnConfig(field) &&
-  (field as FieldWithName).name !== 'id' &&
+  !fieldIsID(field) &&
   (field as FieldWithName).name !== 'blockName';
 
 /**
@@ -367,7 +389,7 @@ export const isLocalizedField = (field: Field, addLocalizedProp = false) =>
 export const reLocalizeField = (field: Field) =>
   localizedFieldTypes.includes(field.type) &&
   !excludeBasedOnConfig(field) &&
-  (field as FieldWithName).name !== 'id';
+  !fieldIsID(field);
 
 const excludeBasedOnConfig = (field: Field) => {
   const description = `${get(field, 'admin.description', '')}`;
