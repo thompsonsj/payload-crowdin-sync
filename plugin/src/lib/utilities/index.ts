@@ -1,9 +1,11 @@
 import type {
+  ArrayField,
   Block,
   CollapsibleField,
   CollectionConfig,
   Field,
   GlobalConfig,
+  GroupField,
   RowField
 } from 'payload';
 import {
@@ -25,10 +27,12 @@ const localizedFieldTypes = ['richText', 'text', 'textarea'];
 
 type IsLocalized = (field: Field, localizedParent?: boolean) => boolean;
 
-export const containsNestedFields = (field: Field) =>
+export const containsNestedFields = (field: Field): boolean =>
   fieldIsGroupType(field) || fieldIsArrayType(field) || fieldIsBlockType(field);
 
-const isCrowdinNestedDataField = (field: Field) =>
+const isCrowdinNestedDataField = (
+  field: Field,
+): field is GroupField | ArrayField =>
   fieldIsGroupType(field) || fieldIsArrayType(field);
 
 export const findField = ({
