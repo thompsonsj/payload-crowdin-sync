@@ -14,6 +14,7 @@ import { getReviewTranslationEndpoint } from './endpoints/globals/reviewTranslat
 import { getReviewFieldsEndpoint } from './endpoints/globals/reviewFields';
 import Joi from 'joi';
 import { crowdinArticleDirectoryFields } from './fields/crowdinArticleDirectoryFields';
+import { buildDocumentTabFields } from './fields/documentTabFields';
 import { syncTranslations } from './tasks/sync-translation';
 
 /**
@@ -65,8 +66,6 @@ const collectionOrGlobalConfigActive = ({
 export const crowdinSync =
   (pluginOptions: PluginOptions) =>
   (config: Config): Config => {
-    const initFunctions: (() => void)[] = [];
-
     const syncedCollectionSlugs: string[] = (() => {
       if (!pluginOptions.collections) return (config.collections || []).map((c) => c.slug);
       const allowed = new Set(
@@ -93,29 +92,7 @@ export const crowdinSync =
       return (config.globals || []).map((g) => g.slug).filter((slug) => allowed.has(slug));
     })();
 
-    const documentTabFields: any[] = [
-      ...(syncedCollectionSlugs.length > 0
-        ? [
-            {
-              name: 'collectionDocument',
-              type: 'relationship',
-              relationTo: syncedCollectionSlugs,
-              hasMany: false,
-            },
-          ]
-        : []),
-      ...(syncedGlobalSlugs.length > 0
-        ? [
-            {
-              // can't create global relationships - see https://github.com/payloadcms/payload/discussions/2100
-              name: 'globalSlug',
-              type: 'select',
-              options: syncedGlobalSlugs,
-              hasMany: false,
-            },
-          ]
-        : []),
-    ];
+    const documentTabFields = buildDocumentTabFields(syncedCollectionSlugs, syncedGlobalSlugs);
 
     // schema validation
     const schema = Joi.object({
@@ -328,7 +305,6 @@ export const crowdinSync =
         }),
       ],
       onInit: async (payload) => {
-        initFunctions.forEach((fn) => fn());
         if (config.onInit) await config.onInit(payload);
       },
     };
