@@ -38,7 +38,9 @@ function resolveRelativeImport(fromFile, specifier) {
       ? `${specifier}index.js`
       : `${specifier}/index.js`;
   }
-  return `${specifier}.js`;
+  throw new Error(
+    `Cannot resolve relative import "${specifier}" from ${fromFile}`,
+  );
 }
 
 function rewriteSpecifiers(source, filePath) {
