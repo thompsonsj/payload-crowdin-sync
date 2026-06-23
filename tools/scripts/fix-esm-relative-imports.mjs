@@ -1,6 +1,9 @@
 /**
  * Append explicit extensions to extensionless relative import/export specifiers
  * in emitted ESM files (Node native ESM requires them).
+ *
+ * Uses the TypeScript compiler API to locate module specifiers instead of regex,
+ * so string literals and comments cannot be mistaken for imports.
  */
 import {
   existsSync,
@@ -10,6 +13,7 @@ import {
   statSync,
 } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
+import ts from 'typescript';
 
 const root = process.argv[2];
 if (!root) {
@@ -18,6 +22,10 @@ if (!root) {
 }
 
 const HAS_EXT = /\.(js|mjs|cjs|json|node)$/i;
+
+function isRelativeSpecifier(specifier) {
+  return specifier === '.' || specifier === '..' || specifier.startsWith('./') || specifier.startsWith('../');
+}
 
 function resolveRelativeImport(fromFile, specifier) {
   if (HAS_EXT.test(specifier)) return specifier;
@@ -43,24 +51,76 @@ function resolveRelativeImport(fromFile, specifier) {
   );
 }
 
+/**
+ * @param {string} source
+ * @param {string} filePath
+ * @returns {string}
+ */
 function rewriteSpecifiers(source, filePath) {
-  const rewrite = (path) => resolveRelativeImport(filePath, path);
+  const sourceFile = ts.createSourceFile(
+    filePath,
+    source,
+    ts.ScriptTarget.ESNext,
+    true,
+    ts.ScriptKind.JS,
+  );
 
-  const relPath = /\.\.?(?:\/[^'"]*)?/;
+  /** @type {{ start: number, end: number, text: string }[]} */
+  const replacements = [];
 
-  return source
-    .replace(
-      /(\bfrom\s+['"])(\.\.?(?:\/[^'"]*)?)(['"])/g,
-      (_, pre, path, suf) => `${pre}${rewrite(path)}${suf}`,
-    )
-    .replace(
-      /(\bexport\s+\*\s+from\s+['"])(\.\.?(?:\/[^'"]*)?)(['"])/g,
-      (_, pre, path, suf) => `${pre}${rewrite(path)}${suf}`,
-    )
-    .replace(
-      /(\bimport\s*\(\s*['"])(\.\.?(?:\/[^'"]*)?)(['"]\s*\))/g,
-      (_, pre, path, suf) => `${pre}${rewrite(path)}${suf}`,
-    );
+  /** @param {ts.StringLiteralLike} literal */
+  function queueRewrite(literal) {
+    const specifier = literal.text;
+    if (!isRelativeSpecifier(specifier) || HAS_EXT.test(specifier)) {
+      return;
+    }
+    replacements.push({
+      start: literal.getStart(sourceFile) + 1,
+      end: literal.getEnd(sourceFile) - 1,
+      text: resolveRelativeImport(filePath, specifier),
+    });
+  }
+
+  /** @param {ts.Node} node */
+  function visit(node) {
+    if (
+      ts.isImportDeclaration(node) &&
+      node.moduleSpecifier &&
+      ts.isStringLiteral(node.moduleSpecifier)
+    ) {
+      queueRewrite(node.moduleSpecifier);
+    } else if (
+      ts.isExportDeclaration(node) &&
+      node.moduleSpecifier &&
+      ts.isStringLiteral(node.moduleSpecifier)
+    ) {
+      queueRewrite(node.moduleSpecifier);
+    } else if (
+      ts.isCallExpression(node) &&
+      node.expression.kind === ts.SyntaxKind.ImportKeyword
+    ) {
+      const arg = node.arguments[0];
+      if (arg && ts.isStringLiteral(arg)) {
+        queueRewrite(arg);
+      }
+    }
+
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+
+  if (replacements.length === 0) {
+    return source;
+  }
+
+  replacements.sort((a, b) => b.start - a.start);
+
+  let output = source;
+  for (const { start, end, text } of replacements) {
+    output = output.slice(0, start) + text + output.slice(end);
+  }
+  return output;
 }
 
 function walk(dir) {
