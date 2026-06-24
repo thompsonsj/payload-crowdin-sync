@@ -23,10 +23,24 @@ if (!root) {
 
 const HAS_EXT = /\.(js|mjs|cjs|json|node)$/i;
 
+/**
+ * Return true when a module specifier is a relative path (./, ../, . or ..).
+ *
+ * @param {string} specifier
+ * @returns {boolean}
+ */
 function isRelativeSpecifier(specifier) {
   return specifier === '.' || specifier === '..' || specifier.startsWith('./') || specifier.startsWith('../');
 }
 
+/**
+ * Resolve an extensionless relative specifier to an explicit .js path for Node ESM.
+ *
+ * @param {string} fromFile - Absolute path of the file containing the import.
+ * @param {string} specifier - Relative module specifier from source.
+ * @returns {string} Rewritten specifier with .js or /index.js suffix.
+ * @throws {Error} When no matching .js or index.js file exists on disk.
+ */
 function resolveRelativeImport(fromFile, specifier) {
   if (HAS_EXT.test(specifier)) return specifier;
 
@@ -52,9 +66,11 @@ function resolveRelativeImport(fromFile, specifier) {
 }
 
 /**
- * @param {string} source
- * @param {string} filePath
- * @returns {string}
+ * Rewrite extensionless relative import/export specifiers in a single JS file.
+ *
+ * @param {string} source - File contents before rewriting.
+ * @param {string} filePath - Absolute path used to resolve relative targets.
+ * @returns {string} Updated source, or the original when no changes are needed.
  */
 function rewriteSpecifiers(source, filePath) {
   const sourceFile = ts.createSourceFile(
@@ -68,7 +84,11 @@ function rewriteSpecifiers(source, filePath) {
   /** @type {{ start: number, end: number, text: string }[]} */
   const replacements = [];
 
-  /** @param {ts.StringLiteralLike} literal */
+  /**
+   * Queue a replacement for one relative string-literal module specifier.
+   *
+   * @param {ts.StringLiteralLike} literal
+   */
   function queueRewrite(literal) {
     const specifier = literal.text;
     if (!isRelativeSpecifier(specifier) || HAS_EXT.test(specifier)) {
@@ -81,7 +101,11 @@ function rewriteSpecifiers(source, filePath) {
     });
   }
 
-  /** @param {ts.Node} node */
+  /**
+   * Walk the AST and collect import/export/dynamic-import specifiers to rewrite.
+   *
+   * @param {ts.Node} node
+   */
   function visit(node) {
     if (
       ts.isImportDeclaration(node) &&
@@ -123,6 +147,11 @@ function rewriteSpecifiers(source, filePath) {
   return output;
 }
 
+/**
+ * Recursively process every .js file under a build output directory.
+ *
+ * @param {string} dir - Root directory to traverse.
+ */
 function walk(dir) {
   for (const name of readdirSync(dir)) {
     const path = join(dir, name);
