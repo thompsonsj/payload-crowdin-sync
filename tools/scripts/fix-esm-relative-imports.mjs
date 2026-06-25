@@ -96,7 +96,7 @@ function rewriteSpecifiers(source, filePath) {
     }
     replacements.push({
       start: literal.getStart(sourceFile) + 1,
-      end: literal.getEnd(sourceFile) - 1,
+      end: literal.getEnd() - 1,
       text: resolveRelativeImport(filePath, specifier),
     });
   }
