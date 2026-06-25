@@ -38,6 +38,13 @@
     "lexical": "0.x"
   },
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "default": "./src/index.js"
+    }
+  },
   "engines": {
     "node": "^18.20.2 || >=20.9.0"
   },
