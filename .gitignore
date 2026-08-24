@@ -52,3 +52,4 @@ nx-cloud.env
 .claude/settings.local.json
 .nx/migrate-runs
 .nx/polygraph
+.nx/self-healing
