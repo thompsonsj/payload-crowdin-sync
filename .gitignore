@@ -51,3 +51,4 @@ nx-cloud.env
 .claude/worktrees
 .claude/settings.local.json
 .nx/migrate-runs
+.nx/polygraph
