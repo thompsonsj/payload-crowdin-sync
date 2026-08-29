@@ -44,7 +44,7 @@ export const image = {
   thumbnailURL: '/api/media/file/cristian-palmer-XexawgzYOBc-unsplash-400x300.jpg',
 }
 
-export const fixture = (mediaId: string = '6807d878f8296947487161eb') =>
+export const fixture = (mediaId = '6807d878f8296947487161eb') =>
   ({
     root: {
       children: [

@@ -1,15 +1,16 @@
-import { FlatCompat } from '@eslint/eslintrc';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import js from '@eslint/js';
 import nx from '@nx/eslint-plugin';
-
-const compat = new FlatCompat({
-  baseDirectory: dirname(fileURLToPath(import.meta.url)),
-  recommendedConfig: js.configs.recommended,
-});
+import globals from 'globals';
 
 export default [
+  {
+    ignores: [
+      '**/.next/**',
+      '**/out/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/next-env.d.ts',
+    ],
+  },
   ...nx.configs['flat/base'],
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
@@ -18,7 +19,9 @@ export default [
         'error',
         {
           enforceBuildableLibDependency: true,
-          allow: [],
+          allow: [
+            '^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$',
+          ],
           depConstraints: [
             {
               sourceTag: '*',
@@ -33,29 +36,35 @@ export default [
   {
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
-      '@typescript-eslint/no-extra-semi': 'error',
-      'no-extra-semi': 'off',
+      'no-extra-semi': 'error',
+      // Newly enforced by ESLint v9 recommended; was not configured before the upgrade.
+      'no-unsafe-optional-chaining': 'off',
     },
   },
   ...nx.configs['flat/javascript'],
   {
     files: ['**/*.js', '**/*.jsx'],
     rules: {
-      '@typescript-eslint/no-extra-semi': 'error',
-      'no-extra-semi': 'off',
+      'no-extra-semi': 'error',
     },
   },
-  ...compat
-    .config({
-      env: {
-        node: true,
+  {
+    files: [
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
+      '**/*.spec.js',
+      '**/*.spec.jsx',
+      '**/*.test.ts',
+      '**/*.test.tsx',
+    ],
+    languageOptions: {
+      globals: {
+        ...globals.node,
       },
-    })
-    .map((config) => ({
-      ...config,
-      files: ['**/*.spec.ts', '**/*.spec.tsx', '**/*.spec.js', '**/*.spec.jsx'],
-      rules: {
-        ...config.rules,
-      },
-    })),
+    },
+    rules: {
+      // Translation fixtures may include French narrow no-break spaces (U+00A0).
+      'no-irregular-whitespace': 'off',
+    },
+  },
 ];

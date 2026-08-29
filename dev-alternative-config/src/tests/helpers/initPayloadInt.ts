@@ -121,7 +121,7 @@ const config = buildConfig({
  * @returns An object containing the sanitized Payload config and, when started, the initialized `payload` instance and optionally a REST client.
  */
 export async function initPayloadInt(
-  dirname: string = './dev/src/',
+  dirname = './dev/src/',
   testSuiteNameOverride?: string,
   initializePayload = true,
 ): Promise<{ config: SanitizedConfig; payload?: Payload; restClient?: NextRESTClient }> {

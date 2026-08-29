@@ -1,1 +1,2 @@
-export default () => {}
+// Vitest/webpack mock placeholder module.
+export default () => undefined
