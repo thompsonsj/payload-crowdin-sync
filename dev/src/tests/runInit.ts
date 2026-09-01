@@ -3,7 +3,7 @@ import { initDevAndTest } from './initDevAndTest.js'
 export async function runInit(
   testSuiteArg: string,
   writeDBAdapter: boolean,
-  skipGenImportMap: boolean = false,
+  skipGenImportMap = false,
 ): Promise<void> {
   await initDevAndTest(testSuiteArg, String(writeDBAdapter), String(skipGenImportMap))
 }

@@ -140,7 +140,7 @@ export const fieldJsonCrowdinObject = (prefix?: string) => {
     },
   };
   if (prefix) {
-    var tgt = {};
+    const tgt = {};
     dot.str(prefix, value, tgt);
     return tgt;
   }

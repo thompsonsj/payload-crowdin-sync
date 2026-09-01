@@ -70,7 +70,7 @@ export const fieldJsonCrowdinObject = (prefix?: string) => {
     textareaField: 'A textarea field value.\nWith a new line.',
   };
   if (prefix) {
-    var tgt = {};
+    const tgt = {};
     dot.str(prefix, value, tgt);
     return tgt;
   }

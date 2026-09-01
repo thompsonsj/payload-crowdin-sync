@@ -15,7 +15,7 @@ interface Metadata {
 
 const getMetadata = async (id: string): Promise<Metadata> => {
   const videoUrl: string = youtubeVideoUrl(id)
-  const requestUrl: string = `https://youtube.com/oembed?url=${videoUrl}&format=json`
+  const requestUrl = `https://youtube.com/oembed?url=${videoUrl}&format=json`
   const result = await fetch(requestUrl)
   if (result.status === 404) {
     throw new CustomAdminError(`Video with id ${id} not found on YouTube.`, 403)

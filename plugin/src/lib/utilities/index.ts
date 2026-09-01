@@ -448,7 +448,7 @@ export const restoreOrder = ({
   document: { [key: string]: any };
   fields: Field[];
 }) => {
-  let response: { [key: string]: any } = {};
+  const response: { [key: string]: any } = {};
   // it is possible the original document is empty (e.g. new document)
   if (!document) {
     return updateDocument;
@@ -612,7 +612,7 @@ export const buildCrowdinJsonObject = ({
   topLevel?: boolean;
   isLocalized?: IsLocalized;
 }) => {
-  let response: { [key: string]: any } = {};
+  const response: { [key: string]: any } = {};
 
   const filteredFields = getLocalizedFields({
     fields,
