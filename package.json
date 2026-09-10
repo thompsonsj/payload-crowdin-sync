@@ -76,7 +76,6 @@
     "vitest": "^4.1.11"
   },
   "overrides": {
-    "axios": "1.15.0",
     "dompurify": "3.4.0"
   },
   "nx": {
