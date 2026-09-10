@@ -1,6 +1,7 @@
 import { CrowdinError } from '@crowdin/crowdin-api-client';
 import { filesApiByDocument } from './by-document';
 import { pluginOptions } from '../mock/plugin-options';
+import type { CrowdinCollectionDirectory } from '../../payload-types';
 import type { PayloadRequest } from 'payload';
 
 /**
@@ -53,6 +54,16 @@ const crowdinDirectoryResponse = (id: number, directoryId: number, name: string)
     createdAt: '2024-01-01T00:00:00.000Z',
     updatedAt: '2024-01-01T00:00:00.000Z',
   },
+});
+
+const collectionDirectoryFixture = (
+  overrides: Pick<CrowdinCollectionDirectory, 'id' | 'originalId'> &
+    Partial<CrowdinCollectionDirectory>,
+): CrowdinCollectionDirectory => ({
+  collectionSlug: 'posts',
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: '2024-01-01T00:00:00.000Z',
+  ...overrides,
 });
 
 describe('directory 404 self-clean (#360)', () => {
@@ -427,16 +438,14 @@ describe('directory 404 self-clean (#360)', () => {
 
   describe('crowdinFindOrCreateDirectory create failures', () => {
     it('when collection parent id is stale, deletes Payload record and retries create', async () => {
-      const staleCollectionDirectory = {
+      const staleCollectionDirectory = collectionDirectoryFixture({
         id: 'collection-dir-stale',
-        collectionSlug: 'posts',
         originalId: 999,
-      };
-      const refreshedCollectionDirectory = {
+      });
+      const refreshedCollectionDirectory = collectionDirectoryFixture({
         id: 'collection-dir-fresh',
-        collectionSlug: 'posts',
         originalId: 100,
-      };
+      });
       const createdArticleDirectory = {
         id: 'article-dir-new',
         originalId: 2001,
@@ -485,16 +494,14 @@ describe('directory 404 self-clean (#360)', () => {
     });
 
     it('rethrows createError when self-clean retry budget is exhausted', async () => {
-      const staleCollectionDirectory = {
+      const staleCollectionDirectory = collectionDirectoryFixture({
         id: 'collection-dir-stale',
-        collectionSlug: 'posts',
         originalId: 999,
-      };
-      const refreshedCollectionDirectory = {
+      });
+      const refreshedCollectionDirectory = collectionDirectoryFixture({
         id: 'collection-dir-fresh',
-        collectionSlug: 'posts',
         originalId: 100,
-      };
+      });
       const createError = new Error(
         "Invalid directory id given. Directory doesn't exists",
       );
