@@ -13,6 +13,7 @@ import * as crowdin from '@crowdin/crowdin-api-client';
 import {
   Client,
   Credentials,
+  CrowdinError,
   SourceFiles,
   UploadStorage,
 } from '@crowdin/crowdin-api-client';
@@ -31,6 +32,23 @@ export function isCrowdinNameConflictError(error: unknown): boolean {
         e?.error?.key === 'directory.name' ||
         String(error).includes('Name must be unique'),
     ) || String(error).includes('Name must be unique')
+  );
+}
+
+/**
+ * Returns true when a Crowdin API error indicates the directory no longer exists
+ * (deleted externally or an invalid/stale directory id was used).
+ */
+export function isCrowdinDirectoryNotFoundError(error: unknown): boolean {
+  if (error instanceof CrowdinError && error.code === 404) {
+    return true;
+  }
+
+  const message = String(error);
+  return (
+    message.includes('Invalid directory id') ||
+    message.includes("Directory doesn't exist") ||
+    message.includes("Directory doesn't exists")
   );
 }
 
