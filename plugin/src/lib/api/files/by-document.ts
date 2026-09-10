@@ -602,7 +602,7 @@ export class filesApiByDocument {
     crowdinPayloadCollectionDirectory?: CrowdinCollectionDirectory;
     name: string;
     useAsTitle?: string;
-  }) {
+  }): Promise<CrowdinArticleDirectory | undefined> {
     try {
       // Check if directory already exists in Payload database
       const existingDirectory =
