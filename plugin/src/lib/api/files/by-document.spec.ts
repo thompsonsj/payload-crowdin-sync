@@ -159,6 +159,31 @@ describe('directory 404 self-clean (#360)', () => {
       expect(result).toEqual(staleDirectory);
     });
 
+    it('throws when stale collection directory persists after one self-clean retry', async () => {
+      const staleDirectory = {
+        id: 'collection-dir-1',
+        collectionSlug: 'posts',
+        originalId: 999,
+      };
+
+      const find = vi.fn().mockResolvedValue({ totalDocs: 1, docs: [staleDirectory] });
+      const getDirectory = vi
+        .fn()
+        .mockRejectedValue(new CrowdinError('Not found', 404, {}));
+      const payloadDelete = vi.fn().mockResolvedValue(undefined);
+
+      const { api } = buildApi({ find, delete: payloadDelete }, { getDirectory });
+
+      await expect(
+        (api as any).findOrCreateCollectionDirectory({ collectionSlug: 'posts' }),
+      ).rejects.toThrow(
+        'Stale Crowdin collection directory "posts" could not be recreated after self-clean',
+      );
+
+      expect(payloadDelete).toHaveBeenCalledTimes(1);
+      expect(find).toHaveBeenCalledTimes(2);
+    });
+
     it('propagates non-404 Crowdin errors during verification', async () => {
       const directory = {
         id: 'collection-dir-1',
@@ -453,9 +478,49 @@ describe('directory 404 self-clean (#360)', () => {
       });
       expect(findOrCreateCollectionDirectory).toHaveBeenCalledWith({
         collectionSlug: 'posts',
+        selfCleanAttempt: 1,
       });
       expect(createDirectory).toHaveBeenCalledTimes(2);
       expect(result).toEqual(createdArticleDirectory);
+    });
+
+    it('rethrows createError when self-clean retry budget is exhausted', async () => {
+      const staleCollectionDirectory = {
+        id: 'collection-dir-stale',
+        collectionSlug: 'posts',
+        originalId: 999,
+      };
+      const refreshedCollectionDirectory = {
+        id: 'collection-dir-fresh',
+        collectionSlug: 'posts',
+        originalId: 100,
+      };
+      const createError = new Error(
+        "Invalid directory id given. Directory doesn't exists",
+      );
+
+      const payloadDelete = vi.fn().mockResolvedValue(undefined);
+      const createDirectory = vi.fn().mockRejectedValue(createError);
+      const findOrCreateCollectionDirectory = vi
+        .fn()
+        .mockResolvedValue(refreshedCollectionDirectory);
+
+      const { api } = buildApi({ delete: payloadDelete }, { createDirectory });
+
+      vi.spyOn(api as any, 'findOrCreateCollectionDirectory').mockImplementation(
+        findOrCreateCollectionDirectory,
+      );
+
+      const result = await api.crowdinFindOrCreateDirectory({
+        crowdinPayloadCollectionDirectory: staleCollectionDirectory,
+        name: 'doc-1',
+        selfCleanAttempt: 1,
+      });
+
+      expect(createDirectory).toHaveBeenCalledTimes(1);
+      expect(findOrCreateCollectionDirectory).not.toHaveBeenCalled();
+      expect(payloadDelete).not.toHaveBeenCalled();
+      expect(result).toBeUndefined();
     });
 
     it('when article parent id is stale (lexical field dirs), deletes parent Payload record', async () => {

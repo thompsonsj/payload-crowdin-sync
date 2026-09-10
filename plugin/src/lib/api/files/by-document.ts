@@ -35,8 +35,11 @@ import {
   SourceFilesModel,
 } from '@crowdin/crowdin-api-client';
 
+const DIRECTORY_SELF_CLEAN_MAX_ATTEMPTS = 1;
+
 interface IfindOrCreateCollectionDirectory {
   collectionSlug: CollectionSlug | 'globals';
+  selfCleanAttempt?: number;
 }
 
 export interface IfilesApiByDocumentOptions {
@@ -370,6 +373,7 @@ export class filesApiByDocument {
 
   private async findOrCreateCollectionDirectory({
     collectionSlug,
+    selfCleanAttempt = 0,
   }: IfindOrCreateCollectionDirectory): Promise<
     CrowdinCollectionDirectory | undefined
   > {
@@ -453,10 +457,19 @@ export class filesApiByDocument {
           typeof originalId === 'number' &&
           !(await this.verifyDirectoryOnCrowdin(originalId))
         ) {
+          const nextAttempt = selfCleanAttempt + 1;
+          if (nextAttempt > DIRECTORY_SELF_CLEAN_MAX_ATTEMPTS) {
+            throw new Error(
+              `Stale Crowdin collection directory "${collectionSlug}" could not be recreated after self-clean`,
+            );
+          }
           await this.deleteStaleCollectionDirectory(
             crowdinPayloadCollectionDirectory as CrowdinCollectionDirectory,
           );
-          return this.findOrCreateCollectionDirectory({ collectionSlug });
+          return this.findOrCreateCollectionDirectory({
+            collectionSlug,
+            selfCleanAttempt: nextAttempt,
+          });
         }
       }
     }
@@ -597,11 +610,13 @@ export class filesApiByDocument {
     crowdinPayloadCollectionDirectory,
     name,
     useAsTitle,
+    selfCleanAttempt = 0,
   }: {
     parent?: CrowdinArticleDirectory;
     crowdinPayloadCollectionDirectory?: CrowdinCollectionDirectory;
     name: string;
     useAsTitle?: string;
+    selfCleanAttempt?: number;
   }): Promise<CrowdinArticleDirectory | undefined> {
     try {
       // Check if directory already exists in Payload database
@@ -654,6 +669,10 @@ export class filesApiByDocument {
           if (parent) {
             await this.deleteStaleArticleDirectory(parent);
           } else if (crowdinPayloadCollectionDirectory) {
+            const nextAttempt = selfCleanAttempt + 1;
+            if (nextAttempt > DIRECTORY_SELF_CLEAN_MAX_ATTEMPTS) {
+              throw createError;
+            }
             await this.deleteStaleCollectionDirectory(
               crowdinPayloadCollectionDirectory,
             );
@@ -663,12 +682,14 @@ export class filesApiByDocument {
                   crowdinPayloadCollectionDirectory.collectionSlug as
                     | CollectionSlug
                     | 'globals',
+                selfCleanAttempt: nextAttempt,
               });
             return this.crowdinFindOrCreateDirectory({
               parent,
               crowdinPayloadCollectionDirectory: refreshedCollectionDirectory,
               name,
               useAsTitle,
+              selfCleanAttempt: nextAttempt,
             });
           }
         }
