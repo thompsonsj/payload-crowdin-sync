@@ -11,15 +11,14 @@ describe('isCrowdinDirectoryNotFoundError', () => {
     ).toBe(true);
   });
 
-  it('returns true for invalid directory id message', () => {
-    expect(
-      isCrowdinDirectoryNotFoundError(
-        new Error("Invalid directory id given. Directory doesn't exists"),
-      ),
-    ).toBe(true);
+  it.each([
+    "Invalid directory id given. Directory doesn't exists",
+    "Invalid directory id given. Directory doesn't exist",
+  ])('returns true for Crowdin invalid-parent message: %s', (message) => {
+    expect(isCrowdinDirectoryNotFoundError(new Error(message))).toBe(true);
   });
 
-  it('returns false for name conflict errors', () => {
+  it('returns false for name conflict errors (handled separately)', () => {
     const conflict = {
       error: {
         errors: [{ error: { key: 'directory.name.is_already_exists' } }],
