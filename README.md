@@ -18,6 +18,14 @@ npm install
 npm run test
 ```
 
+After changing Payload admin components in `dev/` or `dev-alternative-config/`, regenerate import maps:
+
+```bash
+npm run generate:importmaps
+```
+
+CI fails if committed import maps are stale.
+
 Docs site:
 
 ```bash
