@@ -668,6 +668,7 @@ export class filesApiByDocument {
         ) {
           if (parent) {
             await this.deleteStaleArticleDirectory(parent);
+            return undefined;
           } else if (crowdinPayloadCollectionDirectory) {
             const nextAttempt = selfCleanAttempt + 1;
             if (nextAttempt > DIRECTORY_SELF_CLEAN_MAX_ATTEMPTS) {
@@ -749,6 +750,7 @@ export class filesApiByDocument {
       }
     } catch (error) {
       console.error(error);
+      throw error;
     }
   }
 

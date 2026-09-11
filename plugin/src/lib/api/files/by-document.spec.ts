@@ -518,16 +518,17 @@ describe('directory 404 self-clean (#360)', () => {
         findOrCreateCollectionDirectory,
       );
 
-      const result = await api.crowdinFindOrCreateDirectory({
-        crowdinPayloadCollectionDirectory: staleCollectionDirectory,
-        name: 'doc-1',
-        selfCleanAttempt: 1,
-      });
+      await expect(
+        api.crowdinFindOrCreateDirectory({
+          crowdinPayloadCollectionDirectory: staleCollectionDirectory,
+          name: 'doc-1',
+          selfCleanAttempt: 1,
+        }),
+      ).rejects.toThrow(createError);
 
       expect(createDirectory).toHaveBeenCalledTimes(1);
       expect(findOrCreateCollectionDirectory).not.toHaveBeenCalled();
       expect(payloadDelete).not.toHaveBeenCalled();
-      expect(result).toBeUndefined();
     });
 
     it('when article parent id is stale (lexical field dirs), deletes parent Payload record', async () => {
