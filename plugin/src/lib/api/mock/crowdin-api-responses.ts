@@ -61,6 +61,29 @@ class crowdinAPIWrapper {
     };
   }
 
+  getDirectory({
+    id,
+  }: {
+    id: number;
+  }): { data: SourceFilesModel.Directory } {
+    const date = new Date().toISOString();
+    return {
+      data: {
+        id,
+        projectId: this.projectId,
+        branchId: this.branchId,
+        directoryId: this.directoryId ?? 1179,
+        name: 'post id',
+        title: 'undefined',
+        exportPattern: '**',
+        priority: 'normal',
+        path: '',
+        createdAt: date,
+        updatedAt: date,
+      },
+    };
+  }
+
   /**
    * Add Storage
    *
