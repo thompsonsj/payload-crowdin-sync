@@ -121,8 +121,10 @@ describe('Lexical editor with multiple blocks - Translations', () => {
         blocks: {
           '65d67d2591c92e447e7472f7': {
             cta: {
-              text: 'Laden Sie payload-crowdin-sync auf npm herunter!',
-              href: 'https://www.npmjs.com/package/payload-crowdin-sync',
+              link: {
+                text: 'Laden Sie payload-crowdin-sync auf npm herunter!',
+                href: 'https://www.npmjs.com/package/payload-crowdin-sync',
+              },
             },
           },
           '65d67d8191c92e447e7472f8': {

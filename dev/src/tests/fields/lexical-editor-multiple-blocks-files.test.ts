@@ -1,4 +1,4 @@
-import { fixture } from './lexical-editor-with-multiple-blocks.fixture'
+import { fixture, fixture2 } from './lexical-editor-with-multiple-blocks.fixture'
 import { getFilesByDocumentID, isDefined } from 'payload-crowdin-sync'
 import type { Payload } from 'payload'
 import { CrowdinArticleDirectory, Policy } from '../../payload-types'
@@ -91,7 +91,7 @@ describe('Lexical editor with multiple blocks - Files', () => {
             },
             {
               title: 'Test sub-policy 2',
-              content: injectImageRelationship(structuredClone(fixture), mediaID),
+              content: injectImageRelationship(structuredClone(fixture2), mediaID),
             },
           ],
         },
@@ -123,6 +123,20 @@ describe('Lexical editor with multiple blocks - Files', () => {
     })
     expect(fileOneCrowdinFiles.length).toEqual(2)
     expect(fileTwoCrowdinFiles.length).toEqual(2)
+    const fileOneHighlightHtml = fileOneCrowdinFiles.find(
+      (file) =>
+        file.field?.endsWith('.highlight.content') && file.field?.startsWith('blocks.'),
+    )
+    const fileTwoHighlightHtml = fileTwoCrowdinFiles.find(
+      (file) =>
+        file.field?.endsWith('.highlight.content') && file.field?.startsWith('blocks.'),
+    )
+    expect(fileOneHighlightHtml?.fileData?.html).toMatchInlineSnapshot(
+      `"<p>The plugin parses your block configuration for the Lexical rich text editor. It extracts all block values from the rich text field and then treats this config/data combination as a regular \`blocks\` field.</p><p>Markers are placed in the html and this content is restored into the correct place on translation.</p>"`,
+    )
+    expect(fileTwoHighlightHtml?.fileData?.html).toMatchInlineSnapshot(
+      `"<p>The plugin parses your block configuration for the Lexical rich text editor. It extracts all block values from the rich text field and then treats this config/data combination as a regular \`blocks\` field.</p><p>Markers are placed in the html and this content is restored into the correct place on translation.</p>"`,
+    )
     expect(htmlFileOne?.fileData?.html).toMatchInlineSnapshot(`
       "<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li
                 class=""
@@ -139,7 +153,7 @@ describe('Lexical editor with multiple blocks - Files', () => {
               ></li></ul>"
     `)
     expect(htmlFileTwo?.fileData?.html).toMatchInlineSnapshot(`
-      "<p>Sample content for a Lexical rich text field with multiple blocks.</p><span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li
+      "<span data-block-id=65d67d2591c92e447e7472f7 data-block-type=cta></span><p>A bulleted list in-between some blocks consisting of:</p><ul class="list-bullet"><li
                 class=""
                 style=""
                 value="1"
