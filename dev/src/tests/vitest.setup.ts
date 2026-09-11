@@ -1,7 +1,8 @@
 import console from 'node:console'
 import nodemailer from 'nodemailer'
-import { vi } from 'vitest'
+import { beforeEach, vi } from 'vitest'
 
+import { setupCrowdinDirectoryVerificationNocks } from './helpers/crowdin-nock.js'
 import { generateDatabaseAdapter } from './generateDatabaseAdapter.js'
 
 global.console = console
@@ -29,4 +30,8 @@ if (!process.env.PAYLOAD_DATABASE) {
 }
 
 generateDatabaseAdapter(process.env.PAYLOAD_DATABASE)
+
+beforeEach(() => {
+  setupCrowdinDirectoryVerificationNocks()
+})
 

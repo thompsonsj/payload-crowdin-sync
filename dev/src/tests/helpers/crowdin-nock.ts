@@ -1,11 +1,33 @@
 import nock from 'nock'
 import type { PluginOptions } from 'payload-crowdin-sync'
 import { mockCrowdinClient } from 'payload-crowdin-sync'
+import { pluginConfig } from './plugin-config.js'
 
 /** Crowdin API origin used by `@crowdin/crowdin-api-client` when `organization` is unset. */
 export const CROWDIN_API_ORIGIN = 'https://api.crowdin.com'
 
 export type CrowdinMockClient = ReturnType<typeof mockCrowdinClient>
+
+/**
+ * Optional GET mocks for directory verification (`getDirectory`) when Payload
+ * already has directory records from a prior test in the same suite.
+ */
+export function setupCrowdinDirectoryVerificationNocks(
+  pluginOptions: PluginOptions = pluginConfig(),
+  mockClient: CrowdinMockClient = mockCrowdinClient(pluginOptions),
+): void {
+  const { projectId } = pluginOptions
+
+  nock(CROWDIN_API_ORIGIN)
+    .get(new RegExp(`^/api/v2/projects/${projectId}/directories/\\d+$`))
+    .optionally()
+    .times(100)
+    .reply(200, (uri: string) => {
+      const match = uri.match(/\/directories\/(\d+)$/)
+      const id = match ? parseInt(match[1], 10) : 1169
+      return mockClient.getDirectory({ id })
+    })
+}
 
 /**
  * Remove all nock interceptors. Call at the start of each test so a failed
@@ -14,6 +36,7 @@ export type CrowdinMockClient = ReturnType<typeof mockCrowdinClient>
  */
 export function cleanCrowdinNocks(): void {
   nock.cleanAll()
+  setupCrowdinDirectoryVerificationNocks()
 }
 
 /**

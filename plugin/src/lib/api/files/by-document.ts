@@ -12,7 +12,10 @@ import type {
   PayloadRequest,
 } from 'payload';
 import { toWords } from 'payload';
-import { isCrowdinNameConflictError } from '.';
+import {
+  isCrowdinDirectoryNotFoundError,
+  isCrowdinNameConflictError,
+} from '.';
 import {
   payloadCrowdinSyncDocumentFilesApi,
 } from './document';
@@ -32,8 +35,11 @@ import {
   SourceFilesModel,
 } from '@crowdin/crowdin-api-client';
 
+const DIRECTORY_SELF_CLEAN_MAX_ATTEMPTS = 1;
+
 interface IfindOrCreateCollectionDirectory {
   collectionSlug: CollectionSlug | 'globals';
+  selfCleanAttempt?: number;
 }
 
 export interface IfilesApiByDocumentOptions {
@@ -215,8 +221,12 @@ export class filesApiByDocument {
       : this.document.id;
 
     const found =
-      (await this.findArticleDirectoryByPolymorphicLink(documentId)) ??
-      (await this.findArticleDirectoryByLegacyField());
+      (await this.ensureValidArticleDirectory(
+        await this.findArticleDirectoryByPolymorphicLink(documentId),
+      )) ??
+      (await this.ensureValidArticleDirectory(
+        await this.findArticleDirectoryByLegacyField(),
+      ));
 
     if (found) {
       this.articleDirectory = found;
@@ -227,7 +237,9 @@ export class filesApiByDocument {
       collectionSlug: this.global ? 'globals' : this.collectionSlug,
     });
 
-    const existing = await this.findArticleDirectoryInPayload(collectionDirectory);
+    const existing = await this.ensureValidArticleDirectory(
+      await this.findArticleDirectoryInPayload(collectionDirectory),
+    );
     if (existing) {
       this.articleDirectory = existing;
       return existing;
@@ -361,6 +373,7 @@ export class filesApiByDocument {
 
   private async findOrCreateCollectionDirectory({
     collectionSlug,
+    selfCleanAttempt = 0,
   }: IfindOrCreateCollectionDirectory): Promise<
     CrowdinCollectionDirectory | undefined
   > {
@@ -437,9 +450,89 @@ export class filesApiByDocument {
       });
     } else {
       crowdinPayloadCollectionDirectory = query.docs[0];
+
+      if (!this.disableSelfClean) {
+        const originalId = crowdinPayloadCollectionDirectory.originalId as number;
+        if (
+          typeof originalId === 'number' &&
+          !(await this.verifyDirectoryOnCrowdin(originalId))
+        ) {
+          const nextAttempt = selfCleanAttempt + 1;
+          if (nextAttempt > DIRECTORY_SELF_CLEAN_MAX_ATTEMPTS) {
+            throw new Error(
+              `Stale Crowdin collection directory "${collectionSlug}" could not be recreated after self-clean`,
+            );
+          }
+          await this.deleteStaleCollectionDirectory(
+            crowdinPayloadCollectionDirectory as CrowdinCollectionDirectory,
+          );
+          return this.findOrCreateCollectionDirectory({
+            collectionSlug,
+            selfCleanAttempt: nextAttempt,
+          });
+        }
+      }
     }
 
     return crowdinPayloadCollectionDirectory as CrowdinCollectionDirectory;
+  }
+
+  private get disableSelfClean(): boolean {
+    return !!this.pluginOptions.disableSelfClean;
+  }
+
+  private async verifyDirectoryOnCrowdin(originalId: number): Promise<boolean> {
+    try {
+      await this.sourceFilesApi.getDirectory(this.projectId, originalId);
+      return true;
+    } catch (error) {
+      if (isCrowdinDirectoryNotFoundError(error)) {
+        return false;
+      }
+      throw error;
+    }
+  }
+
+  private async deleteStaleCollectionDirectory(
+    directory: CrowdinCollectionDirectory,
+  ): Promise<void> {
+    await this.req.payload.delete({
+      collection: 'crowdin-collection-directories',
+      id: directory.id,
+      req: this.req,
+      overrideAccess: true,
+    });
+  }
+
+  private async deleteStaleArticleDirectory(
+    directory: CrowdinArticleDirectory,
+  ): Promise<void> {
+    await this.req.payload.delete({
+      collection: 'crowdin-article-directories',
+      id: directory.id,
+      req: this.req,
+      overrideAccess: true,
+    });
+  }
+
+  private async ensureValidArticleDirectory(
+    directory: CrowdinArticleDirectory | undefined,
+  ): Promise<CrowdinArticleDirectory | undefined> {
+    if (!directory || this.disableSelfClean) {
+      return directory;
+    }
+
+    const originalId = directory.originalId as number;
+    if (typeof originalId !== 'number') {
+      return directory;
+    }
+
+    if (await this.verifyDirectoryOnCrowdin(originalId)) {
+      return directory;
+    }
+
+    await this.deleteStaleArticleDirectory(directory);
+    return undefined;
   }
 
   /**
@@ -517,12 +610,14 @@ export class filesApiByDocument {
     crowdinPayloadCollectionDirectory,
     name,
     useAsTitle,
+    selfCleanAttempt = 0,
   }: {
     parent?: CrowdinArticleDirectory;
     crowdinPayloadCollectionDirectory?: CrowdinCollectionDirectory;
     name: string;
     useAsTitle?: string;
-  }) {
+    selfCleanAttempt?: number;
+  }): Promise<CrowdinArticleDirectory | undefined> {
     try {
       // Check if directory already exists in Payload database
       const existingDirectory =
@@ -532,8 +627,11 @@ export class filesApiByDocument {
           name,
         }));
       if (existingDirectory) {
-        // Directory already exists in Payload
-        return existingDirectory;
+        const validDirectory =
+          await this.ensureValidArticleDirectory(existingDirectory);
+        if (validDirectory) {
+          return validDirectory;
+        }
       }
 
       const parentDirectoryId = (parent
@@ -562,7 +660,41 @@ export class filesApiByDocument {
           parent,
         });
         return result as CrowdinArticleDirectory;
-      } catch (createError: any) {
+      } catch (createError: unknown) {
+        if (
+          !this.disableSelfClean &&
+          !isCrowdinNameConflictError(createError) &&
+          isCrowdinDirectoryNotFoundError(createError)
+        ) {
+          if (parent) {
+            await this.deleteStaleArticleDirectory(parent);
+            return undefined;
+          } else if (crowdinPayloadCollectionDirectory) {
+            const nextAttempt = selfCleanAttempt + 1;
+            if (nextAttempt > DIRECTORY_SELF_CLEAN_MAX_ATTEMPTS) {
+              throw createError;
+            }
+            await this.deleteStaleCollectionDirectory(
+              crowdinPayloadCollectionDirectory,
+            );
+            const refreshedCollectionDirectory =
+              await this.findOrCreateCollectionDirectory({
+                collectionSlug:
+                  crowdinPayloadCollectionDirectory.collectionSlug as
+                    | CollectionSlug
+                    | 'globals',
+                selfCleanAttempt: nextAttempt,
+              });
+            return this.crowdinFindOrCreateDirectory({
+              parent,
+              crowdinPayloadCollectionDirectory: refreshedCollectionDirectory,
+              name,
+              useAsTitle,
+              selfCleanAttempt: nextAttempt,
+            });
+          }
+        }
+
         if (isCrowdinNameConflictError(createError)) {
           if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
             console.log(
@@ -618,6 +750,7 @@ export class filesApiByDocument {
       }
     } catch (error) {
       console.error(error);
+      throw error;
     }
   }
 
