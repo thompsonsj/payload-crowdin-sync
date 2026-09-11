@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.42.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.42.1...payload-crowdin-sync-v0.42.2) (2026-09-11)
+
+
+### Bug Fixes
+
+* **plugin:** self-clean stale Crowdin directory records on 404 ([#361](https://github.com/thompsonsj/payload-crowdin-sync/issues/361)) ([648af70](https://github.com/thompsonsj/payload-crowdin-sync/commit/648af708f65ff13306f04cd6b6d79e123fa74f6e))
+
 ## [0.42.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.42.0...payload-crowdin-sync-v0.42.1) (2026-06-08)
 
 
