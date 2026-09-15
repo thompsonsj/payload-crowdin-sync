@@ -4,6 +4,7 @@ import { utilities } from 'payload-crowdin-sync'
 import type { Payload } from 'payload'
 import {
   injectImageRelationship,
+  resetLexicalMultipleBlocksCrowdinDirectories,
   setupLexicalMultipleBlocksTest,
   SNAPSHOT_MEDIA_ID,
   teardownLexicalMultipleBlocksTest,
@@ -19,8 +20,9 @@ describe('Lexical editor with multiple blocks - Build', () => {
   beforeAll(async () => {
     ;({ payload, mediaID } = await setupLexicalMultipleBlocksTest())
   })
-  beforeEach(() => {
+  beforeEach(async () => {
     cleanCrowdinNocks()
+    await resetLexicalMultipleBlocksCrowdinDirectories(payload)
   })
   afterEach(() => {
     assertCrowdinNocksDone()
@@ -266,7 +268,7 @@ describe('Lexical editor with multiple blocks - Build', () => {
     `)
   })
   it('builds a Crowdin JSON object as expected', async () => {
-    nockLexical().directories(2).storages(4).files(4).build()
+    nockLexical().directories(3).storages(4).files(4).build()
     const policy = await payload.create({
       collection: 'policies',
       data: {
@@ -286,7 +288,7 @@ describe('Lexical editor with multiple blocks - Build', () => {
     `)
   })
   it('builds a Payload update object as expected', async () => {
-    nockLexical().directories(2).storages(4).files(4).build()
+    nockLexical().directories(3).storages(4).files(4).build()
     const createdPolicy = await payload.create({
       collection: 'policies',
       data: {
