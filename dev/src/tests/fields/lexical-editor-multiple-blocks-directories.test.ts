@@ -53,7 +53,18 @@ describe('Lexical editor with multiple blocks - Directories', () => {
       parent: policy.crowdinArticleDirectory,
     })) as any
     expect(lexicalBlocksArticleDirectory).toBeDefined()
-    // Important: ensure an article directory was not queried/returned without a parent
-    expect(lexicalBlocksArticleDirectory?.parent).toBeDefined()
+
+    const policyArticleDirectoryId =
+      typeof policy.crowdinArticleDirectory === 'object' &&
+      policy.crowdinArticleDirectory !== null
+        ? policy.crowdinArticleDirectory.id
+        : policy.crowdinArticleDirectory
+    const lexicalParentId =
+      typeof lexicalBlocksArticleDirectory.parent === 'object' &&
+      lexicalBlocksArticleDirectory.parent !== null
+        ? lexicalBlocksArticleDirectory.parent.id
+        : lexicalBlocksArticleDirectory.parent
+
+    expect(lexicalParentId).toBe(policyArticleDirectoryId)
   })
 })
