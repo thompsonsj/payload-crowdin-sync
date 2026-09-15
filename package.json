@@ -4,6 +4,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
+    "generate:importmaps": "cd dev && npm run generate:importmap && cd ../dev-alternative-config && npm run generate:importmap",
     "release": "nx build plugin && cd dist/plugin && npm publish",
     "test": "nx run-many --all --target=test",
     "docs:serve": "nx run docs-site:serve",

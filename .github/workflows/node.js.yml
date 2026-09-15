@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     strategy:
       matrix:
@@ -24,6 +26,29 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - run: npm install
+      - name: Verify Payload import maps are up to date
+        run: |
+          set -euo pipefail
+          import_map_error='Payload import maps are stale. Run '\''npm run generate:importmaps'\'' and commit the updated files.'
+          import_map_paths=(
+            "dev/src/app/(payload)/admin/importMap.js"
+            "dev-alternative-config/src/app/(payload)/admin/importMap.js"
+          )
+          for path in "${import_map_paths[@]}"; do
+            if [ ! -f "$path" ]; then
+              echo "::error::$import_map_error (missing: $path)"
+              exit 1
+            fi
+            if ! git ls-files --error-unmatch "$path" >/dev/null 2>&1; then
+              echo "::error::$import_map_error (untracked: $path)"
+              exit 1
+            fi
+          done
+          npm run generate:importmaps
+          git diff --exit-code "${import_map_paths[@]}" || (
+            echo "::error::$import_map_error"
+            exit 1
+          )
       - name: Typecheck (plugin build)
         run: npx nx run plugin:build
       - name: Typecheck (plugin unit tests)
