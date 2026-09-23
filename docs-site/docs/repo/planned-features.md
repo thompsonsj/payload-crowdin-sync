@@ -138,7 +138,7 @@ These were planned in the 2023 todo list or in issues, and have since been built
 - **UI for syncing translations:** the "Sync translations" and "Sync all translations" checkboxes on each document, plus the review and update endpoints.
 - **Required field handling:** translation updates that are missing required fields aren't applied, and validation errors are returned instead.
 - **Document folder names from `useAsTitle`:** [#211](https://github.com/thompsonsj/payload-crowdin-sync/pull/211).
-- **Self-clean when Crowdin returns 404:** files in [#213](https://github.com/thompsonsj/payload-crowdin-sync/pull/213), directories in [#361](https://github.com/thompsonsj/payload-crowdin-sync/pull/361). This covers [#147](https://github.com/thompsonsj/payload-crowdin-sync/issues/147) and [#360](https://github.com/thompsonsj/payload-crowdin-sync/issues/360), which are both still open.
+- **Self-clean when Crowdin returns 404:** files in [#213](https://github.com/thompsonsj/payload-crowdin-sync/pull/213), directories in [#361](https://github.com/thompsonsj/payload-crowdin-sync/pull/361). This covers [#147](https://github.com/thompsonsj/payload-crowdin-sync/issues/147) and [#360](https://github.com/thompsonsj/payload-crowdin-sync/issues/360).
 
 ## Not planned
 
