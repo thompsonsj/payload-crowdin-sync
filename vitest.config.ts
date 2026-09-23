@@ -1,11 +1,23 @@
 import path from 'node:path'
 import { defineConfig } from 'vitest/config'
 
+const coverageExclude = [
+  '**/*.{spec,test}.ts',
+  '**/tests/**',
+  '**/*.d.ts',
+  '**/payload-types.ts',
+]
+
 // Mimic payloadcms/payload: one root vitest config using `projects`.
 export default defineConfig({
   test: {
     watch: false,
     retry: process.env.CI ? 2 : 0,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'text-summary', 'lcov', 'html', 'cobertura'],
+      exclude: coverageExclude,
+    },
     projects: [
       {
         test: {

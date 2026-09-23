@@ -6,6 +6,8 @@ name: Node.js CI
 on:
   pull_request:
     branches: ["main"]
+  push:
+    branches: ["main"]
 
 jobs:
   build:
@@ -53,4 +55,23 @@ jobs:
         run: npx nx run plugin:build
       - name: Typecheck (plugin unit tests)
         run: npx tsc -p plugin/tsconfig.spec.json --noEmit
-      - run: npm run test
+      - name: Test with coverage
+        run: npm run test:coverage
+      - name: Upload coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: coverage/**
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: coverage
+          flags: unittests
+          name: payload-crowdin-sync
+          fail_ci_if_error: false
+          verbose: true

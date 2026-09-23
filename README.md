@@ -16,7 +16,10 @@ Monorepo containing:
 ```bash
 npm install
 npm run test
+npm run test:coverage
 ```
+
+CI uploads `coverage/**` to Codecov (requires the `CODECOV_TOKEN` repository secret).
 
 After changing Payload admin components in `dev/` or `dev-alternative-config/`, regenerate import maps:
 
