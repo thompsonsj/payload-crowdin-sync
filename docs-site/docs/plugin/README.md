@@ -437,4 +437,4 @@ The document will be updated and the same report will be generated as for a revi
 - Crowdin collections: [`crowdin.md`](./crowdin.md)
 - NX generated docs: [`nx.md`](./nx.md)
 
-Note: This plugin is still in development. A todo list is maintained at [`development.md`](./development.md).
+Note: This plugin is still in development. Planned features are listed in [`repo/planned-features.md`](../repo/planned-features.md).
