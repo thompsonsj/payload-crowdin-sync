@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import type { Config } from 'payload'
 import { crowdinSync } from './plugin'
 
@@ -247,5 +247,28 @@ describe('crowdinSync — Document tab in crowdin-article-directories', () => {
     expect(tab).toBeDefined()
     expect(tab.fields.map((f: any) => f.name)).toContain('collectionDocument')
     expect(tab.fields.map((f: any) => f.name)).toContain('globalSlug')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// onInit
+// ---------------------------------------------------------------------------
+
+describe('crowdinSync — onInit', () => {
+  it('calls the existing config onInit with the payload instance', async () => {
+    const onInit = vi.fn()
+    const payload = { name: 'payload' } as any
+    const output = crowdinSync(basePluginOptions)({ ...buildConfig(), onInit })
+
+    await output.onInit?.(payload)
+
+    expect(onInit).toHaveBeenCalledTimes(1)
+    expect(onInit).toHaveBeenCalledWith(payload)
+  })
+
+  it('does not throw when the existing config has no onInit', async () => {
+    const output = crowdinSync(basePluginOptions)(buildConfig())
+
+    await expect(output.onInit?.({} as any)).resolves.toBeUndefined()
   })
 })

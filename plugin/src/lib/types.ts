@@ -7,6 +7,7 @@ import {
   CrowdinArticleDirectory,
   CrowdinCollectionDirectory,
 } from './payload-types';
+import { isPopulatedRelationship } from './utilities/payload';
 
 type CollectionOrGlobalConfigSlug = string;
 type CollectionOrGlobalConfigObject = {
@@ -71,13 +72,9 @@ export type FieldWithName = Field & { name: string };
 
 // Type checkers
 export const isCrowdinArticleDirectory = (
-  val: CrowdinArticleDirectory | string | undefined | null,
-): val is CrowdinArticleDirectory => {
-  return val !== undefined && val !== null && typeof val !== 'string';
-};
+  val: CrowdinArticleDirectory | string | number | undefined | null,
+): val is CrowdinArticleDirectory => isPopulatedRelationship(val);
 
 export const isCrowdinCollectionDirectory = (
-  val: CrowdinCollectionDirectory | string | undefined | null,
-): val is CrowdinCollectionDirectory => {
-  return val !== undefined && val !== null && typeof val !== 'string';
-};
+  val: CrowdinCollectionDirectory | string | number | undefined | null,
+): val is CrowdinCollectionDirectory => isPopulatedRelationship(val);
