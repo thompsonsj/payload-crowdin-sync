@@ -1,10 +1,12 @@
 import { CrowdinArticleDirectory } from '../payload-types';
 
-export const isNotString = <T>(
-  val: T | string | undefined | null,
-): val is T => {
-  return val !== undefined && val !== null && typeof val !== 'string';
-};
+/**
+ * A relationship value is either a populated document or an unpopulated id
+ * (a string on MongoDB, a number on SQL adapters).
+ */
+export const isPopulatedRelationship = <T extends object>(
+  val: T | string | number | undefined | null,
+): val is T => typeof val === 'object' && val !== null;
 
 export const getRelationshipId = (
   relationship?: string | CrowdinArticleDirectory | null,
@@ -12,7 +14,7 @@ export const getRelationshipId = (
   if (!relationship) {
     return undefined;
   }
-  if (isNotString(relationship)) {
+  if (isPopulatedRelationship(relationship)) {
     return relationship.id;
   }
   return relationship;

@@ -164,7 +164,7 @@ A comment in the source already flags this: `"find a better way to do this - blo
 
 **Pass 1 — items 2, 4, 5**
 
-- **Item 2:** `isCrowdinArticleDirectory` and `isCrowdinCollectionDirectory` delegate to `isNotString`. There were no existing type guard tests; `types.spec.ts` now covers both guards and asserts they agree with `isNotString`.
+- **Item 2:** `isNotString` is replaced by `isPopulatedRelationship`, which checks for an object instead of "not a string". The old name described one of three things it ruled out, and it misreported numeric ids (unpopulated relationships on SQL adapters) as populated documents. `isCrowdinArticleDirectory` and `isCrowdinCollectionDirectory` delegate to it. There were no existing type guard tests; `types.spec.ts` and `utilities/payload.spec.ts` now cover the guards, including numeric ids.
 - **Item 4:** `initFunctions` removed. `onInit` still forwards to the host config's `onInit`, now covered in `plugin.spec.ts`.
 - **Item 5:** `buildDocumentTabFields` lives in `fields/documentTabFields.ts`, returns `Field[]`, and has focused tests in `documentTabFields.spec.ts`.
 
