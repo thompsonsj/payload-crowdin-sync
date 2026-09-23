@@ -45,7 +45,7 @@ interface FieldTraversalVisitor<T> {
 
 ---
 
-### 2. Consolidate identical type guard bodies in `types.ts` and `utilities/payload.ts`
+### 2. Consolidate identical type guard bodies in `types.ts` and `utilities/payload.ts` ✅
 
 **Files:** `plugin/src/lib/types.ts:73–83`, `plugin/src/lib/utilities/payload.ts:3–7`
 
@@ -103,7 +103,7 @@ const createSyncAfterChangeHook = (mode: SyncMode, pluginOptions: PluginOptions)
 
 ---
 
-### 4. Remove unused `initFunctions` in `plugin.ts`
+### 4. Remove unused `initFunctions` in `plugin.ts` ✅
 
 **File:** `plugin/src/lib/plugin.ts:68` and `plugin/src/lib/plugin.ts:331`
 
@@ -115,7 +115,7 @@ const createSyncAfterChangeHook = (mode: SyncMode, pluginOptions: PluginOptions)
 
 ---
 
-### 5. Extract `documentTabFields` builder from `plugin.ts`
+### 5. Extract `documentTabFields` builder from `plugin.ts` ✅
 
 **File:** `plugin/src/lib/plugin.ts:96–118`
 
@@ -162,7 +162,13 @@ A comment in the source already flags this: `"find a better way to do this - blo
 
 ## Completed work
 
-*(none yet — all items above are pending)*
+**Pass 1 — items 2, 4, 5**
+
+- **Item 2:** `isCrowdinArticleDirectory` and `isCrowdinCollectionDirectory` delegate to `isNotString`. There were no existing type guard tests; `types.spec.ts` now covers both guards and asserts they agree with `isNotString`.
+- **Item 4:** `initFunctions` removed. `onInit` still forwards to the host config's `onInit`, now covered in `plugin.spec.ts`.
+- **Item 5:** `buildDocumentTabFields` lives in `fields/documentTabFields.ts`, returns `Field[]`, and has focused tests in `documentTabFields.spec.ts`.
+
+Remaining: items 1, 3 and 6.
 
 ---
 
