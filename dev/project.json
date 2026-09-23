@@ -21,8 +21,14 @@
     },
     "test": {
       "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/dev"],
       "options": {
         "command": "vitest run --project dev"
+      },
+      "configurations": {
+        "ci": {
+          "command": "vitest run --project dev --coverage --coverage.reportsDirectory=coverage/dev --coverage.include=dev/src/**/*.ts --coverage.include=plugin/src/**/*.ts"
+        }
       }
     }
   }

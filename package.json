@@ -7,6 +7,7 @@
     "generate:importmaps": "cd dev && npm run generate:importmap && cd ../dev-alternative-config && npm run generate:importmap",
     "release": "nx build plugin && cd dist/plugin && npm publish",
     "test": "nx run-many --all --target=test",
+    "test:coverage": "nx run-many --all --target=test --configuration=ci",
     "docs:serve": "nx run docs-site:serve",
     "docs:build": "nx run docs-site:build"
   },
@@ -57,6 +58,7 @@
     "@types/react-dom": "19.2.5",
     "@typescript-eslint/eslint-plugin": "8.69.0",
     "@typescript-eslint/parser": "8.69.0",
+    "@vitest/coverage-v8": "^4.1.11",
     "copyfiles": "^2.4.1",
     "cross-env": "^10.1.0",
     "eslint": "10.9.1",

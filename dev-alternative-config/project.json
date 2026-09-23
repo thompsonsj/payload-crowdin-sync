@@ -21,8 +21,14 @@
     },
     "test": {
       "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/dev-alternative-config"],
       "options": {
         "command": "vitest run --project dev-alternative-config"
+      },
+      "configurations": {
+        "ci": {
+          "command": "vitest run --project dev-alternative-config --coverage --coverage.reportsDirectory=coverage/dev-alternative-config --coverage.include=dev-alternative-config/src/**/*.ts --coverage.include=plugin/src/**/*.ts"
+        }
       }
     }
   }
