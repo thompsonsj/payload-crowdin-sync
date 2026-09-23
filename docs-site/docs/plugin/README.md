@@ -1,21 +1,31 @@
-# Payload Crowdin Sync Plugin
+---
+sidebar_position: 1
+description: Install and configure payload-crowdin-sync, upload content to Crowdin, and load translations back into Payload.
+---
 
-Automatically upload/sync localized fields from the default locale to Crowdin. Load translations from Crowdin into Payload CMS.
+# Getting started
+
+Install the plugin, configure it, and sync content between Payload and Crowdin.
 
 Table of contents:
 
 - [Install](#install)
 - [Database changes](#database-changes)
 - [Options](#options)
+- [Environment variables](#environment-variables)
 - [Sync translations](#sync-translations)
+- [Delete documents](#delete-documents)
 - [Further documentation](#further-documentation)
 
 ## Install
 
-- Payload version `3.0` or higher is required
+Requirements:
 
-```
-#npm
+- Payload 3
+- A Crowdin project and a [personal access token](https://support.crowdin.com/account-settings/#personal-access-tokens) with access to it
+
+```bash
+# npm
 npm install payload-crowdin-sync
 
 # yarn
@@ -32,7 +42,6 @@ export default buildConfig({
     crowdinSync({
       projectId: 323731,
       token: process.env.CROWDIN_TOKEN,
-      organization: process.env.CROWDIN_ORGANIZATION,
       localeMap: {
         de_DE: {
           crowdinId: 'de',
@@ -56,9 +65,12 @@ This plugin adds three collections to your database:
 - `crowdin-article-directories`
 - `crowdin-collection-directories`
 
-Localized documents have an extra field added to them - `crowdinArticleDirectory`.
+Enabled documents also get these fields, which aren't stored in your database:
 
-For details, see [`crowdin.md`](./crowdin.md).
+- `syncTranslations` and `syncAllTranslations` checkboxes, which load translations on save (see [virtual fields](#virtual-fields)).
+- `crowdinArticleDirectory`, a relationship to the document's Crowdin folder, looked up when the document is read.
+
+For details, see [how documents map to Crowdin](./crowdin.md).
 
 ## Options
 
@@ -98,21 +110,21 @@ The Payload locale that syncs to source translations (files) on Crowdin.
 
 ### `token`
 
-Your [Crowdin API token](https://support.crowdin.com/enterprise/personal-access-tokens/). If empty, changes to files are disabled.
+Your Crowdin API token: a [personal access token](https://support.crowdin.com/account-settings/#personal-access-tokens) on crowdin.com, or an [Enterprise token](https://support.crowdin.com/enterprise/personal-access-tokens/). If empty, the plugin doesn't upload or delete anything in Crowdin.
 
 ```js
 {
-  token: 'xxxxxxx',
+  token: process.env.CROWDIN_TOKEN,
 }
 ```
 
-### `organizationId` (required)
+### `organization`
 
-Your [Crowdin organization ID](https://support.crowdin.com/enterprise/organization/).
+Your Crowdin Enterprise organization domain, for example `acme` for `acme.crowdin.com`. Leave it empty if you use crowdin.com.
 
 ```js
 {
-  organizationId: 200000000,
+  organization: process.env.CROWDIN_ORGANIZATION,
 }
 ```
 
@@ -284,6 +296,8 @@ Common places to look in the `slate-serializers` docs:
 - **`slateToDom`** (used under the hood by `slateToHtml`): `elementMap`, `elementTransforms`, `markMap`, `markTransforms`
 - **`htmlToSlate`**: `elementTags`, `elementStyleMap`, `htmlPreProcessString`, `filterWhitespaceNodes`
 
+These options only affect Slate fields. See [serializer configuration](./serializer.md) for a worked example.
+
 ### `pluginCollectionAccess`
 
 `access` collection config to pass to all the Crowdin collections created by this plugin.
@@ -326,16 +340,47 @@ Default `lex.`. Used as a prefix when constructing directory names for Lexical b
 }
 ```
 
-### Environment variables
+### `disableSelfClean`
 
-Set `PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE=true` to update all localized fields in Crowdin when an article is created/updated.
+Default `false`. The plugin keeps records of the files and folders it creates in Crowdin. If someone deletes one of them in Crowdin, the plugin notices and repairs its records:
 
-By default, updates will only be sent to Crowdin in the following scenarios.
+- When loading translations, a file that returns 404 has its `crowdin-files` record deleted. The file is uploaded again on the next save.
+- When saving, the plugin checks that the collection and document folders still exist in Crowdin. If a folder is missing, the stale record is deleted and the folder is created again.
 
-- At least one of the localized text fields has changed: any change to a localized `text` field updates the compiled `fields.json` that is sent to Crowdin.
-- A `richText` field is changed. Individual `richText` fields will only be updated on Crowdin if the content has changed - each field has its own file on Crowdin.
+The folder check costs one extra Crowdin API call per folder on each save. Set `disableSelfClean: true` to skip the checks and keep all records as they are.
 
-It is useful to have a convenient way of forcing all localized fields to update at once. For example, if the plugin is activated on an existing install, it is convenient to trigger all updates on Crowdin for a given article without having to change every `richText` field or one of the `text` fields.
+```js
+{
+  disableSelfClean: true,
+}
+```
+
+### `deleteCrowdinFiles`
+
+Default `false`. When a document is deleted, or a localized field is emptied, the plugin always deletes its own records for the affected files and folders. Set `deleteCrowdinFiles: true` to delete the source files and folders in Crowdin as well.
+
+This is off by default because deleting a source file in Crowdin also deletes its translations.
+
+```js
+{
+  deleteCrowdinFiles: true,
+}
+```
+
+## Environment variables
+
+| Variable | Effect |
+| --- | --- |
+| `PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE=true` | Upload all localized fields on every save, not only the ones that changed. |
+| `PAYLOAD_CROWDIN_SYNC_USE_JOBS` | Any non-empty value queues translation syncs as Payload jobs instead of running them during save. See [virtual fields](#virtual-fields). |
+| `PAYLOAD_CROWDIN_SYNC_VERBOSE` | Any non-empty value logs details of translation syncs to the console, for debugging. |
+
+By default, the plugin only uploads what changed:
+
+- Any change to a localized `text` or `textarea` field uploads the document's `fields.json` again.
+- A `richText` field is uploaded only if its content changed. Each one has its own file in Crowdin.
+
+`PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE` is useful when you add the plugin to an existing site: saving a document uploads all of its content without you having to edit every field.
 
 ## Sync translations
 
@@ -345,31 +390,7 @@ On save draft or publish, content from [localized fields](https://payloadcms.com
 
 <img width="1000" alt="Screenshot 2024-02-06 at 22 02 38" src="https://github.com/thompsonsj/payload-crowdin-sync/assets/44806974/2c31050d-fee4-4275-bca2-7e4b48743999" />
 
-#### Exclude fields
-
-In some cases, you may wish to localize fields but prevent them being synced to Crowdin. e.g. a slug field that autogenerates based on title.
-
-There are two ways to indicate to the plugin that a field should be ignored. In your field config:
-
-- add `{ custom: { crowdinSync: { disable: true } }}` (preferred); or
-- include the string `Not sent to Crowdin. Localize in the CMS.` in `admin.description` (may be removed in a future version).
-
-Example:
-
-```ts
-import type { Field } from 'payload';
-
-const field: Field = {
-  name: 'textLocalizedField',
-  type: 'text',
-  localized: true,
-  custom: {
-    crowdinSync: {
-      disable: true,
-    },
-  },
-};
-```
+See [supported fields](./fields.md) for which fields are sent, how nested fields are handled, and how to [exclude fields](./fields.md#exclude-fields).
 
 ### Download translations
 
@@ -387,8 +408,9 @@ When in a locale other than the source locale:
 
 <img width="766" alt="Screenshot 2024-02-06 at 22 08 48" src="https://github.com/thompsonsj/payload-crowdin-sync/assets/44806974/2aa9c493-7792-422f-bf8d-a91c23893682" />
 
-Set a `PAYLOAD_CROWDIN_SYNC_USE_JOBS` environment variable to a non-empty value (e.g. `true`) to add translation sync operations as jobs. This is a useful way to prevent hooks from running slowly. You'll need to execute the job queue seperately. See [
-Queues | Docs | Payload CMS](https://payloadcms.com/docs/jobs-queue/queues).
+The checkboxes appear once the document has been uploaded to Crowdin.
+
+Loading translations for many locales can make saving slow. Set `PAYLOAD_CROWDIN_SYNC_USE_JOBS` to a non-empty value (for example `true`) to queue the work as Payload jobs instead. The plugin registers a `crowdinSyncTranslations` task and queues one job per locale. You need to run the job queue yourself; see [Queues](https://payloadcms.com/docs/jobs-queue/queues) in the Payload docs.
 
 #### Endpoints
 
@@ -430,11 +452,18 @@ The document will be updated and the same report will be generated as for a revi
 - Use the `excludeLocales` field on documents in the `crowdin-article-directories` collection to prevent some locales from being included in the review/update operation.
 - If supplied translations do not contain required fields, translation updates will not be applied and validation errors will be returned in the API response.
 
+## Delete documents
+
+When you delete a document, the plugin deletes its `crowdin-files` records and its `crowdin-article-directories` record. Files in Crowdin are kept unless you set [`deleteCrowdinFiles`](#deletecrowdinfiles).
+
+If the document was never uploaded, or its Crowdin records are already gone, there is nothing to clean up and the delete goes ahead. An error deleting one file is logged and doesn't stop the rest.
+
 ## Further documentation
 
-- Development guidance: [`development.md`](./development.md)
-- Engineering decisions: [`repo/engineering.md`](../repo/engineering.md)
-- Crowdin collections: [`crowdin.md`](./crowdin.md)
-- NX generated docs: [`nx.md`](./nx.md)
+- [Supported fields](./fields.md)
+- [How documents map to Crowdin](./crowdin.md)
+- [Serializer configuration](./serializer.md)
+- [Development](./development.md)
+- [Engineering decisions](../repo/engineering.md)
 
 Note: This plugin is still in development. Planned features are listed in [`repo/planned-features.md`](../repo/planned-features.md).

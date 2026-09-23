@@ -1,6 +1,4 @@
-# PayloadCrowdinSyncNx
-
-Review the plugin docs at: https://github.com/thompsonsj/payload-crowdin-sync/blob/main/plugin/README.md.
+# Nx
 
 <a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45" /></a>
 

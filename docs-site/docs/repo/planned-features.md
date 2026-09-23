@@ -18,7 +18,7 @@ Each entry records the goal, its current status, and where it came from.
 
 **Source:** unticked item on the 2023 todo list ("Add option to make localized fields read-only in other locales").
 
-**Note:** `plugin/README.md`, the root `README.md` and `docs-site/docs/repo/README.md` already describe this as a feature ("Keep translated locales read-only in Payload", "Make these fields read-only in other locales"). Either implement it or reword those lines until it exists.
+**Note:** `plugin/README.md`, the root `README.md` and `docs-site/docs/repo/README.md` used to describe this as a feature. Those lines were removed until it exists.
 
 **Things to decide:**
 

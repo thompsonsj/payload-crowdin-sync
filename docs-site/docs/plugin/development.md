@@ -1,29 +1,31 @@
+---
+sidebar_position: 5
+description: Build, lint and test the plugin in the Nx monorepo.
+---
+
 # Development
 
 - [Monorepo](#monorepo)
 - [Build](#build)
-- [Format](#format)
 - [Lint](#lint)
 - [Test](#test)
+- [Import maps](#import-maps)
+- [Run a Payload install locally](#run-a-payload-install-locally)
 
 ## Monorepo
 
-The `payload-crowdin-sync` plugin is developed in the `plugin` folder.
+The repository is an [Nx](https://nx.dev) monorepo with these projects:
 
-Both the `dev` and `dev-alternative-config` folders contain configured local Payload CMS installations that use this plugin.
+- `plugin`: the `payload-crowdin-sync` package.
+- `dev` and `dev-alternative-config`: Payload installs that use the plugin, for integration tests. They configure the plugin differently: for example, `dev-alternative-config` limits `globals` to a list and uses a custom `slateToHtmlConfig`.
+- `docs-site`: this documentation site.
 
 ## Build
 
 In the root of the repository:
 
-- `nx build plugin` - build to `dist/plugin`.
-- `nx build plugin --watch` to build when files change.
-
-## Format
-
-- `nx prettier plugin`
-- `nx prettier dev`
-- `nx prettier dev-alternative-config`
+- `nx build plugin` builds to `dist/plugin`.
+- `nx build plugin --watch` rebuilds when files change.
 
 ## Lint
 
@@ -33,31 +35,36 @@ In the root of the repository:
 
 ## Test
 
-In the root of the repository:
+Tests use [Vitest](https://vitest.dev). In the root of the repository:
 
-- `npm run test` to execute unit and integration tests via [Jest](https://jestjs.io).
-- `nx test plugin` to run plugin tests only.
-- `nx test dev` to run integration tests against the `dev` Payload install.
-- `nx test dev-alternative-config` to run integration tests against the `dev-alternative-config` Payload install.
+- `npm run test` runs all tests.
+- `npm run test:coverage` runs all tests with coverage. Reports are written to `coverage/<project>`.
+- `nx test plugin` runs unit tests only.
+- `nx test dev` and `nx test dev-alternative-config` run integration tests against one Payload install.
 
-Plugin test coverage is not 100%, but seeks to cover as many use cases as possible. This includes:
+Unit tests (`*.spec.ts`) sit next to the code they test in `plugin/src`. Many of them cover the recursive functions that find and rebuild localized fields.
 
-- Testing various field configurations for a collection.
-- Using `nock` to intercept calls to the Crowdin API and ensure the right calls are being made.
-- Unit tests to cover as many cases as possible for the supporting functions, which include a lot of recursion.
+Integration tests (`*.test.ts`) are in `dev/src/tests` and `dev-alternative-config/src/tests`. They use Payload's [Local API](https://payloadcms.com/docs/local-api/overview) against a real Payload install with an in-memory MongoDB database. Calls to the Crowdin API are intercepted with [`nock`](https://github.com/nock/nock), so tests check which requests the plugin makes without needing a Crowdin account.
 
-### Jest
+CI runs `npm run test:coverage` and uploads the results to [Codecov](https://about.codecov.io). This needs the `CODECOV_TOKEN` repository secret.
 
-A Jest test suite is included comprising of:
+## Import maps
 
-- unit tests (`*.spec.ts`) within the `src` folder adjacent to files/functions that they are testing; and
-- integration tests (`*.test.ts`) in the `dev/src/lib/tests` folder.
-- integration tests (`*.test.ts`) in the `dev-alternative-config/src/lib/tests` folder.
+Payload finds custom admin components through an import map. After changing admin components in `dev/` or `dev-alternative-config/`, regenerate both:
 
-### Integration
+```bash
+npm run generate:importmaps
+```
 
-Integration tests use Payload's [Local API](https://payloadcms.com/docs/local-api/overview) to run tests against a configured Payload installation in both the `dev` and `dev-alternative-config` folder. Test configuration is based on the way tests are configured in https://github.com/payloadcms/payload/tree/main/test.
+CI fails if a committed import map is missing or out of date.
 
-### Fixtures
+Running the integration tests can overwrite both `importMap.js` files with an empty map. Restore them with `git restore` before committing.
 
-Use `nx dev dev` or `nx dev dev-alternative-config` to run either of the local Payload installations. These local instances can be used to generate fixtures for use with integration tests.
+## Run a Payload install locally
+
+```bash
+cd dev
+npm run dev
+```
+
+Use the same command in `dev-alternative-config`. A local install is useful for trying out changes in the admin panel, and for generating fixtures for integration tests.

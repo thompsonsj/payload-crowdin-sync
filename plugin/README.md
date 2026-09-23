@@ -1,16 +1,24 @@
 # `payload-crowdin-sync`
 
-Sync localized fields from **Payload CMS** to **Crowdin** and back.
+Translate [Payload CMS](https://payloadcms.com) content in [Crowdin](https://crowdin.com).
 
-- Upload source content from your **source locale** to Crowdin whenever you save/publish.
-- Keep translated locales **read-only** in Payload.
-- Pull translations back from Crowdin into Payload via UI actions (or endpoints/jobs).
+**Documentation: [thompsonsj.github.io/payload-crowdin-sync](https://thompsonsj.github.io/payload-crowdin-sync/)**
+
+The plugin extracts localized fields from your Payload documents and uploads them to Crowdin as clean files: HTML for rich text and JSON for everything else. It then writes translations back into the right fields, however deeply nested.
+
+## Features
+
+- Uploads localized fields from collections and globals on save, sending only the fields that changed.
+- Converts Slate and Lexical rich text to HTML and back, including Lexical blocks, uploads, relationships and tables.
+- Handles localized fields nested in groups, arrays, blocks, tabs, collapsibles and rows.
+- Loads translations from a checkbox in the admin panel, from REST endpoints with a dry-run review, or from Payload jobs.
+- Skips translations that are missing required fields, and reports the validation errors.
+- Recreates files and folders that were deleted in Crowdin.
 
 ## Requirements
 
-- **Payload**: v3+
-- **Crowdin**: project + API token
-- **Node**: see `engines` in `plugin/package.json`
+- Payload 3
+- A Crowdin project and a [personal access token](https://support.crowdin.com/account-settings/#personal-access-tokens)
 
 ## Install
 
@@ -21,41 +29,33 @@ npm install payload-crowdin-sync
 ## Quick start
 
 ```ts
-import { buildConfig } from 'payload'
-import { crowdinSync } from 'payload-crowdin-sync'
+import { buildConfig } from 'payload';
+import { crowdinSync } from 'payload-crowdin-sync';
 
 export default buildConfig({
   plugins: [
     crowdinSync({
       projectId: 323731,
-      directoryId: 1169, // optional: Crowdin folder to store sources
       token: process.env.CROWDIN_TOKEN ?? '',
-      organization: process.env.CROWDIN_ORGANIZATION ?? '',
       sourceLocale: 'en',
       localeMap: {
         de_DE: { crowdinId: 'de' },
         fr_FR: { crowdinId: 'fr' },
       },
-      // collections/globals are optional:
-      // - undefined => auto-detect localized fields and activate where applicable
-      // - [] => disable
-      // - ['posts', ...] or { slug, condition } => enable selectively / conditionally
+      // Optional: limit the plugin to some collections and globals.
+      // Leave undefined to enable it wherever there are localized fields.
+      // collections: ['posts'],
+      // globals: ['nav'],
     }),
   ],
-})
+});
 ```
+
+The plugin adds three collections to your database (`crowdin-files`, `crowdin-article-directories` and `crowdin-collection-directories`) It also adds **Sync translations** and **Sync all translations** checkboxes to each enabled document, which appear after its first upload to Crowdin.
 
 ## Documentation
 
-- **Full docs (recommended)**: `https://thompsonsj.github.io/payload-crowdin-sync/`
-- **Slate serializer reference & demos**: [slate-serializers — docs & demos](https://thompsonsj.github.io/slate-serializers-demo/)
-
-## What this plugin adds
-
-- **Collections**:
-  - `crowdin-files`
-  - `crowdin-article-directories`
-  - `crowdin-collection-directories`
-- **Virtual field** on localized docs/globals:
-  - `crowdinArticleDirectory` (computed)
-
+- [Options, syncing and endpoints](https://thompsonsj.github.io/payload-crowdin-sync/plugin)
+- [Supported fields](https://thompsonsj.github.io/payload-crowdin-sync/plugin/fields)
+- [How documents map to Crowdin](https://thompsonsj.github.io/payload-crowdin-sync/plugin/crowdin)
+- [Slate serializer reference and demos](https://thompsonsj.github.io/slate-serializers-demo/)
