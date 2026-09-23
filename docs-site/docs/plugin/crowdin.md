@@ -1,33 +1,35 @@
-# Crowdin collections
+---
+sidebar_position: 3
+description: How Payload documents become folders and files in Crowdin, and the collections the plugin uses to keep track of them.
+---
 
-Rather than uploading a document json object directly into Crowdin, this plugin transforms a Payload document into multiple `html` and `json` files that contain localized field values only. This greatly enhances the localization experience in Crowdin.
+# How documents map to Crowdin
 
-Following are details of the transformation process, how documents are modified and how the plugin keeps in sync with Crowdin.
+Rather than uploading a document's JSON to Crowdin, the plugin turns each Payload document into HTML and JSON files that contain only localized field values. Translators see just the text they need to translate.
+
+This page covers how documents are transformed, what the plugin stores in your database, and how it stays in sync with Crowdin.
 
 ## Crowdin folder structure
 
-By default, files are uploaded to Crowdin using the following folder/file structure.
+Files are uploaded to Crowdin with this structure:
 
 ```
-[collectionSlug] > [articleSlug] > [fieldSlug]
+[collection] > [document] > [files]
 ```
 
-Files can be uploaded to a specific directory by setting the `directoryId` option.
+- **Collection folders** are named after the collection slug, and titled in words (for example `localized-posts` is titled "Localized Posts"). Globals share a `globals` folder, with a folder for each global inside it.
+- **Document folders** are named after the document ID, and titled with the document's [`useAsTitle`](https://payloadcms.com/docs/configuration/collections#admin-options) field, falling back to `title` or `name`.
+- **Files** are `fields.json` for text fields, and one HTML file per rich text field, for example `content.html`.
+
+Set the [`directoryId`](./README.md#directoryid) option to put everything inside an existing Crowdin folder:
 
 ```
-"My Directory" > [collectionSlug] > [articleSlug] > [fieldSlug]
+"My Directory" > [collection] > [document] > [files]
 ```
-
-- Rich text fields are stored as HTML files.
-- All other fields are compiled into JSON files.
 
 ## Rich text fields
 
-For ease-of-editing in Crowdin, the underlying editor object is converted to HTML. When translated HTML is synced back into Payload, it is converted back to an appropriate object.
-
-Each `richText` field has its own Crowdin file. e.g. `content.html`.
-
-The object conversion depends on the rich text editor used in that field. See [Rich Text Field | Payload](https://payloadcms.com/docs/fields/rich-text).
+Each `richText` field is converted to HTML for Crowdin and converted back when translations are loaded. The conversion depends on the editor: Slate or Lexical. See [supported fields](./fields.md#rich-text) for what each editor supports.
 
 ### Blocks
 
@@ -57,7 +59,7 @@ Currently, this approach only supports non-localized fields. This is because the
 
 ## Text fields
 
-All other fields are compiled into a single `fields.json` file for ease-of-editing in Crowdin.
+All other supported fields are compiled into a single `fields.json` file per document. See [nested fields](./fields.md#nested-fields) for its structure.
 
 ## How the database is modified
 
@@ -67,11 +69,25 @@ Three new collections are created.
 - `crowdin-article-directories`
 - `crowdin-files`
 
-For each document in a collection that contains localized fields, an additional field is added: `crowdinArticleDirectory`. This is a one-to-one relationship with an article created in the `crowdin-article-directories` collection.
+Each root `crowdin-article-directories` document links back to its Payload document, with the polymorphic `collectionDocument` field for collections or the `globalSlug` field for globals.
 
-The plugin also stores a canonical link on each root `crowdin-article-directories` document using the polymorphic `collectionDocument` field (collections) or the `globalSlug` field (globals). The `crowdinArticleDirectory` value on your documents may still be present for older installs; it is optional for resolution and can be removed after you run a backfill. Import `backfillArticleDirectoryPolymorphicLinks` from `payload-crowdin-sync` and call it once with your Payload instance (for example from `onInit` in development, or from a one-off script) to copy legacy ids into `collectionDocument` / `globalSlug` on the Crowdin article directory rows.
+Enabled documents get a `crowdinArticleDirectory` relationship field. It isn't stored: the plugin looks up the matching `crowdin-article-directories` document when your document is read.
 
-To completely uninstall the plugin, delete the three collections and delete the `crowdinArticleDirectory` field from any of your localized documents as appropriate.
+### Upgrading from older versions
+
+Older versions stored `crowdinArticleDirectory` on your documents, and may not have set `collectionDocument` or `globalSlug`. To copy the old links across, import `backfillArticleDirectoryPolymorphicLinks` from `payload-crowdin-sync` and call it once with your Payload instance, for example from `onInit` or a one-off script:
+
+```ts
+import { backfillArticleDirectoryPolymorphicLinks } from 'payload-crowdin-sync';
+
+const result = await backfillArticleDirectoryPolymorphicLinks(payload);
+```
+
+After the backfill, the stored `crowdinArticleDirectory` values are no longer needed.
+
+### Uninstall
+
+To uninstall the plugin, remove it from your config and drop the three collections. On older installs, also remove any stored `crowdinArticleDirectory` values from your documents.
 
 ### `crowdin-collection-directories`
 
@@ -94,7 +110,9 @@ A `crowdin-article-directories` document represents a folder created on Crowdin 
 
 Each entry in the `crowdin-files` collection has a one-to-one relationship with an entry in the `crowdin-article-directories` collection.
 
-When a localized field is changed, a file is created/updated in the `crowdin-files` collection for that field. Details of the file are stored in Payload so that this file can be updated or deleted in the future. Each entry in the `crowdin-files` collection has a one-to-one relationship with the appropriate entry in the `crowdin-article-directories` collection.
+When a localized field is changed, a file is created/updated in the `crowdin-files` collection for that field. Details of the file are stored in Payload so that this file can be updated or deleted in the future.
+
+If a file is deleted in Crowdin, its `crowdin-files` entry is removed the next time translations are loaded, and the file is uploaded again on the next save. See [`disableSelfClean`](./README.md#disableselfclean).
 
 #### `crowdin-files` children
 
@@ -111,8 +129,8 @@ Update the `collectionSlug` field in the appropriate `crowdin-collection-directo
 
 Note that the folder structure on Crowdin will not change. Translations will still be managed in a folder name corresponding to the previous collection slug.
 
-**Delete the `crowdin-article-directories` collection document relationship**
+## Reset a document's translations
 
-Deleting the `crowdin-article-directories` collection document relationship on a document resets the translation. New translation files will be created on Crowdin on the next save.
+Delete the document's entry in `crowdin-article-directories`. A new folder and new files are created in Crowdin on the next save.
 
-Note that previous Crowdin files will not be deleted. Cleanup operations are considered for a future update.
+The old files in Crowdin aren't deleted. Cleaning them up is a [planned feature](../repo/planned-features.md).

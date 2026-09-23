@@ -10,7 +10,7 @@ const isGitHubPages = process.env.GITHUB_ACTIONS === 'true';
 
 const config: Config = {
   title: 'Payload Crowdin Sync',
-  tagline: 'Sync Payload localized fields with Crowdin.',
+  tagline: 'Translate Payload CMS content in Crowdin.',
   favicon: 'img/favicon.ico',
   trailingSlash: false,
 

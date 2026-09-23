@@ -4,20 +4,22 @@
 # It points to the highest-signal pages in this docs site.
 
 ## What is this?
-`payload-crowdin-sync` is a Payload CMS plugin that syncs localized fields to Crowdin and loads translations back into Payload.
+`payload-crowdin-sync` is a Payload CMS plugin that uploads localized fields to Crowdin as HTML and JSON files, and writes translations back into Payload.
 
 ## Canonical docs
 - /docs/intro
 - /docs/plugin
 
 ## Plugin reference
-- /docs/plugin/README
+- /docs/plugin/fields
 - /docs/plugin/crowdin
 - /docs/plugin/serializer
+- /docs/plugin/development
 
 ## Engineering / repo notes
-- /docs/repo/README
+- /docs/repo
 - /docs/repo/engineering
+- /docs/repo/planned-features
 
 ## External references
 - https://www.npmjs.com/package/payload-crowdin-sync

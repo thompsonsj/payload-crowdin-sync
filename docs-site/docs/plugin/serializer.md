@@ -1,6 +1,13 @@
+---
+sidebar_position: 4
+description: Customise how Slate rich text is converted to HTML for Crowdin and back.
+---
+
 # Serializer configuration
 
 [@slate-serializers/html](https://www.npmjs.com/package/@slate-serializers/html) is used to convert between Slate JSON in Payload CMS and HTML content on Crowdin.
+
+This configuration only applies to Slate fields. Lexical fields use Payload's Lexical HTML converters, extended by the plugin; see [supported fields](./fields.md#lexical).
 
 There are some scenarios where you may wish to customise the configuration of these serializers. Examples:
 
