@@ -2769,6 +2769,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                       ],
                     },
                     "node": [Function],
+                    "validations": [
+                      [Function],
+                    ],
                   },
                   {
                     "converters": {
@@ -2813,6 +2816,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                       },
                     },
                     "node": [Function],
+                    "validations": [
+                      [Function],
+                    ],
                   },
                   {
                     "converters": {
@@ -2824,6 +2830,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                       },
                     },
                     "node": [Function],
+                    "validations": [
+                      [Function],
+                    ],
                   },
                   {
                     "converters": {
@@ -2835,6 +2844,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                       },
                     },
                     "node": [Function],
+                    "validations": [
+                      [Function],
+                    ],
                   },
                 ],
                 "validations": Map {
@@ -2847,10 +2859,22 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                   "upload" => [
                     [Function],
                   ],
+                  "relationship" => [
+                    [Function],
+                  ],
                   "autolink" => [
                     [Function],
                   ],
                   "link" => [
+                    [Function],
+                  ],
+                  "list" => [
+                    [Function],
+                  ],
+                  "listitem" => [
+                    [Function],
+                  ],
+                  "heading" => [
                     [Function],
                   ],
                 },
@@ -6031,6 +6055,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                   "ClientFeature": "@payloadcms/richtext-lexical/client#UploadFeatureClient",
                   "clientFeatureProps": {
                     "collections": {},
+                    "enabledCollectionSlugs": [
+                      "media",
+                    ],
                   },
                   "dependencies": undefined,
                   "dependenciesPriority": undefined,
@@ -6190,6 +6217,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                   "order": 5,
                   "sanitizedServerFeatureProps": {
                     "collections": {},
+                    "enabledCollectionSlugs": [
+                      "media",
+                    ],
                   },
                 },
                 "blockquote" => {
@@ -6341,7 +6371,28 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                 },
                 "relationship" => {
                   "ClientFeature": "@payloadcms/richtext-lexical/client#RelationshipFeatureClient",
-                  "clientFeatureProps": {},
+                  "clientFeatureProps": {
+                    "enabledCollectionSlugs": [
+                      "categories",
+                      "multi-rich-text",
+                      "localized-posts",
+                      "nested-field-collection",
+                      "policies",
+                      "posts",
+                      "localized-posts-with-condition",
+                      "tags",
+                      "users",
+                      "youtube-videos",
+                      "crowdin-files",
+                      "crowdin-collection-directories",
+                      "crowdin-article-directories",
+                      "payload-kv",
+                      "payload-jobs",
+                      "payload-locked-documents",
+                      "payload-preferences",
+                      "payload-migrations",
+                    ],
+                  },
                   "dependencies": undefined,
                   "dependenciesPriority": undefined,
                   "dependenciesSoft": undefined,
@@ -6470,9 +6521,34 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                         ],
                       },
                       "node": [Function],
+                      "validations": [
+                        [Function],
+                      ],
                     },
                   ],
                   "order": 7,
+                  "sanitizedServerFeatureProps": {
+                    "enabledCollectionSlugs": [
+                      "categories",
+                      "multi-rich-text",
+                      "localized-posts",
+                      "nested-field-collection",
+                      "policies",
+                      "posts",
+                      "localized-posts-with-condition",
+                      "tags",
+                      "users",
+                      "youtube-videos",
+                      "crowdin-files",
+                      "crowdin-collection-directories",
+                      "crowdin-article-directories",
+                      "payload-kv",
+                      "payload-jobs",
+                      "payload-locked-documents",
+                      "payload-preferences",
+                      "payload-migrations",
+                    ],
+                  },
                 },
                 "link" => {
                   "ClientFeature": "@payloadcms/richtext-lexical/client#LinkFeatureClient",
@@ -7189,6 +7265,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                         },
                       },
                       "node": [Function],
+                      "validations": [
+                        [Function],
+                      ],
                     },
                     {
                       "converters": {
@@ -7200,6 +7279,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                         },
                       },
                       "node": [Function],
+                      "validations": [
+                        [Function],
+                      ],
                     },
                   ],
                   "order": 11,
@@ -7741,6 +7823,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                         },
                       },
                       "node": [Function],
+                      "validations": [
+                        [Function],
+                      ],
                     },
                   ],
                   "order": 14,
@@ -11083,6 +11168,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                         },
                       },
                       "node": [Function],
+                      "validations": [
+                        [Function],
+                      ],
                     },
                     {
                       "converters": {
@@ -11094,6 +11182,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                         },
                       },
                       "node": [Function],
+                      "validations": [
+                        [Function],
+                      ],
                     },
                   ],
                   "order": 11,
@@ -14434,6 +14525,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                               ],
                             },
                             "node": [Function],
+                            "validations": [
+                              [Function],
+                            ],
                           },
                           {
                             "converters": {
@@ -14478,6 +14572,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                               },
                             },
                             "node": [Function],
+                            "validations": [
+                              [Function],
+                            ],
                           },
                           {
                             "converters": {
@@ -14489,6 +14586,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                               },
                             },
                             "node": [Function],
+                            "validations": [
+                              [Function],
+                            ],
                           },
                           {
                             "converters": {
@@ -14500,6 +14600,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                               },
                             },
                             "node": [Function],
+                            "validations": [
+                              [Function],
+                            ],
                           },
                         ],
                         "validations": Map {
@@ -14512,10 +14615,22 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                           "upload" => [
                             [Function],
                           ],
+                          "relationship" => [
+                            [Function],
+                          ],
                           "autolink" => [
                             [Function],
                           ],
                           "link" => [
+                            [Function],
+                          ],
+                          "list" => [
+                            [Function],
+                          ],
+                          "listitem" => [
+                            [Function],
+                          ],
+                          "heading" => [
                             [Function],
                           ],
                         },
@@ -17696,6 +17811,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                           "ClientFeature": "@payloadcms/richtext-lexical/client#UploadFeatureClient",
                           "clientFeatureProps": {
                             "collections": {},
+                            "enabledCollectionSlugs": [
+                              "media",
+                            ],
                           },
                           "dependencies": undefined,
                           "dependenciesPriority": undefined,
@@ -17855,6 +17973,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                           "order": 5,
                           "sanitizedServerFeatureProps": {
                             "collections": {},
+                            "enabledCollectionSlugs": [
+                              "media",
+                            ],
                           },
                         },
                         "blockquote" => {
@@ -18006,7 +18127,28 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                         },
                         "relationship" => {
                           "ClientFeature": "@payloadcms/richtext-lexical/client#RelationshipFeatureClient",
-                          "clientFeatureProps": {},
+                          "clientFeatureProps": {
+                            "enabledCollectionSlugs": [
+                              "categories",
+                              "multi-rich-text",
+                              "localized-posts",
+                              "nested-field-collection",
+                              "policies",
+                              "posts",
+                              "localized-posts-with-condition",
+                              "tags",
+                              "users",
+                              "youtube-videos",
+                              "crowdin-files",
+                              "crowdin-collection-directories",
+                              "crowdin-article-directories",
+                              "payload-kv",
+                              "payload-jobs",
+                              "payload-locked-documents",
+                              "payload-preferences",
+                              "payload-migrations",
+                            ],
+                          },
                           "dependencies": undefined,
                           "dependenciesPriority": undefined,
                           "dependenciesSoft": undefined,
@@ -18135,9 +18277,34 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                 ],
                               },
                               "node": [Function],
+                              "validations": [
+                                [Function],
+                              ],
                             },
                           ],
                           "order": 7,
+                          "sanitizedServerFeatureProps": {
+                            "enabledCollectionSlugs": [
+                              "categories",
+                              "multi-rich-text",
+                              "localized-posts",
+                              "nested-field-collection",
+                              "policies",
+                              "posts",
+                              "localized-posts-with-condition",
+                              "tags",
+                              "users",
+                              "youtube-videos",
+                              "crowdin-files",
+                              "crowdin-collection-directories",
+                              "crowdin-article-directories",
+                              "payload-kv",
+                              "payload-jobs",
+                              "payload-locked-documents",
+                              "payload-preferences",
+                              "payload-migrations",
+                            ],
+                          },
                         },
                         "link" => {
                           "ClientFeature": "@payloadcms/richtext-lexical/client#LinkFeatureClient",
@@ -18854,6 +19021,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                 },
                               },
                               "node": [Function],
+                              "validations": [
+                                [Function],
+                              ],
                             },
                             {
                               "converters": {
@@ -18865,6 +19035,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                 },
                               },
                               "node": [Function],
+                              "validations": [
+                                [Function],
+                              ],
                             },
                           ],
                           "order": 11,
@@ -19406,6 +19579,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                 },
                               },
                               "node": [Function],
+                              "validations": [
+                                [Function],
+                              ],
                             },
                           ],
                           "order": 14,
@@ -22748,6 +22924,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                 },
                               },
                               "node": [Function],
+                              "validations": [
+                                [Function],
+                              ],
                             },
                             {
                               "converters": {
@@ -22759,6 +22938,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                 },
                               },
                               "node": [Function],
+                              "validations": [
+                                [Function],
+                              ],
                             },
                           ],
                           "order": 11,

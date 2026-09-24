@@ -341,7 +341,7 @@ export class payloadCrowdinSyncTranslationsApi {
         },
         error,
       );
-      throw new Error(`${error}`);
+      throw new Error(`${error}`, { cause: error });
     }
   }
 
@@ -744,7 +744,6 @@ export class payloadCrowdinSyncTranslationsApi {
       return;
     }
     const fields: Field[] = [blockConfig];
-    let docTranslations: { [key: string]: any } = {};
     // add json fields
     const crowdinJsonObject =
       (await this.getTranslation({
@@ -770,7 +769,7 @@ export class payloadCrowdinSyncTranslationsApi {
       });
     }
 
-    docTranslations = buildPayloadUpdateObject({
+    const docTranslations: { [key: string]: any } = buildPayloadUpdateObject({
       crowdinJsonObject,
       crowdinHtmlObject,
       fields,

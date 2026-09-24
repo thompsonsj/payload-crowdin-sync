@@ -29,7 +29,7 @@ import { SlateBlockConverter } from './lexical/slateBlockConverter';
 import { cloneDeep } from 'es-toolkit';
 
 import type { Descendant } from 'slate';
-import type { SerializedEditorState } from 'lexical';
+import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical';
 
 import { getLexicalBlockFields } from './lexical';
 import {

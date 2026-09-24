@@ -82,6 +82,7 @@ export interface Config {
     'crowdin-files': CrowdinFile;
     'crowdin-collection-directories': CrowdinCollectionDirectory;
     'crowdin-article-directories': CrowdinArticleDirectory;
+    'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -104,6 +105,7 @@ export interface Config {
     'crowdin-files': CrowdinFilesSelect<false> | CrowdinFilesSelect<true>;
     'crowdin-collection-directories': CrowdinCollectionDirectoriesSelect<false> | CrowdinCollectionDirectoriesSelect<true>;
     'crowdin-article-directories': CrowdinArticleDirectoriesSelect<false> | CrowdinArticleDirectoriesSelect<true>;
+    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -112,6 +114,8 @@ export interface Config {
   db: {
     defaultIDType: string;
   };
+  fallbackLocale:
+    ('false' | 'none' | 'null') | false | null | ('en' | 'de_DE' | 'fr_FR') | ('en' | 'de_DE' | 'fr_FR')[];
   globals: {
     home: Home;
     'localized-nav': LocalizedNav;
@@ -125,9 +129,10 @@ export interface Config {
     statistics: StatisticsSelect<false> | StatisticsSelect<true>;
   };
   locale: 'en' | 'de_DE' | 'fr_FR';
-  user: User & {
-    collection: 'users';
+  widgets: {
+    collections: CollectionsWidget;
   };
+  user: User;
   jobs: {
     tasks: {
       crowdinSyncTranslations: TaskCrowdinSyncTranslations;
@@ -244,10 +249,51 @@ export interface MultiRichText {
  */
 export interface CrowdinArticleDirectory {
   id: string;
+  collectionDocument?:
+    | ({
+        relationTo: 'categories';
+        value: string | Category;
+      } | null)
+    | ({
+        relationTo: 'multi-rich-text';
+        value: string | MultiRichText;
+      } | null)
+    | ({
+        relationTo: 'localized-posts';
+        value: string | LocalizedPost;
+      } | null)
+    | ({
+        relationTo: 'nested-field-collection';
+        value: string | NestedFieldCollection;
+      } | null)
+    | ({
+        relationTo: 'policies';
+        value: string | Policy;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: string | Post;
+      } | null)
+    | ({
+        relationTo: 'localized-posts-with-condition';
+        value: string | LocalizedPostsWithCondition;
+      } | null)
+    | ({
+        relationTo: 'tags';
+        value: string | Tag;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null);
+  globalSlug?: ('home' | 'localized-nav' | 'nav' | 'statistics') | null;
   /**
    * Select locales to exclude from translation synchronization.
    */
   excludeLocales?: ('de_DE' | 'fr_FR')[] | null;
+  /**
+   * Stores the Crowdin directory name. For collection documents this is the Payload document ID; for globals this is the global slug. Use the globalSlug field to query for globals — name is overloaded.
+   */
   name?: string | null;
   crowdinCollectionDirectory?: (string | null) | CrowdinCollectionDirectory;
   crowdinFiles?: (string | CrowdinFile)[] | null;
@@ -259,75 +305,6 @@ export interface CrowdinArticleDirectory {
   };
   originalId?: number | null;
   directoryId?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "crowdin-collection-directories".
- */
-export interface CrowdinCollectionDirectory {
-  id: string;
-  name?: string | null;
-  title?: string | null;
-  collectionSlug?: string | null;
-  reference?: {
-    createdAt?: string | null;
-    updatedAt?: string | null;
-    projectId?: number | null;
-  };
-  originalId?: number | null;
-  directoryId?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "crowdin-files".
- */
-export interface CrowdinFile {
-  id: string;
-  title?: string | null;
-  field?: string | null;
-  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
-  reference?: {
-    createdAt?: string | null;
-    updatedAt?: string | null;
-    projectId?: number | null;
-  };
-  originalId?: number | null;
-  directoryId?: number | null;
-  revisionId?: number | null;
-  name?: string | null;
-  type?: ('json' | 'html') | null;
-  path?: string | null;
-  /**
-   * The file data submitted to the Crowdin API
-   */
-  fileData?: {
-    json?:
-      | {
-          [k: string]: unknown;
-        }
-      | unknown[]
-      | string
-      | number
-      | boolean
-      | null;
-    html?: string | null;
-    /**
-     * Copy Lexical field blocks as a translation source enabling a convenient method of merging block content on translation (i.e. merge non-translated fields like type=select).
-     */
-    sourceBlocks?:
-      | {
-          [k: string]: unknown;
-        }
-      | unknown[]
-      | string
-      | number
-      | boolean
-      | null;
-  };
   updatedAt: string;
   createdAt: string;
 }
@@ -375,6 +352,7 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -385,6 +363,7 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -393,51 +372,6 @@ export interface User {
 export interface Tag {
   id: string;
   name?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: string;
-  alt?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    card?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    tablet?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -812,6 +746,120 @@ export interface LocalizedPostsWithCondition {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "crowdin-collection-directories".
+ */
+export interface CrowdinCollectionDirectory {
+  id: string;
+  name?: string | null;
+  title?: string | null;
+  collectionSlug?: string | null;
+  reference?: {
+    createdAt?: string | null;
+    updatedAt?: string | null;
+    projectId?: number | null;
+  };
+  originalId?: number | null;
+  directoryId?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "crowdin-files".
+ */
+export interface CrowdinFile {
+  id: string;
+  title?: string | null;
+  field?: string | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  reference?: {
+    createdAt?: string | null;
+    updatedAt?: string | null;
+    projectId?: number | null;
+  };
+  originalId?: number | null;
+  directoryId?: number | null;
+  revisionId?: number | null;
+  name?: string | null;
+  type?: ('json' | 'html') | null;
+  path?: string | null;
+  /**
+   * The file data submitted to the Crowdin API
+   */
+  fileData?: {
+    json?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    html?: string | null;
+    /**
+     * Copy Lexical field blocks as a translation source enabling a convenient method of merging block content on translation (i.e. merge non-translated fields like type=select).
+     */
+    sourceBlocks?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: string;
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    tablet?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "youtube-videos".
  */
 export interface YoutubeVideo {
@@ -873,6 +921,23 @@ export interface VideoThumbnail {
       filename?: string | null;
     };
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-kv".
+ */
+export interface PayloadKv {
+  id: string;
+  key: string;
+  data:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1032,10 +1097,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'crowdin-article-directories';
         value: string | CrowdinArticleDirectory;
-      } | null)
-    | ({
-        relationTo: 'payload-jobs';
-        value: string | PayloadJob;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1431,6 +1492,7 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -1554,6 +1616,8 @@ export interface CrowdinCollectionDirectoriesSelect<T extends boolean = true> {
  * via the `definition` "crowdin-article-directories_select".
  */
 export interface CrowdinArticleDirectoriesSelect<T extends boolean = true> {
+  collectionDocument?: T;
+  globalSlug?: T;
   excludeLocales?: T;
   name?: T;
   crowdinCollectionDirectory?: T;
@@ -1570,6 +1634,14 @@ export interface CrowdinArticleDirectoriesSelect<T extends boolean = true> {
   directoryId?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-kv_select".
+ */
+export interface PayloadKvSelect<T extends boolean = true> {
+  key?: T;
+  data?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1826,6 +1898,16 @@ export interface StatisticsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_widget".
+ */
+export interface CollectionsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
