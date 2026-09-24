@@ -1,5 +1,14 @@
 import { payloadCrowdinSyncTranslationsApi } from './translations';
 import { pluginOptions } from './mock/plugin-options';
+import { buildPayloadUpdateObject } from '../utilities';
+
+vi.mock('../utilities', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../utilities')>();
+  return {
+    ...actual,
+    buildPayloadUpdateObject: vi.fn(actual.buildPayloadUpdateObject),
+  };
+});
 
 /**
  * Tests for new/changed behavior in translations.ts (PR diff scope).
@@ -169,6 +178,40 @@ describe('payloadCrowdinSyncTranslationsApi', () => {
       // Object with a string id but no sentinel properties → not collapsed
       const obj = { id: 'x', someOtherProp: 'y' };
       expect(sanitize(obj)).toEqual({ id: 'x', someOtherProp: 'y' });
+    });
+  });
+
+  describe('getCurrentDocumentTranslation', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('rethrows errors from building the update object with the original error as cause', async () => {
+      const payload = {
+        findByID: vi.fn().mockResolvedValue({ id: 'doc-1', title: 'Hello' }),
+      } as any;
+      const translationsApi = new payloadCrowdinSyncTranslationsApi(
+        pluginOptions,
+        payload,
+      );
+      vi.spyOn(translationsApi, 'getCollectionConfig').mockReturnValue({
+        slug: 'posts',
+        fields: [{ name: 'title', type: 'text', localized: true }],
+      } as any);
+      const original = new Error('cannot build update object');
+      vi.mocked(buildPayloadUpdateObject).mockImplementationOnce(() => {
+        throw original;
+      });
+      vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+      const result = translationsApi.getCurrentDocumentTranslation({
+        doc: { id: 'doc-1' },
+        collection: 'posts',
+        locale: 'de_DE',
+      });
+
+      await expect(result).rejects.toThrow('cannot build update object');
+      await expect(result).rejects.toMatchObject({ cause: original });
     });
   });
 });
