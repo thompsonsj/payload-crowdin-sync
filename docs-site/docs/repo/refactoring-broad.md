@@ -10,7 +10,7 @@ This document covers refactor opportunities across the plugin codebase outside o
 
 ### 1. Extract field-traversal skeleton from `buildPayloadUpdateObject`, `buildCrowdinJsonObject`, `buildCrowdinHtmlObject`, and `restoreOrder`
 
-**File:** `plugin/src/lib/utilities/index.ts:420–751`
+**File:** `plugin/src/lib/utilities/index.ts:414–745`
 
 **Problem:** All four functions contain nearly-identical `group / array / blocks` recursive dispatch:
 
@@ -136,9 +136,9 @@ Type the return as `Field[]` (not `any[]`).
 
 ---
 
-### 6. Split `getLocalizedFields` (119 lines, five concerns)
+### 6. Split `getLocalizedFields` (119 lines, five concerns) ✅
 
-**File:** `plugin/src/lib/utilities/index.ts:93–212`
+**File:** `plugin/src/lib/utilities/index.ts:93–212` (line numbers before the refactor)
 
 **Problem:** `getLocalizedFields` handles five distinct concerns in a single 119-line function:
 
@@ -173,7 +173,13 @@ A comment in the source already flags this: `"find a better way to do this - blo
 - **Item 3:** `createSyncBeforeChangeHook(mode, pluginOptions)` and `createSyncAfterChangeHook(mode, pluginOptions)` live in `fields/syncTranslationHooks.ts`, alongside `syncFieldNames`, which maps each `SyncMode` to its checkbox name. The before hook takes `pluginOptions` rather than a field name because the current-locale mode needs `localeMap`; the field name comes from `syncFieldNames`. Baseline tests in `pluginFields.syncHooks.spec.ts` were committed against the old hooks first and pass unchanged against the factories. They cover both modes, inline and job-queue loading, and the `triggerAfterChange === false` guard.
 - **Known limitation, kept as-is:** the after hook only syncs when `articleDirectoryId` is a string, so numeric ids (SQL adapters) never trigger a sync. Fixing it is a behaviour change and belongs in its own PR.
 
-Remaining: items 1 and 6.
+**Pass 3 — item 6**
+
+- **Item 6:** `getLocalizedFields` is now a short orchestrator over three private helpers in `utilities/index.ts`: `filterByType`, `recurseNestedFields` and `flattenContainerFields`. Layout fields (tabs, collapsible, row) are excluded up front instead of being carried through every step and filtered out at the end. Group, array and blocks fields are now reduced once and dropped if empty; previously each was traversed twice, once by `containsLocalizedFields` to decide whether to keep it and again to build the result, and that repeated at every nesting level. The old `TODO` about duplicated block, array and group logic is resolved.
+- **Tests:** the helpers are private, so instead of testing them directly, `getLocalizedFields.structure.spec.ts` was committed first as a baseline against the old implementation. It pins the output shape that the existing tests only covered indirectly: top-level fields before tab, collapsible and row contents; named tabs as groups; blocks reduced to `slug` and `fields`; empty containers dropped under a `type` filter; and custom `isLocalized` predicates.
+- **Known quirk, kept as-is:** `convertTabs` is called without the caller's `isLocalized`, so unnamed tab fields are marked `localized: true` using the default predicate. The baseline tests pin this.
+
+Remaining: item 1.
 
 ---
 

@@ -103,6 +103,73 @@ export const findField = ({
   return undefined;
 };
 
+interface LocalizedFieldsOptions {
+  type?: 'json' | 'html';
+  localizedParent: boolean;
+  isLocalized: IsLocalized;
+}
+
+const layoutFieldTypes = ['collapsible', 'tabs', 'row'];
+
+/**
+ * Group, array and blocks fields are kept here and dropped later by
+ * `recurseNestedFields` if they contain no fields of the requested type.
+ */
+const filterByType = (field: Field, type?: 'json' | 'html') =>
+  containsNestedFields(field) ||
+  !type ||
+  fieldCrowdinFileType(field as FieldWithName) === type;
+
+/**
+ * Reduce a group, array or blocks field to its localized fields, or return
+ * `undefined` if none remain. Blocks keep only their `slug` and `fields`.
+ */
+const recurseNestedFields = (
+  field: Field,
+  options: LocalizedFieldsOptions,
+): Field | undefined => {
+  const nestedOptions = {
+    ...options,
+    localizedParent: options.localizedParent || options.isLocalized(field),
+  };
+  if (isCrowdinNestedDataField(field)) {
+    const fields = getLocalizedFields({
+      ...nestedOptions,
+      fields: field.fields,
+    });
+    return fields.length > 0 ? { ...field, fields } : undefined;
+  }
+  if (fieldIsBlockType(field)) {
+    const blocks = field.blocks.flatMap((block: Block) => {
+      const fields = getLocalizedFields({
+        ...nestedOptions,
+        fields: block.fields,
+      });
+      return fields.length > 0 ? [{ slug: block.slug, fields }] : [];
+    });
+    return blocks.length > 0 ? { ...field, blocks } : undefined;
+  }
+  return field;
+};
+
+/**
+ * Localized fields inside tabs, collapsible and row fields, in that order.
+ * Named tabs become groups.
+ */
+const flattenContainerFields = (
+  fields: Field[],
+  options: LocalizedFieldsOptions,
+): Field[] => [
+  ...convertTabs({
+    fields,
+    localized: options.localizedParent,
+    callback: (tabFields) =>
+      getLocalizedFields({ ...options, fields: tabFields }),
+  }),
+  ...getCollapsibleLocalizedFields({ ...options, fields }),
+  ...getRowLocalizedFields({ ...options, fields }),
+];
+
 export const getLocalizedFields = ({
   fields,
   type,
@@ -113,116 +180,21 @@ export const getLocalizedFields = ({
   type?: 'json' | 'html';
   localizedParent?: boolean;
   isLocalized?: IsLocalized;
-}): any[] => [
-  ...fields
-    // localized or group fields only.
-    .filter(
-      (field) =>
-        isLocalized(field, localizedParent) || containsNestedFields(field),
-    )
-    // further filter on Crowdin field type
-    .filter((field) => {
-      if (containsNestedFields(field)) {
-        return true;
-      }
-      return type
-        ? fieldCrowdinFileType(field as FieldWithName) === type
-        : true;
-    })
-    // exclude group, array and block fields with no localized fields
-    // TODO: find a better way to do this - block, array and group logic is duplicated, and this filter needs to be compatible with field extraction logic later in this function
-    .filter((field) => {
-      if (isCrowdinNestedDataField(field)) {
-        return containsLocalizedFields({
-          fields: field.fields,
-          type,
-          localizedParent: localizedParent || isLocalized(field),
-          isLocalized,
-        });
-      }
-      if (fieldIsBlockType(field)) {
-        return field.blocks.find((block) =>
-          containsLocalizedFields({
-            fields: block.fields,
-            type,
-            localizedParent: localizedParent || isLocalized(field),
-            isLocalized,
-          }),
-        );
-      }
-      return true;
-    })
-    // recursion for group, array and blocks field
-    .map((field) => {
-      if (isCrowdinNestedDataField(field)) {
-        return {
-          ...field,
-          fields: getLocalizedFields({
-            fields: field.fields,
-            type,
-            localizedParent: localizedParent || isLocalized(field),
-            isLocalized,
-          }),
-        };
-      }
-      if (fieldIsBlockType(field)) {
-        const blocks = field.blocks
-          .map((block: Block) => {
-            if (
-              containsLocalizedFields({
-                fields: block.fields,
-                type,
-                localizedParent: localizedParent || isLocalized(field),
-                isLocalized,
-              })
-            ) {
-              return {
-                slug: block.slug,
-                fields: getLocalizedFields({
-                  fields: block.fields,
-                  type,
-                  localizedParent: localizedParent || isLocalized(field),
-                  isLocalized,
-                }),
-              };
-            }
-            return;
-          })
-          .filter((block) => block);
-        return {
-          ...field,
-          blocks,
-        };
-      }
-      return field;
-    })
-    .filter(
-      (field) =>
-        (field as any).type !== 'collapsible' &&
-        (field as any).type !== 'tabs' &&
-        (field as any).type !== 'row',
-    ),
-  ...convertTabs({
-    fields,
-    localized: localizedParent,
-    callback: (fields) =>
-      getLocalizedFields({
-        fields,
-        type,
-        localizedParent,
-        isLocalized,
-      }),
-  }),
-  // recursion for collapsible field - flatten results into the returned array
-  ...getCollapsibleLocalizedFields({
-    fields,
-    type,
-    localizedParent,
-    isLocalized,
-  }),
-  // recursion for row field - flatten results into the returned array
-  ...getRowLocalizedFields({ fields, type, localizedParent, isLocalized }),
-];
+}): any[] => {
+  const options = { type, localizedParent, isLocalized };
+  return [
+    ...fields
+      .filter(
+        (field) =>
+          !layoutFieldTypes.includes(field.type) &&
+          (isLocalized(field, localizedParent) ||
+            containsNestedFields(field)) &&
+          filterByType(field, type),
+      )
+      .flatMap((field) => recurseNestedFields(field, options) ?? []),
+    ...flattenContainerFields(fields, options),
+  ];
+};
 
 export const getCollapsibleLocalizedFields = ({
   fields,
