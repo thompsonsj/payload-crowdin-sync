@@ -94,6 +94,141 @@ export async function findRootArticleDirectoryPolymorphic({
 }
 
 /**
+ * Find an article directory by `name` within the document's collection
+ * directory (`globals` for globals). Does not create the collection directory.
+ */
+async function findArticleDirectoryInCollectionDirectory({
+  payload,
+  req,
+  documentId,
+  rootLookup,
+}: {
+  payload: Payload;
+  req?: PayloadRequest;
+  documentId: string;
+  rootLookup: ArticleDirectoryRootLookup;
+}): Promise<CrowdinArticleDirectory | undefined> {
+  const collectionDirectories = await payload.find({
+    collection: 'crowdin-collection-directories',
+    where: {
+      collectionSlug: {
+        equals: rootLookup.global ? 'globals' : rootLookup.collectionSlug,
+      },
+    },
+    limit: 1,
+    req,
+    overrideAccess: true,
+  });
+  const collectionDirectory = collectionDirectories.docs[0];
+  if (!collectionDirectory) {
+    return undefined;
+  }
+  const articleDirectories = await payload.find({
+    collection: 'crowdin-article-directories',
+    where: {
+      and: [
+        { name: { equals: `${documentId}` } },
+        { crowdinCollectionDirectory: { equals: collectionDirectory.id } },
+      ],
+    },
+    limit: 1,
+    req,
+    overrideAccess: true,
+  });
+  return articleDirectories.docs[0] as CrowdinArticleDirectory | undefined;
+}
+
+/**
+ * Load the directory referenced by the legacy `crowdinArticleDirectory` field
+ * on a synced document. Returns `undefined` if the row no longer exists.
+ */
+async function findArticleDirectoryByLegacyReference({
+  payload,
+  req,
+  legacyReference,
+}: {
+  payload: Payload;
+  req?: PayloadRequest;
+  legacyReference: unknown;
+}): Promise<CrowdinArticleDirectory | undefined> {
+  if (!legacyReference) {
+    return undefined;
+  }
+  if (typeof legacyReference === 'object') {
+    return (legacyReference as CrowdinArticleDirectory).id
+      ? (legacyReference as CrowdinArticleDirectory)
+      : undefined;
+  }
+  try {
+    return (await payload.findByID({
+      collection: 'crowdin-article-directories',
+      id: legacyReference as string,
+      req,
+    })) as CrowdinArticleDirectory;
+  } catch (error) {
+    if ((error as { status?: number }).status === 404) {
+      return undefined;
+    }
+    throw error;
+  }
+}
+
+/**
+ * Find the root article directory for a collection document or global.
+ *
+ * Tries, in order: the polymorphic link (`collectionDocument` / `globalSlug`),
+ * the legacy `crowdinArticleDirectory` reference on the document, then a
+ * `name` match within the document's collection directory. Each candidate is
+ * passed through `validate`; the first one it returns wins.
+ */
+export async function resolveRootArticleDirectory({
+  payload,
+  req,
+  documentId,
+  rootLookup,
+  legacyReference,
+  validate = async (directory) => directory,
+}: {
+  payload: Payload;
+  req?: PayloadRequest;
+  /** For collections: the Payload document id. For globals: the global slug. */
+  documentId: string;
+  rootLookup: ArticleDirectoryRootLookup;
+  /** Value of the `crowdinArticleDirectory` field on the document, if any. */
+  legacyReference?: unknown;
+  validate?: (
+    directory: CrowdinArticleDirectory,
+  ) => Promise<CrowdinArticleDirectory | undefined>;
+}): Promise<CrowdinArticleDirectory | undefined> {
+  const strategies = [
+    () =>
+      findRootArticleDirectoryPolymorphic({
+        payload,
+        req,
+        documentId,
+        rootLookup,
+      }),
+    () =>
+      findArticleDirectoryByLegacyReference({ payload, req, legacyReference }),
+    () =>
+      findArticleDirectoryInCollectionDirectory({
+        payload,
+        req,
+        documentId,
+        rootLookup,
+      }),
+  ];
+  for (const strategy of strategies) {
+    const candidate = await strategy();
+    const directory = candidate && (await validate(candidate));
+    if (directory) {
+      return directory;
+    }
+  }
+  return undefined;
+}
+
+/**
  * Ensure a root article directory row has polymorphic metadata for installs that still only have a legacy `crowdinArticleDirectory` id on the source document.
  */
 export async function ensureArticleDirectoryPolymorphicLink({
@@ -180,7 +315,7 @@ export async function getArticleDirectory({
   allowEmpty?: boolean;
   parent?: CrowdinArticleDirectory | null | string;
   req?: PayloadRequest;
-  /** When resolving a root directory (no `parent`), try polymorphic fields before the legacy `name` lookup. */
+  /** When resolving a root directory (no `parent`), use `resolveRootArticleDirectory`, which limits the `name` lookup to this collection. */
   rootLookup?: ArticleDirectoryRootLookup;
 }) {
   if (parent !== undefined) {
@@ -208,17 +343,23 @@ export async function getArticleDirectory({
   }
 
   if (rootLookup) {
-    const polymorphic = await findRootArticleDirectoryPolymorphic({
+    const articleDirectory = await resolveRootArticleDirectory({
       payload,
       req,
       documentId,
       rootLookup,
     });
-    if (polymorphic) {
-      return polymorphic;
+    if (!articleDirectory && !allowEmpty) {
+      console.error(`No article directory found for document ${documentId}`);
+      throw new Error(
+        'This article does not have a corresponding entry in the crowdin-article-directories collection.',
+      );
     }
+    return articleDirectory;
   }
 
+  // Without `rootLookup` the collection is unknown, so a `name` match may
+  // belong to another collection when ids repeat across collections.
   const crowdinPayloadArticleDirectory = await payload.find({
     collection: 'crowdin-article-directories',
     where: {

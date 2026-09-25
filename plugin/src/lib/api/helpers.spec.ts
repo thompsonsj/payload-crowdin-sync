@@ -6,6 +6,7 @@ import {
   isCrowdinActive,
 } from './helpers';
 import { pluginOptions } from './mock/plugin-options';
+import { createInMemoryPayload } from './tests/in-memory-payload';
 import type { Payload } from 'payload';
 
 describe('Helper: isCrowdinActive', () => {
@@ -173,14 +174,18 @@ describe('findRootArticleDirectoryPolymorphic / getArticleDirectory rootLookup',
     expect(payload.find).toHaveBeenCalledTimes(1);
   });
 
-  it('getArticleDirectory falls back to name lookup when polymorphic misses but rootLookup is set', async () => {
-    const nameDoc = { id: 'from-name', name: 'doc-1' };
-    const payload = {
-      find: vi
-        .fn()
-        .mockResolvedValueOnce({ docs: [], totalDocs: 0 })
-        .mockResolvedValueOnce({ docs: [nameDoc], totalDocs: 1 }),
-    } as unknown as Payload;
+  it("getArticleDirectory falls back to a name lookup within the collection's directory when polymorphic misses", async () => {
+    const nameDoc = {
+      id: 'from-name',
+      name: 'doc-1',
+      crowdinCollectionDirectory: 'cd-posts',
+    };
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': [
+        { id: 'cd-posts', collectionSlug: 'posts' },
+      ],
+      'crowdin-article-directories': [nameDoc],
+    });
 
     const result = await getArticleDirectory({
       documentId: 'doc-1',
@@ -190,7 +195,6 @@ describe('findRootArticleDirectoryPolymorphic / getArticleDirectory rootLookup',
     });
 
     expect(result).toBe(nameDoc);
-    expect(payload.find).toHaveBeenCalledTimes(2);
   });
 });
 

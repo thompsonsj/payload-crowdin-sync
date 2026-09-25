@@ -1,65 +1,21 @@
-import { NotFound } from 'payload';
-import type { Payload, PayloadRequest, Where } from 'payload';
+import type { PayloadRequest } from 'payload';
 import { getArticleDirectory } from './helpers';
 import { filesApiByDocument } from './files/by-document';
 import { payloadCrowdinSyncDocumentFilesApi } from './files/document';
 import { pluginOptions } from './mock/plugin-options';
+import {
+  createInMemoryPayload,
+  type InMemoryPayload,
+  type Row,
+} from './tests/in-memory-payload';
 
 /**
  * Root article directory resolution across the sync, delete and translation
- * lookup paths. Uses an in-memory Payload that evaluates `where` clauses, so
- * the tests assert which directory is found rather than the query sequence.
+ * lookup paths.
  *
  * SQL adapters reuse ids across collections (e.g. post `5` and page `5`), so
  * a lookup by `name` alone can match another collection's directory.
  */
-
-type Row = Record<string, unknown> & { id: string };
-
-const valueAt = (row: Row, path: string): unknown =>
-  path.split('.').reduce<unknown>((value, key) => {
-    if (value && typeof value === 'object') {
-      return (value as Record<string, unknown>)[key];
-    }
-    return undefined;
-  }, row);
-
-const idOf = (value: unknown) =>
-  value && typeof value === 'object' ? (value as Row).id : value;
-
-const matches = (row: Row, where?: Where): boolean => {
-  if (!where) return true;
-  return Object.entries(where).every(([key, condition]) => {
-    if (key === 'and') {
-      return (condition as Where[]).every((w) => matches(row, w));
-    }
-    if (key === 'or') {
-      return (condition as Where[]).some((w) => matches(row, w));
-    }
-    const { equals } = condition as { equals: unknown };
-    return idOf(valueAt(row, key)) === equals;
-  });
-};
-
-function createFakePayload(collections: Record<string, Row[]>) {
-  const rows = (collection: string) => collections[collection] ?? [];
-  const payload = {
-    find: vi.fn(async ({ collection, where, limit }) => {
-      const docs = rows(collection).filter((row) => matches(row, where));
-      const limited = limit ? docs.slice(0, limit) : docs;
-      return { docs: limited, totalDocs: docs.length };
-    }),
-    findByID: vi.fn(async ({ collection, id }) => {
-      const doc = rows(collection).find((row) => row.id === id);
-      if (!doc) throw new NotFound();
-      return doc;
-    }),
-    delete: vi.fn(async ({ collection, id }) => {
-      collections[collection] = rows(collection).filter((row) => row.id !== id);
-    }),
-  };
-  return payload;
-}
 
 const collectionDirectories: Row[] = [
   { id: 'cd-pages', collectionSlug: 'pages', originalId: 10 },
@@ -83,7 +39,7 @@ const legacyPostDirectory: Row = {
 };
 
 const buildApiByDocument = (
-  payload: ReturnType<typeof createFakePayload>,
+  payload: InMemoryPayload,
   document: Record<string, unknown>,
   { collectionSlug = 'posts', global = false } = {},
 ) =>
@@ -104,39 +60,39 @@ describe('getArticleDirectory with rootLookup', () => {
       name: 'renamed',
       collectionDocument: { value: '5', relationTo: 'posts' },
     };
-    const payload = createFakePayload({
+    const payload = createInMemoryPayload({
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [legacyPostDirectory, linked],
     });
     const result = await getArticleDirectory({
       documentId: '5',
-      payload: payload as unknown as Payload,
+      payload: payload,
       rootLookup,
     });
     expect(result?.id).toBe('ad-linked');
   });
 
   it('finds an unlinked directory by name within its own collection directory', async () => {
-    const payload = createFakePayload({
+    const payload = createInMemoryPayload({
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [legacyPageDirectory, legacyPostDirectory],
     });
     const result = await getArticleDirectory({
       documentId: '5',
-      payload: payload as unknown as Payload,
+      payload: payload,
       rootLookup,
     });
     expect(result?.id).toBe('ad-post-5');
   });
 
   it("does not return another collection's directory with the same name", async () => {
-    const payload = createFakePayload({
+    const payload = createInMemoryPayload({
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [legacyPageDirectory],
     });
     const result = await getArticleDirectory({
       documentId: '5',
-      payload: payload as unknown as Payload,
+      payload: payload,
       allowEmpty: true,
       rootLookup,
     });
@@ -144,7 +100,7 @@ describe('getArticleDirectory with rootLookup', () => {
   });
 
   it('finds an unlinked global directory by name within the globals directory', async () => {
-    const payload = createFakePayload({
+    const payload = createInMemoryPayload({
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [
         {
@@ -156,7 +112,7 @@ describe('getArticleDirectory with rootLookup', () => {
     });
     const result = await getArticleDirectory({
       documentId: 'nav',
-      payload: payload as unknown as Payload,
+      payload: payload,
       rootLookup: { collectionSlug: 'nav', global: true },
     });
     expect(result?.id).toBe('ad-nav');
@@ -165,12 +121,12 @@ describe('getArticleDirectory with rootLookup', () => {
 
 describe('getArticleDirectory without rootLookup', () => {
   it('keeps the name-only lookup for callers that do not know the collection', async () => {
-    const payload = createFakePayload({
+    const payload = createInMemoryPayload({
       'crowdin-article-directories': [legacyPageDirectory],
     });
     const result = await getArticleDirectory({
       documentId: '5',
-      payload: payload as unknown as Payload,
+      payload: payload,
     });
     expect(result?.id).toBe('ad-page-5');
   });
@@ -178,7 +134,7 @@ describe('getArticleDirectory without rootLookup', () => {
 
 describe('filesApiByDocument.resolveExistingArticleDirectory (delete path)', () => {
   it("does not resolve another collection's directory for a document that was never synced", async () => {
-    const payload = createFakePayload({
+    const payload = createInMemoryPayload({
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [legacyPageDirectory],
     });
@@ -187,7 +143,7 @@ describe('filesApiByDocument.resolveExistingArticleDirectory (delete path)', () 
   });
 
   it('uses the legacy reference on the document when there is no polymorphic link', async () => {
-    const payload = createFakePayload({
+    const payload = createInMemoryPayload({
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [
         { id: 'ad-legacy', name: 'something-else' },
@@ -201,7 +157,7 @@ describe('filesApiByDocument.resolveExistingArticleDirectory (delete path)', () 
   });
 
   it('skips a legacy reference to a directory that no longer exists', async () => {
-    const payload = createFakePayload({
+    const payload = createInMemoryPayload({
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [],
     });
@@ -215,7 +171,7 @@ describe('filesApiByDocument.resolveExistingArticleDirectory (delete path)', () 
 
 describe('filesApiByDocument.findOrCreateArticleDirectory (sync path)', () => {
   it('prefers the polymorphic link over the legacy reference', async () => {
-    const payload = createFakePayload({
+    const payload = createInMemoryPayload({
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [
         { id: 'ad-legacy', name: 'x' },
@@ -234,7 +190,7 @@ describe('filesApiByDocument.findOrCreateArticleDirectory (sync path)', () => {
   });
 
   it('skips a legacy reference to a directory that no longer exists and finds the directory by name', async () => {
-    const payload = createFakePayload({
+    const payload = createInMemoryPayload({
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [legacyPostDirectory],
     });
@@ -246,7 +202,7 @@ describe('filesApiByDocument.findOrCreateArticleDirectory (sync path)', () => {
   });
 
   it("does not reuse another collection's directory with the same name", async () => {
-    const payload = createFakePayload({
+    const payload = createInMemoryPayload({
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [legacyPageDirectory],
     });
@@ -268,7 +224,7 @@ describe('filesApiByDocument.findOrCreateArticleDirectory (sync path)', () => {
 
 describe('payloadCrowdinSyncDocumentFilesApi.deleteFilesAndDirectory', () => {
   it('deletes the resolved article directory, not another directory with the same name', async () => {
-    const payload = createFakePayload({
+    const payload = createInMemoryPayload({
       'crowdin-article-directories': [legacyPageDirectory, legacyPostDirectory],
       'crowdin-files': [],
     });

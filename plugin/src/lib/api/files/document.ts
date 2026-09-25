@@ -523,6 +523,6 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       }
     }
 
-    await this.deleteArticleDirectory(this.document.id);
+    await this.deleteArticleDirectory(this.articleDirectory);
   }
 }
