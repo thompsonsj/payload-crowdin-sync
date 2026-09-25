@@ -77,9 +77,9 @@ export const isCrowdinArticleDirectory = (val): val is CrowdinArticleDirectory =
 
 ---
 
-### 3. Replace duplicated hook logic in `syncTranslations` / `syncAllTranslations`
+### 3. Replace duplicated hook logic in `syncTranslations` / `syncAllTranslations` ✅
 
-**File:** `plugin/src/lib/fields/pluginFields.ts:156–327`
+**File:** `plugin/src/lib/fields/pluginFields.ts:156–327` (now `plugin/src/lib/fields/syncTranslationHooks.ts`)
 
 **Problem:** The two checkbox fields `syncTranslations` and `syncAllTranslations` have structurally identical `beforeChange` and `afterChange` hooks (~70 lines each, ~140 lines total). Both hooks:
 
@@ -168,7 +168,12 @@ A comment in the source already flags this: `"find a better way to do this - blo
 - **Item 4:** `initFunctions` removed. `onInit` still forwards to the host config's `onInit`, now covered in `plugin.spec.ts`.
 - **Item 5:** `buildDocumentTabFields` lives in `fields/documentTabFields.ts`, returns `Field[]`, and has focused tests in `documentTabFields.spec.ts`.
 
-Remaining: items 1, 3 and 6.
+**Pass 2 — item 3**
+
+- **Item 3:** `createSyncBeforeChangeHook(mode, pluginOptions)` and `createSyncAfterChangeHook(mode, pluginOptions)` live in `fields/syncTranslationHooks.ts`, alongside `syncFieldNames`, which maps each `SyncMode` to its checkbox name. The before hook takes `pluginOptions` rather than a field name because the current-locale mode needs `localeMap`; the field name comes from `syncFieldNames`. Baseline tests in `pluginFields.syncHooks.spec.ts` were committed against the old hooks first and pass unchanged against the factories. They cover both modes, inline and job-queue loading, and the `triggerAfterChange === false` guard.
+- **Known limitation, kept as-is:** the after hook only syncs when `articleDirectoryId` is a string, so numeric ids (SQL adapters) never trigger a sync. Fixing it is a behaviour change and belongs in its own PR.
+
+Remaining: items 1 and 6.
 
 ---
 

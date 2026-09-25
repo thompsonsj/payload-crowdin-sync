@@ -1,8 +1,11 @@
 import type { Field, TabsField } from 'payload';
-import { updatePayloadTranslation } from '../api/helpers';
 import { PluginOptions } from '../types';
 // import { DocumentCustomUIField } from "./documentUI";
-import { getOtherLocales } from '../utilities/locales';
+import {
+  createSyncAfterChangeHook,
+  createSyncBeforeChangeHook,
+  syncFieldNames,
+} from './syncTranslationHooks';
 
 interface Args {
   fields: Field[];
@@ -51,7 +54,8 @@ const crowdinArticleDirectoryField: Field = {
         }
         const cacheKey = `${slugKey}:${data.id}`;
         const ctx = ((req as any).context ||= {});
-        const cache: Record<string, any> = (ctx._crowdinArticleDirectoryCache ||= {});
+        const cache: Record<string, any> =
+          (ctx._crowdinArticleDirectoryCache ||= {});
         if (Object.prototype.hasOwnProperty.call(cache, cacheKey)) {
           return cache[cacheKey];
         }
@@ -133,7 +137,7 @@ const crowdinArticleDirectoryField: Field = {
         return resolved;
       },
     ],
-  }
+  },
 };
 
 export const pluginCollectionOrGlobalFields = ({
@@ -153,7 +157,7 @@ export const pluginCollectionOrGlobalFields = ({
     },
     */
     {
-      name: 'syncTranslations',
+      name: syncFieldNames['current-locale'],
       type: 'checkbox',
       access: {
         create: () => false,
@@ -168,78 +172,15 @@ export const pluginCollectionOrGlobalFields = ({
       },
       hooks: {
         beforeChange: [
-          async ({ context, req, siblingData }) => {
-            // return if flag was previously set
-            if (context.triggerAfterChange === false) {
-              return;
-            }
-            if (
-              siblingData['syncTranslations'] &&
-              siblingData['crowdinArticleDirectory']
-            ) {
-              // is this a draft?
-              const draft = Boolean(
-                siblingData['_status'] &&
-                  siblingData['_status'] !== 'published',
-              );
-              const excludeLocales = getOtherLocales({
-                locale: `${req.locale}`,
-                localeMap: pluginOptions.localeMap,
-              });
-              context['articleDirectoryId'] =
-                typeof siblingData['crowdinArticleDirectory'] === 'string'
-                  ? siblingData['crowdinArticleDirectory']
-                  : siblingData['crowdinArticleDirectory'].id;
-              context['draft'] = draft;
-              context['excludeLocales'] = excludeLocales;
-              context['syncTranslations'] = true;
-            }
-            // Mutate the sibling data to prevent DB storage
-            // eslint-disable-next-line no-param-reassign
-            siblingData['syncTranslations'] = undefined;
-          },
+          createSyncBeforeChangeHook('current-locale', pluginOptions),
         ],
         afterChange: [
-          async ({ context, req }) => {
-            // return if flag was previously set
-            if (context.triggerAfterChange === false) {
-              return;
-            }
-            // type check context, if valid we can safely assume translation updates are desired
-            if (
-              typeof context['articleDirectoryId'] === 'string' &&
-              typeof context['draft'] === 'boolean' &&
-              Array.isArray(context['excludeLocales']) &&
-              typeof context['syncTranslations'] === 'boolean'
-            ) {
-              if (process.env.PAYLOAD_CROWDIN_SYNC_USE_JOBS) {
-                await req.payload.jobs.queue({
-                  task: 'crowdinSyncTranslations',
-                  input: {
-                    articleDirectoryId: context['articleDirectoryId'],
-                    draft: context['draft'],
-                    excludeLocales: context['excludeLocales'],
-                    dryRun: false,
-                  },
-                });
-              } else {
-                await updatePayloadTranslation({
-                  articleDirectoryId: context['articleDirectoryId'],
-                  pluginOptions,
-                  payload: req.payload,
-                  draft: context['draft'],
-                  excludeLocales: context['excludeLocales'],
-                  dryRun: false,
-                  req,
-                });
-              }
-            }
-          },
+          createSyncAfterChangeHook('current-locale', pluginOptions),
         ],
       },
     },
     {
-      name: 'syncAllTranslations',
+      name: syncFieldNames['all-locales'],
       type: 'checkbox',
       access: {
         create: () => false,
@@ -254,75 +195,9 @@ export const pluginCollectionOrGlobalFields = ({
       },
       hooks: {
         beforeChange: [
-          async ({ context, siblingData }) => {
-            // return if flag was previously set
-            if (context.triggerAfterChange === false) {
-              return;
-            }
-            if (
-              siblingData['syncAllTranslations'] &&
-              siblingData['crowdinArticleDirectory']
-            ) {
-              // is this a draft?
-              const draft = Boolean(
-                siblingData['_status'] &&
-                  siblingData['_status'] !== 'published',
-              );
-
-              context['articleDirectoryId'] =
-                typeof siblingData['crowdinArticleDirectory'] === 'string'
-                  ? siblingData['crowdinArticleDirectory']
-                  : siblingData['crowdinArticleDirectory'].id;
-              context['draft'] = draft;
-              context['syncAllTranslations'] = true;
-            }
-            // Mutate the sibling data to prevent DB storage
-            // eslint-disable-next-line no-param-reassign
-            siblingData['syncAllTranslations'] = undefined;
-          },
+          createSyncBeforeChangeHook('all-locales', pluginOptions),
         ],
-        afterChange: [
-          async ({ context, req }) => {
-            // return if flag was previously set
-            if (context.triggerAfterChange === false) {
-              return;
-            }
-            // type check context, if valid we can safely assume translation updates are desired
-            if (
-              typeof context['articleDirectoryId'] === 'string' &&
-              typeof context['draft'] === 'boolean' &&
-              typeof context['syncAllTranslations'] === 'boolean'
-            ) {
-              if (process.env.PAYLOAD_CROWDIN_SYNC_USE_JOBS) {
-                // create seperate tasks
-                for (const locale of Object.keys(pluginOptions.localeMap)) {
-                  const excludeLocales = getOtherLocales({
-                    locale,
-                    localeMap: pluginOptions.localeMap,
-                  });
-                  await req.payload.jobs.queue({
-                    task: 'crowdinSyncTranslations',
-                    input: {
-                      articleDirectoryId: context['articleDirectoryId'],
-                      excludeLocales,
-                      draft: context['draft'],
-                      dryRun: false,
-                    },
-                  });
-                }
-              } else {
-                await updatePayloadTranslation({
-                  articleDirectoryId: context['articleDirectoryId'],
-                  pluginOptions,
-                  payload: req.payload,
-                  draft: context['draft'],
-                  dryRun: false,
-                  req,
-                });
-              }
-            }
-          },
-        ],
+        afterChange: [createSyncAfterChangeHook('all-locales', pluginOptions)],
       },
     },
     crowdinArticleDirectoryField,
