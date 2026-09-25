@@ -1,7 +1,7 @@
 {
   "name": "payload-crowdin-sync",
   "version": "0.42.2",
-  "description": "Automatically upload/sync localized fields from the default locale to Crowdin. Make these fields read-only in other locales and update them using Crowdin translations.",
+  "description": "Translate Payload CMS content in Crowdin. Uploads localized fields as HTML and JSON files, and writes translations back into Payload.",
   "keywords": [
     "payload",
     "payloadcms",
@@ -34,8 +34,7 @@
     "@payloadcms/richtext-lexical": "^3",
     "@payloadcms/richtext-slate": "^3",
     "@payloadcms/ui": "^3",
-    "react": "^19.0.0",
-    "lexical": "0.x"
+    "react": "^19.0.0"
   },
   "type": "module",
   "engines": {

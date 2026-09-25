@@ -79,6 +79,7 @@ export interface Config {
     'crowdin-files': CrowdinFile;
     'crowdin-collection-directories': CrowdinCollectionDirectory;
     'crowdin-article-directories': CrowdinArticleDirectory;
+    'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -98,6 +99,7 @@ export interface Config {
     'crowdin-files': CrowdinFilesSelect<false> | CrowdinFilesSelect<true>;
     'crowdin-collection-directories': CrowdinCollectionDirectoriesSelect<false> | CrowdinCollectionDirectoriesSelect<true>;
     'crowdin-article-directories': CrowdinArticleDirectoriesSelect<false> | CrowdinArticleDirectoriesSelect<true>;
+    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -106,6 +108,8 @@ export interface Config {
   db: {
     defaultIDType: string;
   };
+  fallbackLocale:
+    ('false' | 'none' | 'null') | false | null | ('en' | 'de_DE' | 'fr_FR') | ('en' | 'de_DE' | 'fr_FR')[];
   globals: {
     'localized-nav': LocalizedNav;
     nav: Nav;
@@ -117,9 +121,10 @@ export interface Config {
     statistics: StatisticsSelect<false> | StatisticsSelect<true>;
   };
   locale: 'en' | 'de_DE' | 'fr_FR';
-  user: User & {
-    collection: 'users';
+  widgets: {
+    collections: CollectionsWidget;
   };
+  user: User;
   jobs: {
     tasks: {
       crowdinSyncTranslations: TaskCrowdinSyncTranslations;
@@ -236,10 +241,31 @@ export interface MultiRichText {
  */
 export interface CrowdinArticleDirectory {
   id: string;
+  collectionDocument?:
+    | ({
+        relationTo: 'multi-rich-text';
+        value: string | MultiRichText;
+      } | null)
+    | ({
+        relationTo: 'localized-posts';
+        value: string | LocalizedPost;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: string | Post;
+      } | null)
+    | ({
+        relationTo: 'localized-posts-with-condition';
+        value: string | LocalizedPostsWithCondition;
+      } | null);
+  globalSlug?: ('nav' | 'statistics') | null;
   /**
    * Select locales to exclude from translation synchronization.
    */
   excludeLocales?: ('de_DE' | 'fr_FR')[] | null;
+  /**
+   * Stores the Crowdin directory name. For collection documents this is the Payload document ID; for globals this is the global slug. Use the globalSlug field to query for globals — name is overloaded.
+   */
   name?: string | null;
   crowdinCollectionDirectory?: (string | null) | CrowdinCollectionDirectory;
   crowdinFiles?: (string | CrowdinFile)[] | null;
@@ -253,6 +279,122 @@ export interface CrowdinArticleDirectory {
   directoryId?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "localized-posts".
+ */
+export interface LocalizedPost {
+  id: string;
+  title?: string | null;
+  author?: (string | null) | User;
+  publishedDate?: string | null;
+  category?: (string | null) | Category;
+  tags?: (string | Tag)[] | null;
+  content?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  status?: ('draft' | 'published') | null;
+  /**
+   * Sync translations for this locale from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
+   */
+  syncTranslations?: boolean | null;
+  /**
+   * Sync all translations from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
+   */
+  syncAllTranslations?: boolean | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: string;
+  name?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: string;
+  name?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: string;
+  title?: string | null;
+  author?: (string | null) | User;
+  publishedDate?: string | null;
+  category?: (string | null) | Category;
+  tags?: (string | Tag)[] | null;
+  content?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  status?: ('draft' | 'published') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "localized-posts-with-condition".
+ */
+export interface LocalizedPostsWithCondition {
+  id: string;
+  title?: string | null;
+  translateWithCrowdin?: boolean | null;
+  author?: (string | null) | User;
+  publishedDate?: string | null;
+  category?: (string | null) | Category;
+  tags?: (string | Tag)[] | null;
+  content?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
+  status?: ('draft' | 'published') | null;
+  /**
+   * Sync translations for this locale from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
+   */
+  syncTranslations?: boolean | null;
+  /**
+   * Sync all translations from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
+   */
+  syncAllTranslations?: boolean | null;
+  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -322,69 +464,6 @@ export interface CrowdinFile {
   };
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "localized-posts".
- */
-export interface LocalizedPost {
-  id: string;
-  title?: string | null;
-  author?: (string | null) | User;
-  publishedDate?: string | null;
-  category?: (string | null) | Category;
-  tags?: (string | Tag)[] | null;
-  content?:
-    | {
-        [k: string]: unknown;
-      }[]
-    | null;
-  status?: ('draft' | 'published') | null;
-  /**
-   * Sync translations for this locale from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
-   */
-  syncTranslations?: boolean | null;
-  /**
-   * Sync all translations from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
-   */
-  syncAllTranslations?: boolean | null;
-  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: string;
-  name?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tags".
- */
-export interface Tag {
-  id: string;
-  name?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -503,7 +582,7 @@ export interface NestedFieldCollection {
                 root: {
                   type: string;
                   children: {
-                    type: string;
+                    type: any;
                     version: number;
                     [k: string]: unknown;
                   }[];
@@ -544,7 +623,7 @@ export interface Policy {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -563,7 +642,7 @@ export interface Policy {
             root: {
               type: string;
               children: {
-                type: string;
+                type: any;
                 version: number;
                 [k: string]: unknown;
               }[];
@@ -583,54 +662,20 @@ export interface Policy {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts".
+ * via the `definition` "payload-kv".
  */
-export interface Post {
+export interface PayloadKv {
   id: string;
-  title?: string | null;
-  author?: (string | null) | User;
-  publishedDate?: string | null;
-  category?: (string | null) | Category;
-  tags?: (string | Tag)[] | null;
-  content?:
+  key: string;
+  data:
     | {
         [k: string]: unknown;
-      }[]
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
     | null;
-  status?: ('draft' | 'published') | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "localized-posts-with-condition".
- */
-export interface LocalizedPostsWithCondition {
-  id: string;
-  title?: string | null;
-  translateWithCrowdin?: boolean | null;
-  author?: (string | null) | User;
-  publishedDate?: string | null;
-  category?: (string | null) | Category;
-  tags?: (string | Tag)[] | null;
-  content?:
-    | {
-        [k: string]: unknown;
-      }[]
-    | null;
-  status?: ('draft' | 'published') | null;
-  /**
-   * Sync translations for this locale from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
-   */
-  syncTranslations?: boolean | null;
-  /**
-   * Sync all translations from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).
-   */
-  syncAllTranslations?: boolean | null;
-  crowdinArticleDirectory?: (string | null) | CrowdinArticleDirectory;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -778,10 +823,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'crowdin-article-directories';
         value: string | CrowdinArticleDirectory;
-      } | null)
-    | ({
-        relationTo: 'payload-jobs';
-        value: string | PayloadJob;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1053,6 +1094,7 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -1119,6 +1161,8 @@ export interface CrowdinCollectionDirectoriesSelect<T extends boolean = true> {
  * via the `definition` "crowdin-article-directories_select".
  */
 export interface CrowdinArticleDirectoriesSelect<T extends boolean = true> {
+  collectionDocument?: T;
+  globalSlug?: T;
   excludeLocales?: T;
   name?: T;
   crowdinCollectionDirectory?: T;
@@ -1135,6 +1179,14 @@ export interface CrowdinArticleDirectoriesSelect<T extends boolean = true> {
   directoryId?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-kv_select".
+ */
+export interface PayloadKvSelect<T extends boolean = true> {
+  key?: T;
+  data?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1309,6 +1361,16 @@ export interface StatisticsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_widget".
+ */
+export interface CollectionsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

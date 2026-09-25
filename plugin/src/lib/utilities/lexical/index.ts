@@ -4,7 +4,10 @@ import {
   SerializedUploadNode,
 } from '@payloadcms/richtext-lexical';
 import type { BlocksField as BlockField, RichTextField } from 'payload';
-import { SerializedRootNode, SerializedLexicalNode } from 'lexical';
+import type {
+  SerializedRootNode,
+  SerializedLexicalNode,
+} from '@payloadcms/richtext-lexical/lexical';
 import { SerializedBlockNode } from '@payloadcms/richtext-lexical';
 
 const isSerializedBlockNode = (
