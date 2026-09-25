@@ -211,7 +211,8 @@ describe('payloadCrowdinSyncTranslationsApi', () => {
       });
 
       await expect(result).rejects.toThrow('cannot build update object');
-      await expect(result).rejects.toMatchObject({ cause: original });
+      const rejection = await result.catch((error: Error) => error);
+      expect(rejection.cause).toBe(original);
     });
   });
 });
