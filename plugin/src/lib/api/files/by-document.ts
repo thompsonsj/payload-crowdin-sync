@@ -150,7 +150,7 @@ export class filesApiByDocument {
         collectionSlug: this.collectionSlug as string,
         global: this.global,
       },
-      legacyReference: this.document.crowdinArticleDirectory,
+      documentDirectory: this.document.crowdinArticleDirectory,
       validate,
     });
   }

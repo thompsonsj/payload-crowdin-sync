@@ -52,7 +52,8 @@ export type ArticleDirectoryRootLookup = {
 };
 
 /**
- * Find root article directory using `globalSlug` or `collectionDocument` on `crowdin-article-directories`.
+ * Find a root article directory linked to its document: `collectionDocument`
+ * for collections, `globalSlug` for globals.
  */
 export async function findRootArticleDirectoryPolymorphic({
   payload,
@@ -94,10 +95,58 @@ export async function findRootArticleDirectoryPolymorphic({
 }
 
 /**
- * Find an article directory by `name` within the document's collection
- * directory (`globals` for globals). Does not create the collection directory.
+ * Resolve the directory held in a document's `crowdinArticleDirectory` field.
+ *
+ * The field is virtual: its `beforeChange` hook stops it being stored, and its
+ * `afterRead` hook fills it in with a directory lookup. So documents read
+ * through Payload usually carry the resolved directory already, and using it
+ * saves the queries below. A string id only appears in raw data, or on
+ * documents stored by versions that saved the field. Returns `undefined` if
+ * that row no longer exists.
  */
-async function findArticleDirectoryInCollectionDirectory({
+async function findArticleDirectoryOnDocument({
+  payload,
+  req,
+  documentDirectory,
+}: {
+  payload: Payload;
+  req?: PayloadRequest;
+  documentDirectory: unknown;
+}): Promise<CrowdinArticleDirectory | undefined> {
+  if (!documentDirectory) {
+    return undefined;
+  }
+  if (typeof documentDirectory === 'object') {
+    return (documentDirectory as CrowdinArticleDirectory).id
+      ? (documentDirectory as CrowdinArticleDirectory)
+      : undefined;
+  }
+  try {
+    return (await payload.findByID({
+      collection: 'crowdin-article-directories',
+      id: documentDirectory as string,
+      req,
+      overrideAccess: true,
+    })) as CrowdinArticleDirectory;
+  } catch (error) {
+    if ((error as { status?: number }).status === 404) {
+      return undefined;
+    }
+    throw error;
+  }
+}
+
+/**
+ * Find a directory row that has no link back to its document, by its `name`
+ * (the document id, or the global slug) within the collection's directory
+ * (`globals` for globals). Does not create the collection directory.
+ *
+ * New collection directories are created without `collectionDocument`, so
+ * this is how collection documents are found unless the backfill has linked
+ * their rows. Global directories get `globalSlug` on creation, so for globals
+ * this only finds rows from older versions.
+ */
+async function findUnlinkedArticleDirectoryByName({
   payload,
   req,
   documentId,
@@ -139,55 +188,22 @@ async function findArticleDirectoryInCollectionDirectory({
 }
 
 /**
- * Load the directory referenced by the legacy `crowdinArticleDirectory` field
- * on a synced document. Returns `undefined` if the row no longer exists.
- */
-async function findArticleDirectoryByLegacyReference({
-  payload,
-  req,
-  legacyReference,
-}: {
-  payload: Payload;
-  req?: PayloadRequest;
-  legacyReference: unknown;
-}): Promise<CrowdinArticleDirectory | undefined> {
-  if (!legacyReference) {
-    return undefined;
-  }
-  if (typeof legacyReference === 'object') {
-    return (legacyReference as CrowdinArticleDirectory).id
-      ? (legacyReference as CrowdinArticleDirectory)
-      : undefined;
-  }
-  try {
-    return (await payload.findByID({
-      collection: 'crowdin-article-directories',
-      id: legacyReference as string,
-      req,
-      overrideAccess: true,
-    })) as CrowdinArticleDirectory;
-  } catch (error) {
-    if ((error as { status?: number }).status === 404) {
-      return undefined;
-    }
-    throw error;
-  }
-}
-
-/**
  * Find the root article directory for a collection document or global.
  *
- * Tries, in order: the polymorphic link (`collectionDocument` / `globalSlug`),
- * the legacy `crowdinArticleDirectory` reference on the document, then a
- * `name` match within the document's collection directory. Each candidate is
- * passed through `validate`; the first one it returns wins.
+ * Tries, in order:
+ * 1. a row linked to the document (`collectionDocument` / `globalSlug`)
+ * 2. the directory already on the document's `crowdinArticleDirectory` field
+ * 3. an unlinked row matched by `name` within the collection's directory
+ *
+ * Each candidate is passed through `validate` (self-clean on sync); the first
+ * one it returns wins.
  */
 export async function resolveRootArticleDirectory({
   payload,
   req,
   documentId,
   rootLookup,
-  legacyReference,
+  documentDirectory,
   validate = async (directory) => directory,
 }: {
   payload: Payload;
@@ -195,13 +211,13 @@ export async function resolveRootArticleDirectory({
   /** For collections: the Payload document id. For globals: the global slug. */
   documentId: string;
   rootLookup: ArticleDirectoryRootLookup;
-  /** Value of the `crowdinArticleDirectory` field on the document, if any. */
-  legacyReference?: unknown;
+  /** Value of the document's `crowdinArticleDirectory` field, if any. */
+  documentDirectory?: unknown;
   validate?: (
     directory: CrowdinArticleDirectory,
   ) => Promise<CrowdinArticleDirectory | undefined>;
 }): Promise<CrowdinArticleDirectory | undefined> {
-  const strategies = [
+  const lookups = [
     () =>
       findRootArticleDirectoryPolymorphic({
         payload,
@@ -209,18 +225,17 @@ export async function resolveRootArticleDirectory({
         documentId,
         rootLookup,
       }),
+    () => findArticleDirectoryOnDocument({ payload, req, documentDirectory }),
     () =>
-      findArticleDirectoryByLegacyReference({ payload, req, legacyReference }),
-    () =>
-      findArticleDirectoryInCollectionDirectory({
+      findUnlinkedArticleDirectoryByName({
         payload,
         req,
         documentId,
         rootLookup,
       }),
   ];
-  for (const strategy of strategies) {
-    const candidate = await strategy();
+  for (const lookup of lookups) {
+    const candidate = await lookup();
     const directory = candidate && (await validate(candidate));
     if (directory) {
       return directory;
