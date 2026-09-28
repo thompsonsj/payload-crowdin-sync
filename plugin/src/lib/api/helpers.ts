@@ -164,6 +164,7 @@ async function findArticleDirectoryByLegacyReference({
       collection: 'crowdin-article-directories',
       id: legacyReference as string,
       req,
+      overrideAccess: true,
     })) as CrowdinArticleDirectory;
   } catch (error) {
     if ((error as { status?: number }).status === 404) {

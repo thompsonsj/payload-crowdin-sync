@@ -119,6 +119,28 @@ describe('getArticleDirectory with rootLookup', () => {
   });
 });
 
+describe('getArticleDirectory with rootLookup when nothing matches', () => {
+  it('throws unless allowEmpty is set', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [legacyPageDirectory],
+    });
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    await expect(
+      getArticleDirectory({
+        documentId: '5',
+        payload,
+        rootLookup: { collectionSlug: 'posts', global: false },
+      }),
+    ).rejects.toThrow(
+      'This article does not have a corresponding entry in the crowdin-article-directories collection.',
+    );
+    consoleError.mockRestore();
+  });
+});
+
 describe('getArticleDirectory without rootLookup', () => {
   it('keeps the name-only lookup for callers that do not know the collection', async () => {
     const payload = createInMemoryPayload({
@@ -154,6 +176,39 @@ describe('filesApiByDocument.resolveExistingArticleDirectory (delete path)', () 
       crowdinArticleDirectory: 'ad-legacy',
     });
     expect((await api.resolveExistingArticleDirectory())?.id).toBe('ad-legacy');
+    expect(payload.findByID).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'ad-legacy', overrideAccess: true }),
+    );
+  });
+
+  it('ignores a populated legacy reference without an id', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [legacyPostDirectory],
+    });
+    const api = buildApiByDocument(payload, {
+      id: '5',
+      crowdinArticleDirectory: { name: 'no-id' },
+    });
+    expect((await api.resolveExistingArticleDirectory())?.id).toBe('ad-post-5');
+  });
+
+  it('rethrows errors other than not found from the legacy lookup', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [legacyPostDirectory],
+    });
+    const databaseError = Object.assign(new Error('Database unavailable'), {
+      status: 500,
+    });
+    payload.findByID.mockRejectedValueOnce(databaseError);
+    const api = buildApiByDocument(payload, {
+      id: '5',
+      crowdinArticleDirectory: 'ad-legacy',
+    });
+    await expect(api.resolveExistingArticleDirectory()).rejects.toBe(
+      databaseError,
+    );
   });
 
   it('skips a legacy reference to a directory that no longer exists', async () => {
