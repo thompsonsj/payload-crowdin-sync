@@ -101,6 +101,7 @@ Unifying the paths fixed these bugs:
 - **A directory id on the document that no longer exists blocked sync.** If `crowdinArticleDirectory` held the id of a deleted row, sync threw until the field was cleared. It is now skipped on both paths (only on a 404; other errors still throw).
 - **Self-clean could delete the same row twice.** When self-clean deleted a stale linked row, sync validated the document field next, which usually holds the same row, and the second delete threw `NotFound`.
 - **Globals could pick up another collection's directory.** When a global's directory had no `globalSlug`, `afterRead` matched `name` against the global slug with no collection filter. It now uses the resolver, which only matches within the `globals` directory.
+- **A document could point at another document's directory.** Before #294, duplicating a document copied the stored `crowdinArticleDirectory` id. The resolver now only uses the directory on the document field if the row is named for this document and isn't linked to another document, global or collection. The check reads the row alone, so it costs no queries.
 
 `getArticleDirectory`, `getFileByDocumentID` and `getFilesByDocumentID` are exported, so without `rootLookup` they keep the `name`-only lookup; callers that know the collection should pass it.
 

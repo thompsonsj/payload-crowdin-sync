@@ -135,6 +135,7 @@ export class filesApiByDocument {
     return this.resolveArticleDirectory();
   }
 
+  /** Run `resolveRootArticleDirectory` for this document. */
   private resolveArticleDirectory(
     validate?: (
       directory: CrowdinArticleDirectory,
@@ -186,6 +187,10 @@ export class filesApiByDocument {
     }
   }
 
+  /**
+   * Find the document's article directory, removing stale rows unless
+   * `disableSelfClean` is set, or create it under the collection's directory.
+   */
   async findOrCreateArticleDirectory(): Promise<CrowdinArticleDirectory> {
     const found = await this.resolveArticleDirectory((directory) =>
       this.ensureValidArticleDirectory(directory),

@@ -206,6 +206,11 @@ export class payloadCrowdinSyncFilesApi {
     }
   }
 
+  /**
+   * Delete an article directory's Payload record, and the directory on Crowdin
+   * when `deleteCrowdinFiles` is set. Skips rows that were never created on
+   * Crowdin (no `originalId`).
+   */
   async deleteArticleDirectory(
     crowdinPayloadArticleDirectory: CrowdinArticleDirectory,
   ) {

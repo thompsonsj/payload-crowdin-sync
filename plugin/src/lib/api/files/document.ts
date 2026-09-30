@@ -512,6 +512,10 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     );
   }
 
+  /**
+   * Delete the document's files, then its article directory. A file that
+   * fails to delete is logged and skipped so the directory is still removed.
+   */
   async deleteFilesAndDirectory() {
     const files = await this.getFiles();
 

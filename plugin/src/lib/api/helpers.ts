@@ -102,38 +102,93 @@ export async function findRootArticleDirectoryPolymorphic({
  * through Payload usually carry the resolved directory already, and using it
  * saves the queries below. A string id only appears in raw data, or on
  * documents stored by versions that saved the field. Returns `undefined` if
- * that row no longer exists.
+ * that row no longer exists, or if it belongs to another document.
  */
 async function findArticleDirectoryOnDocument({
   payload,
   req,
+  documentId,
+  rootLookup,
   documentDirectory,
 }: {
   payload: Payload;
   req?: PayloadRequest;
+  documentId: string;
+  rootLookup: ArticleDirectoryRootLookup;
   documentDirectory: unknown;
 }): Promise<CrowdinArticleDirectory | undefined> {
   if (!documentDirectory) {
     return undefined;
   }
+  let directory: CrowdinArticleDirectory;
   if (typeof documentDirectory === 'object') {
-    return (documentDirectory as CrowdinArticleDirectory).id
-      ? (documentDirectory as CrowdinArticleDirectory)
-      : undefined;
-  }
-  try {
-    return (await payload.findByID({
-      collection: 'crowdin-article-directories',
-      id: documentDirectory as string,
-      req,
-      overrideAccess: true,
-    })) as CrowdinArticleDirectory;
-  } catch (error) {
-    if ((error as { status?: number }).status === 404) {
+    directory = documentDirectory as CrowdinArticleDirectory;
+    if (!directory.id) {
       return undefined;
     }
-    throw error;
+  } else {
+    try {
+      directory = (await payload.findByID({
+        collection: 'crowdin-article-directories',
+        id: documentDirectory as string,
+        req,
+        overrideAccess: true,
+      })) as CrowdinArticleDirectory;
+    } catch (error) {
+      if ((error as { status?: number }).status === 404) {
+        return undefined;
+      }
+      throw error;
+    }
   }
+  return isDirectoryForDocument({ directory, documentId, rootLookup })
+    ? directory
+    : undefined;
+}
+
+/**
+ * Whether a directory row was created for this document, judged from the row
+ * alone. Root directories are named after the document id (the slug for
+ * globals). Before #294, duplicating a document copied the stored directory
+ * id, so a document's field can point at another document's directory.
+ */
+function isDirectoryForDocument({
+  directory,
+  documentId,
+  rootLookup,
+}: {
+  directory: CrowdinArticleDirectory;
+  documentId: string;
+  rootLookup: ArticleDirectoryRootLookup;
+}): boolean {
+  if (`${directory.name}` !== documentId) {
+    return false;
+  }
+  const link = directory.collectionDocument;
+  if (link?.value) {
+    const linkedId =
+      typeof link.value === 'object'
+        ? (link.value as { id?: unknown }).id
+        : link.value;
+    return (
+      !rootLookup.global &&
+      link.relationTo === rootLookup.collectionSlug &&
+      `${linkedId}` === documentId
+    );
+  }
+  if (directory.globalSlug) {
+    return (
+      rootLookup.global && directory.globalSlug === rootLookup.collectionSlug
+    );
+  }
+  const collectionDirectory = directory.crowdinCollectionDirectory;
+  if (collectionDirectory && typeof collectionDirectory === 'object') {
+    return (
+      collectionDirectory.collectionSlug ===
+      (rootLookup.global ? 'globals' : rootLookup.collectionSlug)
+    );
+  }
+  return true;
 }
 
 /**
@@ -192,7 +247,8 @@ async function findUnlinkedArticleDirectoryByName({
  *
  * Tries, in order:
  * 1. a row linked to the document (`collectionDocument` / `globalSlug`)
- * 2. the directory already on the document's `crowdinArticleDirectory` field
+ * 2. the directory already on the document's `crowdinArticleDirectory` field,
+ *    if the row is named for this document and not linked elsewhere
  * 3. an unlinked row matched by `name` within the collection's directory
  *
  * Each candidate is passed through `validate` (self-clean on sync); the first
@@ -226,7 +282,14 @@ export async function resolveRootArticleDirectory({
         documentId,
         rootLookup,
       }),
-    () => findArticleDirectoryOnDocument({ payload, req, documentDirectory }),
+    () =>
+      findArticleDirectoryOnDocument({
+        payload,
+        req,
+        documentId,
+        rootLookup,
+        documentDirectory,
+      }),
     () =>
       findUnlinkedArticleDirectoryByName({
         payload,

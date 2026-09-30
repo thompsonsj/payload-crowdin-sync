@@ -36,6 +36,11 @@ const matches = (row: Row, where?: Where): boolean => {
   });
 };
 
+/**
+ * Seeded with rows per collection slug. Each method is a `vi.fn`, so tests can
+ * assert calls. `findByID` and `delete` throw `NotFound` for a missing id,
+ * like Payload.
+ */
 export function createInMemoryPayload(collections: Record<string, Row[]>) {
   const rows = (collection: string) => collections[collection] ?? [];
   const payload = {
