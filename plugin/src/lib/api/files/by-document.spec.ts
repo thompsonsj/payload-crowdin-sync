@@ -305,6 +305,45 @@ describe('directory 404 self-clean (#360)', () => {
       expect(result).toEqual(recreatedArticleDirectory);
     });
 
+    it('does not validate the same stale directory again when the document field holds it', async () => {
+      const staleArticleDirectory = {
+        id: 'article-dir-1',
+        originalId: 888,
+        name: 'doc-1',
+        ...polymorphicLink,
+      };
+      const recreatedArticleDirectory = {
+        id: 'article-dir-2',
+        originalId: 1002,
+        name: 'doc-1',
+      };
+
+      const getDirectory = vi
+        .fn()
+        .mockRejectedValueOnce(new CrowdinError('Not found', 404, {}))
+        .mockResolvedValue({ data: { id: 100 } });
+      const createDirectory = vi.fn().mockResolvedValue(
+        crowdinDirectoryResponse(1002, 100, 'doc-1'),
+      );
+
+      const payload = createInMemoryPayload({
+        'crowdin-article-directories': [staleArticleDirectory],
+      });
+      const { api } = buildApi(
+        payload,
+        { getDirectory, createDirectory },
+        {},
+        { crowdinArticleDirectory: { ...staleArticleDirectory } },
+      );
+      stubArticleDirectoryCreation(api, recreatedArticleDirectory);
+
+      const result = await api.findOrCreateArticleDirectory();
+
+      expect(getDirectory).toHaveBeenCalledTimes(1);
+      expect(payload.delete).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(recreatedArticleDirectory);
+    });
+
     it('self-cleans stale legacy field reference then creates a new article directory', async () => {
       const staleArticleDirectory = {
         id: 'article-dir-legacy',

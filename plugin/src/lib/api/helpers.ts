@@ -196,7 +196,8 @@ async function findUnlinkedArticleDirectoryByName({
  * 3. an unlinked row matched by `name` within the collection's directory
  *
  * Each candidate is passed through `validate` (self-clean on sync); the first
- * one it returns wins.
+ * one it returns wins. Different lookups often find the same row, so a row
+ * `validate` rejected (and self-clean may have deleted) is not validated again.
  */
 export async function resolveRootArticleDirectory({
   payload,
@@ -234,12 +235,17 @@ export async function resolveRootArticleDirectory({
         rootLookup,
       }),
   ];
+  const rejectedIds = new Set<string>();
   for (const lookup of lookups) {
     const candidate = await lookup();
-    const directory = candidate && (await validate(candidate));
+    if (!candidate || rejectedIds.has(candidate.id)) {
+      continue;
+    }
+    const directory = await validate(candidate);
     if (directory) {
       return directory;
     }
+    rejectedIds.add(candidate.id);
   }
   return undefined;
 }

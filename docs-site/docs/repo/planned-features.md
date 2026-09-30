@@ -61,7 +61,7 @@ Per-locale translation progress would need a Crowdin API call, for example trans
 
 **Goal:** stop adding a relationship field to every synced document. The plugin's own collections would hold the link instead, so the plugin makes no schema changes to user collections.
 
-**Status:** partly done. `crowdin-article-directories` has polymorphic link fields back to the document (`collectionDocument`) or global (`globalSlug`). New global directories get `globalSlug`, but new collection directories are created without `collectionDocument`, so collection documents are still found by `name` within their collection's directory. `backfillArticleDirectoryPolymorphicLinks` only links rows for documents that still have a stored `crowdinArticleDirectory` value, which current versions never store. The `crowdinArticleDirectory` field is still added to documents; it isn't stored, and its `afterRead` hook fills it in with its own copy of the directory lookup.
+**Status:** partly done. `crowdin-article-directories` has polymorphic link fields back to the document (`collectionDocument`) or global (`globalSlug`). New global directories get `globalSlug`, but new collection directories are created without `collectionDocument`, so collection documents are still found by `name` within their collection's directory. `backfillArticleDirectoryPolymorphicLinks` only links rows for documents that still have a stored `crowdinArticleDirectory` value, which current versions never store. The `crowdinArticleDirectory` field is still added to documents; it isn't stored, and its `afterRead` hook fills it in with `resolveRootArticleDirectory`.
 
 **Source:** [#267](https://github.com/thompsonsj/payload-crowdin-sync/issues/267). Besides the schema change, the issue notes that writing the relationship back to the document can fail on validation errors after files have already been created on Crowdin.
 
@@ -69,10 +69,9 @@ Per-locale translation progress would need a Crowdin API call, for example trans
 
 1. Set `collectionDocument` when creating a collection document's directory (`payloadStoreCrowdinDirectory`).
 2. Let the backfill also link unlinked rows found by `name` within their collection's directory.
-3. Have the field's `afterRead` hook use `resolveRootArticleDirectory` instead of its own lookup. Its global fallback matches `name` without a collection filter.
-4. Correct [Crowdin](../plugin/crowdin.md), which says collection directories link back with `collectionDocument`.
-5. Add an option to turn off the unlinked `name` lookup (default on), and turn it off by default in a major version, with the backfill as the migration step.
-6. Move every remaining read of the field to the links, then remove the field. Removing it is a breaking change for anyone querying it, so it needs a migration note.
+3. Correct [Crowdin](../plugin/crowdin.md), which says collection directories link back with `collectionDocument`.
+4. Add an option to turn off the unlinked `name` lookup (default on), and turn it off by default in a major version, with the backfill as the migration step.
+5. Move every remaining read of the field to the links, then remove the field. Removing it is a breaking change for anyone querying it, so it needs a migration note.
 
 ---
 

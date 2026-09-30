@@ -50,6 +50,7 @@ export function createInMemoryPayload(collections: Record<string, Row[]>) {
       return doc;
     }),
     delete: vi.fn(async ({ collection, id }) => {
+      if (!rows(collection).some((row) => row.id === id)) throw new NotFound();
       collections[collection] = rows(collection).filter(
         (row) => row.id !== id,
       );

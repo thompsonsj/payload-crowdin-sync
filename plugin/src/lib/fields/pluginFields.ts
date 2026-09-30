@@ -1,5 +1,6 @@
 import type { Field, TabsField } from 'payload';
 import { PluginOptions } from '../types';
+import { resolveRootArticleDirectory } from '../api/helpers';
 // import { DocumentCustomUIField } from "./documentUI";
 import {
   createSyncAfterChangeHook,
@@ -60,79 +61,12 @@ const crowdinArticleDirectoryField: Field = {
           return cache[cacheKey];
         }
 
-        let result;
-        if (global?.slug) {
-          result = await req.payload.find({
-            collection: 'crowdin-article-directories',
-            where: {
-              globalSlug: { equals: global.slug },
-            },
-            req,
-            overrideAccess: true,
-          });
-
-          // Backwards compatibility: some installs link global root directories by `name`
-          // rather than `globalSlug`.
-          if (result.totalDocs === 0) {
-            result = await req.payload.find({
-              collection: 'crowdin-article-directories',
-              where: {
-                name: { equals: global.slug },
-              },
-              limit: 1,
-              req,
-              overrideAccess: true,
-            });
-          }
-        } else if (collection?.slug) {
-          result = await req.payload.find({
-            collection: 'crowdin-article-directories',
-            where: {
-              'collectionDocument.value': { equals: data.id },
-              'collectionDocument.relationTo': { equals: collection.slug },
-            },
-            req,
-            overrideAccess: true,
-          });
-
-          // Backwards compatibility: some installs still link root directories by `name`
-          // plus `crowdinCollectionDirectory` instead of `collectionDocument`.
-          if (result.totalDocs === 0) {
-            const collectionDirectory = await req.payload.find({
-              collection: 'crowdin-collection-directories',
-              where: {
-                collectionSlug: { equals: collection.slug },
-              },
-              limit: 1,
-              req,
-              overrideAccess: true,
-            });
-            const collectionDirectoryId = collectionDirectory.docs[0]?.id;
-            if (collectionDirectoryId) {
-              result = await req.payload.find({
-                collection: 'crowdin-article-directories',
-                where: {
-                  and: [
-                    { name: { equals: data.id } },
-                    {
-                      crowdinCollectionDirectory: {
-                        equals: collectionDirectoryId,
-                      },
-                    },
-                  ],
-                },
-                limit: 1,
-                req,
-                overrideAccess: true,
-              });
-            }
-          }
-        } else {
-          // Without a collection/global slug we cannot safely resolve a polymorphic link.
-          // Avoid a loose lookup by value that could collide across collections.
-          return;
-        }
-        const resolved = result?.totalDocs > 0 ? result.docs[0] : undefined;
+        const resolved = await resolveRootArticleDirectory({
+          payload: req.payload,
+          req,
+          documentId: global?.slug ? global.slug : `${data.id}`,
+          rootLookup: { collectionSlug: slugKey, global: Boolean(global?.slug) },
+        });
         cache[cacheKey] = resolved;
         return resolved;
       },
