@@ -1,6 +1,7 @@
 import { CrowdinError } from '@crowdin/crowdin-api-client';
 import { filesApiByDocument } from './by-document';
 import { pluginOptions } from '../mock/plugin-options';
+import { createInMemoryPayload } from '../tests/in-memory-payload';
 import type { CrowdinCollectionDirectory } from '../../payload-types';
 import type { PayloadRequest } from 'payload';
 
@@ -17,7 +18,7 @@ import type { PayloadRequest } from 'payload';
  */
 
 function buildApi(
-  payloadOverrides: Record<string, unknown> = {},
+  payloadOverrides: object = {},
   sourceFilesOverrides: Record<string, unknown> = {},
   pluginOptionsOverrides: Record<string, unknown> = {},
   documentOverrides: Record<string, unknown> = {},
@@ -238,24 +239,25 @@ describe('directory 404 self-clean (#360)', () => {
       );
     }
 
+    const polymorphicLink = {
+      collectionDocument: { value: 'doc-1', relationTo: 'posts' },
+    };
+
     it('returns valid polymorphic link without calling createDirectory', async () => {
       const validArticleDirectory = {
         id: 'article-dir-1',
         originalId: 200,
         name: 'doc-1',
+        ...polymorphicLink,
       };
 
       const getDirectory = vi.fn().mockResolvedValue({ data: { id: 200 } });
       const createDirectory = vi.fn();
 
-      const { api } = buildApi({}, { getDirectory, createDirectory });
-
-      vi.spyOn(api as any, 'findArticleDirectoryByPolymorphicLink').mockResolvedValue(
-        validArticleDirectory,
-      );
-      vi.spyOn(api as any, 'findArticleDirectoryByLegacyField').mockResolvedValue(
-        undefined,
-      );
+      const payload = createInMemoryPayload({
+        'crowdin-article-directories': [validArticleDirectory],
+      });
+      const { api } = buildApi(payload, { getDirectory, createDirectory });
 
       const result = await api.findOrCreateArticleDirectory();
 
@@ -269,6 +271,7 @@ describe('directory 404 self-clean (#360)', () => {
         id: 'article-dir-1',
         originalId: 888,
         name: 'doc-1',
+        ...polymorphicLink,
       };
       const recreatedArticleDirectory = {
         id: 'article-dir-2',
@@ -276,7 +279,6 @@ describe('directory 404 self-clean (#360)', () => {
         name: 'doc-1',
       };
 
-      const payloadDelete = vi.fn().mockResolvedValue(undefined);
       const getDirectory = vi
         .fn()
         .mockRejectedValueOnce(new CrowdinError('Not found', 404, {}))
@@ -285,26 +287,60 @@ describe('directory 404 self-clean (#360)', () => {
         crowdinDirectoryResponse(1002, 100, 'doc-1'),
       );
 
-      const { api } = buildApi({ delete: payloadDelete }, { getDirectory, createDirectory });
-
-      vi.spyOn(api as any, 'findArticleDirectoryByPolymorphicLink').mockResolvedValue(
-        staleArticleDirectory,
-      );
-      vi.spyOn(api as any, 'findArticleDirectoryByLegacyField').mockResolvedValue(
-        undefined,
-      );
-      vi.spyOn(api as any, 'findArticleDirectoryInPayload').mockResolvedValue(undefined);
+      const payload = createInMemoryPayload({
+        'crowdin-article-directories': [staleArticleDirectory],
+      });
+      const { api } = buildApi(payload, { getDirectory, createDirectory });
       stubArticleDirectoryCreation(api, recreatedArticleDirectory);
 
       const result = await api.findOrCreateArticleDirectory();
 
-      expect(payloadDelete).toHaveBeenCalledWith({
+      expect(payload.delete).toHaveBeenCalledWith({
         collection: 'crowdin-article-directories',
         id: staleArticleDirectory.id,
         req: expect.any(Object),
         overrideAccess: true,
       });
       expect(createDirectory).toHaveBeenCalled();
+      expect(result).toEqual(recreatedArticleDirectory);
+    });
+
+    it('does not validate the same stale directory again when the document field holds it', async () => {
+      const staleArticleDirectory = {
+        id: 'article-dir-1',
+        originalId: 888,
+        name: 'doc-1',
+        ...polymorphicLink,
+      };
+      const recreatedArticleDirectory = {
+        id: 'article-dir-2',
+        originalId: 1002,
+        name: 'doc-1',
+      };
+
+      const getDirectory = vi
+        .fn()
+        .mockRejectedValueOnce(new CrowdinError('Not found', 404, {}))
+        .mockResolvedValue({ data: { id: 100 } });
+      const createDirectory = vi.fn().mockResolvedValue(
+        crowdinDirectoryResponse(1002, 100, 'doc-1'),
+      );
+
+      const payload = createInMemoryPayload({
+        'crowdin-article-directories': [staleArticleDirectory],
+      });
+      const { api } = buildApi(
+        payload,
+        { getDirectory, createDirectory },
+        {},
+        { crowdinArticleDirectory: { ...staleArticleDirectory } },
+      );
+      stubArticleDirectoryCreation(api, recreatedArticleDirectory);
+
+      const result = await api.findOrCreateArticleDirectory();
+
+      expect(getDirectory).toHaveBeenCalledTimes(1);
+      expect(payload.delete).toHaveBeenCalledTimes(1);
       expect(result).toEqual(recreatedArticleDirectory);
     });
 
@@ -320,7 +356,6 @@ describe('directory 404 self-clean (#360)', () => {
         name: 'doc-1',
       };
 
-      const payloadDelete = vi.fn().mockResolvedValue(undefined);
       const getDirectory = vi
         .fn()
         .mockRejectedValueOnce(new CrowdinError('Not found', 404, {}))
@@ -329,25 +364,20 @@ describe('directory 404 self-clean (#360)', () => {
         crowdinDirectoryResponse(1003, 100, 'doc-1'),
       );
 
+      const payload = createInMemoryPayload({
+        'crowdin-article-directories': [staleArticleDirectory],
+      });
       const { api } = buildApi(
-        { delete: payloadDelete },
+        payload,
         { getDirectory, createDirectory },
         {},
         { crowdinArticleDirectory: staleArticleDirectory },
       );
-
-      vi.spyOn(api as any, 'findArticleDirectoryByPolymorphicLink').mockResolvedValue(
-        undefined,
-      );
-      vi.spyOn(api as any, 'findArticleDirectoryByLegacyField').mockResolvedValue(
-        staleArticleDirectory,
-      );
-      vi.spyOn(api as any, 'findArticleDirectoryInPayload').mockResolvedValue(undefined);
       stubArticleDirectoryCreation(api, recreatedArticleDirectory);
 
       const result = await api.findOrCreateArticleDirectory();
 
-      expect(payloadDelete).toHaveBeenCalledWith({
+      expect(payload.delete).toHaveBeenCalledWith({
         collection: 'crowdin-article-directories',
         id: staleArticleDirectory.id,
         req: expect.any(Object),
@@ -362,6 +392,7 @@ describe('directory 404 self-clean (#360)', () => {
         id: 'article-dir-payload',
         originalId: 666,
         name: 'doc-1',
+        crowdinCollectionDirectory: collectionDirectory.id,
       };
       const recreatedArticleDirectory = {
         id: 'article-dir-new',
@@ -369,7 +400,6 @@ describe('directory 404 self-clean (#360)', () => {
         name: 'doc-1',
       };
 
-      const payloadDelete = vi.fn().mockResolvedValue(undefined);
       const getDirectory = vi
         .fn()
         .mockRejectedValueOnce(new CrowdinError('Not found', 404, {}))
@@ -378,22 +408,16 @@ describe('directory 404 self-clean (#360)', () => {
         crowdinDirectoryResponse(1004, 100, 'doc-1'),
       );
 
-      const { api } = buildApi({ delete: payloadDelete }, { getDirectory, createDirectory });
-
-      vi.spyOn(api as any, 'findArticleDirectoryByPolymorphicLink').mockResolvedValue(
-        undefined,
-      );
-      vi.spyOn(api as any, 'findArticleDirectoryByLegacyField').mockResolvedValue(
-        undefined,
-      );
-      vi.spyOn(api as any, 'findArticleDirectoryInPayload').mockResolvedValue(
-        staleArticleDirectory,
-      );
+      const payload = createInMemoryPayload({
+        'crowdin-collection-directories': [collectionDirectory],
+        'crowdin-article-directories': [staleArticleDirectory],
+      });
+      const { api } = buildApi(payload, { getDirectory, createDirectory });
       stubArticleDirectoryCreation(api, recreatedArticleDirectory);
 
       const result = await api.findOrCreateArticleDirectory();
 
-      expect(payloadDelete).toHaveBeenCalledWith({
+      expect(payload.delete).toHaveBeenCalledWith({
         collection: 'crowdin-article-directories',
         id: staleArticleDirectory.id,
         req: expect.any(Object),
@@ -408,29 +432,25 @@ describe('directory 404 self-clean (#360)', () => {
         id: 'article-dir-1',
         originalId: 888,
         name: 'doc-1',
+        ...polymorphicLink,
       };
 
-      const payloadDelete = vi.fn();
       const getDirectory = vi.fn();
       const createDirectory = vi.fn();
 
+      const payload = createInMemoryPayload({
+        'crowdin-article-directories': [staleArticleDirectory],
+      });
       const { api } = buildApi(
-        { delete: payloadDelete },
+        payload,
         { getDirectory, createDirectory },
         { disableSelfClean: true },
-      );
-
-      vi.spyOn(api as any, 'findArticleDirectoryByPolymorphicLink').mockResolvedValue(
-        staleArticleDirectory,
-      );
-      vi.spyOn(api as any, 'findArticleDirectoryByLegacyField').mockResolvedValue(
-        undefined,
       );
 
       const result = await api.findOrCreateArticleDirectory();
 
       expect(getDirectory).not.toHaveBeenCalled();
-      expect(payloadDelete).not.toHaveBeenCalled();
+      expect(payload.delete).not.toHaveBeenCalled();
       expect(createDirectory).not.toHaveBeenCalled();
       expect(result).toEqual(staleArticleDirectory);
     });

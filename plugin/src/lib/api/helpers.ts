@@ -52,7 +52,8 @@ export type ArticleDirectoryRootLookup = {
 };
 
 /**
- * Find root article directory using `globalSlug` or `collectionDocument` on `crowdin-article-directories`.
+ * Find a root article directory linked to its document: `collectionDocument`
+ * for collections, `globalSlug` for globals.
  */
 export async function findRootArticleDirectoryPolymorphic({
   payload,
@@ -91,6 +92,225 @@ export async function findRootArticleDirectoryPolymorphic({
     overrideAccess: true,
   });
   return r.docs[0] as CrowdinArticleDirectory | undefined;
+}
+
+/**
+ * Resolve the directory held in a document's `crowdinArticleDirectory` field.
+ *
+ * The field is virtual: its `beforeChange` hook stops it being stored, and its
+ * `afterRead` hook fills it in with a directory lookup. So documents read
+ * through Payload usually carry the resolved directory already, and using it
+ * saves the queries below. A string id only appears in raw data, or on
+ * documents stored by versions that saved the field. Returns `undefined` if
+ * that row no longer exists, or if it belongs to another document.
+ */
+async function findArticleDirectoryOnDocument({
+  payload,
+  req,
+  documentId,
+  rootLookup,
+  documentDirectory,
+}: {
+  payload: Payload;
+  req?: PayloadRequest;
+  documentId: string;
+  rootLookup: ArticleDirectoryRootLookup;
+  documentDirectory: unknown;
+}): Promise<CrowdinArticleDirectory | undefined> {
+  if (!documentDirectory) {
+    return undefined;
+  }
+  let directory: CrowdinArticleDirectory;
+  if (typeof documentDirectory === 'object') {
+    directory = documentDirectory as CrowdinArticleDirectory;
+    if (!directory.id) {
+      return undefined;
+    }
+  } else {
+    try {
+      directory = (await payload.findByID({
+        collection: 'crowdin-article-directories',
+        id: documentDirectory as string,
+        req,
+        overrideAccess: true,
+      })) as CrowdinArticleDirectory;
+    } catch (error) {
+      if ((error as { status?: number }).status === 404) {
+        return undefined;
+      }
+      throw error;
+    }
+  }
+  return isDirectoryForDocument({ directory, documentId, rootLookup })
+    ? directory
+    : undefined;
+}
+
+/**
+ * Whether a directory row was created for this document, judged from the row
+ * alone. Root directories are named after the document id (the slug for
+ * globals). Before #294, duplicating a document copied the stored directory
+ * id, so a document's field can point at another document's directory.
+ */
+function isDirectoryForDocument({
+  directory,
+  documentId,
+  rootLookup,
+}: {
+  directory: CrowdinArticleDirectory;
+  documentId: string;
+  rootLookup: ArticleDirectoryRootLookup;
+}): boolean {
+  if (`${directory.name}` !== documentId) {
+    return false;
+  }
+  const link = directory.collectionDocument;
+  if (link?.value) {
+    const linkedId =
+      typeof link.value === 'object'
+        ? (link.value as { id?: unknown }).id
+        : link.value;
+    return (
+      !rootLookup.global &&
+      link.relationTo === rootLookup.collectionSlug &&
+      `${linkedId}` === documentId
+    );
+  }
+  if (directory.globalSlug) {
+    return (
+      rootLookup.global && directory.globalSlug === rootLookup.collectionSlug
+    );
+  }
+  const collectionDirectory = directory.crowdinCollectionDirectory;
+  if (collectionDirectory && typeof collectionDirectory === 'object') {
+    return (
+      collectionDirectory.collectionSlug ===
+      (rootLookup.global ? 'globals' : rootLookup.collectionSlug)
+    );
+  }
+  return true;
+}
+
+/**
+ * Find a directory row that has no link back to its document, by its `name`
+ * (the document id, or the global slug) within the collection's directory
+ * (`globals` for globals). Does not create the collection directory.
+ *
+ * New collection directories are created without `collectionDocument`, so
+ * this is how collection documents are found unless the backfill has linked
+ * their rows. Global directories get `globalSlug` on creation, so for globals
+ * this only finds rows from older versions.
+ */
+async function findUnlinkedArticleDirectoryByName({
+  payload,
+  req,
+  documentId,
+  rootLookup,
+}: {
+  payload: Payload;
+  req?: PayloadRequest;
+  documentId: string;
+  rootLookup: ArticleDirectoryRootLookup;
+}): Promise<CrowdinArticleDirectory | undefined> {
+  const collectionDirectories = await payload.find({
+    collection: 'crowdin-collection-directories',
+    where: {
+      collectionSlug: {
+        equals: rootLookup.global ? 'globals' : rootLookup.collectionSlug,
+      },
+    },
+    limit: 1,
+    req,
+    overrideAccess: true,
+  });
+  const collectionDirectory = collectionDirectories.docs[0];
+  if (!collectionDirectory) {
+    return undefined;
+  }
+  const articleDirectories = await payload.find({
+    collection: 'crowdin-article-directories',
+    where: {
+      and: [
+        { name: { equals: `${documentId}` } },
+        { crowdinCollectionDirectory: { equals: collectionDirectory.id } },
+      ],
+    },
+    limit: 1,
+    req,
+    overrideAccess: true,
+  });
+  return articleDirectories.docs[0] as CrowdinArticleDirectory | undefined;
+}
+
+/**
+ * Find the root article directory for a collection document or global.
+ *
+ * Tries, in order:
+ * 1. a row linked to the document (`collectionDocument` / `globalSlug`)
+ * 2. the directory already on the document's `crowdinArticleDirectory` field,
+ *    if the row is named for this document and not linked elsewhere
+ * 3. an unlinked row matched by `name` within the collection's directory
+ *
+ * Each candidate is passed through `validate` (self-clean on sync); the first
+ * one it returns wins. Different lookups often find the same row, so a row
+ * `validate` rejected (and self-clean may have deleted) is not validated again.
+ */
+export async function resolveRootArticleDirectory({
+  payload,
+  req,
+  documentId,
+  rootLookup,
+  documentDirectory,
+  validate = async (directory) => directory,
+}: {
+  payload: Payload;
+  req?: PayloadRequest;
+  /** For collections: the Payload document id. For globals: the global slug. */
+  documentId: string;
+  rootLookup: ArticleDirectoryRootLookup;
+  /** Value of the document's `crowdinArticleDirectory` field, if any. */
+  documentDirectory?: unknown;
+  validate?: (
+    directory: CrowdinArticleDirectory,
+  ) => Promise<CrowdinArticleDirectory | undefined>;
+}): Promise<CrowdinArticleDirectory | undefined> {
+  const lookups = [
+    () =>
+      findRootArticleDirectoryPolymorphic({
+        payload,
+        req,
+        documentId,
+        rootLookup,
+      }),
+    () =>
+      findArticleDirectoryOnDocument({
+        payload,
+        req,
+        documentId,
+        rootLookup,
+        documentDirectory,
+      }),
+    () =>
+      findUnlinkedArticleDirectoryByName({
+        payload,
+        req,
+        documentId,
+        rootLookup,
+      }),
+  ];
+  const rejectedIds = new Set<string>();
+  for (const lookup of lookups) {
+    const candidate = await lookup();
+    if (!candidate || rejectedIds.has(candidate.id)) {
+      continue;
+    }
+    const directory = await validate(candidate);
+    if (directory) {
+      return directory;
+    }
+    rejectedIds.add(candidate.id);
+  }
+  return undefined;
 }
 
 /**
@@ -180,7 +400,7 @@ export async function getArticleDirectory({
   allowEmpty?: boolean;
   parent?: CrowdinArticleDirectory | null | string;
   req?: PayloadRequest;
-  /** When resolving a root directory (no `parent`), try polymorphic fields before the legacy `name` lookup. */
+  /** When resolving a root directory (no `parent`), use `resolveRootArticleDirectory`, which limits the `name` lookup to this collection. */
   rootLookup?: ArticleDirectoryRootLookup;
 }) {
   if (parent !== undefined) {
@@ -208,17 +428,23 @@ export async function getArticleDirectory({
   }
 
   if (rootLookup) {
-    const polymorphic = await findRootArticleDirectoryPolymorphic({
+    const articleDirectory = await resolveRootArticleDirectory({
       payload,
       req,
       documentId,
       rootLookup,
     });
-    if (polymorphic) {
-      return polymorphic;
+    if (!articleDirectory && !allowEmpty) {
+      console.error(`No article directory found for document ${documentId}`);
+      throw new Error(
+        'This article does not have a corresponding entry in the crowdin-article-directories collection.',
+      );
     }
+    return articleDirectory;
   }
 
+  // Without `rootLookup` the collection is unknown, so a `name` match may
+  // belong to another collection when ids repeat across collections.
   const crowdinPayloadArticleDirectory = await payload.find({
     collection: 'crowdin-article-directories',
     where: {

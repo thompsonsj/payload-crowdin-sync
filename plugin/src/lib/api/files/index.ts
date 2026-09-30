@@ -1,9 +1,5 @@
 import { PluginOptions } from '../../types';
-import {
-  getArticleDirectory,
-  getFileByDocumentID,
-  getFilesByDocumentID,
-} from '../helpers';
+import { getFileByDocumentID, getFilesByDocumentID } from '../helpers';
 
 import { CrowdinArticleDirectory } from '../../payload-types';
 import { PayloadRequest } from 'payload';
@@ -210,29 +206,15 @@ export class payloadCrowdinSyncFilesApi {
     }
   }
 
-  async getArticleDirectory(
-    documentId: string,
-  ): Promise<CrowdinArticleDirectory | undefined> {
-    let result = undefined;
-    try {
-      result = await getArticleDirectory({
-        documentId,
-        payload: this.req.payload,
-        req: this.req,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-    return result as CrowdinArticleDirectory | undefined;
-  }
-
-  async deleteArticleDirectory(documentId: string) {
-    const crowdinPayloadArticleDirectory =
-      await this.getArticleDirectory(documentId);
-    if (
-      !crowdinPayloadArticleDirectory ||
-      !crowdinPayloadArticleDirectory.originalId
-    ) {
+  /**
+   * Delete an article directory's Payload record, and the directory on Crowdin
+   * when `deleteCrowdinFiles` is set. Skips rows that were never created on
+   * Crowdin (no `originalId`).
+   */
+  async deleteArticleDirectory(
+    crowdinPayloadArticleDirectory: CrowdinArticleDirectory,
+  ) {
+    if (!crowdinPayloadArticleDirectory.originalId) {
       return;
     }
     if (this.pluginOptions.deleteCrowdinFiles) {

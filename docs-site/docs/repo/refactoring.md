@@ -84,7 +84,7 @@ Constructor signatures reference the interface. This gives a single place to upd
 
 ---
 
-### 6. Unified polymorphic resolver
+### 6. Unified polymorphic resolver ✅
 
 **Problem:** Three separate locations implement article directory lookup with different fallback orderings:
 - `helpers.ts:findRootArticleDirectoryPolymorphic()`
@@ -92,6 +92,20 @@ Constructor signatures reference the interface. This gives a single place to upd
 - `by-document.ts:findOrCreateArticleDirectory()` (inline strategies)
 
 **Fix:** Single resolver in `helpers.ts` with a consistent strategy ordering (polymorphic → legacy field → Payload query → optional create). All callers use it.
+
+**Done:** `resolveRootArticleDirectory` in `helpers.ts` tries a row linked to the document (`collectionDocument` / `globalSlug`), then the directory already on the document's `crowdinArticleDirectory` field, then an unlinked row matched by `name` within the collection's directory (`globals` for globals), passing each candidate through an optional `validate` step. The `name` lookup is not just for old installs: new collection directories are created without `collectionDocument`, so it is how collection documents are found today. Making the links the main path is tracked under [Remove the `crowdinArticleDirectory` field](./planned-features.md#remove-the-crowdinarticledirectory-field-from-synced-documents). Creation stays in `findOrCreateArticleDirectory`, which runs the resolver with self-clean as `validate`. `resolveExistingArticleDirectory` (delete), `getArticleDirectory` with `rootLookup`, and the `afterRead` hook that fills in the document's virtual `crowdinArticleDirectory` field use the same resolver. A row that `validate` rejects is not validated again when a later lookup finds it.
+
+Unifying the paths fixed these bugs:
+
+- **Lookups matched other collections.** The delete path and `getArticleDirectory` fell back to a `name` match without a collection filter, and `deleteFilesAndDirectory` looked the directory up by `name` again before deleting it. On SQL adapters, where ids repeat across collections, deleting post `5` could delete page `5`'s directory. The `name` match is now limited to the collection directory, and `deleteFilesAndDirectory` deletes the directory it already resolved.
+- **A directory id on the document that no longer exists blocked sync.** If `crowdinArticleDirectory` held the id of a deleted row, sync threw until the field was cleared. It is now skipped on both paths (only on a 404; other errors still throw).
+- **Self-clean could delete the same row twice.** When self-clean deleted a stale linked row, sync validated the document field next, which usually holds the same row, and the second delete threw `NotFound`.
+- **Globals could pick up another collection's directory.** When a global's directory had no `globalSlug`, `afterRead` matched `name` against the global slug with no collection filter. It now uses the resolver, which only matches within the `globals` directory.
+- **A document could point at another document's directory.** Before #294, duplicating a document copied the stored `crowdinArticleDirectory` id. The resolver now only uses the directory on the document field if the row is named for this document and isn't linked to another document, global or collection. The check reads the row alone, so it costs no queries.
+
+`getArticleDirectory`, `getFileByDocumentID` and `getFilesByDocumentID` are exported, so without `rootLookup` they keep the `name`-only lookup; callers that know the collection should pass it.
+
+**Tests:** `articleDirectoryResolution.spec.ts` was committed first, failing for each bug. It and the rewritten self-clean tests in `by-document.spec.ts` use `api/tests/in-memory-payload.ts`, which evaluates `where` clauses, so they assert which directory is found rather than the order of queries.
 
 ---
 

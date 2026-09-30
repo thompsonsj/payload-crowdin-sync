@@ -19,11 +19,7 @@ import {
 import {
   payloadCrowdinSyncDocumentFilesApi,
 } from './document';
-import {
-  findRootArticleDirectoryPolymorphic,
-  getArticleDirectory,
-  getCollectionConfig,
-} from '../helpers';
+import { getCollectionConfig, resolveRootArticleDirectory } from '../helpers';
 
 import * as crowdin from '@crowdin/crowdin-api-client';
 
@@ -136,52 +132,28 @@ export class filesApiByDocument {
   async resolveExistingArticleDirectory(): Promise<
     CrowdinArticleDirectory | undefined
   > {
-    const documentId = this.global
-      ? (this.collectionSlug as string)
-      : this.document.id;
+    return this.resolveArticleDirectory();
+  }
 
-    let crowdinPayloadArticleDirectory =
-      await findRootArticleDirectoryPolymorphic({
-        payload: this.req.payload,
-        req: this.req,
-        documentId,
-        rootLookup: {
-          collectionSlug: this.collectionSlug as string,
-          global: this.global,
-        },
-      });
-
-    if (!crowdinPayloadArticleDirectory && this.document.crowdinArticleDirectory) {
-      const ref = this.document.crowdinArticleDirectory;
-      if (isCrowdinArticleDirectory(ref) || ref?.id) {
-        crowdinPayloadArticleDirectory = ref as CrowdinArticleDirectory;
-      } else {
-        try {
-          crowdinPayloadArticleDirectory = (await this.req.payload.findByID({
-            collection: 'crowdin-article-directories',
-            id: ref,
-            req: this.req,
-          })) as CrowdinArticleDirectory;
-        } catch {
-          // Orphaned reference — nothing to clean up on Crowdin.
-        }
-      }
-    }
-
-    if (!crowdinPayloadArticleDirectory) {
-      crowdinPayloadArticleDirectory = (await getArticleDirectory({
-        documentId,
-        payload: this.req.payload,
-        req: this.req,
-        allowEmpty: true,
-        rootLookup: {
-          collectionSlug: this.collectionSlug as string,
-          global: this.global,
-        },
-      })) as CrowdinArticleDirectory | undefined;
-    }
-
-    return crowdinPayloadArticleDirectory;
+  /** Run `resolveRootArticleDirectory` for this document. */
+  private resolveArticleDirectory(
+    validate?: (
+      directory: CrowdinArticleDirectory,
+    ) => Promise<CrowdinArticleDirectory | undefined>,
+  ): Promise<CrowdinArticleDirectory | undefined> {
+    return resolveRootArticleDirectory({
+      payload: this.req.payload,
+      req: this.req,
+      documentId: this.global
+        ? (this.collectionSlug as string)
+        : this.document.id,
+      rootLookup: {
+        collectionSlug: this.collectionSlug as string,
+        global: this.global,
+      },
+      documentDirectory: this.document.crowdinArticleDirectory,
+      validate,
+    });
   }
 
   /**
@@ -215,19 +187,14 @@ export class filesApiByDocument {
     }
   }
 
+  /**
+   * Find the document's article directory, removing stale rows unless
+   * `disableSelfClean` is set, or create it under the collection's directory.
+   */
   async findOrCreateArticleDirectory(): Promise<CrowdinArticleDirectory> {
-    const documentId = this.global
-      ? (this.collectionSlug as string)
-      : this.document.id;
-
-    const found =
-      (await this.ensureValidArticleDirectory(
-        await this.findArticleDirectoryByPolymorphicLink(documentId),
-      )) ??
-      (await this.ensureValidArticleDirectory(
-        await this.findArticleDirectoryByLegacyField(),
-      ));
-
+    const found = await this.resolveArticleDirectory((directory) =>
+      this.ensureValidArticleDirectory(directory),
+    );
     if (found) {
       this.articleDirectory = found;
       return found;
@@ -236,14 +203,6 @@ export class filesApiByDocument {
     const collectionDirectory = await this.findOrCreateCollectionDirectory({
       collectionSlug: this.global ? 'globals' : this.collectionSlug,
     });
-
-    const existing = await this.ensureValidArticleDirectory(
-      await this.findArticleDirectoryInPayload(collectionDirectory),
-    );
-    if (existing) {
-      this.articleDirectory = existing;
-      return existing;
-    }
 
     const resolvedParent = await this.resolveParentDirectory();
     const collectionConfig = this.lookupCollectionConfig();
@@ -264,68 +223,6 @@ export class filesApiByDocument {
 
     this.articleDirectory = created;
     return created;
-  }
-
-  private async findArticleDirectoryByPolymorphicLink(
-    documentId: string,
-  ): Promise<CrowdinArticleDirectory | undefined> {
-    return findRootArticleDirectoryPolymorphic({
-      payload: this.req.payload,
-      req: this.req,
-      documentId,
-      rootLookup: {
-        collectionSlug: this.collectionSlug as string,
-        global: this.global,
-      },
-    });
-  }
-
-  private async findArticleDirectoryByLegacyField(): Promise<
-    CrowdinArticleDirectory | undefined
-  > {
-    // Legacy: directory id stored on the synced document (plus in-place population).
-    // See https://developer.crowdin.com/api/v2/#operation/api.projects.directories.getMany
-    if (!this.document.crowdinArticleDirectory) return undefined;
-    if (this.document.crowdinArticleDirectory.id) {
-      return this.document.crowdinArticleDirectory;
-    }
-    return (await this.req.payload.findByID({
-      collection: 'crowdin-article-directories',
-      id: this.document.crowdinArticleDirectory,
-      req: this.req,
-    })) as unknown as CrowdinArticleDirectory;
-  }
-
-  private async findArticleDirectoryInPayload(
-    collectionDirectory: CrowdinCollectionDirectory | undefined,
-  ): Promise<CrowdinArticleDirectory | undefined> {
-    if (this.parent) return undefined;
-    if (this.global) {
-      const result = await this.req.payload.find({
-        collection: 'crowdin-article-directories',
-        where: { globalSlug: { equals: this.collectionSlug as string } },
-        limit: 1,
-        req: this.req,
-        overrideAccess: true,
-      });
-      return result.docs[0] as CrowdinArticleDirectory | undefined;
-    }
-    if (collectionDirectory?.id) {
-      const result = await this.req.payload.find({
-        collection: 'crowdin-article-directories',
-        where: {
-          and: [
-            { name: { equals: `${this.document.id}` } },
-            { crowdinCollectionDirectory: { equals: collectionDirectory.id } },
-          ],
-        },
-        limit: 1,
-        req: this.req,
-        overrideAccess: true,
-      });
-      return result.docs[0] as CrowdinArticleDirectory | undefined;
-    }
-    return undefined;
   }
 
   private async resolveParentDirectory(): Promise<

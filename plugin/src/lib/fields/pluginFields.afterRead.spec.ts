@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { pluginCollectionOrGlobalFields } from './pluginFields'
 import type { PluginOptions } from '../types'
+import { createInMemoryPayload } from '../api/tests/in-memory-payload'
 
 function getAfterReadHook() {
   const pluginOptions = {
@@ -124,6 +125,46 @@ describe('pluginFields - crowdinArticleDirectory afterRead', () => {
     expect(first).toBe(resolved)
     expect(second).toBe(resolved)
     expect(find).toHaveBeenCalledTimes(3)
+  })
+
+  describe('global without a globalSlug link', () => {
+    const collectionDirectories = [
+      { id: 'cd-pages', collectionSlug: 'pages' },
+      { id: 'cd-globals', collectionSlug: 'globals' },
+    ]
+
+    it("does not return another collection's directory with the global's slug as its name", async () => {
+      const afterRead = getAfterReadHook()
+      const payload = createInMemoryPayload({
+        'crowdin-collection-directories': collectionDirectories,
+        'crowdin-article-directories': [
+          { id: 'ad-page-nav', name: 'nav', crowdinCollectionDirectory: 'cd-pages' },
+        ],
+      })
+      const res = await afterRead({
+        data: { id: 'nav-global-id' },
+        req: { context: {}, payload },
+        global: { slug: 'nav' },
+      })
+      expect(res).toBeUndefined()
+    })
+
+    it('finds the directory by name within the globals directory', async () => {
+      const afterRead = getAfterReadHook()
+      const payload = createInMemoryPayload({
+        'crowdin-collection-directories': collectionDirectories,
+        'crowdin-article-directories': [
+          { id: 'ad-page-nav', name: 'nav', crowdinCollectionDirectory: 'cd-pages' },
+          { id: 'ad-nav', name: 'nav', crowdinCollectionDirectory: 'cd-globals' },
+        ],
+      })
+      const res = await afterRead({
+        data: { id: 'nav-global-id' },
+        req: { context: {}, payload },
+        global: { slug: 'nav' },
+      })
+      expect(res?.id).toBe('ad-nav')
+    })
   })
 
   it('memoizes separately for globals vs collections (different cache keys)', async () => {
