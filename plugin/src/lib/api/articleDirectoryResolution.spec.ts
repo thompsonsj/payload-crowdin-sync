@@ -294,6 +294,70 @@ describe('directory on the document field that belongs to another document', () 
     expect(await api.resolveExistingArticleDirectory()).toBeUndefined();
   });
 
+  it('is not used when its populated link points at another document', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [],
+    });
+    const api = buildApiByDocument(payload, {
+      id: '5',
+      crowdinArticleDirectory: {
+        id: 'ad-post-7',
+        name: '5',
+        collectionDocument: { relationTo: 'posts', value: { id: '7' } },
+      },
+    });
+    expect(await api.resolveExistingArticleDirectory()).toBeUndefined();
+  });
+
+  it("is not used on a collection document when it is a global's directory", async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [],
+    });
+    const api = buildApiByDocument(payload, {
+      id: 'nav',
+      crowdinArticleDirectory: { id: 'ad-nav', name: 'nav', globalSlug: 'nav' },
+    });
+    expect(await api.resolveExistingArticleDirectory()).toBeUndefined();
+  });
+
+  it("is used for a global when it is that global's directory", async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [],
+    });
+    const api = buildApiByDocument(
+      payload,
+      {
+        id: 'nav-doc',
+        crowdinArticleDirectory: { id: 'ad-nav', name: 'nav', globalSlug: 'nav' },
+      },
+      { collectionSlug: 'nav', global: true },
+    );
+    expect((await api.resolveExistingArticleDirectory())?.id).toBe('ad-nav');
+  });
+
+  it('is used for a global when it is in the globals directory', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [],
+    });
+    const api = buildApiByDocument(
+      payload,
+      {
+        id: 'nav-doc',
+        crowdinArticleDirectory: {
+          id: 'ad-nav',
+          name: 'nav',
+          crowdinCollectionDirectory: collectionDirectories[2],
+        },
+      },
+      { collectionSlug: 'nav', global: true },
+    );
+    expect((await api.resolveExistingArticleDirectory())?.id).toBe('ad-nav');
+  });
+
   it("falls through to the document's own directory on sync", async () => {
     const payload = createInMemoryPayload({
       'crowdin-collection-directories': collectionDirectories,
