@@ -171,7 +171,7 @@ describe('filesApiByDocument.resolveExistingArticleDirectory (delete path)', () 
     const payload = createInMemoryPayload({
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [
-        { id: 'ad-stored', name: 'something-else' },
+        { id: 'ad-stored', name: '5' },
       ],
     });
     const api = buildApiByDocument(payload, {
@@ -224,6 +224,89 @@ describe('filesApiByDocument.resolveExistingArticleDirectory (delete path)', () 
       crowdinArticleDirectory: 'ad-deleted',
     });
     expect(await api.resolveExistingArticleDirectory()).toBeUndefined();
+  });
+});
+
+/**
+ * Before #294, duplicating a document copied the stored directory id, so old
+ * documents can point at another document's directory.
+ */
+describe('directory on the document field that belongs to another document', () => {
+  it('is not used when it is named for another document', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [
+        { id: 'ad-post-7', name: '7', crowdinCollectionDirectory: 'cd-posts' },
+      ],
+    });
+    const api = buildApiByDocument(payload, {
+      id: '5',
+      crowdinArticleDirectory: 'ad-post-7',
+    });
+    expect(await api.resolveExistingArticleDirectory()).toBeUndefined();
+  });
+
+  it('is not used when it is linked to a document in another collection', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [
+        {
+          id: 'ad-page-5-linked',
+          name: '5',
+          collectionDocument: { value: '5', relationTo: 'pages' },
+        },
+      ],
+    });
+    const api = buildApiByDocument(payload, {
+      id: '5',
+      crowdinArticleDirectory: 'ad-page-5-linked',
+    });
+    expect(await api.resolveExistingArticleDirectory()).toBeUndefined();
+  });
+
+  it("is not used when it is in another collection's directory", async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [],
+    });
+    const api = buildApiByDocument(payload, {
+      id: '5',
+      crowdinArticleDirectory: {
+        ...unlinkedPageDirectory,
+        crowdinCollectionDirectory: collectionDirectories[0],
+      },
+    });
+    expect(await api.resolveExistingArticleDirectory()).toBeUndefined();
+  });
+
+  it('is not used for a global when it belongs to another global', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [
+        { id: 'ad-footer', name: 'footer', globalSlug: 'footer' },
+      ],
+    });
+    const api = buildApiByDocument(
+      payload,
+      { id: 'nav-doc', crowdinArticleDirectory: 'ad-footer' },
+      { collectionSlug: 'nav', global: true },
+    );
+    expect(await api.resolveExistingArticleDirectory()).toBeUndefined();
+  });
+
+  it("falls through to the document's own directory on sync", async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [
+        { id: 'ad-post-7', name: '7', crowdinCollectionDirectory: 'cd-posts' },
+        unlinkedPostDirectory,
+      ],
+    });
+    const api = buildApiByDocument(payload, {
+      id: '5',
+      crowdinArticleDirectory: 'ad-post-7',
+    });
+    expect((await api.findOrCreateArticleDirectory()).id).toBe('ad-post-5');
   });
 });
 
