@@ -94,15 +94,15 @@ To uninstall the plugin, remove it from your config and drop the three collectio
 
 ### `crowdin-collection-directories`
 
-Each entry in the `crowdin-article-directories` collection has a one-to-one relationship with an entry in the `crowdin-collection-directories` collection.
+A `crowdin-collection-directories` document represents a folder created on Crowdin for a collection, or a single `globals` folder for all globals. Each entry in the `crowdin-article-directories` collection belongs to one entry in the `crowdin-collection-directories` collection, and a collection directory holds many article directories.
 
 ### `crowdin-article-directories`
 
-A `crowdin-article-directories` document represents a folder created on Crowdin containing files for a given Payload document.
+A `crowdin-article-directories` document represents a folder created on Crowdin containing files for a given Payload document. See [How documents link to Crowdin directories](./directory-links.md) for how these records link to your documents and globals.
 
 #### `crowdin-article-directories` children
 
-`crowdin-article-directories` can also have a one-to-one relationship with each other through the `parent` field. These directories are created within parent directories to contain translations for blocks within a Lexical `richText` field.
+`crowdin-article-directories` can also belong to each other through the `parent` field. These directories are created within parent directories to contain translations for blocks within a Lexical `richText` field.
 
 `crowdin-article-directories` documents created for Lexical blocks have the following differences:
 
@@ -111,7 +111,7 @@ A `crowdin-article-directories` document represents a folder created on Crowdin 
 
 ### `crowdin-files`
 
-Each entry in the `crowdin-files` collection has a one-to-one relationship with an entry in the `crowdin-article-directories` collection.
+Each entry in the `crowdin-files` collection belongs to one entry in the `crowdin-article-directories` collection, and an article directory holds several files: `fields.json` and one HTML file per rich text field.
 
 When a localized field is changed, a file is created/updated in the `crowdin-files` collection for that field. Details of the file are stored in Payload so that this file can be updated or deleted in the future.
 

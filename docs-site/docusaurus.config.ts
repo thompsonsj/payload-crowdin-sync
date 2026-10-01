@@ -38,10 +38,12 @@ const config: Config = {
   },
 
   markdown: {
+    mermaid: true,
     hooks: {
       onBrokenMarkdownLinks: 'throw',
     },
   },
+  themes: ['@docusaurus/theme-mermaid'],
 
   presets: [
     [
