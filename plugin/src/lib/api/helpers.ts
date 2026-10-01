@@ -70,6 +70,8 @@ export async function findRootArticleDirectoryPolymorphic({
   if (rootLookup.global) {
     const r = await payload.find({
       collection: 'crowdin-article-directories',
+      select: { collectionDocument: false },
+      depth: 1,
       where: {
         globalSlug: { equals: rootLookup.collectionSlug },
       },
@@ -81,6 +83,8 @@ export async function findRootArticleDirectoryPolymorphic({
   }
   const r = await payload.find({
     collection: 'crowdin-article-directories',
+    select: { collectionDocument: false },
+    depth: 1,
     where: {
       and: [
         { 'collectionDocument.value': { equals: documentId } },
@@ -131,6 +135,7 @@ async function findArticleDirectoryOnDocument({
       directory = (await payload.findByID({
         collection: 'crowdin-article-directories',
         id: documentDirectory as string,
+        depth: 0,
         req,
         overrideAccess: true,
       })) as CrowdinArticleDirectory;
@@ -229,6 +234,8 @@ async function findUnlinkedArticleDirectoryByName({
   }
   const articleDirectories = await payload.find({
     collection: 'crowdin-article-directories',
+    select: { collectionDocument: false },
+    depth: 1,
     where: {
       and: [
         { name: { equals: `${documentId}` } },
@@ -254,6 +261,13 @@ async function findUnlinkedArticleDirectoryByName({
  * Each candidate is passed through `validate` (self-clean on sync); the first
  * one it returns wins. Different lookups often find the same row, so a row
  * `validate` rejected (and self-clean may have deleted) is not validated again.
+ *
+ * The document's `afterRead` hook calls this resolver, so no query may populate
+ * a `collectionDocument` link at any level: reading the document from inside
+ * its own read waits on Payload's request loader and never finishes. Searches
+ * leave the field out and use `depth: 1`, so the related rows they populate
+ * keep their links as ids. Loading the row on the document field uses
+ * `depth: 0`, as the ownership check needs the link.
  */
 export async function resolveRootArticleDirectory({
   payload,
