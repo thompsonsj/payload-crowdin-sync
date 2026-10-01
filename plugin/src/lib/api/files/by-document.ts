@@ -688,6 +688,12 @@ export class filesApiByDocument {
           ...(this.global && !parent && {
             globalSlug: this.collectionSlug as string,
           }),
+          ...(!this.global && !parent && {
+            collectionDocument: {
+              relationTo: this.collectionSlug as string,
+              value: this.document.id,
+            },
+          }),
         },
         req: this.req,
       });

@@ -69,19 +69,22 @@ Three new collections are created.
 - `crowdin-article-directories`
 - `crowdin-files`
 
-Each root `crowdin-article-directories` document links back to its Payload document, with the polymorphic `collectionDocument` field for collections or the `globalSlug` field for globals.
+Each root `crowdin-article-directories` document links back to its Payload document, with the polymorphic `collectionDocument` field for collections or the `globalSlug` field for globals. Directories created by earlier versions may not have these links. The plugin still finds them by `name` (the document id, or the global slug) within their collection's `crowdin-collection-directories` document.
 
 Enabled documents get a `crowdinArticleDirectory` relationship field. It isn't stored: the plugin looks up the matching `crowdin-article-directories` document when your document is read.
 
 ### Upgrading from older versions
 
-Older versions stored `crowdinArticleDirectory` on your documents, and may not have set `collectionDocument` or `globalSlug`. To copy the old links across, import `backfillArticleDirectoryPolymorphicLinks` from `payload-crowdin-sync` and call it once with your Payload instance, for example from `onInit` or a one-off script:
+Earlier versions created collection directories without `collectionDocument`, and some stored `crowdinArticleDirectory` on your documents instead. To link existing directories, import `backfillArticleDirectoryPolymorphicLinks` from `payload-crowdin-sync` and call it once with your Payload instance, for example from `onInit` or a one-off script:
 
 ```ts
 import { backfillArticleDirectoryPolymorphicLinks } from 'payload-crowdin-sync';
 
 const result = await backfillArticleDirectoryPolymorphicLinks(payload);
+// { collectionDocumentsUpdated: number, globalsUpdated: number }
 ```
+
+The backfill first copies links from any stored `crowdinArticleDirectory` values. It then links the remaining directories by `name` within their collection's directory. It skips directories whose document no longer exists, directories for collections or globals no longer in your config, and duplicates for a document that already has a linked directory. It is safe to run more than once.
 
 After the backfill, the stored `crowdinArticleDirectory` values are no longer needed.
 
