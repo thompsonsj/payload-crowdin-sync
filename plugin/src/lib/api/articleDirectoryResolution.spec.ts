@@ -303,6 +303,41 @@ describe('directory on the document field that belongs to another document', () 
     expect((await api.resolveExistingArticleDirectory())?.id).toBe('ad-post-5');
   });
 
+  it('is not used when its collection directory no longer exists', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': [],
+      'crowdin-article-directories': [unlinkedPostDirectory],
+    });
+    const api = buildApiByDocument(payload, {
+      id: '5',
+      crowdinArticleDirectory: 'ad-post-5',
+    });
+    expect(await api.resolveExistingArticleDirectory()).toBeUndefined();
+  });
+
+  it('rethrows errors other than not found when loading its collection directory', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [unlinkedPostDirectory],
+    });
+    const databaseError = Object.assign(new Error('Database unavailable'), {
+      status: 500,
+    });
+    const findByID = payload.findByID.getMockImplementation();
+    payload.findByID.mockImplementation(async (args) =>
+      args.collection === 'crowdin-collection-directories'
+        ? Promise.reject(databaseError)
+        : findByID?.(args),
+    );
+    const api = buildApiByDocument(payload, {
+      id: '5',
+      crowdinArticleDirectory: 'ad-post-5',
+    });
+    await expect(api.resolveExistingArticleDirectory()).rejects.toBe(
+      databaseError,
+    );
+  });
+
   it('is not used for a global when it belongs to another global', async () => {
     const payload = createInMemoryPayload({
       'crowdin-collection-directories': collectionDirectories,

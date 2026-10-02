@@ -106,7 +106,8 @@ export async function findRootArticleDirectoryPolymorphic({
  * through Payload usually carry the resolved directory already, and using it
  * saves the queries below. A string id only appears in raw data, or on
  * documents stored by versions that saved the field. Returns `undefined` if
- * that row no longer exists, or if it belongs to another document.
+ * that row or its collection directory no longer exists, or if it belongs to
+ * another document.
  */
 async function findArticleDirectoryOnDocument({
   payload,
@@ -144,6 +145,26 @@ async function findArticleDirectoryOnDocument({
         return undefined;
       }
       throw error;
+    }
+    const collectionDirectoryId = directory.crowdinCollectionDirectory;
+    if (collectionDirectoryId && typeof collectionDirectoryId !== 'object') {
+      try {
+        directory = {
+          ...directory,
+          crowdinCollectionDirectory: (await payload.findByID({
+            collection: 'crowdin-collection-directories',
+            id: collectionDirectoryId,
+            depth: 0,
+            req,
+            overrideAccess: true,
+          })) as CrowdinCollectionDirectory,
+        };
+      } catch (error) {
+        if ((error as { status?: number }).status === 404) {
+          return undefined;
+        }
+        throw error;
+      }
     }
   }
   return isDirectoryForDocument({ directory, documentId, rootLookup })
@@ -267,7 +288,8 @@ async function findUnlinkedArticleDirectoryByName({
  * its own read waits on Payload's request loader and never finishes. Searches
  * leave the field out and use `depth: 1`, so the related rows they populate
  * keep their links as ids. Loading the row on the document field uses
- * `depth: 0`, as the ownership check needs the link.
+ * `depth: 0`, as the ownership check needs the link, then loads its collection
+ * directory separately for the same check.
  */
 export async function resolveRootArticleDirectory({
   payload,
