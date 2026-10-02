@@ -194,7 +194,7 @@ describe('findRootArticleDirectoryPolymorphic / getArticleDirectory rootLookup',
       rootLookup: { collectionSlug: 'posts', global: false },
     });
 
-    expect(result).toBe(nameDoc);
+    expect(result).toEqual(nameDoc);
   });
 });
 

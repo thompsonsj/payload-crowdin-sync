@@ -70,6 +70,8 @@ export async function findRootArticleDirectoryPolymorphic({
   if (rootLookup.global) {
     const r = await payload.find({
       collection: 'crowdin-article-directories',
+      select: { collectionDocument: false },
+      depth: 1,
       where: {
         globalSlug: { equals: rootLookup.collectionSlug },
       },
@@ -81,6 +83,8 @@ export async function findRootArticleDirectoryPolymorphic({
   }
   const r = await payload.find({
     collection: 'crowdin-article-directories',
+    select: { collectionDocument: false },
+    depth: 1,
     where: {
       and: [
         { 'collectionDocument.value': { equals: documentId } },
@@ -102,7 +106,8 @@ export async function findRootArticleDirectoryPolymorphic({
  * through Payload usually carry the resolved directory already, and using it
  * saves the queries below. A string id only appears in raw data, or on
  * documents stored by versions that saved the field. Returns `undefined` if
- * that row no longer exists, or if it belongs to another document.
+ * that row or its collection directory no longer exists, or if it belongs to
+ * another document.
  */
 async function findArticleDirectoryOnDocument({
   payload,
@@ -131,6 +136,7 @@ async function findArticleDirectoryOnDocument({
       directory = (await payload.findByID({
         collection: 'crowdin-article-directories',
         id: documentDirectory as string,
+        depth: 0,
         req,
         overrideAccess: true,
       })) as CrowdinArticleDirectory;
@@ -139,6 +145,26 @@ async function findArticleDirectoryOnDocument({
         return undefined;
       }
       throw error;
+    }
+    const collectionDirectoryId = directory.crowdinCollectionDirectory;
+    if (collectionDirectoryId && typeof collectionDirectoryId !== 'object') {
+      try {
+        directory = {
+          ...directory,
+          crowdinCollectionDirectory: (await payload.findByID({
+            collection: 'crowdin-collection-directories',
+            id: collectionDirectoryId,
+            depth: 0,
+            req,
+            overrideAccess: true,
+          })) as CrowdinCollectionDirectory,
+        };
+      } catch (error) {
+        if ((error as { status?: number }).status === 404) {
+          return undefined;
+        }
+        throw error;
+      }
     }
   }
   return isDirectoryForDocument({ directory, documentId, rootLookup })
@@ -229,6 +255,8 @@ async function findUnlinkedArticleDirectoryByName({
   }
   const articleDirectories = await payload.find({
     collection: 'crowdin-article-directories',
+    select: { collectionDocument: false },
+    depth: 1,
     where: {
       and: [
         { name: { equals: `${documentId}` } },
@@ -254,6 +282,14 @@ async function findUnlinkedArticleDirectoryByName({
  * Each candidate is passed through `validate` (self-clean on sync); the first
  * one it returns wins. Different lookups often find the same row, so a row
  * `validate` rejected (and self-clean may have deleted) is not validated again.
+ *
+ * The document's `afterRead` hook calls this resolver, so no query may populate
+ * a `collectionDocument` link at any level: reading the document from inside
+ * its own read waits on Payload's request loader and never finishes. Searches
+ * leave the field out and use `depth: 1`, so the related rows they populate
+ * keep their links as ids. Loading the row on the document field uses
+ * `depth: 0`, as the ownership check needs the link, then loads its collection
+ * directory separately for the same check.
  */
 export async function resolveRootArticleDirectory({
   payload,

@@ -263,7 +263,7 @@ describe('directory 404 self-clean (#360)', () => {
 
       expect(getDirectory).toHaveBeenCalledWith(pluginOptions.projectId, 200);
       expect(createDirectory).not.toHaveBeenCalled();
-      expect(result).toEqual(validArticleDirectory);
+      expect(result.id).toBe(validArticleDirectory.id);
     });
 
     it('self-cleans stale polymorphic link then creates a new article directory', async () => {
@@ -452,7 +452,7 @@ describe('directory 404 self-clean (#360)', () => {
       expect(getDirectory).not.toHaveBeenCalled();
       expect(payload.delete).not.toHaveBeenCalled();
       expect(createDirectory).not.toHaveBeenCalled();
-      expect(result).toEqual(staleArticleDirectory);
+      expect(result.id).toBe(staleArticleDirectory.id);
     });
   });
 
