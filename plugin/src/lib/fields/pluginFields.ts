@@ -13,7 +13,9 @@ interface Args {
   pluginOptions: PluginOptions;
 }
 
-const crowdinArticleDirectoryField: Field = {
+const createCrowdinArticleDirectoryField = (
+  pluginOptions: PluginOptions,
+): Field => ({
   name: 'crowdinArticleDirectory',
   type: 'relationship',
   relationTo: 'crowdin-article-directories',
@@ -66,13 +68,15 @@ const crowdinArticleDirectoryField: Field = {
           req,
           documentId: global?.slug ? global.slug : `${data.id}`,
           rootLookup: { collectionSlug: slugKey, global: Boolean(global?.slug) },
+          legacyArticleDirectoryLookup:
+            pluginOptions.legacyArticleDirectoryLookup,
         });
         cache[cacheKey] = resolved;
         return resolved;
       },
     ],
   },
-};
+});
 
 export const pluginCollectionOrGlobalFields = ({
   fields,
@@ -134,7 +138,7 @@ export const pluginCollectionOrGlobalFields = ({
         afterChange: [createSyncAfterChangeHook('all-locales', pluginOptions)],
       },
     },
-    crowdinArticleDirectoryField,
+    createCrowdinArticleDirectoryField(pluginOptions),
   ];
 
   if (pluginOptions.tabbedUI) {

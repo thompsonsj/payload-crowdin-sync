@@ -19,7 +19,11 @@ import {
 import {
   payloadCrowdinSyncDocumentFilesApi,
 } from './document';
-import { getCollectionConfig, resolveRootArticleDirectory } from '../helpers';
+import {
+  findUnlinkedArticleDirectoryByName,
+  getCollectionConfig,
+  resolveRootArticleDirectory,
+} from '../helpers';
 
 import * as crowdin from '@crowdin/crowdin-api-client';
 
@@ -152,6 +156,8 @@ export class filesApiByDocument {
         global: this.global,
       },
       documentDirectory: this.document.crowdinArticleDirectory,
+      legacyArticleDirectoryLookup:
+        this.pluginOptions.legacyArticleDirectoryLookup,
       validate,
     });
   }
@@ -198,6 +204,30 @@ export class filesApiByDocument {
     if (found) {
       this.articleDirectory = found;
       return found;
+    }
+
+    if (!this.pluginOptions.legacyArticleDirectoryLookup) {
+      const documentId = this.global
+        ? (this.collectionSlug as string)
+        : this.document.id;
+      const unlinked = await findUnlinkedArticleDirectoryByName({
+        payload: this.req.payload,
+        req: this.req,
+        documentId,
+        rootLookup: {
+          collectionSlug: this.collectionSlug as string,
+          global: this.global,
+        },
+      });
+      if (unlinked) {
+        throw new Error(
+          `Found an unlinked Crowdin article directory named "${unlinked.name}" for ${
+            this.global
+              ? `global "${this.collectionSlug}"`
+              : `collection "${this.collectionSlug}"`
+          }. Run backfillArticleDirectoryPolymorphicLinks to link it, or set legacyArticleDirectoryLookup: true until you do.`,
+        );
+      }
     }
 
     const collectionDirectory = await this.findOrCreateCollectionDirectory({

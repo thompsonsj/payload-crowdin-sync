@@ -66,6 +66,20 @@ export interface PluginOptions {
    * Default: false (keep Crowdin source files).
    */
   deleteCrowdinFiles?: boolean;
+  /**
+   * Find article directories that have no `collectionDocument` or `globalSlug`
+   * link: by a stored `crowdinArticleDirectory` id on the document, or by
+   * `name` within the collection's directory.
+   *
+   * Off by default. Turn this on only if directories from earlier plugin
+   * versions are still unlinked, and you have not run
+   * `backfillArticleDirectoryPolymorphicLinks`. This option will be removed
+   * in a future major version.
+   *
+   * @deprecated Run the backfill instead. This option exists so older
+   * installs can keep working until their directories are linked.
+   */
+  legacyArticleDirectoryLookup?: boolean;
 }
 
 export type FieldWithName = Field & { name: string };

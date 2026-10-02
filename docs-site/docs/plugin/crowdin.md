@@ -69,7 +69,7 @@ Three new collections are created.
 - `crowdin-article-directories`
 - `crowdin-files`
 
-Each root `crowdin-article-directories` document links back to its Payload document, with the polymorphic `collectionDocument` field for collections or the `globalSlug` field for globals. Directories created by earlier versions may not have these links. The plugin still finds them by `name` (the document id, or the global slug) within their collection's `crowdin-collection-directories` document.
+Each root `crowdin-article-directories` document links back to its Payload document, with the polymorphic `collectionDocument` field for collections or the `globalSlug` field for globals. Directories created by earlier versions may not have these links. The plugin only finds those if you set [`legacyArticleDirectoryLookup`](./README.md#legacyarticledirectorylookup) or run the backfill below.
 
 Enabled documents get a `crowdinArticleDirectory` relationship field. It isn't stored: the plugin looks up the matching `crowdin-article-directories` document when your document is read.
 
@@ -86,7 +86,7 @@ const result = await backfillArticleDirectoryPolymorphicLinks(payload);
 
 The backfill first copies links from any stored `crowdinArticleDirectory` values. It then links the remaining directories by `name` within their collection's directory. It skips directories whose document no longer exists, directories for collections or globals no longer in your config, and duplicates for a document that already has a linked directory. It is safe to run more than once.
 
-After the backfill, the stored `crowdinArticleDirectory` values are no longer needed.
+After the backfill, the stored `crowdinArticleDirectory` values are no longer needed, and you can leave `legacyArticleDirectoryLookup` off (the default).
 
 ### Uninstall
 

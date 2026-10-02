@@ -192,6 +192,7 @@ describe('findRootArticleDirectoryPolymorphic / getArticleDirectory rootLookup',
       payload,
       allowEmpty: true,
       rootLookup: { collectionSlug: 'posts', global: false },
+      legacyArticleDirectoryLookup: true,
     });
 
     expect(result).toEqual(nameDoc);

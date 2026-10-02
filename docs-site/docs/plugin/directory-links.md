@@ -81,7 +81,7 @@ Globals work the same way, inside the `globals` folder, with `globalSlug` instea
 
 ### Finding a document's directory
 
-Syncing, reading and deleting a document all use the same lookup. It tries three ways in turn and uses the first directory it finds:
+Syncing, reading and deleting a document all use the same lookup. By default it only uses the direct link. If [`legacyArticleDirectoryLookup`](./README.md#legacyarticledirectorylookup) is on, it also tries the two older paths:
 
 ```mermaid
 flowchart TD
@@ -98,7 +98,7 @@ flowchart TD
 
 When saving, each record found is first checked on Crowdin. If its folder was deleted on Crowdin, the record is deleted and the next one is tried. See [`disableSelfClean`](./README.md#disableselfclean).
 
-The second and third steps only exist for directories created by earlier versions, which have no direct link. Running the [backfill](#linking-older-directories) adds the link, after which the first step finds them.
+The second and third steps are off unless `legacyArticleDirectoryLookup` is set. Running the [backfill](#linking-older-directories) adds the link, after which the first step finds them. If you save a document whose directory is still unlinked while the option is off, the plugin throws and names the backfill rather than creating a second Crowdin folder.
 
 ### Lexical blocks
 
@@ -198,4 +198,4 @@ flowchart TD
   checks -- yes --> linkName["Link it by name:<br/>collectionDocument or globalSlug"]
 ```
 
-Once every directory is linked, the name lookup and the stored id are no longer needed. A future major version will turn the name lookup off, then remove the `crowdinArticleDirectory` field from your documents. See [planned features](../repo/planned-features.md#remove-the-crowdinarticledirectory-field-from-synced-documents).
+Once every directory is linked, leave `legacyArticleDirectoryLookup` off. A future major version will remove that option, then remove the `crowdinArticleDirectory` field from your documents. See [planned features](../repo/planned-features.md#remove-the-crowdinarticledirectory-field-from-synced-documents).

@@ -63,6 +63,23 @@ const buildApiByDocument = (
     req: { payload } as unknown as PayloadRequest,
   });
 
+const buildLegacyApiByDocument = (
+  payload: InMemoryPayload,
+  document: Record<string, unknown>,
+  opts: {
+    collectionSlug?: string;
+    global?: boolean;
+    pluginOptionsOverrides?: Record<string, unknown>;
+  } = {},
+) =>
+  buildApiByDocument(payload, document, {
+    ...opts,
+    pluginOptionsOverrides: {
+      legacyArticleDirectoryLookup: true,
+      ...opts.pluginOptionsOverrides,
+    },
+  });
+
 describe('getArticleDirectory with rootLookup', () => {
   const rootLookup = { collectionSlug: 'posts', global: false };
 
@@ -80,6 +97,7 @@ describe('getArticleDirectory with rootLookup', () => {
       documentId: '5',
       payload: payload,
       rootLookup,
+      legacyArticleDirectoryLookup: true,
     });
     expect(result?.id).toBe('ad-linked');
   });
@@ -96,6 +114,7 @@ describe('getArticleDirectory with rootLookup', () => {
       documentId: '5',
       payload: payload,
       rootLookup,
+      legacyArticleDirectoryLookup: true,
     });
     expect(result?.id).toBe('ad-post-5');
   });
@@ -129,6 +148,7 @@ describe('getArticleDirectory with rootLookup', () => {
       documentId: 'nav',
       payload: payload,
       rootLookup: { collectionSlug: 'nav', global: true },
+      legacyArticleDirectoryLookup: true,
     });
     expect(result?.id).toBe('ad-nav');
   });
@@ -175,7 +195,7 @@ describe('filesApiByDocument.resolveExistingArticleDirectory (delete path)', () 
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [unlinkedPageDirectory],
     });
-    const api = buildApiByDocument(payload, { id: '5' });
+    const api = buildLegacyApiByDocument(payload, { id: '5' });
     expect(await api.resolveExistingArticleDirectory()).toBeUndefined();
   });
 
@@ -186,7 +206,7 @@ describe('filesApiByDocument.resolveExistingArticleDirectory (delete path)', () 
         { id: 'ad-stored', name: '5' },
       ],
     });
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: '5',
       crowdinArticleDirectory: 'ad-stored',
     });
@@ -201,7 +221,7 @@ describe('filesApiByDocument.resolveExistingArticleDirectory (delete path)', () 
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [unlinkedPostDirectory],
     });
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: '5',
       crowdinArticleDirectory: { name: 'no-id' },
     });
@@ -217,7 +237,7 @@ describe('filesApiByDocument.resolveExistingArticleDirectory (delete path)', () 
       status: 500,
     });
     payload.findByID.mockRejectedValueOnce(databaseError);
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: '5',
       crowdinArticleDirectory: 'ad-stored',
     });
@@ -231,7 +251,7 @@ describe('filesApiByDocument.resolveExistingArticleDirectory (delete path)', () 
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [],
     });
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: '5',
       crowdinArticleDirectory: 'ad-deleted',
     });
@@ -251,7 +271,7 @@ describe('directory on the document field that belongs to another document', () 
         { id: 'ad-post-7', name: '7', crowdinCollectionDirectory: 'cd-posts' },
       ],
     });
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: '5',
       crowdinArticleDirectory: 'ad-post-7',
     });
@@ -269,7 +289,7 @@ describe('directory on the document field that belongs to another document', () 
         },
       ],
     });
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: '5',
       crowdinArticleDirectory: 'ad-page-5-linked',
     });
@@ -281,7 +301,7 @@ describe('directory on the document field that belongs to another document', () 
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [],
     });
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: '5',
       crowdinArticleDirectory: {
         ...unlinkedPageDirectory,
@@ -296,7 +316,7 @@ describe('directory on the document field that belongs to another document', () 
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [unlinkedPageDirectory],
     });
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: '5',
       crowdinArticleDirectory: 'ad-page-5',
     });
@@ -308,7 +328,7 @@ describe('directory on the document field that belongs to another document', () 
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [unlinkedPostDirectory],
     });
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: '5',
       crowdinArticleDirectory: 'ad-post-5',
     });
@@ -320,7 +340,7 @@ describe('directory on the document field that belongs to another document', () 
       'crowdin-collection-directories': [],
       'crowdin-article-directories': [unlinkedPostDirectory],
     });
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: '5',
       crowdinArticleDirectory: 'ad-post-5',
     });
@@ -342,7 +362,7 @@ describe('directory on the document field that belongs to another document', () 
         ? Promise.reject(databaseError)
         : findByID(args),
     );
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: '5',
       crowdinArticleDirectory: 'ad-post-5',
     });
@@ -358,7 +378,7 @@ describe('directory on the document field that belongs to another document', () 
         { id: 'ad-footer', name: 'footer', globalSlug: 'footer' },
       ],
     });
-    const api = buildApiByDocument(
+    const api = buildLegacyApiByDocument(
       payload,
       { id: 'nav-doc', crowdinArticleDirectory: 'ad-footer' },
       { collectionSlug: 'nav', global: true },
@@ -371,7 +391,7 @@ describe('directory on the document field that belongs to another document', () 
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [],
     });
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: '5',
       crowdinArticleDirectory: {
         id: 'ad-post-7',
@@ -387,7 +407,7 @@ describe('directory on the document field that belongs to another document', () 
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [],
     });
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: 'nav',
       crowdinArticleDirectory: { id: 'ad-nav', name: 'nav', globalSlug: 'nav' },
     });
@@ -399,7 +419,7 @@ describe('directory on the document field that belongs to another document', () 
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [],
     });
-    const api = buildApiByDocument(
+    const api = buildLegacyApiByDocument(
       payload,
       {
         id: 'nav-doc',
@@ -415,7 +435,7 @@ describe('directory on the document field that belongs to another document', () 
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [],
     });
-    const api = buildApiByDocument(
+    const api = buildLegacyApiByDocument(
       payload,
       {
         id: 'nav-doc',
@@ -438,7 +458,7 @@ describe('directory on the document field that belongs to another document', () 
         unlinkedPostDirectory,
       ],
     });
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: '5',
       crowdinArticleDirectory: 'ad-post-7',
     });
@@ -459,7 +479,7 @@ describe('filesApiByDocument.findOrCreateArticleDirectory (sync path)', () => {
         },
       ],
     });
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: '5',
       crowdinArticleDirectory: 'ad-stored',
     });
@@ -471,7 +491,7 @@ describe('filesApiByDocument.findOrCreateArticleDirectory (sync path)', () => {
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [unlinkedPostDirectory],
     });
-    const api = buildApiByDocument(payload, {
+    const api = buildLegacyApiByDocument(payload, {
       id: '5',
       crowdinArticleDirectory: 'ad-deleted',
     });
@@ -483,7 +503,7 @@ describe('filesApiByDocument.findOrCreateArticleDirectory (sync path)', () => {
       'crowdin-collection-directories': collectionDirectories,
       'crowdin-article-directories': [unlinkedPageDirectory],
     });
-    const api = buildApiByDocument(payload, { id: '5' });
+    const api = buildLegacyApiByDocument(payload, { id: '5' });
     const created = { id: 'ad-created', name: '5' };
     const create = vi
       .spyOn(api, 'crowdinFindOrCreateDirectory')
@@ -564,17 +584,31 @@ describe('legacyArticleDirectoryLookup', () => {
     expect(payload.findByID).not.toHaveBeenCalled();
   });
 
-  it('does not use a name-only lookup when rootLookup is omitted and the option is off', async () => {
+  it('finds an unlinked directory by name when the option is on', async () => {
     const payload = createInMemoryPayload({
-      'crowdin-article-directories': [unlinkedPageDirectory],
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [unlinkedPostDirectory],
     });
     const result = await getArticleDirectory({
       documentId: '5',
       payload,
       allowEmpty: true,
+      rootLookup: { collectionSlug: 'posts', global: false },
+      legacyArticleDirectoryLookup: true,
     });
-    expect(result).toBeUndefined();
-    expect(payload.find).not.toHaveBeenCalled();
+    expect(result?.id).toBe('ad-post-5');
+  });
+
+  it('uses a directory id on the document when the option is on', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [unlinkedPostDirectory],
+    });
+    const api = buildLegacyApiByDocument(payload, {
+      id: '5',
+      crowdinArticleDirectory: 'ad-post-5',
+    });
+    expect((await api.resolveExistingArticleDirectory())?.id).toBe('ad-post-5');
   });
 
   it('refuses to create a directory when an unlinked row already exists and the option is off', async () => {

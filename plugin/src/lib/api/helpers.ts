@@ -227,7 +227,7 @@ function isDirectoryForDocument({
  * their rows. Global directories get `globalSlug` on creation, so for globals
  * this only finds rows from older versions.
  */
-async function findUnlinkedArticleDirectoryByName({
+export async function findUnlinkedArticleDirectoryByName({
   payload,
   req,
   documentId,
@@ -275,9 +275,11 @@ async function findUnlinkedArticleDirectoryByName({
  *
  * Tries, in order:
  * 1. a row linked to the document (`collectionDocument` / `globalSlug`)
- * 2. the directory already on the document's `crowdinArticleDirectory` field,
- *    if the row is named for this document and not linked elsewhere
- * 3. an unlinked row matched by `name` within the collection's directory
+ * 2. if `legacyArticleDirectoryLookup` is on: the directory already on the
+ *    document's `crowdinArticleDirectory` field, if the row is named for this
+ *    document and not linked elsewhere
+ * 3. if `legacyArticleDirectoryLookup` is on: an unlinked row matched by
+ *    `name` within the collection's directory
  *
  * Each candidate is passed through `validate` (self-clean on sync); the first
  * one it returns wins. Different lookups often find the same row, so a row
@@ -297,6 +299,7 @@ export async function resolveRootArticleDirectory({
   documentId,
   rootLookup,
   documentDirectory,
+  legacyArticleDirectoryLookup = false,
   validate = async (directory) => directory,
 }: {
   payload: Payload;
@@ -306,6 +309,8 @@ export async function resolveRootArticleDirectory({
   rootLookup: ArticleDirectoryRootLookup;
   /** Value of the document's `crowdinArticleDirectory` field, if any. */
   documentDirectory?: unknown;
+  /** Use the stored field and name match for directories with no link. */
+  legacyArticleDirectoryLookup?: boolean;
   validate?: (
     directory: CrowdinArticleDirectory,
   ) => Promise<CrowdinArticleDirectory | undefined>;
@@ -318,21 +323,25 @@ export async function resolveRootArticleDirectory({
         documentId,
         rootLookup,
       }),
-    () =>
-      findArticleDirectoryOnDocument({
-        payload,
-        req,
-        documentId,
-        rootLookup,
-        documentDirectory,
-      }),
-    () =>
-      findUnlinkedArticleDirectoryByName({
-        payload,
-        req,
-        documentId,
-        rootLookup,
-      }),
+    ...(legacyArticleDirectoryLookup
+      ? [
+          () =>
+            findArticleDirectoryOnDocument({
+              payload,
+              req,
+              documentId,
+              rootLookup,
+              documentDirectory,
+            }),
+          () =>
+            findUnlinkedArticleDirectoryByName({
+              payload,
+              req,
+              documentId,
+              rootLookup,
+            }),
+        ]
+      : []),
   ];
   const rejectedIds = new Set<string>();
   for (const lookup of lookups) {
@@ -430,6 +439,7 @@ export async function getArticleDirectory({
   parent,
   req,
   rootLookup,
+  legacyArticleDirectoryLookup = false,
 }: {
   documentId: string;
   payload: Payload;
@@ -438,6 +448,8 @@ export async function getArticleDirectory({
   req?: PayloadRequest;
   /** When resolving a root directory (no `parent`), use `resolveRootArticleDirectory`, which limits the `name` lookup to this collection. */
   rootLookup?: ArticleDirectoryRootLookup;
+  /** Use the stored field and name match for directories with no link. */
+  legacyArticleDirectoryLookup?: boolean;
 }) {
   if (parent !== undefined) {
     const crowdinPayloadArticleDirectory = await payload.find({
@@ -469,6 +481,7 @@ export async function getArticleDirectory({
       req,
       documentId,
       rootLookup,
+      legacyArticleDirectoryLookup,
     });
     if (!articleDirectory && !allowEmpty) {
       console.error(`No article directory found for document ${documentId}`);
@@ -480,7 +493,8 @@ export async function getArticleDirectory({
   }
 
   // Without `rootLookup` the collection is unknown, so a `name` match may
-  // belong to another collection when ids repeat across collections.
+  // belong to another collection when ids repeat across collections. Callers
+  // that know the collection should pass `rootLookup` instead.
   const crowdinPayloadArticleDirectory = await payload.find({
     collection: 'crowdin-article-directories',
     where: {
@@ -625,6 +639,7 @@ export async function getFileByDocumentID(
   payload: Payload,
   req?: PayloadRequest,
   rootLookup?: ArticleDirectoryRootLookup,
+  legacyArticleDirectoryLookup?: boolean,
 ): Promise<CrowdinFile> {
   let articleDirectory = undefined;
   try {
@@ -633,6 +648,7 @@ export async function getFileByDocumentID(
       payload,
       req,
       rootLookup,
+      legacyArticleDirectoryLookup,
     });
   } catch (error) {
     console.error(error);
@@ -653,12 +669,14 @@ export async function getFilesByDocumentID({
   parent,
   req,
   rootLookup,
+  legacyArticleDirectoryLookup,
 }: {
   documentId: string;
   payload: Payload;
   parent?: CrowdinArticleDirectory;
   req?: PayloadRequest;
   rootLookup?: ArticleDirectoryRootLookup;
+  legacyArticleDirectoryLookup?: boolean;
 }): Promise<CrowdinFile[]> {
   let articleDirectory = undefined;
   try {
@@ -669,6 +687,7 @@ export async function getFilesByDocumentID({
       parent,
       req,
       rootLookup,
+      legacyArticleDirectoryLookup,
     });
   } catch (error) {
     console.error(error);
