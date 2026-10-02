@@ -41,13 +41,25 @@ const unlinkedPostDirectory: Row = {
 const buildApiByDocument = (
   payload: InMemoryPayload,
   document: Record<string, unknown>,
-  { collectionSlug = 'posts', global = false } = {},
+  {
+    collectionSlug = 'posts',
+    global = false,
+    pluginOptionsOverrides = {},
+  }: {
+    collectionSlug?: string;
+    global?: boolean;
+    pluginOptionsOverrides?: Record<string, unknown>;
+  } = {},
 ) =>
   new filesApiByDocument({
     document: { title: 'Doc', ...document },
     collectionSlug: collectionSlug as 'posts',
     global,
-    pluginOptions: { ...pluginOptions, disableSelfClean: true },
+    pluginOptions: {
+      ...pluginOptions,
+      disableSelfClean: true,
+      ...pluginOptionsOverrides,
+    },
     req: { payload } as unknown as PayloadRequest,
   });
 
@@ -515,6 +527,64 @@ describe('payloadCrowdinSyncDocumentFilesApi.deleteFilesAndDirectory', () => {
         collection: 'crowdin-article-directories',
         id: 'ad-post-5',
       }),
+    );
+  });
+});
+
+/**
+ * `legacyArticleDirectoryLookup` is off by default. Unlinked rows and ids
+ * stored on documents are ignored unless the option is set.
+ */
+describe('legacyArticleDirectoryLookup', () => {
+  it('does not find an unlinked directory by name when the option is off', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [unlinkedPostDirectory],
+    });
+    const result = await getArticleDirectory({
+      documentId: '5',
+      payload,
+      allowEmpty: true,
+      rootLookup: { collectionSlug: 'posts', global: false },
+    });
+    expect(result).toBeUndefined();
+    expect(payload.find).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not use a directory id on the document when the option is off', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [unlinkedPostDirectory],
+    });
+    const api = buildApiByDocument(payload, {
+      id: '5',
+      crowdinArticleDirectory: 'ad-post-5',
+    });
+    expect(await api.resolveExistingArticleDirectory()).toBeUndefined();
+    expect(payload.findByID).not.toHaveBeenCalled();
+  });
+
+  it('does not use a name-only lookup when rootLookup is omitted and the option is off', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-article-directories': [unlinkedPageDirectory],
+    });
+    const result = await getArticleDirectory({
+      documentId: '5',
+      payload,
+      allowEmpty: true,
+    });
+    expect(result).toBeUndefined();
+    expect(payload.find).not.toHaveBeenCalled();
+  });
+
+  it('refuses to create a directory when an unlinked row already exists and the option is off', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [unlinkedPostDirectory],
+    });
+    const api = buildApiByDocument(payload, { id: '5' });
+    await expect(api.findOrCreateArticleDirectory()).rejects.toThrow(
+      /legacyArticleDirectoryLookup|backfillArticleDirectoryPolymorphicLinks/,
     );
   });
 });

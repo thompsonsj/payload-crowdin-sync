@@ -3,13 +3,14 @@ import { pluginCollectionOrGlobalFields } from './pluginFields'
 import type { PluginOptions } from '../types'
 import { createInMemoryPayload } from '../api/tests/in-memory-payload'
 
-function getAfterReadHook() {
+function getAfterReadHook(pluginOptionsOverrides: Partial<PluginOptions> = {}) {
   const pluginOptions = {
     projectId: 123,
     token: 'fake-token',
     organization: '',
     localeMap: {},
     sourceLocale: 'en',
+    ...pluginOptionsOverrides,
   } as unknown as PluginOptions
 
   const fields = pluginCollectionOrGlobalFields({ fields: [], pluginOptions })
@@ -164,6 +165,23 @@ describe('pluginFields - crowdinArticleDirectory afterRead', () => {
         global: { slug: 'nav' },
       })
       expect(res?.id).toBe('ad-nav')
+    })
+
+    it('does not find the directory by name when legacyArticleDirectoryLookup is off', async () => {
+      const afterRead = getAfterReadHook()
+      const payload = createInMemoryPayload({
+        'crowdin-collection-directories': collectionDirectories,
+        'crowdin-article-directories': [
+          { id: 'ad-nav', name: 'nav', crowdinCollectionDirectory: 'cd-globals' },
+        ],
+      })
+      const res = await afterRead({
+        data: { id: 'nav-global-id' },
+        req: { context: {}, payload },
+        global: { slug: 'nav' },
+      })
+      expect(res).toBeUndefined()
+      expect(payload.find).toHaveBeenCalledTimes(1)
     })
   })
 
