@@ -183,6 +183,23 @@ describe('backfillArticleDirectoryPolymorphicLinks for rows found by name', () =
     });
   });
 
+  it('rethrows errors other than not found when loading the document', async () => {
+    const payload = buildPayload({
+      posts: [{ id: '5' }],
+      'crowdin-article-directories': [
+        { id: 'ad-post-5', name: '5', crowdinCollectionDirectory: 'cd-posts' },
+      ],
+    });
+    const databaseError = Object.assign(new Error('Database unavailable'), {
+      status: 500,
+    });
+    payload.findByID.mockRejectedValueOnce(databaseError);
+
+    await expect(backfillArticleDirectoryPolymorphicLinks(payload)).rejects.toBe(
+      databaseError,
+    );
+  });
+
   it("links an unlinked row in the globals directory to the global it's named after", async () => {
     const payload = buildPayload({
       'crowdin-article-directories': [
