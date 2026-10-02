@@ -279,6 +279,30 @@ describe('directory on the document field that belongs to another document', () 
     expect(await api.resolveExistingArticleDirectory()).toBeUndefined();
   });
 
+  it("is not used when its id loads a row in another collection's directory", async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [unlinkedPageDirectory],
+    });
+    const api = buildApiByDocument(payload, {
+      id: '5',
+      crowdinArticleDirectory: 'ad-page-5',
+    });
+    expect(await api.resolveExistingArticleDirectory()).toBeUndefined();
+  });
+
+  it("is used when its id loads a row in the collection's own directory", async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [unlinkedPostDirectory],
+    });
+    const api = buildApiByDocument(payload, {
+      id: '5',
+      crowdinArticleDirectory: 'ad-post-5',
+    });
+    expect((await api.resolveExistingArticleDirectory())?.id).toBe('ad-post-5');
+  });
+
   it('is not used for a global when it belongs to another global', async () => {
     const payload = createInMemoryPayload({
       'crowdin-collection-directories': collectionDirectories,
