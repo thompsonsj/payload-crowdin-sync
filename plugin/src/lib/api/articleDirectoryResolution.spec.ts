@@ -621,4 +621,25 @@ describe('legacyArticleDirectoryLookup', () => {
       /legacyArticleDirectoryLookup|backfillArticleDirectoryPolymorphicLinks/,
     );
   });
+
+  it('refuses to create a global directory when an unlinked row already exists and the option is off', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-collection-directories': collectionDirectories,
+      'crowdin-article-directories': [
+        {
+          id: 'ad-nav',
+          name: 'nav',
+          crowdinCollectionDirectory: 'cd-globals',
+        },
+      ],
+    });
+    const api = buildApiByDocument(
+      payload,
+      { id: 'nav-doc' },
+      { collectionSlug: 'nav', global: true },
+    );
+    await expect(api.findOrCreateArticleDirectory()).rejects.toThrow(
+      /global "nav".*legacyArticleDirectoryLookup|backfillArticleDirectoryPolymorphicLinks/,
+    );
+  });
 });
