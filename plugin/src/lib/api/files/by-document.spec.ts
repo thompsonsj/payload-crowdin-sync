@@ -641,3 +641,65 @@ describe('directory 404 self-clean (#360)', () => {
     });
   });
 });
+
+describe('payloadStoreCrowdinDirectory', () => {
+  const crowdinDirectory = crowdinDirectoryResponse(4001, 100, 'doc-1');
+  const collectionDirectory = collectionDirectoryFixture({
+    id: 'collection-dir-1',
+    originalId: 100,
+  });
+
+  it("links a collection document's directory back to the document", async () => {
+    const create = vi.fn().mockResolvedValue({ id: 'article-dir-1' });
+    const { api } = buildApi({ create });
+
+    await api.payloadStoreCrowdinDirectory({
+      crowdinDirectory: crowdinDirectory as never,
+      crowdinPayloadCollectionDirectory: collectionDirectory,
+      name: 'doc-1',
+    });
+
+    expect(create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        collection: 'crowdin-article-directories',
+        data: expect.objectContaining({
+          name: 'doc-1',
+          collectionDocument: { relationTo: 'posts', value: 'doc-1' },
+        }),
+      }),
+    );
+  });
+
+  it('does not link a Lexical block directory, which has a parent', async () => {
+    const create = vi.fn().mockResolvedValue({ id: 'field-dir-1' });
+    const { api } = buildApi({ create });
+
+    await api.payloadStoreCrowdinDirectory({
+      crowdinDirectory: crowdinDirectoryResponse(4002, 4001, 'blocks__hero') as never,
+      name: 'blocks__hero',
+      parent: { id: 'article-dir-1' } as never,
+    });
+
+    expect(create.mock.calls[0][0].data).not.toHaveProperty('collectionDocument');
+  });
+
+  it("links a global's directory with globalSlug only", async () => {
+    const create = vi.fn().mockResolvedValue({ id: 'article-dir-nav' });
+    const api = new filesApiByDocument({
+      document: { id: 'nav-doc' },
+      collectionSlug: 'nav' as never,
+      global: true,
+      pluginOptions,
+      req: { payload: { create } } as unknown as PayloadRequest,
+    });
+
+    await api.payloadStoreCrowdinDirectory({
+      crowdinDirectory: crowdinDirectory as never,
+      name: 'nav',
+    });
+
+    const { data } = create.mock.calls[0][0];
+    expect(data.globalSlug).toBe('nav');
+    expect(data).not.toHaveProperty('collectionDocument');
+  });
+});

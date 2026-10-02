@@ -4,7 +4,7 @@ import { vi } from 'vitest';
 
 /**
  * In-memory stand-in for the Payload methods used by the Crowdin directory
- * code. `find` evaluates `where` clauses (`equals`, `and`, `or`) against the
+ * code. `find` evaluates `where` clauses (`equals`, `not_equals`, `and`, `or`) against the
  * seeded rows, so tests can assert which row is found rather than the order
  * of queries.
  */
@@ -31,8 +31,11 @@ const matches = (row: Row, where?: Where): boolean => {
     if (key === 'or') {
       return (condition as Where[]).some((w) => matches(row, w));
     }
-    const { equals } = condition as { equals: unknown };
-    return idOf(valueAt(row, key)) === equals;
+    const value = idOf(valueAt(row, key)) ?? null;
+    if ('not_equals' in condition) {
+      return value !== (condition as { not_equals: unknown }).not_equals;
+    }
+    return value === (condition as { equals: unknown }).equals;
   });
 };
 
@@ -54,9 +57,11 @@ const applySelect = (row: Row, select?: Record<string, boolean>): Row => {
 export function createInMemoryPayload(collections: Record<string, Row[]>) {
   const rows = (collection: string) => collections[collection] ?? [];
   const payload = {
-    find: vi.fn(async ({ collection, where, limit, select }) => {
+    find: vi.fn(async ({ collection, where, limit, page = 1, select }) => {
       const docs = rows(collection).filter((row) => matches(row, where));
-      const limited = limit ? docs.slice(0, limit) : docs;
+      const limited = limit
+        ? docs.slice((page - 1) * limit, page * limit)
+        : docs;
       return {
         docs: limited.map((row) => applySelect(row, select)),
         totalDocs: docs.length,
@@ -66,6 +71,11 @@ export function createInMemoryPayload(collections: Record<string, Row[]>) {
       const doc = rows(collection).find((row) => row.id === id);
       if (!doc) throw new NotFound();
       return applySelect(doc, select);
+    }),
+    update: vi.fn(async ({ collection, id, data }) => {
+      const doc = rows(collection).find((row) => row.id === id);
+      if (!doc) throw new NotFound();
+      return Object.assign(doc, data);
     }),
     delete: vi.fn(async ({ collection, id }) => {
       if (!rows(collection).some((row) => row.id === id)) throw new NotFound();

@@ -69,19 +69,22 @@ Three new collections are created.
 - `crowdin-article-directories`
 - `crowdin-files`
 
-Each root `crowdin-article-directories` document links back to its Payload document, with the polymorphic `collectionDocument` field for collections or the `globalSlug` field for globals.
+Each root `crowdin-article-directories` document links back to its Payload document, with the polymorphic `collectionDocument` field for collections or the `globalSlug` field for globals. Directories created by earlier versions may not have these links. The plugin still finds them by `name` (the document id, or the global slug) within their collection's `crowdin-collection-directories` document.
 
 Enabled documents get a `crowdinArticleDirectory` relationship field. It isn't stored: the plugin looks up the matching `crowdin-article-directories` document when your document is read.
 
 ### Upgrading from older versions
 
-Older versions stored `crowdinArticleDirectory` on your documents, and may not have set `collectionDocument` or `globalSlug`. To copy the old links across, import `backfillArticleDirectoryPolymorphicLinks` from `payload-crowdin-sync` and call it once with your Payload instance, for example from `onInit` or a one-off script:
+Earlier versions created collection directories without `collectionDocument`, and some stored `crowdinArticleDirectory` on your documents instead. To link existing directories, import `backfillArticleDirectoryPolymorphicLinks` from `payload-crowdin-sync` and call it once with your Payload instance, for example from `onInit` or a one-off script:
 
 ```ts
 import { backfillArticleDirectoryPolymorphicLinks } from 'payload-crowdin-sync';
 
 const result = await backfillArticleDirectoryPolymorphicLinks(payload);
+// { collectionDocumentsUpdated: number, globalsUpdated: number }
 ```
+
+The backfill first copies links from any stored `crowdinArticleDirectory` values. It then links the remaining directories by `name` within their collection's directory. It skips directories whose document no longer exists, directories for collections or globals no longer in your config, and duplicates for a document that already has a linked directory. It is safe to run more than once.
 
 After the backfill, the stored `crowdinArticleDirectory` values are no longer needed.
 
@@ -91,15 +94,15 @@ To uninstall the plugin, remove it from your config and drop the three collectio
 
 ### `crowdin-collection-directories`
 
-Each entry in the `crowdin-article-directories` collection has a one-to-one relationship with an entry in the `crowdin-collection-directories` collection.
+A `crowdin-collection-directories` document represents a folder created on Crowdin for a collection, or a single `globals` folder for all globals. Each entry in the `crowdin-article-directories` collection belongs to one entry in the `crowdin-collection-directories` collection, and a collection directory holds many article directories.
 
 ### `crowdin-article-directories`
 
-A `crowdin-article-directories` document represents a folder created on Crowdin containing files for a given Payload document.
+A `crowdin-article-directories` document represents a folder created on Crowdin containing files for a given Payload document. See [How documents link to Crowdin directories](./directory-links.md) for how these records link to your documents and globals.
 
 #### `crowdin-article-directories` children
 
-`crowdin-article-directories` can also have a one-to-one relationship with each other through the `parent` field. These directories are created within parent directories to contain translations for blocks within a Lexical `richText` field.
+`crowdin-article-directories` can also belong to each other through the `parent` field. These directories are created within parent directories to contain translations for blocks within a Lexical `richText` field.
 
 `crowdin-article-directories` documents created for Lexical blocks have the following differences:
 
@@ -108,7 +111,7 @@ A `crowdin-article-directories` document represents a folder created on Crowdin 
 
 ### `crowdin-files`
 
-Each entry in the `crowdin-files` collection has a one-to-one relationship with an entry in the `crowdin-article-directories` collection.
+Each entry in the `crowdin-files` collection belongs to one entry in the `crowdin-article-directories` collection, and an article directory holds several files: `fields.json` and one HTML file per rich text field.
 
 When a localized field is changed, a file is created/updated in the `crowdin-files` collection for that field. Details of the file are stored in Payload so that this file can be updated or deleted in the future.
 
