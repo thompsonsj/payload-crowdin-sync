@@ -324,10 +324,11 @@ describe('directory on the document field that belongs to another document', () 
       status: 500,
     });
     const findByID = payload.findByID.getMockImplementation();
+    if (!findByID) throw new Error('findByID is not implemented');
     payload.findByID.mockImplementation(async (args) =>
       args.collection === 'crowdin-collection-directories'
         ? Promise.reject(databaseError)
-        : findByID?.(args),
+        : findByID(args),
     );
     const api = buildApiByDocument(payload, {
       id: '5',
