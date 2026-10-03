@@ -34,7 +34,6 @@ jobs:
           import_map_error='Payload import maps are stale. Run '\''npm run generate:importmaps'\'' and commit the updated files.'
           import_map_paths=(
             "dev/src/app/(payload)/admin/importMap.js"
-            "dev-alternative-config/src/app/(payload)/admin/importMap.js"
           )
           for path in "${import_map_paths[@]}"; do
             if [ ! -f "$path" ]; then

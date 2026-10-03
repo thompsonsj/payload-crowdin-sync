@@ -50,26 +50,6 @@ export default defineConfig({
           globalSetup: ['dev/src/tests/vitest.globalSetup.ts'],
         },
       },
-      {
-        resolve: {
-          alias: {
-            'payload-crowdin-sync': path.resolve('plugin/src/index.ts'),
-          },
-        },
-        test: {
-          name: 'dev-alternative-config',
-          environment: 'node',
-          globals: true,
-          watch: false,
-          retry: process.env.CI ? 2 : 0,
-          include: ['dev-alternative-config/src/tests/**/*.test.ts'],
-          fileParallelism: false,
-          hookTimeout: 90000,
-          testTimeout: 90000,
-          setupFiles: ['dev-alternative-config/src/tests/vitest.setup.ts'],
-          globalSetup: ['dev-alternative-config/src/tests/vitest.globalSetup.ts'],
-        },
-      },
     ],
   },
   resolve: {

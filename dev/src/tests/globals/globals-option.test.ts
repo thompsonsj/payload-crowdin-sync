@@ -4,30 +4,20 @@ import { mockCrowdinClient } from 'payload-crowdin-sync'
 import { pluginConfig } from '../helpers/plugin-config'
 import { initPayloadInt } from '../helpers/initPayloadInt'
 import type { Payload } from 'payload'
+import type { PluginOptions } from 'payload-crowdin-sync'
+
 let payload: Payload
-/**
- * Test the collections
- *
- * Ensure plugin collections are created and
- * behave as expected.
- *
- * Collections to test:
- *
- * - crowdin-article-directories
- * - crowdin-files
- * - crowdin-collection-directories
- *
- * Terminology:
- *
- * - article directory: Crowdin Article Directory
- * - collection directory: Crowdin Collection Directory
- * - file: Crowdin File
- */
-const pluginOptions = pluginConfig()
+
+const pluginOptionsOverride: Partial<PluginOptions> = {
+  globals: ['nav', 'statistics'],
+}
+
+const pluginOptions = pluginConfig(pluginOptionsOverride)
 const mockClient = mockCrowdinClient(pluginOptions)
-describe('Globals', () => {
+
+describe('Globals - globals option', () => {
   beforeAll(async () => {
-    const initialized = await initPayloadInt()
+    const initialized = await initPayloadInt({ pluginOptionsOverride })
     ;({ payload } = initialized as {
       payload: Payload
     })
@@ -97,7 +87,6 @@ describe('Globals', () => {
         slug: 'statistics',
         data: { countries: { text: 'Country stats' } },
       })
-      // retrieve post to get populated fields
       const result = await payload.findGlobal({
         slug: 'statistics',
       })

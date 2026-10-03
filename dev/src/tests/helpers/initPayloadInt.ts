@@ -1,22 +1,22 @@
 import type { Payload, SanitizedConfig } from 'payload'
+import type { PluginOptions } from 'payload-crowdin-sync'
 
 import path from 'path'
-import { getPayload } from 'payload'
-
-import { runInit } from '../runInit'
-import { NextRESTClient } from './NextRESTClient'
-
-import { databaseAdapter } from '../databaseAdapter.js'
-
-// storage-adapter-import-placeholder
-import { mongooseAdapter } from '@payloadcms/db-mongodb'
-import { buildConfig } from 'payload'
+import { buildConfig, getPayload } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+import { slateEditor } from '@payloadcms/richtext-slate'
+import { crowdinSync } from 'payload-crowdin-sync'
+
+import { runInit } from '../runInit'
+import type { NextRESTClient } from './NextRESTClient'
+import { databaseAdapter } from '../databaseAdapter.js'
+import { pluginConfig } from './plugin-config'
 
 import { LocalizedNav } from './../../globals/LocalizedNav'
 import Nav from './../../globals/Nav'
 import Statistics from './../../globals/Statistics'
+import { Home } from './../../globals/Home'
 import Categories from './../../collections/Categories'
 import { Media } from './../../collections/Media'
 import MultiRichText from './../../collections/MultiRichText'
@@ -27,121 +27,78 @@ import LocalizedPostsWithCondition from './../../collections/LocalizedPostsWithC
 import NestedFieldCollection from './../../collections/NestedFieldCollection'
 import Tags from './../../collections/Tags'
 import Users from './../../collections/Users'
-
-import { crowdinSync } from 'payload-crowdin-sync'
-import { slateEditor } from '@payloadcms/richtext-slate'
-import { Home } from './../../globals/Home'
-
-const localeMap = {
-  de_DE: {
-    crowdinId: 'de',
-  },
-  fr_FR: {
-    crowdinId: 'fr',
-  },
-}
+import { localeMap } from '../../payload.config.js'
 
 const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
+const helpersDir = path.dirname(filename)
 
-const config = buildConfig({
-  admin: {
-    user: Users.slug,
-    importMap: {
-      baseDir: path.resolve(dirname),
-    },
-  },
-  plugins: [
-    crowdinSync({
-      projectId: parseInt(process.env['CROWDIN_PROJECT_ID'] || ``) || 323731,
-      directoryId: parseInt(process.env['CROWDIN_DIRECTORY_ID'] || ``) || 1169,
-      token: process.env['NODE_ENV'] === 'test' ? `fake-token` : process.env['CROWDIN_TOKEN'] || ``, // CrowdIn API is mocked but we need a token to pass schema validation
-      organization: process.env['CROWDIN_ORGANIZATION'] || ``,
-      localeMap,
-      sourceLocale: 'en',
-      tabbedUI: true,
-      lexicalBlockFolderPrefix: 'lex.',
-      // In tests we expect cleanup to delete Crowdin source files/directories.
-      // Default behavior (outside tests) is to keep Crowdin source files.
-      deleteCrowdinFiles: process.env['NODE_ENV'] === 'test',
-      collections: [
-        'categories',
-        'multi-rich-text',
-        'localized-posts',
-        'nested-field-collection',
-        'policies',
-        'posts',
-        {
-          slug: 'localized-posts-with-condition',
-          condition: ({ doc }) => doc.translateWithCrowdin,
-        },
-        'tags',
-        'users',
-      ],
-    }),
-  ],
-  collections: [
-    Categories,
-    MultiRichText,
-    LocalizedPosts,
-    Media,
-    NestedFieldCollection,
-    Policies,
-    Posts,
-    LocalizedPostsWithCondition,
-    Tags,
-    Users,
-  ],
-  globals: [Home, LocalizedNav, Nav, Statistics],
-  localization: {
-    locales: ['en', ...Object.keys(localeMap)],
-    defaultLocale: 'en',
-    fallback: true,
-  },
-  /**
-  compatibility: {
-    allowLocalizedWithinLocalized: true,
-  },
-  */
-  editor: slateEditor({}),
-  secret: process.env['PAYLOAD_SECRET'] || '',
-  typescript: {
-    outputFile: path.resolve(dirname, 'payload-types.ts'),
-  },
-  db: mongooseAdapter({
-    url: process.env['MONGODB_URI'] || '',
-  }),
-  sharp,
-})
+export type InitPayloadIntOptions = {
+  dirname?: string
+  testSuiteName?: string
+  initializePayload?: boolean
+  pluginOptionsOverride?: Partial<PluginOptions>
+}
 
 /**
- * Prepare and optionally initialize a Payload instance configured for integration tests.
+ * Start a Payload instance for an integration test.
  *
- * Builds a test configuration by merging the module's built config with the test database adapter and a fixed test secret. When `initializePayload` is true, initializes Payload and returns the running instance.
- *
- * @param dirname - Directory used to derive the test suite name and to locate an optional custom payload.config.ts (defaults to './dev/src/').
- * @param testSuiteNameOverride - Optional explicit test suite name to use instead of deriving it from `dirname`.
- * @param initializePayload - If `false`, only the constructed sanitized config is returned; if `true`, Payload is initialized and returned as well.
- * @returns An object containing `config` (the sanitized Payload configuration). When initialization is requested, the object also includes `payload` (the initialized Payload instance) and may include `restClient` if created.
-*/
+ * `pluginOptionsOverride` is merged over the default test plugin options.
+ * Pass `{ collections: undefined }` to sync every collection with localized
+ * fields (see issue #342).
+ */
 export async function initPayloadInt(
-  dirname = './dev/src/',
-  testSuiteNameOverride?: string,
-  initializePayload = true,
-): Promise<{ config: SanitizedConfig; payload?: Payload; restClient?: NextRESTClient }> {
+  options: InitPayloadIntOptions = {},
+): Promise<{
+  config: SanitizedConfig
+  payload?: Payload
+  restClient?: NextRESTClient
+}> {
+  const {
+    dirname = './dev/src/',
+    testSuiteName: testSuiteNameOverride,
+    initializePayload = true,
+    pluginOptionsOverride,
+  } = options
   const testSuiteName = testSuiteNameOverride ?? path.basename(dirname)
   await runInit(testSuiteName, false, true)
-  // custom configs can be used e.g. in test file use initPayloadInt(`${__dirname}/..`) and ensure a payload.config.ts file is in the test directory.
-  // See https://github.com/payloadcms/payload/blob/main/test/helpers/initPayloadInt.ts
-  // console.log('importing config', path.resolve(dirname, 'payload.config.ts'))
 
-  // const { default: config } = await import(path.resolve(dirname, 'payload.config.ts'))
-
-  const payloadConfig = {
-    ...(await config),
-    db: databaseAdapter,
+  const pluginOptions = pluginConfig(pluginOptionsOverride)
+  const config = await buildConfig({
+    admin: {
+      user: Users.slug,
+      importMap: {
+        baseDir: path.resolve(helpersDir),
+      },
+    },
+    plugins: [crowdinSync(pluginOptions)],
+    collections: [
+      Categories,
+      MultiRichText,
+      LocalizedPosts,
+      Media,
+      NestedFieldCollection,
+      Policies,
+      Posts,
+      LocalizedPostsWithCondition,
+      Tags,
+      Users,
+    ],
+    globals: [Home, LocalizedNav, Nav, Statistics],
+    localization: {
+      locales: ['en', ...Object.keys(localeMap)],
+      defaultLocale: 'en',
+      fallback: true,
+    },
+    editor: slateEditor({}),
     secret: 'TEST_SECRET',
-  } as unknown as SanitizedConfig
+    typescript: {
+      outputFile: path.resolve(helpersDir, 'payload-types.ts'),
+    },
+    db: databaseAdapter,
+    sharp,
+  })
+
+  const payloadConfig = config as unknown as SanitizedConfig
 
   if (!initializePayload) {
     return {
@@ -153,12 +110,9 @@ export async function initPayloadInt(
 
   const payload = await getPayload({ config: payloadConfig })
 
-  // console.log('initializing rest client')
-  // const restClient = new NextRESTClient(payload.config)
   console.log('initPayloadInt done')
   return {
     config: payload.config,
     payload,
-    // restClient,
   }
 }

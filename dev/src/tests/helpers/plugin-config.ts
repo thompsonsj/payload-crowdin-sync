@@ -1,10 +1,18 @@
-import { PluginOptions } from 'payload-crowdin-sync'
+import type { PluginOptions } from 'payload-crowdin-sync'
 import { localeMap } from '../../payload.config.js'
 
-export const pluginConfig = (): PluginOptions => ({
+/**
+ * Plugin options used by integration tests. Pass the same object (or the
+ * same override) to `initPayloadInt` and `mockCrowdinClient` so the Payload
+ * instance and Crowdin mocks stay aligned.
+ */
+export const pluginConfig = (
+  override: Partial<PluginOptions> = {},
+): PluginOptions => ({
   projectId: parseInt(process.env['CROWDIN_PROJECT_ID'] || ``) || 323731,
   directoryId: parseInt(process.env['CROWDIN_DIRECTORY_ID'] || ``) || 1169,
-  token: process.env['NODE_ENV'] === 'test' ? `fake-token` : process.env['CROWDIN_TOKEN'] || ``, // CrowdIn API is mocked but we need a token to pass schema validation
+  token: process.env['NODE_ENV'] === 'test' ? `fake-token` : process.env['CROWDIN_TOKEN'] || ``,
+  organization: process.env['CROWDIN_ORGANIZATION'] || ``,
   localeMap,
   sourceLocale: 'en',
   tabbedUI: true,
@@ -24,4 +32,5 @@ export const pluginConfig = (): PluginOptions => ({
     'users',
   ],
   lexicalBlockFolderPrefix: 'lex.',
+  ...override,
 })

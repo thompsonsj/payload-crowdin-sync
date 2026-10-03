@@ -10,7 +10,7 @@ Notes for contributors and maintainers. To use the plugin, start with [getting s
 ## Layout
 
 - [`plugin/`](https://github.com/thompsonsj/payload-crowdin-sync/tree/main/plugin): the `payload-crowdin-sync` package published to npm.
-- [`dev/`](https://github.com/thompsonsj/payload-crowdin-sync/tree/main/dev) and [`dev-alternative-config/`](https://github.com/thompsonsj/payload-crowdin-sync/tree/main/dev-alternative-config): Payload installs used for integration tests.
+- [`dev/`](https://github.com/thompsonsj/payload-crowdin-sync/tree/main/dev): Payload install used for integration tests.
 - [`docs-site/`](https://github.com/thompsonsj/payload-crowdin-sync/tree/main/docs-site): this documentation site, built with Docusaurus and published to GitHub Pages.
 
 The repository is an Nx monorepo. See [Nx](./nx.md) for general Nx commands.
@@ -21,7 +21,7 @@ The repository is an Nx monorepo. See [Nx](./nx.md) for general Nx commands.
 npm install
 npm run test                 # unit and integration tests
 npm run test:coverage        # the same, with coverage reports in coverage/<project>
-npm run generate:importmaps  # regenerate Payload import maps in dev/ and dev-alternative-config/
+npm run generate:importmaps  # regenerate the Payload import map in dev/
 npm run docs:serve           # run this site locally
 ```
 
@@ -31,7 +31,7 @@ See [development](../plugin/development.md) for how the tests are organised, and
 
 On every pull request and push to `main`, CI:
 
-- checks that both Payload import maps are committed and up to date
+- checks that the Payload import map is committed and up to date
 - runs all tests with coverage
 - uploads coverage to [Codecov](https://about.codecov.io) and keeps the reports as a build artifact for 14 days
 

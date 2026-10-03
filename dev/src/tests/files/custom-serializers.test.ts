@@ -5,23 +5,26 @@ import {
   assertCrowdinNocksDone,
   cleanCrowdinNocks,
   CROWDIN_API_ORIGIN,
-} from '../../../../dev/src/tests/helpers/crowdin-nock'
+} from '../helpers/crowdin-nock'
 import nock from 'nock'
 import { pluginConfig } from '../helpers/plugin-config'
 import { initPayloadInt } from '../helpers/initPayloadInt'
+import { tableSlateToHtmlConfig } from '../helpers/table-slate-to-html'
 import type { Payload } from 'payload'
+import type { PluginOptions } from 'payload-crowdin-sync'
+
 let payload: Payload
-/**
- * Test translations
- *
- * Ensure translations are retrieved, compared, and
- * stored as expected.
- */
-const pluginOptions = pluginConfig()
+
+const pluginOptionsOverride: Partial<PluginOptions> = {
+  slateToHtmlConfig: tableSlateToHtmlConfig,
+}
+
+const pluginOptions = pluginConfig(pluginOptionsOverride)
 const mockClient = mockCrowdinClient(pluginOptions)
+
 describe('Files - custom serializer', () => {
   beforeAll(async () => {
-    const initialized = await initPayloadInt()
+    const initialized = await initPayloadInt({ pluginOptionsOverride })
     ;({ payload } = initialized as {
       payload: Payload
     })

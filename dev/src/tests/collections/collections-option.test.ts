@@ -4,32 +4,30 @@ import nock from 'nock'
 import { mockCrowdinClient } from 'payload-crowdin-sync'
 import { pluginConfig } from '../helpers/plugin-config'
 import { initPayloadInt } from '../helpers/initPayloadInt'
-import { assertCrowdinNocksDone, cleanCrowdinNocks } from '../../../../dev/src/tests/helpers/crowdin-nock'
+import { assertCrowdinNocksDone, cleanCrowdinNocks } from '../helpers/crowdin-nock'
 import type { Payload } from 'payload'
+import type { PluginOptions } from 'payload-crowdin-sync'
+
 let payload: Payload
-/**
- * Test the collections
- *
- * Ensure plugin collections are created and
- * behave as expected.
- *
- * Collections to test:
- *
- * - crowdin-article-directories
- * - crowdin-files
- * - crowdin-collection-directories
- *
- * Terminology:
- *
- * - article directory: Crowdin Article Directory
- * - collection directory: Crowdin Collection Directory
- * - file: Crowdin File
- */
-const pluginOptions = pluginConfig()
+
+const pluginOptionsOverride: Partial<PluginOptions> = {
+  collections: [
+    'localized-posts',
+    'posts',
+    'multi-rich-text',
+    {
+      slug: 'localized-posts-with-condition',
+      condition: ({ doc }) => doc.translateWithCrowdin,
+    },
+  ],
+}
+
+const pluginOptions = pluginConfig(pluginOptionsOverride)
 const mockClient = mockCrowdinClient(pluginOptions)
+
 describe('Collections - collections option', () => {
   beforeAll(async () => {
-    const initialized = await initPayloadInt()
+    const initialized = await initPayloadInt({ pluginOptionsOverride })
     ;({ payload } = initialized as {
       payload: Payload
     })
@@ -126,7 +124,6 @@ describe('Collections - collections option', () => {
         .reply(200, mockClient.addStorage())
         .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
         .reply(200, mockClient.createFile({}))
-      // need to ensure condition is met
       const post = await payload.create({
         collection: 'localized-posts-with-condition',
         data: {

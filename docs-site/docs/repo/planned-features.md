@@ -122,22 +122,11 @@ Per-locale translation progress would need a Crowdin API call, for example trans
 
 ---
 
-## Repo and tooling
-
-### Single test installation with per-test config
-
-**Goal:** replace the separate `dev/` and `dev-alternative-config/` installations with one, switching plugin config per test. This would make it possible to test config shapes such as `collections: undefined`, the root cause of [#342](https://github.com/thompsonsj/payload-crowdin-sync/issues/342).
-
-**Status:** not started.
-
-**Source:** [#347](https://github.com/thompsonsj/payload-crowdin-sync/issues/347), related to test interdependency in [#316](https://github.com/thompsonsj/payload-crowdin-sync/issues/316).
-
----
-
 ## Done since it was planned
 
 These were planned in the 2023 todo list or in issues, and have since been built:
 
+- **Single test installation with per-test config:** one `dev/` Payload install; tests pass `pluginOptionsOverride` to `initPayloadInt` ([#347](https://github.com/thompsonsj/payload-crowdin-sync/issues/347)).
 - **UI for syncing translations:** the "Sync translations" and "Sync all translations" checkboxes on each document, plus the review and update endpoints.
 - **Required field handling:** translation updates that are missing required fields aren't applied, and validation errors are returned instead.
 - **Document folder names from `useAsTitle`:** [#211](https://github.com/thompsonsj/payload-crowdin-sync/pull/211).
