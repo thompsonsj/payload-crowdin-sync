@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.43.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.42.2...payload-crowdin-sync-v0.43.0) (2026-10-03)
+
+
+### Features
+
+* **plugin:** link collection article directories to their documents ([#376](https://github.com/thompsonsj/payload-crowdin-sync/issues/376)) ([0b39e72](https://github.com/thompsonsj/payload-crowdin-sync/commit/0b39e72a474a1ee89fe2e8a6bc29d64522fc658a))
+* **plugin:** skip legacy article directory lookups unless opted in ([#377](https://github.com/thompsonsj/payload-crowdin-sync/issues/377)) ([2aa706d](https://github.com/thompsonsj/payload-crowdin-sync/commit/2aa706dc699e2fd6998dde65f13c1e8e40bfb13a))
+
+
+### Bug Fixes
+
+* **plugin:** reading a document whose article directory is linked never returns ([#375](https://github.com/thompsonsj/payload-crowdin-sync/issues/375)) ([34f3ba8](https://github.com/thompsonsj/payload-crowdin-sync/commit/34f3ba8aebdc970c958bbe158f49fa47a2cd225f))
+* **plugin:** scope article directory lookups to the document's collection ([#372](https://github.com/thompsonsj/payload-crowdin-sync/issues/372)) ([4d21102](https://github.com/thompsonsj/payload-crowdin-sync/commit/4d2110256efa3b4e1f95bb22442f6c6d521f89cd))
+* **plugin:** send only strings to Crowdin createDirectory ([#380](https://github.com/thompsonsj/payload-crowdin-sync/issues/380)) ([94b2b6a](https://github.com/thompsonsj/payload-crowdin-sync/commit/94b2b6a0fc918a1a6511072e25d61334a6692dac)), closes [#323](https://github.com/thompsonsj/payload-crowdin-sync/issues/323)
+
 ## [0.42.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.42.1...payload-crowdin-sync-v0.42.2) (2026-09-11)
 
 
