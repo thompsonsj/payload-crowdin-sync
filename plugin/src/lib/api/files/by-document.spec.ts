@@ -1,5 +1,5 @@
 import { CrowdinError } from '@crowdin/crowdin-api-client';
-import { filesApiByDocument } from './by-document';
+import { crowdinCreateDirectoryRequest, filesApiByDocument } from './by-document';
 import { pluginOptions } from '../mock/plugin-options';
 import { createInMemoryPayload } from '../tests/in-memory-payload';
 import type { CrowdinCollectionDirectory } from '../../payload-types';
@@ -703,5 +703,144 @@ describe('payloadStoreCrowdinDirectory', () => {
     const { data } = create.mock.calls[0][0];
     expect(data.globalSlug).toBe('nav');
     expect(data).not.toHaveProperty('collectionDocument');
+  });
+
+  it('rethrows a Payload store error instead of hiding a successful Crowdin create (#323)', async () => {
+    const storeError = Object.assign(new Error('Invalid type given. String expected'), {
+      code: 400,
+    });
+    const create = vi.fn().mockRejectedValue(storeError);
+    const { api } = buildApi({ create });
+
+    await expect(
+      api.payloadStoreCrowdinDirectory({
+        crowdinDirectory: crowdinDirectory as never,
+        crowdinPayloadCollectionDirectory: collectionDirectory,
+        name: 'doc-1',
+      }),
+    ).rejects.toThrow(storeError);
+  });
+});
+
+/**
+ * #323: Crowdin createDirectory returns 400 "Invalid type given. String
+ * expected" when `name` or `title` is not a string. Collection create uses a
+ * string slug; article create used the raw document id (a number on Postgres)
+ * and the raw useAsTitle value (often a localized object). After Crowdin
+ * succeeded, a swallowed Payload store error then looked like
+ * "Crowdin article directory not found".
+ */
+describe('Crowdin createDirectory request validation (#323)', () => {
+  const collectionDirectory = collectionDirectoryFixture({
+    id: 'collection-dir-1',
+    originalId: 100,
+  });
+
+  function stubNewArticleDirectory(api: filesApiByDocument) {
+    vi.spyOn(api as any, 'findOrCreateCollectionDirectory').mockResolvedValue(
+      collectionDirectory,
+    );
+    vi.spyOn(api as any, 'resolveParentDirectory').mockResolvedValue(undefined);
+    vi.spyOn(api as any, 'lookupCollectionConfig').mockReturnValue({
+      admin: { useAsTitle: 'title' },
+    });
+  }
+
+  it('stringifies a numeric document id and keeps a string title', () => {
+    expect(
+      crowdinCreateDirectoryRequest({
+        directoryId: 100,
+        name: 42,
+        title: 'Numeric id',
+      }),
+    ).toEqual({
+      directoryId: 100,
+      name: '42',
+      title: 'Numeric id',
+    });
+  });
+
+  it('omits title when the Payload field is not a string', () => {
+    expect(
+      crowdinCreateDirectoryRequest({
+        directoryId: 100,
+        name: 'doc-1',
+        title: { en: 'Hello', de: 'Hallo' },
+      }),
+    ).toEqual({
+      directoryId: 100,
+      name: 'doc-1',
+    });
+  });
+
+  it('omits directoryId when it is not a number', () => {
+    expect(
+      crowdinCreateDirectoryRequest({
+        name: 'posts',
+        title: 'Posts',
+      }),
+    ).toEqual({
+      name: 'posts',
+      title: 'Posts',
+    });
+  });
+
+  it('sends a string name when the document id is numeric', async () => {
+    const createDirectory = vi
+      .fn()
+      .mockResolvedValue(crowdinDirectoryResponse(5001, 100, '42'));
+    const create = vi.fn().mockResolvedValue({ id: 'article-dir-1' });
+    const find = vi.fn().mockResolvedValue({ totalDocs: 0, docs: [] });
+    const { api } = buildApi(
+      { create, find },
+      { createDirectory },
+      {},
+      { id: 42, title: 'Numeric id' },
+    );
+    stubNewArticleDirectory(api);
+
+    await api.findOrCreateArticleDirectory();
+
+    expect(createDirectory).toHaveBeenCalledWith(pluginOptions.projectId, {
+      directoryId: 100,
+      name: '42',
+      title: 'Numeric id',
+    });
+  });
+
+  it('does not send a localized object as the Crowdin directory title', async () => {
+    const createDirectory = vi
+      .fn()
+      .mockResolvedValue(crowdinDirectoryResponse(5002, 100, 'doc-1'));
+    const create = vi.fn().mockResolvedValue({ id: 'article-dir-1' });
+    const find = vi.fn().mockResolvedValue({ totalDocs: 0, docs: [] });
+    const { api } = buildApi(
+      { create, find },
+      { createDirectory },
+      {},
+      { title: { en: 'Hello', de: 'Hallo' } },
+    );
+    stubNewArticleDirectory(api);
+
+    await api.findOrCreateArticleDirectory();
+
+    expect(createDirectory).toHaveBeenCalledWith(pluginOptions.projectId, {
+      directoryId: 100,
+      name: 'doc-1',
+    });
+  });
+
+  it('does not report the Crowdin directory as missing when Payload rejects the stored row', async () => {
+    const storeError = new Error('ValidationError');
+    const createDirectory = vi
+      .fn()
+      .mockResolvedValue(crowdinDirectoryResponse(5003, 100, 'doc-1'));
+    const create = vi.fn().mockRejectedValue(storeError);
+    const find = vi.fn().mockResolvedValue({ totalDocs: 0, docs: [] });
+    const { api } = buildApi({ create, find }, { createDirectory });
+    stubNewArticleDirectory(api);
+
+    await expect(api.findOrCreateArticleDirectory()).rejects.toThrow(storeError);
+    expect(createDirectory).toHaveBeenCalled();
   });
 });

@@ -37,6 +37,34 @@ import {
 
 const DIRECTORY_SELF_CLEAN_MAX_ATTEMPTS = 1;
 
+/**
+ * Crowdin's createDirectory validator rejects non-strings with
+ * `400 Invalid type given. String expected` (#323). `name` must be a
+ * string (Postgres document ids are numbers). `title` is optional and
+ * must be omitted when the Payload field is not a string (localized
+ * objects, rich text, relationships).
+ */
+export function crowdinCreateDirectoryRequest({
+  directoryId,
+  name,
+  title,
+}: {
+  directoryId?: number;
+  name: unknown;
+  title?: unknown;
+}): SourceFilesModel.CreateDirectoryRequest {
+  const request: SourceFilesModel.CreateDirectoryRequest = {
+    name: `${name}`,
+  };
+  if (typeof directoryId === 'number') {
+    request.directoryId = directoryId;
+  }
+  if (typeof title === 'string' && title.length > 0) {
+    request.title = title;
+  }
+  return request;
+}
+
 interface IfindOrCreateCollectionDirectory {
   collectionSlug: CollectionSlug | 'globals';
   selfCleanAttempt?: number;
@@ -238,7 +266,7 @@ export class filesApiByDocument {
     const collectionConfig = this.lookupCollectionConfig();
     const useAsTitle = (collectionConfig as CollectionConfig | undefined)
       ?.admin?.useAsTitle;
-    const name = this.global ? this.collectionSlug : this.document.id;
+    const name = `${this.global ? this.collectionSlug : this.document.id}`;
 
     const created = await this.crowdinFindOrCreateDirectory({
       parent: resolvedParent,
@@ -332,11 +360,11 @@ export class filesApiByDocument {
       try {
         crowdinDirectory = await this.sourceFilesApi.createDirectory(
           this.projectId,
-          {
+          crowdinCreateDirectoryRequest({
             directoryId: this.directoryId,
             name: collectionSlug,
-            title: toWords(collectionSlug), // is this transformed value available on the collection object?
-          },
+            title: toWords(collectionSlug),
+          }),
         );
       } catch (createError: any) {
         // In integration tests, the Crowdin collection directory can already exist in the remote mock
@@ -574,11 +602,11 @@ export class filesApiByDocument {
       try {
         const crowdinDirectory = await this.sourceFilesApi.createDirectory(
           this.projectId,
-          {
+          crowdinCreateDirectoryRequest({
             directoryId: parentDirectoryId,
             name,
-            title, // no tests for this Crowdin metadata, but makes it easier for translators
-          },
+            title,
+          }),
         );
         const result = await this.payloadStoreCrowdinDirectory({
           crowdinDirectory,
@@ -729,7 +757,11 @@ export class filesApiByDocument {
       });
       return result as CrowdinArticleDirectory
     } catch (error) {
+      // Do not swallow this: Crowdin already has the directory. Returning
+      // undefined made findOrCreateArticleDirectory throw "Crowdin article
+      // directory not found" and hid the Payload validation error (#323).
       console.error(error);
+      throw error;
     }
   }
 }
