@@ -83,10 +83,7 @@ jobs:
               },
               {
                 label: 'area: test-installation',
-                globs: [
-                  /^dev\//,
-                  /^dev-alternative-config\//,
-                ],
+                globs: [/^dev\//],
               },
               {
                 label: 'area: tests',

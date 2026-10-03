@@ -10,7 +10,6 @@
   - changed-files:
       - any-glob-to-any-file:
           - dev/**
-          - dev-alternative-config/**
 
 "area: tests":
   - changed-files:

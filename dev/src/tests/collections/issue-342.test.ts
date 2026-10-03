@@ -15,67 +15,32 @@
  * pluginOptions.collections is not specified.
  */
 import type { Payload } from 'payload'
-import { buildConfig, getPayload } from 'payload'
-import { crowdinSync, mockCrowdinClient } from 'payload-crowdin-sync'
+import { mockCrowdinClient } from 'payload-crowdin-sync'
 import nock from 'nock'
-import path from 'path'
-import { fileURLToPath } from 'url'
-import { slateEditor } from '@payloadcms/richtext-slate'
-import sharp from 'sharp'
 
-import { databaseAdapter } from '../databaseAdapter.js'
-import { runInit } from '../runInit'
+import { pluginConfig } from '../helpers/plugin-config'
+import { initPayloadInt } from '../helpers/initPayloadInt'
 import { assertCrowdinNocksDone, cleanCrowdinNocks } from '../helpers/crowdin-nock'
-import Categories from '../../collections/Categories'
-import LocalizedPosts from '../../collections/LocalizedPosts'
-import Tags from '../../collections/Tags'
-import Users from '../../collections/Users'
-import Nav from '../../globals/Nav'
-
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
 
 // Plugin options with collections intentionally omitted — the issue #342 scenario.
-const pluginOptions = {
-  projectId: 323731,
-  directoryId: 1169,
-  token: 'fake-token',
-  localeMap: {
-    de_DE: { crowdinId: 'de' },
-    fr_FR: { crowdinId: 'fr' },
-  },
-  sourceLocale: 'en',
-  deleteCrowdinFiles: true,
-  // collections: undefined  ← deliberate omission — this is what triggered the bug
+const pluginOptionsOverride = {
+  collections: undefined,
 }
 
+const pluginOptions = pluginConfig(pluginOptionsOverride)
 const mockClient = mockCrowdinClient(pluginOptions)
-
-const config = buildConfig({
-  admin: {
-    user: Users.slug,
-    importMap: { baseDir: path.resolve(dirname) },
-  },
-  plugins: [crowdinSync(pluginOptions)],
-  collections: [Categories, LocalizedPosts, Tags, Users],
-  globals: [Nav],
-  localization: {
-    locales: ['en', 'de_DE', 'fr_FR'],
-    defaultLocale: 'en',
-    fallback: true,
-  },
-  editor: slateEditor({}),
-  secret: 'TEST_SECRET',
-  db: databaseAdapter,
-  sharp,
-})
 
 let payload: Payload
 
 describe('issue #342 — collections: undefined does not cause QueryError', () => {
   beforeAll(async () => {
-    await runInit('issue-342', false, true)
-    payload = await getPayload({ config: await config })
+    const initialized = await initPayloadInt({
+      testSuiteName: 'issue-342',
+      pluginOptionsOverride,
+    })
+    ;({ payload } = initialized as {
+      payload: Payload
+    })
   })
 
   beforeEach(() => {

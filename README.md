@@ -60,7 +60,7 @@ When translations are ready, tick **Sync all translations** on the document and 
 This monorepo contains:
 
 - [`plugin/`](plugin): the `payload-crowdin-sync` package published to npm
-- [`dev/`](dev) and [`dev-alternative-config/`](dev-alternative-config): Payload installs used for integration tests
+- [`dev/`](dev): Payload install used for integration tests
 - [`docs-site/`](docs-site): the documentation site
 
 ```bash

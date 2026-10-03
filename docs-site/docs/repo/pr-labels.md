@@ -9,7 +9,7 @@ Defined in `.github/labeler.yml` and applied by `actions/labeler@v5`. Labels are
 | Label | Paths |
 |-------|-------|
 | `area: plugin` | `plugin/src/lib/**` |
-| `area: test-installation` | `dev/**`, `dev-alternative-config/**` |
+| `area: test-installation` | `dev/**` |
 | `area: tests` | `**/*.spec.ts`, `**/*.test.ts`, `**/*.spec.tsx`, `**/*.test.tsx` |
 | `area: docs` | `docs-site/**`, `**/*.md` |
 | `area: ci` | `.github/**` |
