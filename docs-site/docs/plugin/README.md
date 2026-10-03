@@ -355,6 +355,22 @@ The folder check costs one extra Crowdin API call per folder on each save. Set `
 }
 ```
 
+### `legacyArticleDirectoryLookup`
+
+Default `false`. Deprecated: use this only until you have run the [backfill](./crowdin.md#upgrading-from-older-versions), then turn it off again. It will be removed in a future major version.
+
+New directories are linked to their document when they are created (`collectionDocument` or `globalSlug`). Directories from earlier versions may have no link. With this option off, the plugin only finds a directory through that link.
+
+Set `legacyArticleDirectoryLookup: true` if you still have unlinked directories and have not run `backfillArticleDirectoryPolymorphicLinks`. The plugin then also looks at a stored `crowdinArticleDirectory` id on the document, and at `name` within the collection's directory.
+
+If you save a document whose directory is still unlinked while this option is off, the plugin throws instead of creating a second folder on Crowdin. The error names this option and the backfill.
+
+```js
+{
+  legacyArticleDirectoryLookup: true,
+}
+```
+
 ### `deleteCrowdinFiles`
 
 Default `false`. When a document is deleted, or a localized field is emptied, the plugin always deletes its own records for the affected files and folders. Set `deleteCrowdinFiles: true` to delete the source files and folders in Crowdin as well.

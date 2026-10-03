@@ -235,6 +235,9 @@ export class payloadCrowdinSyncFilesApi {
       name,
       documentId,
       this.req.payload,
+      this.req,
+      undefined,
+      this.pluginOptions.legacyArticleDirectoryLookup,
     );
     return result;
   }
@@ -243,6 +246,9 @@ export class payloadCrowdinSyncFilesApi {
     const result = await getFilesByDocumentID({
       documentId,
       payload: this.req.payload,
+      req: this.req,
+      legacyArticleDirectoryLookup:
+        this.pluginOptions.legacyArticleDirectoryLookup,
     });
     return result;
   }

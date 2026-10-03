@@ -370,7 +370,7 @@ describe('directory 404 self-clean (#360)', () => {
       const { api } = buildApi(
         payload,
         { getDirectory, createDirectory },
-        {},
+        { legacyArticleDirectoryLookup: true },
         { crowdinArticleDirectory: staleArticleDirectory },
       );
       stubArticleDirectoryCreation(api, recreatedArticleDirectory);
@@ -412,7 +412,9 @@ describe('directory 404 self-clean (#360)', () => {
         'crowdin-collection-directories': [collectionDirectory],
         'crowdin-article-directories': [staleArticleDirectory],
       });
-      const { api } = buildApi(payload, { getDirectory, createDirectory });
+      const { api } = buildApi(payload, { getDirectory, createDirectory }, {
+        legacyArticleDirectoryLookup: true,
+      });
       stubArticleDirectoryCreation(api, recreatedArticleDirectory);
 
       const result = await api.findOrCreateArticleDirectory();

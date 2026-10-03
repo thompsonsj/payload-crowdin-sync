@@ -61,13 +61,13 @@ Per-locale translation progress would need a Crowdin API call, for example trans
 
 **Goal:** stop adding a relationship field to every synced document. The plugin's own collections would hold the link instead, so the plugin makes no schema changes to user collections.
 
-**Status:** partly done. `crowdin-article-directories` has polymorphic link fields back to the document (`collectionDocument`) or global (`globalSlug`), and new root directories get them on creation. Directories created by earlier versions may have no link, so `resolveRootArticleDirectory` still falls back to finding them by `name` within their collection's directory. `backfillArticleDirectoryPolymorphicLinks` links them, from a stored `crowdinArticleDirectory` value or by `name`. The `crowdinArticleDirectory` field is still added to documents; it isn't stored, and its `afterRead` hook fills it in with `resolveRootArticleDirectory`.
+**Status:** partly done. `crowdin-article-directories` has polymorphic link fields back to the document (`collectionDocument`) or global (`globalSlug`), and new root directories get them on creation. `backfillArticleDirectoryPolymorphicLinks` links older directories, from a stored `crowdinArticleDirectory` value or by `name`. `legacyArticleDirectoryLookup` (default `false`, deprecated) turns the stored-id and name lookups back on for installs that have not run the backfill. The `crowdinArticleDirectory` field is still added to documents; it isn't stored, and its `afterRead` hook fills it in with `resolveRootArticleDirectory`.
 
 **Source:** [#267](https://github.com/thompsonsj/payload-crowdin-sync/issues/267). Besides the schema change, the issue notes that writing the relationship back to the document can fail on validation errors after files have already been created on Crowdin.
 
 **Remaining:**
 
-1. Add an option to turn off the unlinked `name` lookup (default on), and turn it off by default in a major version, with the backfill as the migration step.
+1. Remove `legacyArticleDirectoryLookup` in a major version. The backfill is the migration step.
 2. Move every remaining read of the field to the links, then remove the field. Removing it is a breaking change for anyone querying it, so it needs a migration note.
 
 ---

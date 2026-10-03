@@ -144,6 +144,8 @@ export const crowdinSync =
       disableSelfClean: Joi.boolean(),
       /** Delete source files from Crowdin during cleanup. */
       deleteCrowdinFiles: Joi.boolean(),
+      /** Find unlinked article directories by stored id or name. */
+      legacyArticleDirectoryLookup: Joi.boolean(),
     });
 
     const validate = schema.validate(pluginOptions);
@@ -155,6 +157,8 @@ export const crowdinSync =
     // option defaults
     pluginOptions.lexicalBlockFolderPrefix =
       pluginOptions.lexicalBlockFolderPrefix || 'lex.';
+    pluginOptions.legacyArticleDirectoryLookup =
+      pluginOptions.legacyArticleDirectoryLookup ?? false;
 
     return {
       ...config,

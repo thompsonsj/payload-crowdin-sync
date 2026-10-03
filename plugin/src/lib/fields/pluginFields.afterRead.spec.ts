@@ -3,13 +3,14 @@ import { pluginCollectionOrGlobalFields } from './pluginFields'
 import type { PluginOptions } from '../types'
 import { createInMemoryPayload } from '../api/tests/in-memory-payload'
 
-function getAfterReadHook() {
+function getAfterReadHook(pluginOptionsOverrides: Partial<PluginOptions> = {}) {
   const pluginOptions = {
     projectId: 123,
     token: 'fake-token',
     organization: '',
     localeMap: {},
     sourceLocale: 'en',
+    ...pluginOptionsOverrides,
   } as unknown as PluginOptions
 
   const fields = pluginCollectionOrGlobalFields({ fields: [], pluginOptions })
@@ -92,13 +93,13 @@ describe('pluginFields - crowdinArticleDirectory afterRead', () => {
 
     expect(first).toBeUndefined()
     expect(second).toBeUndefined()
-    // First call: polymorphic lookup + collection directory lookup (legacy fallback path).
+    // First call: polymorphic lookup only (legacy name lookup is off).
     // Second call: served from cache.
-    expect(find).toHaveBeenCalledTimes(2)
+    expect(find).toHaveBeenCalledTimes(1)
   })
 
   it('performs legacy fallback once, then reuses cached value', async () => {
-    const afterRead = getAfterReadHook()
+    const afterRead = getAfterReadHook({ legacyArticleDirectoryLookup: true })
     const resolved = { id: 'ad-legacy-1' }
     const find = vi
       .fn()
@@ -150,7 +151,7 @@ describe('pluginFields - crowdinArticleDirectory afterRead', () => {
     })
 
     it('finds the directory by name within the globals directory', async () => {
-      const afterRead = getAfterReadHook()
+      const afterRead = getAfterReadHook({ legacyArticleDirectoryLookup: true })
       const payload = createInMemoryPayload({
         'crowdin-collection-directories': collectionDirectories,
         'crowdin-article-directories': [
@@ -164,6 +165,23 @@ describe('pluginFields - crowdinArticleDirectory afterRead', () => {
         global: { slug: 'nav' },
       })
       expect(res?.id).toBe('ad-nav')
+    })
+
+    it('does not find the directory by name when legacyArticleDirectoryLookup is off', async () => {
+      const afterRead = getAfterReadHook()
+      const payload = createInMemoryPayload({
+        'crowdin-collection-directories': collectionDirectories,
+        'crowdin-article-directories': [
+          { id: 'ad-nav', name: 'nav', crowdinCollectionDirectory: 'cd-globals' },
+        ],
+      })
+      const res = await afterRead({
+        data: { id: 'nav-global-id' },
+        req: { context: {}, payload },
+        global: { slug: 'nav' },
+      })
+      expect(res).toBeUndefined()
+      expect(payload.find).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -184,9 +202,9 @@ describe('pluginFields - crowdinArticleDirectory afterRead', () => {
     })
 
     // two different cache keys → two separate lookups
-    // collection miss: 2 finds (article-directories + collection-directories)
-    // global miss: 2 finds (article-directories by globalSlug, then legacy name fallback)
-    expect(find).toHaveBeenCalledTimes(4)
+    // collection miss: 1 find (polymorphic)
+    // global miss: 1 find (polymorphic by globalSlug)
+    expect(find).toHaveBeenCalledTimes(2)
   })
 })
 

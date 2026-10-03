@@ -98,6 +98,7 @@ export class payloadCrowdinSyncTranslationsApi {
   htmlToSlateConfig: PluginOptions['htmlToSlateConfig'];
   lexicalBlockFolderPrefix: PluginOptions['lexicalBlockFolderPrefix'];
   disableSelfClean?: PluginOptions['disableSelfClean'];
+  legacyArticleDirectoryLookup?: PluginOptions['legacyArticleDirectoryLookup'];
 
   constructor(
     pluginOptions: PluginOptions,
@@ -121,6 +122,8 @@ export class payloadCrowdinSyncTranslationsApi {
     this.sourceLocale = pluginOptions.sourceLocale;
     this.htmlToSlateConfig = pluginOptions.htmlToSlateConfig;
     this.disableSelfClean = pluginOptions.disableSelfClean;
+    this.legacyArticleDirectoryLookup =
+      pluginOptions.legacyArticleDirectoryLookup;
     this.lexicalBlockFolderPrefix =
       pluginOptions.lexicalBlockFolderPrefix || ``;
   }
@@ -493,6 +496,7 @@ export class payloadCrowdinSyncTranslationsApi {
       payload: this.payload,
       req: this.req,
       rootLookup,
+      legacyArticleDirectoryLookup: this.legacyArticleDirectoryLookup,
     });
     const slugs = files
       .filter((file) => file.type === 'html')
@@ -558,6 +562,7 @@ export class payloadCrowdinSyncTranslationsApi {
             this.payload,
             this.req,
             rootLookup,
+            this.legacyArticleDirectoryLookup,
           )
     ) as CrowdinFile;
     if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
