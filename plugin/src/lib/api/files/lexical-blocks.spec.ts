@@ -292,5 +292,31 @@ describe('lexical-blocks', () => {
         ],
       });
     });
+
+    it('returns translations unchanged when sourceBlocks is an empty string', () => {
+      const result = mergeLexicalBlockTranslations({
+        blockConfig: highlightBlockConfig,
+        crowdinJsonObject: {
+          blocks: {
+            'block-1': {
+              highlight: {
+                title: 'Titre',
+              },
+            },
+          },
+        },
+        sourceBlocks: '',
+      });
+
+      expect(result).toEqual({
+        blocks: [
+          {
+            id: 'block-1',
+            blockType: 'highlight',
+            title: 'Titre',
+          },
+        ],
+      });
+    });
   });
 });
