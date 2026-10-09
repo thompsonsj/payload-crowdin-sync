@@ -57,6 +57,16 @@ export function assertCrowdinNocksDone(): void {
  * Slate `content` field is present on the document (including default `[]`),
  * the plugin also uploads `content.html`.
  */
+const parseNockJsonBody = (body: unknown): Record<string, unknown> => {
+  if (typeof body === 'string') {
+    return JSON.parse(body) as Record<string, unknown>
+  }
+  if (body && typeof body === 'object') {
+    return body as Record<string, unknown>
+  }
+  return {}
+}
+
 export function nockLocalizedPostsDocumentCreate(
   pluginOptions: PluginOptions,
   mockClient: CrowdinMockClient,
@@ -67,11 +77,19 @@ export function nockLocalizedPostsDocumentCreate(
     includeContentHtml: boolean
     fieldsFileId?: number
     contentFileId?: number
+    /** Crowdin article directory id returned by `createDirectory`. Default 1169. */
+    articleDirectoryId?: number
+    /**
+     * When set, `POST /files` for `fields.json` only matches if the request
+     * `directoryId` is this value — the Crowdin folder the file is created in.
+     */
+    fieldsDirectoryId?: number
   },
 ): nock.Scope {
   const { projectId } = pluginOptions
   const fieldsFileId = opts.fieldsFileId ?? 1079
   const contentFileId = opts.contentFileId ?? 1080
+  const articleDirectoryId = opts.articleDirectoryId ?? 1169
   const base = nock(CROWDIN_API_ORIGIN)
   let scope: nock.Scope
   if (opts.directoryPosts === 2) {
@@ -79,28 +97,36 @@ export function nockLocalizedPostsDocumentCreate(
       .post(`/api/v2/projects/${projectId}/directories`)
       .reply(200, mockClient.createDirectory({ id: 1170 }))
       .post(`/api/v2/projects/${projectId}/directories`)
-      .reply(200, mockClient.createDirectory({ id: 1169 }))
+      .reply(200, mockClient.createDirectory({ id: articleDirectoryId }))
   } else {
     scope = base
       .post(`/api/v2/projects/${projectId}/directories`)
-      .reply(200, mockClient.createDirectory({ id: 1169 }))
+      .reply(200, mockClient.createDirectory({ id: articleDirectoryId }))
   }
 
-  scope = scope
-    .post(`/api/v2/storages`)
-    .reply(200, mockClient.addStorage())
-    .post(`/api/v2/projects/${projectId}/files`)
-    .reply(
-      200,
-      mockClient.createFile({
-        fileId: fieldsFileId,
-        request: {
-          name: 'fields',
-          storageId: 5678,
-          type: 'json',
-        },
-      }),
-    )
+  const fieldsFileRequest = {
+    name: 'fields',
+    storageId: 5678,
+    type: 'json' as const,
+    ...(opts.fieldsDirectoryId !== undefined
+      ? { directoryId: opts.fieldsDirectoryId }
+      : {}),
+  }
+  scope = scope.post(`/api/v2/storages`).reply(200, mockClient.addStorage())
+  const fieldsFilePost =
+    opts.fieldsDirectoryId === undefined
+      ? scope.post(`/api/v2/projects/${projectId}/files`)
+      : scope.post(
+          `/api/v2/projects/${projectId}/files`,
+          (body) => parseNockJsonBody(body).directoryId === opts.fieldsDirectoryId,
+        )
+  scope = fieldsFilePost.reply(
+    200,
+    mockClient.createFile({
+      fileId: fieldsFileId,
+      request: fieldsFileRequest,
+    }),
+  )
 
   if (opts.includeContentHtml) {
     scope = scope

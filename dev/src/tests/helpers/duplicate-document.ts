@@ -41,15 +41,22 @@ export const assertDuplicateGetsOwnCrowdinDirectory = async ({
   fileIds: { original: number; copy: number }
   directoryPostsOnCreate: 1 | 2
 }) => {
+  const originalCrowdinDirectoryId = 1169
+  const copyCrowdinDirectoryId = 1171
+
   nockLocalizedPostsDocumentCreate(pluginOptions, mockClient, {
     directoryPosts: directoryPostsOnCreate,
     includeContentHtml: false,
     fieldsFileId: fileIds.original,
+    articleDirectoryId: originalCrowdinDirectoryId,
+    fieldsDirectoryId: originalCrowdinDirectoryId,
   })
   nockLocalizedPostsDocumentCreate(pluginOptions, mockClient, {
     directoryPosts: 1,
     includeContentHtml: false,
     fieldsFileId: fileIds.copy,
+    articleDirectoryId: copyCrowdinDirectoryId,
+    fieldsDirectoryId: copyCrowdinDirectoryId,
   })
     .post(`/api/v2/storages`)
     .reply(200, mockClient.addStorage())
@@ -62,6 +69,7 @@ export const assertDuplicateGetsOwnCrowdinDirectory = async ({
   })
   const originalDirectory = await findArticleDirectory(payload, `${original.id}`)
   expectDocumentLink(originalDirectory, `${original.id}`)
+  expect(originalDirectory?.originalId).toBe(originalCrowdinDirectoryId)
 
   const copy = await payload.duplicate({
     collection: 'localized-posts',
@@ -72,6 +80,8 @@ export const assertDuplicateGetsOwnCrowdinDirectory = async ({
   const copyDirectory = await findArticleDirectory(payload, `${copy.id}`)
   expect(copyDirectory?.id).toBeDefined()
   expect(copyDirectory?.id).not.toBe(originalDirectory?.id)
+  expect(copyDirectory?.originalId).toBe(copyCrowdinDirectoryId)
+  expect(copyDirectory?.originalId).not.toBe(originalDirectory?.originalId)
   expectDocumentLink(copyDirectory, `${copy.id}`)
 
   const originalAfterDuplicate = await findArticleDirectory(payload, `${original.id}`)
@@ -101,6 +111,8 @@ export const assertDuplicateGetsOwnCrowdinDirectory = async ({
 
   const copyFile = await getFileByDocumentID('fields', `${copy.id}`, payload)
   const originalFile = await getFileByDocumentID('fields', `${original.id}`, payload)
+  expect(copyFile.directoryId).toBe(copyCrowdinDirectoryId)
+  expect(originalFile.directoryId).toBe(originalCrowdinDirectoryId)
   expect(copyFile.fileData?.json).toEqual({ title: 'Copy updated independently' })
   expect(originalFile.fileData?.json).toEqual({
     title: 'Shared title that a duplicate would keep',
