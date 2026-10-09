@@ -26,6 +26,11 @@ import {
   findField,
 } from '../utilities';
 import {
+  LEXICAL_BLOCKS_FIELD_NAME,
+  lexicalBlocksFolderName,
+  mergeLexicalBlockTranslations,
+} from './files/lexical-blocks';
+import {
   convertHtmlToLexical,
   convertHtmlToSlate,
 } from '../utilities/richTextConversion';
@@ -44,8 +49,6 @@ import {
   getLexicalEditorConfig,
 } from '../utilities/lexical';
 import { getRelationshipId } from '../utilities/payload';
-import { merge } from 'es-toolkit';
-import { isEmpty } from 'es-toolkit/compat';
 
 import { Client } from '@crowdin/crowdin-api-client';
 
@@ -645,7 +648,10 @@ export class payloadCrowdinSyncTranslationsApi {
       await getLexicalFieldArticleDirectory({
         payload: this.payload,
         parent: file.crowdinArticleDirectory,
-        name: `${this.lexicalBlockFolderPrefix}${fieldName}`,
+        name: lexicalBlocksFolderName(
+          this.lexicalBlockFolderPrefix,
+          fieldName,
+        ),
         req: this.req,
       });
     const lexicalFieldCrowdinArticleDirectoryId = getRelationshipId(
@@ -740,31 +746,23 @@ export class payloadCrowdinSyncTranslationsApi {
     file: CrowdinFile;
     locale: string;
     crowdinArticleDirectoryId: string;
-  }) {
-    // link with plugin/src/lib/api/files/document.ts - store as variable?
-    const fieldName = `blocks`;
-    // find a way to `getTranslation` or getPayloadTranslation` for the subfolder.
-    // add ability to pass `fields` and `crowdinArticleDirectory` to `getTranslation`. That will do it.
+  }): Promise<{ [key: string]: any } | undefined> {
     if (!blockConfig) {
       return;
     }
     const fields: Field[] = [blockConfig];
-    // add json fields
-    const crowdinJsonObject =
+    const crowdinJsonObject: { [key: string]: any } =
       (await this.getTranslation({
-        // field name in dot notation is the 'id' for getTranslation
-        documentId: fieldName,
-        fieldName: 'blocks',
+        documentId: LEXICAL_BLOCKS_FIELD_NAME,
+        fieldName: LEXICAL_BLOCKS_FIELD_NAME,
         locale: locale,
         crowdinArticleDirectoryId,
       })) || {};
-    // add html fields
     const localizedHtmlFields = await this.getHtmlFieldSlugsByArticleDirectory(
       crowdinArticleDirectoryId,
     );
     const crowdinHtmlObject: CrowdinHtmlObject = {};
     for (const field of localizedHtmlFields) {
-      // need to get the field definition here somehow?
       crowdinHtmlObject[field] = await this.getTranslation({
         documentId: field,
         fieldName: field,
@@ -774,38 +772,12 @@ export class payloadCrowdinSyncTranslationsApi {
       });
     }
 
-    const docTranslations: { [key: string]: any } = buildPayloadUpdateObject({
+    return mergeLexicalBlockTranslations({
+      blockConfig,
       crowdinJsonObject,
       crowdinHtmlObject,
-      fields,
-      isLocalized: (field) => !!field,
+      sourceBlocks: file.fileData?.sourceBlocks,
     });
-
-    // merge non-localized fields back in
-    if (!isEmpty(file.fileData?.sourceBlocks)) {
-      const sourceBlocks = JSON.parse(`${file.fileData?.sourceBlocks}`) || [];
-
-      // build a source translation crowdinJsonObject
-      const sourceCrowdinJsonObject = buildCrowdinJsonObject({
-        doc: {
-          blocks: sourceBlocks,
-        },
-        fields,
-        isLocalized: (field) => !!field,
-      });
-      // convert source translation crowdinJsonObject to payloadUpdateObject
-      // we are only interested in merging back json fields - otherwise html fields will deep merge creating hybrid rich text content containing both translations
-      // this is why a 'sourceCrowdinHtmlObject' is not built
-      const sourcePayloadUpdateObject = buildPayloadUpdateObject({
-        crowdinJsonObject: sourceCrowdinJsonObject,
-        fields,
-        isLocalized: (field) => !!field,
-      });
-
-      return merge(sourcePayloadUpdateObject, docTranslations);
-    }
-
-    return docTranslations;
   }
 
   private async getFileDataFromUrl(url: string) {

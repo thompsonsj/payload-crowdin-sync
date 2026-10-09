@@ -115,7 +115,7 @@ describe('lexical-blocks', () => {
 
   describe('lexicalBlocksChildDocumentOptions', () => {
     it('names the nested Crowdin directory after the prefixed field', () => {
-      const parent = { id: 'parent-dir' };
+      const parent = 'parent-dir';
       expect(
         lexicalBlocksChildDocumentOptions({
           folderName: 'lex.content',
@@ -179,7 +179,7 @@ describe('lexical-blocks', () => {
 
   describe('syncLexicalBlocks', () => {
     it('opens a nested files API for the prefixed folder, then writes files', async () => {
-      const parent = { id: 'parent-dir' };
+      const parent = 'parent-dir';
       const filesApi = {
         createOrUpdateJsonFile: vi.fn().mockResolvedValue(undefined),
         createOrUpdateHtmlFile: vi.fn().mockResolvedValue(undefined),
