@@ -8,7 +8,7 @@ This document covers refactor opportunities across the plugin codebase outside o
 
 ## Items
 
-### 1. Extract field-traversal skeleton from `buildPayloadUpdateObject`, `buildCrowdinJsonObject`, `buildCrowdinHtmlObject`, and `restoreOrder`
+### 1. Extract field-traversal skeleton from `buildPayloadUpdateObject`, `buildCrowdinJsonObject`, `buildCrowdinHtmlObject`, and `restoreOrder` ✅
 
 **File:** `plugin/src/lib/utilities/index.ts:414–745`
 
@@ -179,12 +179,14 @@ A comment in the source already flags this: `"find a better way to do this - blo
 - **Tests:** the helpers are private, so instead of testing them directly, `getLocalizedFields.structure.spec.ts` was committed first as a baseline against the old implementation. It pins the output shape that the existing tests only covered indirectly: top-level fields before tab, collapsible and row contents; named tabs as groups; blocks reduced to `slug` and `fields`; empty containers dropped under a `type` filter; and custom `isLocalized` predicates.
 - **Known quirk, kept as-is:** `convertTabs` is called without the caller's `isLocalized`, so unnamed tab fields are marked `localized: true` using the default predicate. The baseline tests pin this.
 
-Remaining: item 1.
+**Pass 4 — item 1**
+
+- **Item 1:** `traverseFields` and `getBlockFields` live in `utilities/traverseFields.ts`. `restoreOrder`, `buildPayloadUpdateObject`, `buildCrowdinJsonObject` and `buildCrowdinHtmlObject` dispatch through the visitor. Nested walks still call the builders so `getLocalizedFields` type/locale filtering is unchanged.
+- **Tests:** `traverseFields.spec.ts` was committed first (failing). The existing builder specs and the book-demo snapshot are the regression suite.
 
 ---
 
 ## Notes on approach
 
 - Each item must have a failing (or green-baseline) test committed before any implementation changes.
-- Items 1 and 3 carry the highest risk (core translation pipeline and UI field hooks respectively) — take extra care with regression coverage before touching them.
-- Items 4 and 5 are safe to tackle first: item 4 is pure deletion, item 5 is a pure extraction with no behaviour change.
+- Item 1 is done. The four builder specs and the book-demo snapshot are the regression suite; `traverseFields.spec.ts` covers dispatch, skip, unnamed layout fields, and block slug lookup.
