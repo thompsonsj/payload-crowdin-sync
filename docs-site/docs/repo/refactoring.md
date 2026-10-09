@@ -60,7 +60,7 @@ Constructor signatures reference the interface. This gives a single place to upd
 
 ---
 
-### 4. Isolate Lexical block handling
+### 4. Isolate Lexical block handling ✅
 
 **Problem:** Lexical-specific logic is spread across `document.ts`, `translations.ts`, and `by-document.ts`:
 - Hardcoded `'mock-collection-for-lexical-blocks'` slug in `document.ts:512`
@@ -69,6 +69,10 @@ Constructor signatures reference the interface. This gives a single place to upd
 - `createLexicalBlocks()` recursively instantiates a new `filesApiByDocument`, creating a fragile cycle
 
 **Fix:** Extract to `files/lexical-blocks.ts` with a clean interface. This module owns the folder naming, the mock collection config, the block content extraction, and the recursive sync. Both `document.ts` and `translations.ts` delegate to it.
+
+**Done:** `files/lexical-blocks.ts` owns the mock collection slug, the `blocks` field name, folder naming (`lexicalBlockFolderPrefix` + field name), the imaginary collection/document used for nested sync, JSON/HTML file writes, and merging source block json (selects, etc.) back into translations without hybridising rich text. `createOrUpdateHtmlFile` calls `syncLexicalBlocks` with an injected `getNestedFilesApi` so the module does not import `filesApiByDocument`. `getBlockTranslations` fetches Crowdin files then calls `mergeLexicalBlockTranslations`. `lookupCollectionConfig` skips the mock slug via `isLexicalBlocksCollectionSlug`.
+
+**Tests:** `lexical-blocks.spec.ts` was committed first (failing). Existing Lexical editor integration tests are the regression suite.
 
 ---
 

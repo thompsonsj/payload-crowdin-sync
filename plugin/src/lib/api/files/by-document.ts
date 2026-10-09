@@ -19,6 +19,7 @@ import {
 import {
   payloadCrowdinSyncDocumentFilesApi,
 } from './document';
+import { isLexicalBlocksCollectionSlug } from './lexical-blocks';
 import {
   findUnlinkedArticleDirectoryByName,
   getCollectionConfig,
@@ -309,7 +310,7 @@ export class filesApiByDocument {
     // Lexical block syncing uses an internal "mock" collection config to
     // avoid requiring a real collection definition for derived block fields.
     // That slug will never exist in the Payload config, so skip lookup.
-    if (this.collectionSlug === 'mock-collection-for-lexical-blocks') {
+    if (isLexicalBlocksCollectionSlug(this.collectionSlug)) {
       return undefined;
     }
     try {

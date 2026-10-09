@@ -106,7 +106,7 @@ Per-locale translation progress would need a Crowdin API call, for example trans
 
 **Goal:** support translation services other than Crowdin (for example Phrase or Lokalise) behind a shared interface.
 
-**Status:** not started. Depends on API refactoring items 3 (done) and 4 (isolate Lexical block handling, pending).
+**Status:** not started. Depends on API refactoring items 3 and 4 (Lexical block handling isolated in `files/lexical-blocks.ts`).
 
 **Source:** [refactoring.md](./refactoring.md#future-adapter-pattern).
 
