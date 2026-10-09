@@ -108,10 +108,9 @@ describe('fn: getBlockFields', () => {
   const field = blocks('layout', [text('heading'), text('body')]);
 
   it('returns the fields for a known block slug', () => {
-    expect(getBlockFields(field, 'hero').map((item) => item.name)).toEqual([
-      'heading',
-      'body',
-    ]);
+    expect(
+      getBlockFields(field, 'hero').map((item) => ('name' in item ? item.name : undefined)),
+    ).toEqual(['heading', 'body']);
   });
 
   it('returns an empty array for an unknown block slug', () => {
