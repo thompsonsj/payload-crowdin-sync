@@ -60,6 +60,7 @@ describe('restore version (#186)', () => {
       },
     })
 
+    // de_DE is not the source locale, so afterChange does not call Crowdin.
     await payload.update({
       collection: 'nested-field-collection',
       id: created.id,
@@ -75,6 +76,43 @@ describe('restore version (#186)', () => {
       },
     })
 
+    nock('https://api.crowdin.com')
+      .post(`/api/v2/storages`)
+      .optionally()
+      .times(8)
+      .reply(200, mockClient.addStorage())
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .optionally()
+      .times(8)
+      .reply(200, mockClient.createFile({}))
+      .put(new RegExp(`^/api/v2/projects/${pluginOptions.projectId}/files/\\d+$`))
+      .optionally()
+      .times(8)
+      .reply(200, mockClient.createFile({}))
+
+    await payload.update({
+      collection: 'nested-field-collection',
+      id: created.id,
+      locale: 'en',
+      data: {
+        title: 'Updated title',
+        layoutTwo: [
+          {
+            blockType: 'basicBlock',
+            textField: 'Updated source block',
+          },
+        ],
+      },
+    })
+
+    const beforeRestoreEn = await payload.findByID({
+      collection: 'nested-field-collection',
+      id: created.id,
+      locale: 'en',
+    })
+    expect(beforeRestoreEn.title).toBe('Updated title')
+    expect(beforeRestoreEn.layoutTwo?.[0]?.textField).toBe('Updated source block')
+
     const versions = await payload.findVersions({
       collection: 'nested-field-collection',
       where: {
@@ -82,32 +120,37 @@ describe('restore version (#186)', () => {
           equals: created.id,
         },
       },
-      sort: '-createdAt',
+      sort: 'createdAt',
     })
 
-    const versionFromOtherLocale = versions.docs[0]
-    expect(versionFromOtherLocale).toBeDefined()
-
-    nock('https://api.crowdin.com')
-      .post(`/api/v2/storages`)
-      .optionally()
-      .times(4)
-      .reply(200, mockClient.addStorage())
-      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
-      .optionally()
-      .times(4)
-      .reply(200, mockClient.createFile({}))
-      .put(new RegExp(`^/api/v2/projects/${pluginOptions.projectId}/files/\\d+$`))
-      .optionally()
-      .times(4)
-      .reply(200, mockClient.createFile({}))
+    // create → de_DE update → en update. Restore the snapshot that still
+    // has both locales, before the later English edit.
+    const versionWithBothLocales = versions.docs[1]
+    expect(versionWithBothLocales).toBeDefined()
 
     await expect(
       payload.restoreVersion({
         collection: 'nested-field-collection',
-        id: versionFromOtherLocale.id,
+        id: versionWithBothLocales.id,
         locale: 'en',
       }),
     ).resolves.toBeDefined()
+
+    // Payload restores the whole version across locales. English reverts;
+    // German stays. title is not localized, so it comes from that snapshot.
+    const restoredEn = await payload.findByID({
+      collection: 'nested-field-collection',
+      id: created.id,
+      locale: 'en',
+    })
+    const restoredDe = await payload.findByID({
+      collection: 'nested-field-collection',
+      id: created.id,
+      locale: 'de_DE',
+    })
+
+    expect(restoredEn.title).toBe('Deutscher Titel')
+    expect(restoredEn.layoutTwo?.[0]?.textField).toBe('Source block')
+    expect(restoredDe.layoutTwo?.[0]?.textField).toBe('Deutscher Block')
   })
 })
