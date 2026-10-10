@@ -3,6 +3,15 @@
 ## [0.24.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.23.2...source-v0.24.0) (2026-10-09)
 
 
+### ⚠ BREAKING CHANGES
+
+* **plugin:** article directories from earlier versions are no longer found unless you opt in ([#377](https://github.com/thompsonsj/payload-crowdin-sync/issues/377))
+
+If you already use this plugin, set `legacyArticleDirectoryLookup: true` until you have run `backfillArticleDirectoryPolymorphicLinks`. Without that option, the plugin only finds directories linked with `collectionDocument` or `globalSlug`. Saving a document whose directory is still unlinked will throw instead of creating a second Crowdin folder.
+
+See [Upgrading from older versions](https://thompsonsj.github.io/payload-crowdin-sync/plugin/crowdin#upgrading-from-older-versions).
+
+
 ### Features
 
 * **plugin:** link collection article directories to their documents ([#376](https://github.com/thompsonsj/payload-crowdin-sync/issues/376)) ([0b39e72](https://github.com/thompsonsj/payload-crowdin-sync/commit/0b39e72a474a1ee89fe2e8a6bc29d64522fc658a))
