@@ -40,12 +40,17 @@ const localeAllDoc = {
 
 describe('fn: buildCrowdinJsonObject: restoreVersion previousDoc (#186)', () => {
   it('does not throw when a localized array is a locale map', () => {
-    expect(() =>
+    expect(
       buildCrowdinJsonObject({
         doc: localeAllDoc,
         fields: getLocalizedFields({ fields: localizedArrayFields }),
       }),
-    ).not.toThrow();
+    ).toEqual({
+      title: {
+        en: 'Hello',
+        de_DE: 'Hallo',
+      },
+    });
   });
 
   it('does not throw when localized blocks are a locale map', () => {
@@ -68,7 +73,7 @@ describe('fn: buildCrowdinJsonObject: restoreVersion previousDoc (#186)', () => 
         ],
       },
     ];
-    expect(() =>
+    expect(
       buildCrowdinJsonObject({
         doc: {
           layout: {
@@ -90,6 +95,6 @@ describe('fn: buildCrowdinJsonObject: restoreVersion previousDoc (#186)', () => 
         },
         fields: getLocalizedFields({ fields }),
       }),
-    ).not.toThrow();
+    ).toEqual({});
   });
 });

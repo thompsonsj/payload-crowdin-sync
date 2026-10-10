@@ -1,11 +1,8 @@
 /**
- * #186: restoring a version while the request locale is the source locale
- * throws `TypeError: doc[field.name].map is not a function` in
- * `buildCrowdinJsonObject`.
- *
- * Payload's restoreVersion loads the current document with `locale: 'all'`
- * and passes that as `previousDoc` to afterChange. Localized array/blocks
- * fields are then locale maps, not arrays.
+ * #186: restoreVersion loads the current document with `locale: 'all'` and
+ * passes that as `previousDoc` to afterChange. Localized array/blocks
+ * fields are then locale maps, not arrays. The Crowdin builders skip those
+ * values instead of calling `.map`.
  */
 import type { Payload } from 'payload'
 import { mockCrowdinClient } from 'payload-crowdin-sync'
@@ -90,6 +87,20 @@ describe('restore version (#186)', () => {
 
     const versionFromOtherLocale = versions.docs[0]
     expect(versionFromOtherLocale).toBeDefined()
+
+    nock('https://api.crowdin.com')
+      .post(`/api/v2/storages`)
+      .optionally()
+      .times(4)
+      .reply(200, mockClient.addStorage())
+      .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+      .optionally()
+      .times(4)
+      .reply(200, mockClient.createFile({}))
+      .put(new RegExp(`^/api/v2/projects/${pluginOptions.projectId}/files/\\d+$`))
+      .optionally()
+      .times(4)
+      .reply(200, mockClient.createFile({}))
 
     await expect(
       payload.restoreVersion({
