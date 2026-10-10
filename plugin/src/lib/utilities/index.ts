@@ -413,6 +413,30 @@ export const removeLineBreaks = (string: string) =>
 export const fieldCrowdinFileType = (field: FieldWithName): 'json' | 'html' =>
   field.type === 'richText' ? 'html' : 'json';
 
+/**
+ * Skip empty values, and array/blocks fields that are not arrays.
+ *
+ * `restoreVersion` passes `previousDoc` with `locale: 'all'`, so a
+ * localized array or blocks field is a locale map (`{ en: [...], de_DE:
+ * [...] }`) rather than an array. Calling `.map` on that throws (#186).
+ */
+const skipCrowdinBuilderField = (
+  field: FieldWithName,
+  doc: { [key: string]: any },
+): boolean => {
+  const value = doc[field.name];
+  if (!value) {
+    return true;
+  }
+  if (
+    (field.type === 'array' || field.type === 'blocks') &&
+    !Array.isArray(value)
+  ) {
+    return true;
+  }
+  return false;
+};
+
 type RestoreOrderContext = {
   updateDocument: { [key: string]: any };
   document: { [key: string]: any };
@@ -627,7 +651,7 @@ export const buildCrowdinJsonObject = ({
     filteredFields,
     { doc, response, isLocalized },
     {
-      skip: (field, ctx) => !ctx.doc[field.name],
+      skip: (field, ctx) => skipCrowdinBuilderField(field, ctx.doc),
       group(field, ctx) {
         ctx.response[field.name] = buildCrowdinJsonObject({
           doc: ctx.doc[field.name],
@@ -713,7 +737,7 @@ export const buildCrowdinHtmlObject = ({
     filteredFields,
     { doc, prefix, isLocalized, response },
     {
-      skip: (field, ctx) => !ctx.doc[field.name],
+      skip: (field, ctx) => skipCrowdinBuilderField(field, ctx.doc),
       group(field, ctx) {
         const subPrefix = `${[ctx.prefix, field.name]
           .filter((string) => string)
