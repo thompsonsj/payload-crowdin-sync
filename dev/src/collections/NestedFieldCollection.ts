@@ -67,6 +67,7 @@ const NestedFieldCollection: CollectionConfig = {
   access: {
     read: () => true,
   },
+  versions: true,
   fields: [
     {
       name: 'title',
