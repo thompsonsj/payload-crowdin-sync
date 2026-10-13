@@ -785,33 +785,4 @@ export class payloadCrowdinSyncTranslationsApi {
     const body = await response.text();
     return body;
   }
-
-  /**
-   * Restore id and blockType to translations
-   *
-   * In order to update a document, we need to know the id and blockType of each block.
-   *
-   * Ideally, id and blockType are not sent to Crowdin - hence
-   * we need to restore them from the original document.
-   *
-   * This currently only works for a top-level `layout` blocks field.
-   *
-   * TODO: make this work for nested blocks.
-   */
-  restoreIdAndBlockType = (
-    document: any,
-    translations: any,
-    key = 'layout',
-  ) => {
-    if (Object.prototype.hasOwnProperty.call(translations, key)) {
-      translations[key] = translations[key].map(
-        (block: any, index: number) => ({
-          ...block,
-          id: document[key][index].id,
-          blockType: document[key][index].blockType,
-        }),
-      );
-    }
-    return translations;
-  };
 }
