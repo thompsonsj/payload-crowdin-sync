@@ -92,16 +92,6 @@ Per-locale translation progress would need a Crowdin API call, for example trans
 
 ---
 
-### Load Lexical translations directly
-
-**Goal:** convert translated HTML from Crowdin straight to Lexical, without converting to Slate first.
-
-**Status:** not started. Translations are loaded as Slate and converted with Payload's Slate-to-Lexical migration support. This works for basic content but limits what Lexical features can round-trip.
-
-**Source:** [#237](https://github.com/thompsonsj/payload-crowdin-sync/issues/237), [#296](https://github.com/thompsonsj/payload-crowdin-sync/issues/296).
-
----
-
 ### Adapters for other translation services
 
 **Goal:** support translation services other than Crowdin (for example Phrase or Lokalise) behind a shared interface.
@@ -131,6 +121,7 @@ These were planned in the 2023 todo list or in issues, and have since been built
 - **Required field handling:** translation updates that are missing required fields aren't applied, and validation errors are returned instead.
 - **Document folder names from `useAsTitle`:** [#211](https://github.com/thompsonsj/payload-crowdin-sync/pull/211).
 - **Self-clean when Crowdin returns 404:** files in [#213](https://github.com/thompsonsj/payload-crowdin-sync/pull/213), directories in [#361](https://github.com/thompsonsj/payload-crowdin-sync/pull/361). This covers [#147](https://github.com/thompsonsj/payload-crowdin-sync/issues/147) and [#360](https://github.com/thompsonsj/payload-crowdin-sync/issues/360).
+- **Load Lexical translations directly:** Crowdin HTML is converted with Payload's `convertHTMLToLexical` (plus Crowdin marker rewrites). The Slate hop is gone ([#237](https://github.com/thompsonsj/payload-crowdin-sync/issues/237), [#296](https://github.com/thompsonsj/payload-crowdin-sync/issues/296)).
 
 ## Not planned
 

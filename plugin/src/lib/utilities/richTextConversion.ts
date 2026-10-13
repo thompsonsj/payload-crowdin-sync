@@ -18,35 +18,16 @@ import {
   HTMLConverters,
 } from '@payloadcms/richtext-lexical/html';
 
-import {
-  convertSlateToLexical,
-  defaultSlateConverters,
-} from '@payloadcms/richtext-lexical/migrate';
-
-import { Element } from 'domhandler';
-import { findOne, getAttributeValue } from 'domutils';
-import { SlateBlockConverter } from './lexical/slateBlockConverter';
-import { cloneDeep } from 'es-toolkit';
-
 import type { Descendant } from 'slate';
 import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical';
 
 import { getLexicalBlockFields } from './lexical';
-import {
-  SlateTableCellConverter,
-  SlateTableConverter,
-  SlateTableRowConverter,
-} from './lexical/slateTableConverter';
 
-// use editorConfig to determine custom convertors
-export const converters = cloneDeep([
-  ...defaultSlateConverters,
-  SlateBlockConverter,
-  SlateTableConverter,
-  SlateTableRowConverter,
-  SlateTableCellConverter,
-  // AnotherCustomConverter
-]);
+export {
+  convertHtmlToLexical,
+  rewriteCrowdinHtmlForLexical,
+} from './htmlToLexical';
+export type { ConvertHtmlToLexicalOptions } from './htmlToLexical';
 
 export const convertLexicalToHtml = async (
   editorData: SerializedEditorState,
@@ -125,121 +106,6 @@ export const convertLexicalToHtml = async (
     }),
     data: editorData,
     disableContainer: true,
-  });
-};
-
-export const convertHtmlToLexical = (
-  htmlString: string,
-  blockTranslations?: {
-    [key: string]: any;
-  } | null,
-) => {
-  const htmlToSlateConfig = {
-    ...payloadHtmlToSlateConfig,
-    textTags: {
-      ...payloadHtmlToSlateConfig.textTags,
-      sub: () => ({ subscript: true }),
-      sup: () => ({ superscript: true }),
-    },
-    elementTags: {
-      ...payloadHtmlToSlateConfig.elementTags,
-      span: (el) => {
-        const blockId = el && getAttributeValue(el, 'data-block-id');
-        const blockType = el && getAttributeValue(el, 'data-block-type');
-
-        const isBlock = !!blockId && !!blockType;
-
-        if (isBlock && blockType === 'pcsUpload') {
-          const relationTo = el && getAttributeValue(el, 'data-relation-to');
-          return {
-            type: 'upload',
-            relationTo,
-            value: {
-              id: blockId,
-            },
-          };
-        } else if (isBlock && blockType === 'pcsRelationship') {
-          const relationTo = el && getAttributeValue(el, 'data-relation-to');
-          return {
-            type: 'relationship',
-            relationTo,
-            value: {
-              id: blockId,
-            },
-          };
-        } else {
-          const translation = (blockTranslations?.['blocks'] || []).find(
-            (block: any) => block.id === blockId,
-          );
-
-          return {
-            // use a relatively obscure name to reduce likelihood of a clash with an existing Slate editor configuration `nodeType`.
-            type: 'pcs-block',
-            // fieldName needed to obtain translations?
-            translation,
-            blockId,
-            blockType,
-          };
-        }
-      },
-      div: () => ({ type: 'div' }),
-      table: () => ({ type: 'table' }),
-      tr: () => ({ type: 'table-row' }),
-      td: () => ({ type: 'table-cell' }),
-      // thead: () => ({ type: 'table-header' }),
-      th: () => ({ type: 'table-header-cell' }),
-      // tbody: () => ({ type: 'table-body' }),
-    },
-    htmlUpdaterMap: {
-      div: (el) => {
-        // is this is a direct parent of a table
-        const table = findOne((node) => node.name === 'table', [el]);
-        if (table) {
-          return table;
-        }
-        return el;
-      },
-      span: (el) => {
-        // is this a formatting span?
-        const styleAttribs = (el && getAttributeValue(el, 'style')) || '';
-        if (styleAttribs) {
-          const styleObject: { [key: string]: boolean } = {};
-          styleAttribs.split(';').forEach((item) => {
-            const styleItem = item.trim().split(':');
-            if (styleItem.length === 2) {
-              if (
-                styleItem[0].trim() === 'text-decoration' &&
-                styleItem[1].trim() === 'underline'
-              ) {
-                styleObject['underline'] = true;
-              }
-              if (
-                styleItem[0].trim() === 'text-decoration' &&
-                styleItem[1].trim() === 'line-through'
-              ) {
-                styleObject['strikethrough'] = true;
-              }
-            }
-          });
-          if (styleObject['strikethrough'] && styleObject['underline']) {
-            return new Element('s', el.attribs, [
-              new Element('u', el.attribs, el.children),
-            ]);
-          }
-          if (styleObject['underline']) {
-            return new Element('u', el.attribs, el.children);
-          }
-          if (styleObject['strikethrough']) {
-            return new Element('s', el.attribs, el.children);
-          }
-        }
-        return el;
-      },
-    },
-  } as HtmlToSlateConfig;
-  return convertSlateToLexical({
-    converters: converters,
-    slateData: convertHtmlToSlate(htmlString, htmlToSlateConfig),
   });
 };
 

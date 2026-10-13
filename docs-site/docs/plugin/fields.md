@@ -52,12 +52,14 @@ Slate fields are converted with [`@slate-serializers/html`](https://www.npmjs.co
 
 ### Lexical
 
-Lexical fields are converted with Payload's Lexical HTML converters. The plugin extends them so that these round-trip correctly:
+Lexical fields go to Crowdin as HTML and back as Lexical JSON using Payload's own converters — `convertLexicalToHTML` on the way out and `convertHTMLToLexical` on the way in. There is no Slate conversion in between.
 
-- **Formatting:** headings, lists, links, bold, italic, underline, strikethrough, subscript and superscript.
+The plugin extends those converters so these round-trip correctly:
+
+- **Formatting:** headings, lists, links, bold, italic, underline, strikethrough, subscript and superscript. Payload emits underline and strikethrough as `span` style attributes; the plugin rewrites those to `<u>` / `<s>` before import.
 - **Tables.**
-- **Uploads and relationships:** kept as placeholders in the HTML, so translators can't break them, and restored when translations are loaded.
-- **Blocks:** each block's content is extracted from the HTML and handled as its own small document. It gets a subfolder in Crowdin (prefixed `lex.` by default, see [`lexicalBlockFolderPrefix`](./README.md#lexicalblockfolderprefix)) with its own `fields.json` and HTML files. Blocks can contain Lexical fields that have blocks of their own.
+- **Uploads and relationships:** kept as Crowdin placeholders (`pcsUpload` / `pcsRelationship` spans) so translators can't break them, then rewritten to Payload's `data-lexical-upload-*` / `data-lexical-relationship-*` attributes on load.
+- **Blocks:** Payload's block nodes have no HTML import, so each marker is rewritten to a token, then the translated block fields are attached after conversion. Each block's content is also extracted and handled as its own small document. It gets a subfolder in Crowdin (prefixed `lex.` by default, see [`lexicalBlockFolderPrefix`](./README.md#lexicalblockfolderprefix)) with its own `fields.json` and HTML files. Blocks can contain Lexical fields that have blocks of their own.
 
 Fields inside Lexical blocks are sent if they are a supported type, whether or not they are marked `localized`. The Lexical field itself is localized, so each locale already has its own copy of the blocks. See [blocks are not localized](./crowdin.md#blocks-are-not-localized).
 

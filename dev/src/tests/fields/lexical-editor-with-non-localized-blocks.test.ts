@@ -459,25 +459,14 @@ describe('Lexical editor with blocks', () => {
               "version": 1,
             },
             {
-              "children": [
-                {
-                  "fields": {
-                    "blockType": "cookieTable",
-                    "cookieCategoryId": "strictlyNecessary",
-                    "id": "678564c06ec4a6f1fcf6a623",
-                  },
-                  "format": "",
-                  "type": "block",
-                  "version": 2,
-                },
-              ],
-              "direction": "ltr",
+              "fields": {
+                "blockType": "cookieTable",
+                "cookieCategoryId": "strictlyNecessary",
+                "id": "678564c06ec4a6f1fcf6a623",
+              },
               "format": "",
-              "indent": 0,
-              "textFormat": 0,
-              "textStyle": "",
-              "type": "paragraph",
-              "version": 1,
+              "type": "block",
+              "version": 2,
             },
             {
               "children": [
@@ -500,25 +489,14 @@ describe('Lexical editor with blocks', () => {
               "version": 1,
             },
             {
-              "children": [
-                {
-                  "fields": {
-                    "blockType": "cookieTable",
-                    "cookieCategoryId": "functional",
-                    "id": "678564926ec4a6f1fcf6a622",
-                  },
-                  "format": "",
-                  "type": "block",
-                  "version": 2,
-                },
-              ],
-              "direction": "ltr",
+              "fields": {
+                "blockType": "cookieTable",
+                "cookieCategoryId": "functional",
+                "id": "678564926ec4a6f1fcf6a622",
+              },
               "format": "",
-              "indent": 0,
-              "textFormat": 0,
-              "textStyle": "",
-              "type": "paragraph",
-              "version": 1,
+              "type": "block",
+              "version": 2,
             },
           ],
           "direction": "ltr",

@@ -9,6 +9,7 @@ import {
   fixtureHtml as fixtureHtmlFr,
 } from './__fixtures__/lexical-richtext-formatting.expected-fr'
 import { initPayloadInt } from '../../helpers/initPayloadInt'
+import { omitLexicalGeneratedIds } from '../../helpers/omit-lexical-generated-ids'
 import type { Payload } from 'payload'
 import { CrowdinArticleDirectory } from '@/payload-types'
 let payload: Payload
@@ -116,7 +117,7 @@ describe('Translations', () => {
         id: post.id,
         locale: 'fr_FR',
       })
-      expect(frResult['content']).toEqual(fixtureFr)
+      expect(omitLexicalGeneratedIds(frResult['content'])).toEqual(fixtureFr)
     })
   })
 })

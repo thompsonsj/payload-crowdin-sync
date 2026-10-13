@@ -26,6 +26,7 @@
     "url": "https://github.com/thompsonsj/payload-crowdin-sync/issues"
   },
   "dependencies": {
+    "jsdom": "^29.1.1",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {

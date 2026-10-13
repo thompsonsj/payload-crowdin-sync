@@ -323,5 +323,288 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
       expect(result.root.type).toBe('root');
       expect(Array.isArray(result.root.children)).toBe(true);
     });
+
+    it('returns an empty root for whitespace-only HTML', () => {
+      const result = convert('   \n  ');
+      expect(result.root.type).toBe('root');
+      expect(result.root.children).toEqual([]);
+    });
+  });
+
+  describe('additional formatting and lists', () => {
+    it('converts ordered lists', () => {
+      const result = convert('<ol><li>First</li><li>Second</li></ol>');
+      expect(childTypes(result)).toEqual(['list']);
+      const list = result.root.children[0] as {
+        listType?: string;
+        tag?: string;
+        children: Array<{ type: string }>;
+      };
+      expect(list.listType ?? list.tag).toMatch(/number|ol/);
+      expect(list.children.map((c) => c.type)).toEqual(['listitem', 'listitem']);
+    });
+
+    it('restores checklists from Payload list-check HTML', () => {
+      const result = convert(
+        '<ul class="list-check"><li aria-checked="false" class="list-item-checkbox" role="checkbox" value="1"><input type="checkbox" /><label>One</label></li></ul>',
+      );
+      const list = result.root.children.find((n) => n.type === 'list') as {
+        listType?: string;
+        children: Array<{ checked?: boolean }>;
+      };
+      expect(list.listType).toBe('check');
+      expect(list.children[0]?.checked).toBe(false);
+    });
+
+    it('keeps bullet lists with class="list-bullet"', () => {
+      const result = convert(
+        '<ul class="list-bullet"><li value="1">One</li></ul>',
+      );
+      expect(
+        (result.root.children.find((n) => n.type === 'list') as { listType?: string })
+          .listType,
+      ).toBe('bullet');
+    });
+
+    it('sets direction to ltr when convertHTMLToLexical leaves it null', () => {
+      const result = convert('<p>Hello</p>');
+      expect(result.root.direction).toBe('ltr');
+      expect(
+        (result.root.children[0] as { direction?: string | null }).direction,
+      ).toBe('ltr');
+    });
+
+    it('imports links as version 3 nodes with a generated id', () => {
+      const result = convert(
+        '<p><a href="https://example.com">link</a></p>',
+      );
+      const paragraph = result.root.children[0] as {
+        children: Array<{ type: string; version?: number; id?: string; fields?: { url?: string } }>;
+      };
+      const link = paragraph.children.find((c) => c.type === 'link');
+      expect(link?.version).toBe(3);
+      expect(typeof link?.id).toBe('string');
+      expect(link?.fields?.url ?? (link as { url?: string }).url).toBe(
+        'https://example.com',
+      );
+    });
+
+    it('converts a horizontal rule', () => {
+      const result = convert('<p>before</p><hr /><p>after</p>');
+      expect(childTypes(result)).toEqual(['paragraph', 'horizontalrule', 'paragraph']);
+    });
+
+    it('keeps nested bold and italic', () => {
+      const result = convert('<p><strong><em>both</em></strong></p>');
+      const texts = (
+        result.root.children[0] as { children: Array<{ text: string; format: number }> }
+      ).children.filter((c) => c.text);
+      expect(texts[0]?.text).toBe('both');
+      expect(texts[0]?.format & 1).toBeTruthy();
+      expect(texts[0]?.format & 2).toBeTruthy();
+    });
+
+    it('restores combined underline and strikethrough from nested Payload style spans', () => {
+      const result = convert(
+        '<p><span style="text-decoration: underline;"><span style="text-decoration: line-through;">both</span></span></p>',
+      );
+      const texts = (
+        result.root.children[0] as { children: Array<{ text: string; format: number }> }
+      ).children.filter((c) => c.text);
+      expect(texts[0]?.text).toBe('both');
+      expect(texts[0]?.format & 8).toBeTruthy();
+      expect(texts[0]?.format & 4).toBeTruthy();
+    });
+  });
+
+  describe('Crowdin marker variants', () => {
+    it('restores unquoted Crowdin attributes (convertLexicalToHtml output)', () => {
+      const result = convert(
+        '<span data-block-id=abc data-block-type=pcsUpload data-relation-to=media></span>',
+      );
+      expect(result.root.children.find((n) => n.type === 'upload')).toMatchObject({
+        type: 'upload',
+        relationTo: 'media',
+        value: 'abc',
+      });
+    });
+
+    it('restores quoted Crowdin attributes', () => {
+      const result = convert(
+        '<span data-block-id="abc" data-block-type="pcsUpload" data-relation-to="media"></span>',
+      );
+      expect(result.root.children.find((n) => n.type === 'upload')).toMatchObject({
+        type: 'upload',
+        relationTo: 'media',
+        value: 'abc',
+      });
+    });
+
+    it('attaches nested block translation fields', () => {
+      const result = convert(
+        '<span data-block-id="h1" data-block-type="highlight"></span>',
+        {
+          blocks: [
+            {
+              id: 'h1',
+              blockType: 'highlight',
+              heading: { title: 'Título' },
+              color: 'yellow',
+            },
+          ],
+        },
+      );
+      expect(result.root.children.find((n) => n.type === 'block')).toMatchObject({
+        type: 'block',
+        fields: {
+          id: 'h1',
+          blockType: 'highlight',
+          heading: { title: 'Título' },
+          color: 'yellow',
+        },
+      });
+    });
+
+    it('restores multiple blocks in order', () => {
+      const result = convert(
+        '<span data-block-id="1" data-block-type="custom"></span><span data-block-id="2" data-block-type="highlight"></span>',
+        {
+          blocks: [
+            { id: '1', blockType: 'custom', name: 'Uno' },
+            { id: '2', blockType: 'highlight', color: 'green' },
+          ],
+        },
+      );
+      const blocks = result.root.children.filter((n) => n.type === 'block') as Array<{
+        fields: { id: string };
+      }>;
+      expect(blocks.map((b) => b.fields.id)).toEqual(['1', '2']);
+    });
+
+    it('restores a block marker from unclosed Crowdin paragraphs as a sibling, not a nested child', () => {
+      const result = convert(
+        '<p>Intro<p><span data-block-id="b1" data-block-type="custom"></span><p>Outro',
+        { blocks: [{ id: 'b1', blockType: 'custom', name: 'X' }] },
+      );
+      expect(childTypes(result)).toEqual(['paragraph', 'block', 'paragraph']);
+    });
+
+    it('does not treat user text that mentions PCS_BLOCK as a block node', () => {
+      const result = convert('<p>See PCS_BLOCK::not-a-block::custom in the docs</p>');
+      expect(childTypes(result)).toEqual(['paragraph']);
+      expect(result.root.children.find((n) => n.type === 'block')).toBeUndefined();
+    });
+
+    it('does not emit Slate hop node types', () => {
+      const result = convert(
+        '<p>Hi</p><span data-block-id="b1" data-block-type="custom"></span><table><tr><td>Cell</td></tr></table>',
+        { blocks: [{ id: 'b1', blockType: 'custom', name: 'X' }] },
+      );
+      const types = new Set<string>();
+      const walk = (nodes: Array<{ type: string; children?: unknown[] }>) => {
+        for (const node of nodes) {
+          types.add(node.type);
+          if (Array.isArray(node.children)) {
+            walk(node.children as Array<{ type: string; children?: unknown[] }>);
+          }
+        }
+      };
+      walk(result.root.children as Array<{ type: string; children?: unknown[] }>);
+      expect(types.has('pcs-block')).toBe(false);
+      expect(types.has('table-row')).toBe(false);
+      expect(types.has('table-cell')).toBe(false);
+      expect(types.has('table-header-cell')).toBe(false);
+      expect(types.has('block')).toBe(true);
+      expect(types.has('table')).toBe(true);
+      expect(types.has('tablerow')).toBe(true);
+      expect(types.has('tablecell')).toBe(true);
+    });
+  });
+
+  describe('round-trip via convertLexicalToHtml Crowdin markers', () => {
+    const lexicalRoot = (
+      children: SerializedEditorState['root']['children'],
+    ): SerializedEditorState => ({
+      root: {
+        type: 'root',
+        format: '',
+        indent: 0,
+        direction: 'ltr',
+        version: 1,
+        children,
+      },
+    });
+
+    it('round-trips an upload node through Crowdin span markers', async () => {
+      const html = await convertLexicalToHtml(
+        lexicalRoot([
+          {
+            type: 'upload',
+            version: 3,
+            id: 'node-1',
+            format: '',
+            relationTo: 'media',
+            value: 'media-99',
+            fields: {},
+          } as SerializedEditorState['root']['children'][number],
+        ]),
+        editorConfig,
+      );
+      expect(html).toContain('pcsUpload');
+      const result = convert(html);
+      expect(result.root.children.find((n) => n.type === 'upload')).toMatchObject({
+        type: 'upload',
+        relationTo: 'media',
+        value: 'media-99',
+        version: 3,
+      });
+    });
+
+    it('round-trips a relationship node through Crowdin span markers', async () => {
+      const html = await convertLexicalToHtml(
+        lexicalRoot([
+          {
+            type: 'relationship',
+            version: 2,
+            format: '',
+            relationTo: 'pages',
+            value: 'page-2',
+          } as SerializedEditorState['root']['children'][number],
+        ]),
+        editorConfig,
+      );
+      expect(html).toContain('pcsRelationship');
+      expect(resultOf(html)).toMatchObject({
+        type: 'relationship',
+        relationTo: 'pages',
+        value: 'page-2',
+      });
+
+      function resultOf(markup: string) {
+        return convert(markup).root.children.find((n) => n.type === 'relationship');
+      }
+    });
+
+    it('round-trips a block node through Crowdin span markers and translations', async () => {
+      const html = await convertLexicalToHtml(
+        lexicalRoot([
+          {
+            type: 'block',
+            version: 2,
+            format: '',
+            fields: { id: 'b1', blockType: 'custom', name: 'Hello' },
+          } as SerializedEditorState['root']['children'][number],
+        ]),
+        editorConfig,
+      );
+      expect(html).toContain('data-block-type=custom');
+      const result = convert(html, {
+        blocks: [{ id: 'b1', blockType: 'custom', name: 'Hola' }],
+      });
+      expect(result.root.children.find((n) => n.type === 'block')).toMatchObject({
+        type: 'block',
+        fields: { id: 'b1', name: 'Hola' },
+      });
+    });
   });
 });

@@ -670,7 +670,7 @@ export class payloadCrowdinSyncTranslationsApi {
         : null;
 
     return (
-      convertHtmlToLexical(data, blockTranslations) || {
+      convertHtmlToLexical(data, { editorConfig, blockTranslations }) || {
         root: {
           type: 'root',
           format: '',
