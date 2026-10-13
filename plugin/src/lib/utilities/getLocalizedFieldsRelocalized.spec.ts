@@ -110,10 +110,12 @@ describe('fn: getLocalizedFields using reLocalizeField', () => {
             {
               name: 'textField',
               type: 'text',
+              localized: true,
             },
             {
               name: 'textareaField',
               type: 'textarea',
+              localized: true,
             },
           ],
         },

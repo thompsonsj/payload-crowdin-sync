@@ -340,4 +340,98 @@ describe('fn: buildPayloadUpdateObject: blocks field type', () => {
       buildPayloadUpdateObject({ crowdinJsonObject, fields: localizedFields }),
     ).toEqual(expected);
   });
+
+  it('restores id and blockType for blocks nested inside blocks', () => {
+    const NestedColumn: Block = {
+      slug: 'column',
+      fields: [
+        {
+          name: 'heading',
+          type: 'text',
+          localized: true,
+        },
+      ],
+    };
+    const Section: Block = {
+      slug: 'section',
+      fields: [
+        {
+          name: 'columns',
+          type: 'blocks',
+          localized: true,
+          blocks: [NestedColumn],
+        },
+      ],
+    };
+    const fields: Field[] = [
+      {
+        name: 'layout',
+        type: 'blocks',
+        localized: true,
+        blocks: [Section],
+      },
+    ];
+    const crowdinJsonObject = {
+      layout: {
+        'outer-1': {
+          section: {
+            columns: {
+              'inner-2': {
+                column: { heading: 'Second' },
+              },
+              'inner-1': {
+                column: { heading: 'First' },
+              },
+            },
+          },
+        },
+      },
+    };
+    const document = {
+      layout: [
+        {
+          id: 'outer-1',
+          blockType: 'section',
+          columns: [
+            {
+              id: 'inner-1',
+              blockType: 'column',
+              heading: 'First source',
+            },
+            {
+              id: 'inner-2',
+              blockType: 'column',
+              heading: 'Second source',
+            },
+          ],
+        },
+      ],
+    };
+    expect(
+      buildPayloadUpdateObject({
+        crowdinJsonObject,
+        fields: getLocalizedFields({ fields }),
+        document,
+      }),
+    ).toEqual({
+      layout: [
+        {
+          id: 'outer-1',
+          blockType: 'section',
+          columns: [
+            {
+              id: 'inner-1',
+              blockType: 'column',
+              heading: 'First',
+            },
+            {
+              id: 'inner-2',
+              blockType: 'column',
+              heading: 'Second',
+            },
+          ],
+        },
+      ],
+    });
+  });
 });
