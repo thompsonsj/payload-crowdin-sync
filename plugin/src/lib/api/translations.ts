@@ -669,37 +669,7 @@ export class payloadCrowdinSyncTranslationsApi {
           })
         : null;
 
-    return (
-      convertHtmlToLexical(data, { editorConfig, blockTranslations }) || {
-        root: {
-          type: 'root',
-          format: '',
-          indent: 0,
-          version: 1,
-          children: [
-            {
-              children: [
-                {
-                  detail: 0,
-                  format: 0,
-                  mode: 'normal',
-                  style: '',
-                  text: 'lexical configuration not found',
-                  type: 'text',
-                  version: 1,
-                },
-              ],
-              direction: 'ltr',
-              format: '',
-              indent: 0,
-              type: 'quote',
-              version: 1,
-            },
-          ],
-          direction: 'ltr',
-        },
-      }
-    );
+    return convertHtmlToLexical(data, { editorConfig, blockTranslations });
   }
 
   private async buildTranslationFile({

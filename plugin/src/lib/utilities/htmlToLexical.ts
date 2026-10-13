@@ -58,9 +58,6 @@ export const rewriteCrowdinHtmlForLexical = (html: string): string => {
     }
     el.remove();
     parent.after(replacement);
-    if (![...parent.childNodes].some((node) => !isInsignificant(node))) {
-      parent.remove();
-    }
   };
 
   for (const el of [...doc.querySelectorAll('[data-block-type]')]) {

@@ -107,6 +107,47 @@ describe('fn: rewriteCrowdinHtmlForLexical', () => {
     expect(children[2]?.textContent).toBe('Outro');
   });
 
+  it('splits a paragraph when a block marker sits next to text', () => {
+    const html = rewriteCrowdinHtmlForLexical(
+      '<p>Hello<span data-block-id="b1" data-block-type="custom"></span> world</p>',
+    );
+    const body = bodyOf(html);
+    const children = [...body.children];
+    expect(children.map((el) => el.tagName)).toEqual(['P', 'P']);
+    expect(children[0]?.textContent).toContain('Hello');
+    expect(children[1]?.textContent).toBe('PCS_BLOCK::b1::custom');
+  });
+
+  it('treats a br next to a marker as insignificant and replaces the paragraph', () => {
+    const html = rewriteCrowdinHtmlForLexical(
+      '<p><br /><span data-block-id="b1" data-block-type="custom"></span></p>',
+    );
+    const body = bodyOf(html);
+    expect(body.querySelectorAll('p').length).toBe(1);
+    expect(body.querySelector('p')?.textContent).toBe('PCS_BLOCK::b1::custom');
+  });
+
+  it('rewrites pcsUpload and pcsRelationship spans that omit data-relation-to', () => {
+    const html = rewriteCrowdinHtmlForLexical(
+      '<span data-block-id="1" data-block-type="pcsUpload"></span><span data-block-id="2" data-block-type="pcsRelationship"></span>',
+    );
+    const body = bodyOf(html);
+    expect(body.querySelector('img')?.getAttribute('data-lexical-upload-id')).toBe(
+      '1',
+    );
+    expect(
+      body.querySelector('img')?.hasAttribute('data-lexical-upload-relation-to'),
+    ).toBe(false);
+    expect(
+      body.querySelector('div')?.getAttribute('data-lexical-relationship-id'),
+    ).toBe('2');
+    expect(
+      body
+        .querySelector('div')
+        ?.hasAttribute('data-lexical-relationship-relationTo'),
+    ).toBe(false);
+  });
+
   it('skips markers that are missing an id or type', () => {
     const html = rewriteCrowdinHtmlForLexical(
       '<span data-block-type="custom"></span><span data-block-id="only-id"></span>',

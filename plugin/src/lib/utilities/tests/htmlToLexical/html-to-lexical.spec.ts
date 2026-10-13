@@ -491,6 +491,20 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
       expect(blocks.map((b) => b.fields.id)).toEqual(['1', '2']);
     });
 
+    it('keeps surrounding text when a block marker sits inside a paragraph', () => {
+      const result = convert(
+        '<p>Hello<span data-block-id="b1" data-block-type="custom"></span> world</p>',
+        { blocks: [{ id: 'b1', blockType: 'custom', name: 'X' }] },
+      );
+      expect(childTypes(result)).toEqual(
+        expect.arrayContaining(['paragraph', 'block']),
+      );
+      expect(result.root.children.find((n) => n.type === 'block')).toMatchObject({
+        type: 'block',
+        fields: { id: 'b1', name: 'X' },
+      });
+    });
+
     it('restores a block marker from unclosed Crowdin paragraphs as a sibling, not a nested child', () => {
       const result = convert(
         '<p>Intro<p><span data-block-id="b1" data-block-type="custom"></span><p>Outro',
