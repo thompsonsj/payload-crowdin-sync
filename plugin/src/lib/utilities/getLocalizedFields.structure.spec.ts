@@ -120,7 +120,7 @@ describe('fn: getLocalizedFields output structure', () => {
     ]);
   });
 
-  it('marks unnamed tab fields as localized using the default predicate', () => {
+  it('marks unnamed tab fields as localized using the caller isLocalized predicate', () => {
     const fields: Field[] = [
       {
         type: 'tabs',
@@ -129,7 +129,7 @@ describe('fn: getLocalizedFields output structure', () => {
     ];
     expect(
       getLocalizedFields({ fields, isLocalized: (field) => !!field }),
-    ).toEqual([text('inTab', false)]);
+    ).toEqual([{ ...text('inTab', false), localized: true }]);
     expect(
       getLocalizedFields({
         fields,

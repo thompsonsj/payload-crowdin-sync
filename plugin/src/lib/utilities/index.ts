@@ -168,6 +168,7 @@ const flattenContainerFields = (
   ...convertTabs({
     fields,
     localized: options.localizedParent,
+    isLocalized: options.isLocalized,
     callback: (tabFields) =>
       getLocalizedFields({ ...options, fields: tabFields }),
   }),

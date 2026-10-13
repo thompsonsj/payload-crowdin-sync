@@ -177,12 +177,17 @@ A comment in the source already flags this: `"find a better way to do this - blo
 
 - **Item 6:** `getLocalizedFields` is now a short orchestrator over three private helpers in `utilities/index.ts`: `filterByType`, `recurseNestedFields` and `flattenContainerFields`. Layout fields (tabs, collapsible, row) are excluded up front instead of being carried through every step and filtered out at the end. Group, array and blocks fields are now reduced once and dropped if empty; previously each was traversed twice, once by `containsLocalizedFields` to decide whether to keep it and again to build the result, and that repeated at every nesting level. The old `TODO` about duplicated block, array and group logic is resolved.
 - **Tests:** the helpers are private, so instead of testing them directly, `getLocalizedFields.structure.spec.ts` was committed first as a baseline against the old implementation. It pins the output shape that the existing tests only covered indirectly: top-level fields before tab, collapsible and row contents; named tabs as groups; blocks reduced to `slug` and `fields`; empty containers dropped under a `type` filter; and custom `isLocalized` predicates.
-- **Known quirk, kept as-is:** `convertTabs` is called without the caller's `isLocalized`, so unnamed tab fields are marked `localized: true` using the default predicate. The baseline tests pin this.
+- **Known quirk, kept as-is (fixed in pass 5):** `convertTabs` was called without the caller's `isLocalized`, so unnamed tab fields were marked `localized: true` using the default predicate.
 
 **Pass 4 — item 1**
 
 - **Item 1:** `traverseFields` and `getBlockFields` live in `utilities/traverseFields.ts`. `restoreOrder`, `buildPayloadUpdateObject`, `buildCrowdinJsonObject` and `buildCrowdinHtmlObject` dispatch through the visitor. Nested walks still call the builders so `getLocalizedFields` type/locale filtering is unchanged.
 - **Tests:** `traverseFields.spec.ts` was committed first (failing). The existing builder specs and the book-demo snapshot are the regression suite.
+
+**Pass 5 — convertTabs `isLocalized` and nested block restore**
+
+- **`convertTabs`:** `flattenContainerFields` passes the caller's `isLocalized` into `convertTabs`, so unnamed tab fields are marked `localized: true` with the same predicate as collapsible and row flattening. Covered by `getLocalizedFields.structure.spec.ts` and `getLocalizedFieldsRelocalized.spec.ts`.
+- **Nested `id` / `blockType`:** `restoreOrder` (used by `buildPayloadUpdateObject` when a source `document` is passed) already restores nested blocks. That is pinned in the `buildPayloadUpdateObject` blocks tests. The unused top-level-only `restoreIdAndBlockType` helper on the translations API was removed.
 
 ---
 
