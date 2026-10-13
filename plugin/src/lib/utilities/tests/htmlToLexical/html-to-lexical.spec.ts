@@ -1,7 +1,10 @@
 import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical';
 import { convertHtmlToLexical, convertLexicalToHtml } from '../../richTextConversion';
+import { asNode } from './as-node';
 import { getTestLexicalEditorConfig } from './editor-config';
 import type { SanitizedServerEditorConfig } from '@payloadcms/richtext-lexical';
+
+type TextParent = { children: Array<{ text: string; format: number }> };
 
 const textNode = (n: { text: string; format?: number }) =>
   expect.objectContaining({
@@ -29,9 +32,7 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
     it('converts a paragraph with bold', () => {
       const result = convert('<p>Hello, <strong>world</strong>!</p>');
       expect(childTypes(result)).toEqual(['paragraph']);
-      const paragraph = result.root.children[0] as {
-        children: Array<{ text: string; format: number }>;
-      };
+      const paragraph = asNode<TextParent>(result.root.children[0]);
       expect(paragraph.children.map((c) => c.text)).toEqual([
         'Hello, ',
         'world',
@@ -45,7 +46,7 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
         '<p><em>italic</em> <u>under</u> <s>strike</s> <sub>sub</sub> <sup>sup</sup></p>',
       );
       const texts = (
-        result.root.children[0] as { children: Array<{ text: string; format: number }> }
+        asNode<TextParent>(result.root.children[0])
       ).children.filter((c) => c.text?.trim());
       expect(texts.map((c) => c.text)).toEqual([
         'italic',
@@ -66,7 +67,7 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
         '<p><span style="text-decoration: underline;">under</span><span style="text-decoration: line-through;">strike</span></p>',
       );
       const texts = (
-        result.root.children[0] as { children: Array<{ text: string; format: number }> }
+        asNode<TextParent>(result.root.children[0])
       ).children.filter((c) => c.text);
       expect(texts[0]).toEqual(textNode({ text: 'under', format: 8 }));
       expect(texts[1]).toEqual(textNode({ text: 'strike', format: 4 }));
@@ -85,24 +86,28 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
       expect(result.root.children[0]).toEqual(
         expect.objectContaining({ type: 'heading', tag: 'h2' }),
       );
-      const list = result.root.children[2] as { listType?: string; tag?: string };
+      const list = asNode<{ listType?: string; tag?: string }>(
+        result.root.children[2],
+      );
       expect(list.listType ?? list.tag).toMatch(/bullet|ul/);
-      const paragraph = result.root.children[3] as {
-        children: Array<{ type: string; url?: string; children?: Array<{ text: string }> }>;
-      };
+      const paragraph = asNode<{
+        children: Array<{
+          type: string;
+          url?: string;
+          fields?: { url?: string };
+        }>;
+      }>(result.root.children[3]);
       const link = paragraph.children.find((c) => c.type === 'link');
       expect(link).toBeDefined();
-      expect(link?.url ?? (link as { fields?: { url?: string } }).fields?.url).toBe(
-        'https://example.com',
-      );
+      expect(link?.url ?? link?.fields?.url).toBe('https://example.com');
     });
 
     it('converts inline code', () => {
       const result = convert('<p>use <code>code</code></p>');
       const code = (
-        result.root.children[0] as { children: Array<{ text: string; format: number }> }
+        asNode<TextParent>(result.root.children[0])
       ).children.find((c) => c.text === 'code');
-      expect(code?.format & 16).toBeTruthy();
+      expect((code?.format ?? 0) & 16).toBeTruthy();
     });
   });
 
@@ -111,12 +116,12 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
       const result = convert(
         '<p>before</p><img data-lexical-upload-id="media-1" data-lexical-upload-relation-to="media" src="/media/file.jpg" alt="" /><p>after</p>',
       );
-      const upload = result.root.children.find((n) => n.type === 'upload') as {
+      const upload = asNode<{
         relationTo: string;
         value: string;
         version: number;
         id?: string;
-      };
+      }>(result.root.children.find((n) => n.type === 'upload'));
       expect(upload).toMatchObject({
         type: 'upload',
         relationTo: 'media',
@@ -144,10 +149,10 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
       const result = convert(
         '<span data-block-id="123" data-block-type="pcsUpload" data-relation-to="media">Upload</span>',
       );
-      const upload = result.root.children.find((n) => n.type === 'upload') as {
+      const upload = asNode<{
         value: unknown;
         version: number;
-      };
+      }>(result.root.children.find((n) => n.type === 'upload'));
       expect(upload).toMatchObject({
         type: 'upload',
         relationTo: 'media',
@@ -193,7 +198,7 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
       );
       expect(block).toBeDefined();
       if (block?.type === 'block') {
-        expect((block as { fields: { id: string; blockType: string } }).fields).toMatchObject({
+        expect(asNode<{ fields: { id: string; blockType: string } }>(block).fields).toMatchObject({
           id: 'missing',
           blockType: 'highlight',
         });
@@ -207,12 +212,12 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
     it('converts a lexical-table HTML fragment to table / tablerow / tablecell nodes', () => {
       const html = `<div class="lexical-table-container"><table class="lexical-table" style="border-collapse: collapse;"><tbody><tr class="lexical-table-row"><th class="lexical-table-cell lexical-table-cell-header-1">Head</th><td class="lexical-table-cell lexical-table-cell-header-0">Cell</td></tr></tbody></table></div>`;
       const result = convert(html);
-      const table = result.root.children.find((n) => n.type === 'table') as {
+      const table = asNode<{
         children: Array<{
           type: string;
           children: Array<{ type: string; headerState?: number; children: unknown[] }>;
         }>;
-      };
+      }>(result.root.children.find((n) => n.type === 'table'));
       expect(table).toBeDefined();
       expect(table.children[0]?.type).toBe('tablerow');
       const cells = table.children[0]?.children ?? [];
@@ -224,11 +229,13 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
     it('keeps paragraphs inside table cells', () => {
       const html = `<table><tr><td><p>One</p><p>Two</p></td></tr></table>`;
       const result = convert(html);
-      const table = result.root.children.find((n) => n.type === 'table') as {
+      const table = asNode<{
         children: Array<{
-          children: Array<{ children: Array<{ type: string; children?: Array<{ text: string }> }> }>;
+          children: Array<{
+            children: Array<{ type: string; children?: Array<{ text: string }> }>;
+          }>;
         }>;
-      };
+      }>(result.root.children.find((n) => n.type === 'table'));
       const cellChildren = table.children[0]?.children[0]?.children ?? [];
       expect(cellChildren.map((c) => c.type)).toContain('paragraph');
       const texts = cellChildren.flatMap(
@@ -303,7 +310,7 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
               },
             ],
           },
-        },
+        } as unknown as SerializedEditorState,
         editorConfig,
       );
       const result = convert(html);
@@ -311,9 +318,7 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
       expect(result.root.children[0]).toEqual(
         expect.objectContaining({ type: 'heading', tag: 'h2' }),
       );
-      const paragraph = result.root.children[1] as {
-        children: Array<{ text: string; format: number }>;
-      };
+      const paragraph = asNode<TextParent>(result.root.children[1]);
       expect(paragraph.children[0]?.text).toBe('bold');
       expect(paragraph.children[0]?.format & 1).toBeTruthy();
     });
@@ -335,11 +340,11 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
     it('converts ordered lists', () => {
       const result = convert('<ol><li>First</li><li>Second</li></ol>');
       expect(childTypes(result)).toEqual(['list']);
-      const list = result.root.children[0] as {
+      const list = asNode<{
         listType?: string;
         tag?: string;
         children: Array<{ type: string }>;
-      };
+      }>(result.root.children[0]);
       expect(list.listType ?? list.tag).toMatch(/number|ol/);
       expect(list.children.map((c) => c.type)).toEqual(['listitem', 'listitem']);
     });
@@ -348,10 +353,10 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
       const result = convert(
         '<ul class="list-check"><li aria-checked="false" class="list-item-checkbox" role="checkbox" value="1"><input type="checkbox" /><label>One</label></li></ul>',
       );
-      const list = result.root.children.find((n) => n.type === 'list') as {
+      const list = asNode<{
         listType?: string;
         children: Array<{ checked?: boolean }>;
-      };
+      }>(result.root.children.find((n) => n.type === 'list'));
       expect(list.listType).toBe('check');
       expect(list.children[0]?.checked).toBe(false);
     });
@@ -361,8 +366,9 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
         '<ul class="list-bullet"><li value="1">One</li></ul>',
       );
       expect(
-        (result.root.children.find((n) => n.type === 'list') as { listType?: string })
-          .listType,
+        asNode<{ listType?: string }>(
+          result.root.children.find((n) => n.type === 'list'),
+        ).listType,
       ).toBe('bullet');
     });
 
@@ -370,7 +376,7 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
       const result = convert('<p>Hello</p>');
       expect(result.root.direction).toBe('ltr');
       expect(
-        (result.root.children[0] as { direction?: string | null }).direction,
+        asNode<{ direction?: string | null }>(result.root.children[0]).direction,
       ).toBe('ltr');
     });
 
@@ -378,15 +384,19 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
       const result = convert(
         '<p><a href="https://example.com">link</a></p>',
       );
-      const paragraph = result.root.children[0] as {
-        children: Array<{ type: string; version?: number; id?: string; fields?: { url?: string } }>;
-      };
+      const paragraph = asNode<{
+        children: Array<{
+          type: string;
+          version?: number;
+          id?: string;
+          url?: string;
+          fields?: { url?: string };
+        }>;
+      }>(result.root.children[0]);
       const link = paragraph.children.find((c) => c.type === 'link');
       expect(link?.version).toBe(3);
       expect(typeof link?.id).toBe('string');
-      expect(link?.fields?.url ?? (link as { url?: string }).url).toBe(
-        'https://example.com',
-      );
+      expect(link?.fields?.url ?? link?.url).toBe('https://example.com');
     });
 
     it('converts a horizontal rule', () => {
@@ -397,7 +407,7 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
     it('keeps nested bold and italic', () => {
       const result = convert('<p><strong><em>both</em></strong></p>');
       const texts = (
-        result.root.children[0] as { children: Array<{ text: string; format: number }> }
+        asNode<TextParent>(result.root.children[0])
       ).children.filter((c) => c.text);
       expect(texts[0]?.text).toBe('both');
       expect(texts[0]?.format & 1).toBeTruthy();
@@ -409,7 +419,7 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
         '<p><span style="text-decoration: underline;"><span style="text-decoration: line-through;">both</span></span></p>',
       );
       const texts = (
-        result.root.children[0] as { children: Array<{ text: string; format: number }> }
+        asNode<TextParent>(result.root.children[0])
       ).children.filter((c) => c.text);
       expect(texts[0]?.text).toBe('both');
       expect(texts[0]?.format & 8).toBeTruthy();
@@ -475,9 +485,9 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
           ],
         },
       );
-      const blocks = result.root.children.filter((n) => n.type === 'block') as Array<{
-        fields: { id: string };
-      }>;
+      const blocks = asNode<Array<{ fields: { id: string } }>>(
+        result.root.children.filter((n) => n.type === 'block'),
+      );
       expect(blocks.map((b) => b.fields.id)).toEqual(['1', '2']);
     });
 
@@ -505,11 +515,11 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
         for (const node of nodes) {
           types.add(node.type);
           if (Array.isArray(node.children)) {
-            walk(node.children as Array<{ type: string; children?: unknown[] }>);
+            walk(asNode<Array<{ type: string; children?: unknown[] }>>(node.children));
           }
         }
       };
-      walk(result.root.children as Array<{ type: string; children?: unknown[] }>);
+      walk(asNode<Array<{ type: string; children?: unknown[] }>>(result.root.children));
       expect(types.has('pcs-block')).toBe(false);
       expect(types.has('table-row')).toBe(false);
       expect(types.has('table-cell')).toBe(false);
@@ -522,18 +532,17 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
   });
 
   describe('round-trip via convertLexicalToHtml Crowdin markers', () => {
-    const lexicalRoot = (
-      children: SerializedEditorState['root']['children'],
-    ): SerializedEditorState => ({
-      root: {
-        type: 'root',
-        format: '',
-        indent: 0,
-        direction: 'ltr',
-        version: 1,
-        children,
-      },
-    });
+    const lexicalRoot = (children: unknown[]): SerializedEditorState =>
+      ({
+        root: {
+          type: 'root',
+          format: '',
+          indent: 0,
+          direction: 'ltr',
+          version: 1,
+          children,
+        },
+      }) as unknown as SerializedEditorState;
 
     it('round-trips an upload node through Crowdin span markers', async () => {
       const html = await convertLexicalToHtml(
@@ -546,7 +555,7 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
             relationTo: 'media',
             value: 'media-99',
             fields: {},
-          } as SerializedEditorState['root']['children'][number],
+          },
         ]),
         editorConfig,
       );
@@ -569,7 +578,7 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
             format: '',
             relationTo: 'pages',
             value: 'page-2',
-          } as SerializedEditorState['root']['children'][number],
+          },
         ]),
         editorConfig,
       );
@@ -593,7 +602,7 @@ describe('fn: convertHtmlToLexical (Payload convertHTMLToLexical, no Slate hop)'
             version: 2,
             format: '',
             fields: { id: 'b1', blockType: 'custom', name: 'Hello' },
-          } as SerializedEditorState['root']['children'][number],
+          },
         ]),
         editorConfig,
       );

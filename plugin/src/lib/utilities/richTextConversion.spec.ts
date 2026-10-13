@@ -12,7 +12,7 @@ describe('Rich Text Conversion', () => {
   it('should convert HTML to Lexical format', () => {
     const htmlString = '<p>Hello, <strong>world</strong>!</p>';
     const result = convertHtmlToLexical(htmlString, { editorConfig });
-    const paragraph = result.root.children[0] as {
+    const paragraph = result.root.children[0] as unknown as {
       type: string;
       children: Array<{ text: string; format: number }>;
     };
@@ -45,7 +45,7 @@ describe('Rich Text Conversion', () => {
     const htmlString =
       '<img data-lexical-upload-id="123" data-lexical-upload-relation-to="media" src="/file.jpg" alt="" />';
     const result = convertHtmlToLexical(htmlString, { editorConfig });
-    const upload = result.root.children.find((n) => n.type === 'upload') as {
+    const upload = result.root.children.find((n) => n.type === 'upload') as unknown as {
       version: number;
       id?: string;
     };
