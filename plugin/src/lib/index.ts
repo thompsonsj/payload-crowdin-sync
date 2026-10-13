@@ -18,7 +18,7 @@ import { backfillArticleDirectoryPolymorphicLinks } from './migrations/backfillA
 // translations api
 import { payloadCrowdinSyncTranslationsApi } from './api/translations';
 import { getLocalizedFields } from './utilities';
-import * as document from './document';
+import * as document from 'payload-document';
 import {
   extractLexicalBlockContent,
   getLexicalBlockFields,

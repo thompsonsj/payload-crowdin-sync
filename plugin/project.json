@@ -3,7 +3,8 @@
   "$schema": "../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "plugin/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:plugin"],
+  "implicitDependencies": ["document"],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",

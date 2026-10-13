@@ -191,9 +191,9 @@ A comment in the source already flags this: `"find a better way to do this - blo
 
 **Pass 6 — extract Payload document walk**
 
-- Vendor-neutral field walk lives in `plugin/src/lib/document/`: `traverseFields`, `getLocalizedFields` (`include` predicate, no Crowdin `json`/`html` type), `restoreOrder`, `findField`, `isLocalizedField` (Payload localization only). Crowdin exclude rules (`custom.crowdinSync.disable` / admin description) stay on the utilities wrappers.
-- Crowdin builders (`buildCrowdinJsonObject`, `buildCrowdinHtmlObject`, `buildPayloadUpdateObject`) stay in `utilities/` and call the document walk. `getLocalizedFields({ type: 'json' | 'html' })` remains as a Crowdin convenience that maps to `include`.
-- **Tests:** `document/*.spec.ts` were committed first (failing). Existing utilities specs are the regression suite.
+- Vendor-neutral field walk is the `payload-document` package (`document/`): `traverseFields`, `getLocalizedFields` (`include` predicate, no Crowdin `json`/`html` type), `restoreOrder`, `findField`, `isLocalizedField` (Payload localization only). Crowdin exclude rules (`custom.crowdinSync.disable` / admin description) stay on the plugin utilities wrappers.
+- Crowdin builders (`buildCrowdinJsonObject`, `buildCrowdinHtmlObject`, `buildPayloadUpdateObject`) stay in `plugin/src/lib/utilities/` and call `payload-document`. `getLocalizedFields({ type: 'json' | 'html' })` remains as a Crowdin convenience that maps to `include`.
+- **Tests:** `document/src/*.spec.ts` were committed first (failing). Existing plugin utilities specs are the regression suite.
 
 ---
 

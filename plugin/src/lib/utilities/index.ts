@@ -12,7 +12,7 @@ import {
   restoreOrder,
   traverseFields,
   type IsLocalized,
-} from '../document';
+} from 'payload-document';
 
 export {
   containsNestedFields,
@@ -22,9 +22,9 @@ export {
   getFieldSlugs,
   restoreOrder,
   traverseFields,
-} from '../document';
-export type { FieldTraversalVisitor } from '../document';
-export type { IsLocalized } from '../document';
+} from 'payload-document';
+export type { FieldTraversalVisitor } from 'payload-document';
+export type { IsLocalized } from 'payload-document';
 
 import { merge, omitBy } from 'es-toolkit';
 import { get, isEmpty, map } from 'es-toolkit/compat';

@@ -1,5 +1,5 @@
 export {
   getBlockFields,
   traverseFields,
-} from '../document';
-export type { FieldTraversalVisitor } from '../document';
+} from 'payload-document';
+export type { FieldTraversalVisitor } from 'payload-document';

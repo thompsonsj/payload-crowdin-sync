@@ -26,7 +26,8 @@
     "baseUrl": ".",
     "paths": {
       "@payload-crowdin-sync-nx/dev": ["dev/src/index.ts"],
-      "payload-crowdin-sync": ["plugin/src/index.ts"]
+      "payload-crowdin-sync": ["plugin/src/index.ts"],
+      "payload-document": ["document/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

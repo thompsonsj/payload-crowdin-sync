@@ -6,6 +6,11 @@
       - any-glob-to-any-file:
           - plugin/src/lib/**
 
+"area: document":
+  - changed-files:
+      - any-glob-to-any-file:
+          - document/**
+
 "area: test-installation":
   - changed-files:
       - any-glob-to-any-file:
