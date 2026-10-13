@@ -11,6 +11,7 @@ import nock from 'nock'
 import { pluginConfig } from '../../helpers/plugin-config'
 import { CrowdinArticleDirectory, Policy } from '../../../payload-types'
 import { initPayloadInt } from '../../helpers/initPayloadInt'
+import { omitLexicalGeneratedIds } from '../../helpers/omit-lexical-generated-ids'
 import type { Payload } from 'payload'
 let payload: Payload
 const pluginOptions = pluginConfig()
@@ -230,6 +231,6 @@ describe('Collection: Policies: Lexical Relationship', () => {
       id: `${policy.id}`,
       locale: 'fr_FR',
     })
-    expect(result['content']).toMatchSnapshot()
+    expect(omitLexicalGeneratedIds(result['content'])).toMatchSnapshot()
   })
 })

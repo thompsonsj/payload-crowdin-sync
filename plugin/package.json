@@ -26,6 +26,7 @@
     "url": "https://github.com/thompsonsj/payload-crowdin-sync/issues"
   },
   "dependencies": {
+    "jsdom": "^29.1.1",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {
@@ -38,7 +39,7 @@
   },
   "type": "module",
   "engines": {
-    "node": "^18.20.2 || >=20.9.0"
+    "node": "^20.19.0 || ^22.13.0 || >=24.0.0"
   },
   "volta": {
     "node": "23.5.0"

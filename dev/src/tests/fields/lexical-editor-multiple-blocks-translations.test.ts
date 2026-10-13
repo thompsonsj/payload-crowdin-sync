@@ -15,6 +15,7 @@ import {
 } from './lexical-editor-multiple-blocks-shared.js'
 import nock from 'nock'
 import { assertCrowdinNocksDone, cleanCrowdinNocks } from '../helpers/crowdin-nock.js'
+import { omitLexicalGeneratedIds } from '../helpers/omit-lexical-generated-ids'
 
 let payload: Payload
 let mediaID: string
@@ -308,7 +309,9 @@ describe('Lexical editor with multiple blocks - Translations', () => {
       depth: 0,
     })
     expect(
-      injectImageRelationship(structuredClone(result['content']), SNAPSHOT_MEDIA_ID),
+      omitLexicalGeneratedIds(
+        injectImageRelationship(structuredClone(result['content']), SNAPSHOT_MEDIA_ID),
+      ),
     ).toMatchInlineSnapshot(`
       {
         "root": {
@@ -476,17 +479,7 @@ describe('Lexical editor with multiple blocks - Translations', () => {
             {
               "children": [
                 {
-                  "children": [
-                    {
-                      "detail": 0,
-                      "format": 0,
-                      "mode": "normal",
-                      "style": "",
-                      "text": "",
-                      "type": "text",
-                      "version": 1,
-                    },
-                  ],
+                  "children": [],
                   "direction": "ltr",
                   "format": "",
                   "indent": 0,

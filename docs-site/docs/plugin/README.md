@@ -22,6 +22,7 @@ Table of contents:
 Requirements:
 
 - Payload 3
+- Node `^20.19.0 || ^22.13.0 || >=24` (jsdom 29, used to load Lexical HTML)
 - A Crowdin project and a [personal access token](https://support.crowdin.com/account-settings/#personal-access-tokens) with access to it
 
 ```bash

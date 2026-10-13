@@ -1,223 +1,325 @@
 import { Policy } from '@/payload-types'
 
+/** Expected Lexical JSON after convertHTMLToLexical (no Slate hop). */
 export const fixture = {
-  root: {
-    type: 'root',
-    children: [
+  "root": {
+    "children": [
       {
-        type: 'table',
-        format: '',
-        direction: null,
-        version: 1,
-        indent: 0,
-        children: [
+        "children": [
           {
-            type: 'tablerow',
-            format: '',
-            direction: null,
-            version: 1,
-            indent: 0,
-            children: [
+            "children": [
               {
-                type: 'tablecell',
-                headerState: 1,
-                format: '',
-                direction: null,
-                version: 1,
-                indent: 0,
-                children: [
+                "children": [
                   {
-                    type: 'text',
-                    detail: 0,
-                    format: 0,
-                    mode: 'normal',
-                    style: '',
-                    text: "Texte pour la cellule d'en-tête 1",
-                    version: 1,
-                  },
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Texte pour la cellule d'en-tête 1",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ],
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "paragraph",
+                    "version": 1,
+                    "textFormat": 0,
+                    "textStyle": ""
+                  }
                 ],
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "type": "tablecell",
+                "version": 1,
+                "backgroundColor": null,
+                "colSpan": 1,
+                "headerState": 3,
+                "rowSpan": 1
               },
               {
-                type: 'tablecell',
-                headerState: 1,
-                format: '',
-                direction: null,
-                version: 1,
-                indent: 0,
-                children: [
+                "children": [
                   {
-                    type: 'text',
-                    detail: 0,
-                    format: 0,
-                    mode: 'normal',
-                    style: '',
-                    text: "Texte pour la cellule d'en-tête 2",
-                    version: 1,
-                  },
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Texte pour la cellule d'en-tête 2",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ],
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "paragraph",
+                    "version": 1,
+                    "textFormat": 0,
+                    "textStyle": ""
+                  }
                 ],
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "type": "tablecell",
+                "version": 1,
+                "backgroundColor": null,
+                "colSpan": 1,
+                "headerState": 1,
+                "rowSpan": 1
               },
               {
-                type: 'tablecell',
-                headerState: 1,
-                format: '',
-                direction: null,
-                version: 1,
-                indent: 0,
-                children: [
+                "children": [
                   {
-                    type: 'text',
-                    detail: 0,
-                    format: 0,
-                    mode: 'normal',
-                    style: '',
-                    text: "Texte pour la cellule d'en-tête 3",
-                    version: 1,
-                  },
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Texte pour la cellule d'en-tête 3",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ],
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "paragraph",
+                    "version": 1,
+                    "textFormat": 0,
+                    "textStyle": ""
+                  }
                 ],
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "type": "tablecell",
+                "version": 1,
+                "backgroundColor": null,
+                "colSpan": 1,
+                "headerState": 1,
+                "rowSpan": 1
               },
               {
-                type: 'tablecell',
-                headerState: 1,
-                format: '',
-                direction: null,
-                version: 1,
-                indent: 0,
-                children: [
+                "children": [
                   {
-                    type: 'text',
-                    detail: 0,
-                    format: 0,
-                    mode: 'normal',
-                    style: '',
-                    text: "Texte pour la cellule d'en-tête 4",
-                    version: 1,
-                  },
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Texte pour la cellule d'en-tête 4",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ],
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "paragraph",
+                    "version": 1,
+                    "textFormat": 0,
+                    "textStyle": ""
+                  }
                 ],
-              },
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "type": "tablecell",
+                "version": 1,
+                "backgroundColor": null,
+                "colSpan": 1,
+                "headerState": 1,
+                "rowSpan": 1
+              }
             ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "tablerow",
+            "version": 1
           },
           {
-            type: 'tablerow',
-            format: '',
-            direction: null,
-            version: 1,
-            indent: 0,
-            children: [
+            "children": [
               {
-                type: 'tablecell',
-                headerState: 0,
-                format: '',
-                direction: null,
-                version: 1,
-                indent: 0,
-                children: [
+                "children": [
                   {
-                    type: 'text',
-                    detail: 0,
-                    format: 0,
-                    mode: 'normal',
-                    style: '',
-                    text: 'Texte de la cellule du tableau, ligne 1, col 1',
-                    version: 1,
-                  },
-                ],
-              },
-              {
-                type: 'tablecell',
-                headerState: 0,
-                format: '',
-                direction: null,
-                version: 1,
-                indent: 0,
-                children: [
-                  {
-                    type: 'text',
-                    detail: 0,
-                    format: 0,
-                    mode: 'normal',
-                    style: '',
-                    text: 'Texte de la cellule du tableau, ligne 1, col 2',
-                    version: 1,
-                  },
-                ],
-              },
-              {
-                type: 'tablecell',
-                headerState: 0,
-                format: '',
-                direction: null,
-                version: 1,
-                indent: 0,
-                children: [
-                  {
-                    type: 'text',
-                    detail: 0,
-                    format: 0,
-                    mode: 'normal',
-                    style: '',
-                    text: 'Texte de la cellule du tableau, ligne 1, col 3',
-                    version: 1,
-                  },
-                ],
-              },
-              {
-                type: 'tablecell',
-                headerState: 0,
-                format: '',
-                direction: null,
-                version: 1,
-                indent: 0,
-                children: [
-                  {
-                    type: 'paragraph',
-                    children: [
+                    "children": [
                       {
-                        type: 'text',
-                        detail: 0,
-                        format: 0,
-                        mode: 'normal',
-                        style: '',
-                        text: 'Texte du paragraphe 1 pour la ligne 1 de la cellule du tableau, colonne 4',
-                        version: 1,
-                      },
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Texte de la cellule du tableau, ligne 1, col 1",
+                        "type": "text",
+                        "version": 1
+                      }
                     ],
-                    direction: 'ltr',
-                    format: '',
-                    indent: 0,
-                    textFormat: 0,
-                    textStyle: '',
-                    version: 1,
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "paragraph",
+                    "version": 1,
+                    "textFormat": 0,
+                    "textStyle": ""
+                  }
+                ],
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "type": "tablecell",
+                "version": 1,
+                "backgroundColor": null,
+                "colSpan": 1,
+                "headerState": 0,
+                "rowSpan": 1
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Texte de la cellule du tableau, ligne 1, col 2",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ],
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "paragraph",
+                    "version": 1,
+                    "textFormat": 0,
+                    "textStyle": ""
+                  }
+                ],
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "type": "tablecell",
+                "version": 1,
+                "backgroundColor": null,
+                "colSpan": 1,
+                "headerState": 0,
+                "rowSpan": 1
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Texte de la cellule du tableau, ligne 1, col 3",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ],
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "paragraph",
+                    "version": 1,
+                    "textFormat": 0,
+                    "textStyle": ""
+                  }
+                ],
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "type": "tablecell",
+                "version": 1,
+                "backgroundColor": null,
+                "colSpan": 1,
+                "headerState": 0,
+                "rowSpan": 1
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Texte du paragraphe 1 pour la ligne 1 de la cellule du tableau, colonne 4",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ],
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "paragraph",
+                    "version": 1,
+                    "textFormat": 0,
+                    "textStyle": ""
                   },
                   {
-                    type: 'paragraph',
-                    children: [
+                    "children": [
                       {
-                        type: 'text',
-                        detail: 0,
-                        format: 0,
-                        mode: 'normal',
-                        style: '',
-                        text: 'Texte du paragraphe 2 pour la ligne 1 de la cellule du tableau, colonne 4',
-                        version: 1,
-                      },
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Texte du paragraphe 2 pour la ligne 1 de la cellule du tableau, colonne 4",
+                        "type": "text",
+                        "version": 1
+                      }
                     ],
-                    direction: 'ltr',
-                    format: '',
-                    indent: 0,
-                    textFormat: 0,
-                    textStyle: '',
-                    version: 1,
-                  },
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "paragraph",
+                    "version": 1,
+                    "textFormat": 0,
+                    "textStyle": ""
+                  }
                 ],
-              },
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "type": "tablecell",
+                "version": 1,
+                "backgroundColor": null,
+                "colSpan": 1,
+                "headerState": 0,
+                "rowSpan": 1
+              }
             ],
-          },
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "tablerow",
+            "version": 1
+          }
         ],
-      },
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "table",
+        "version": 1
+      }
     ],
-    direction: 'ltr',
-    format: '',
-    indent: 0,
-    version: 1,
-  },
+    "direction": "ltr",
+    "format": "",
+    "indent": 0,
+    "type": "root",
+    "version": 1
+  }
 } as Policy['content']

@@ -32,6 +32,7 @@ const getRelationshipId = (relationship?: string | CrowdinArticleDirectory | nul
 }
 
 import { initPayloadInt } from '../helpers/initPayloadInt'
+import { omitLexicalGeneratedIds } from '../helpers/omit-lexical-generated-ids'
 import type { Payload } from 'payload'
 
 let payload: Payload
@@ -1153,7 +1154,7 @@ describe('Lexical editor with multiple blocks', () => {
       id: `${doc.id}`,
       locale: 'fr_FR',
     })
-    expect(result['items']).toEqual([
+    expect(omitLexicalGeneratedIds(result['items'])).toEqual([
       {
         block: [
           {
@@ -1362,7 +1363,6 @@ describe('Lexical editor with multiple blocks', () => {
                                   ],
                                   direction: 'ltr',
                                   fields: {
-                                    doc: null,
                                     linkType: 'custom',
                                     newTab: false,
                                     url: 'https://payloadcms.com/docs/configuration/localization#field-by-field-localization',
@@ -1370,7 +1370,7 @@ describe('Lexical editor with multiple blocks', () => {
                                   format: '',
                                   indent: 0,
                                   type: 'link',
-                                  version: 2,
+                                  version: 3,
                                 },
                                 {
                                   detail: 0,
