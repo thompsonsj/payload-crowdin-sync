@@ -41,7 +41,7 @@ Tests use [Vitest](https://vitest.dev). In the root of the repository:
 - `nx test plugin` runs unit tests only.
 - `nx test dev` runs integration tests against the Payload install.
 
-Unit tests (`*.spec.ts`) sit next to the code they test in `plugin/src`. Many of them cover the recursive functions that find and rebuild localized fields.
+Unit tests (`*.spec.ts`) sit next to the code they test in `plugin/src`. Payload field walks (`getLocalizedFields`, `traverseFields`, `restoreOrder`) live in `plugin/src/lib/document/`. Crowdin file builders stay in `plugin/src/lib/utilities/`.
 
 Integration tests (`*.test.ts`) are in `dev/src/tests`. They use Payload's [Local API](https://payloadcms.com/docs/local-api/overview) against a real Payload install with an in-memory MongoDB database. Calls to the Crowdin API are intercepted with [`nock`](https://github.com/nock/nock), so tests check which requests the plugin makes without needing a Crowdin account.
 

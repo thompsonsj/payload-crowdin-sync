@@ -189,6 +189,12 @@ A comment in the source already flags this: `"find a better way to do this - blo
 - **`convertTabs`:** `flattenContainerFields` passes the caller's `isLocalized` into `convertTabs`, so unnamed tab fields are marked `localized: true` with the same predicate as collapsible and row flattening. Covered by `getLocalizedFields.structure.spec.ts` and `getLocalizedFieldsRelocalized.spec.ts`.
 - **Nested `id` / `blockType`:** `restoreOrder` (used by `buildPayloadUpdateObject` when a source `document` is passed) already restores nested blocks. That is pinned in the `buildPayloadUpdateObject` blocks tests. The unused top-level-only `restoreIdAndBlockType` helper on the translations API was removed.
 
+**Pass 6 — extract Payload document walk**
+
+- Vendor-neutral field walk lives in `plugin/src/lib/document/`: `traverseFields`, `getLocalizedFields` (`include` predicate, no Crowdin `json`/`html` type), `restoreOrder`, `findField`, `isLocalizedField` (Payload localization only). Crowdin exclude rules (`custom.crowdinSync.disable` / admin description) stay on the utilities wrappers.
+- Crowdin builders (`buildCrowdinJsonObject`, `buildCrowdinHtmlObject`, `buildPayloadUpdateObject`) stay in `utilities/` and call the document walk. `getLocalizedFields({ type: 'json' | 'html' })` remains as a Crowdin convenience that maps to `include`.
+- **Tests:** `document/*.spec.ts` were committed first (failing). Existing utilities specs are the regression suite.
+
 ---
 
 ## Notes on approach
