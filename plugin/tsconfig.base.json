@@ -5,6 +5,11 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "jsx": "preserve",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "payload-localized-fields": ["../document/src/index.ts"]
+    }
   }
 }

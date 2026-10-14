@@ -1,373 +1,34 @@
-import type {
-  ArrayField,
-  Block,
-  BlocksField,
-  CollapsibleField,
-  CollectionConfig,
-  Field,
-  GlobalConfig,
-  GroupField,
-  RowField
-} from 'payload';
-import {
-  fieldIsArrayType,
-  fieldIsBlockType,
-  fieldIsGroupType,
-  fieldIsID,
-  fieldShouldBeLocalized,
-  tabHasName,
-} from 'payload/shared';
+import type { CollectionConfig, Field, GlobalConfig } from 'payload';
 import deepEqual from 'deep-equal';
 import { FieldWithName, type CrowdinHtmlObject } from '../types';
-import { getBlockFields, traverseFields } from './traverseFields';
+import {
+  containsLocalizedFields as getDocumentContainsLocalizedFields,
+  getBlockFields,
+  getCollapsibleLocalizedFields as getDocumentCollapsibleLocalizedFields,
+  getLocalizedFields as getDocumentLocalizedFields,
+  getRowLocalizedFields as getDocumentRowLocalizedFields,
+  isLocalizedField as isDocumentLocalizedField,
+  reLocalizeField as isDocumentReLocalizeField,
+  restoreOrder,
+  traverseFields,
+  type IsLocalized,
+} from 'payload-localized-fields';
 
-export { getBlockFields, traverseFields };
-export type { FieldTraversalVisitor } from './traverseFields';
+export {
+  containsNestedFields,
+  convertTabs,
+  findField,
+  getBlockFields,
+  getFieldSlugs,
+  restoreOrder,
+  traverseFields,
+} from 'payload-localized-fields';
+export type { FieldTraversalVisitor } from 'payload-localized-fields';
+export type { IsLocalized } from 'payload-localized-fields';
 
 import { merge, omitBy } from 'es-toolkit';
 import { get, isEmpty, map } from 'es-toolkit/compat';
 import dot from 'dot-object';
-
-const localizedFieldTypes = ['richText', 'text', 'textarea'];
-
-type IsLocalized = (field: Field, localizedParent?: boolean) => boolean;
-
-export const containsNestedFields = (field: Field): boolean =>
-  fieldIsGroupType(field) || fieldIsArrayType(field) || fieldIsBlockType(field);
-
-const isCrowdinNestedDataField = (
-  field: Field,
-): field is GroupField | ArrayField =>
-  fieldIsGroupType(field) || fieldIsArrayType(field);
-
-export const findField = ({
-  dotNotation,
-  fields,
-  firstIteration = true,
-  filterLocalizedFields = true,
-}: {
-  dotNotation: string;
-  fields: Field[];
-  firstIteration?: boolean;
-  filterLocalizedFields?: boolean;
-}): Field | undefined => {
-  const localizedFields = getLocalizedFields({
-    fields,
-    isLocalized:
-      firstIteration && filterLocalizedFields ? undefined : (field) => !!field,
-  });
-  const keys = dotNotation.split(`.`);
-  if (keys.length === 0) {
-    return undefined;
-  }
-  for (const field of localizedFields) {
-    if (fieldIsGroupType(field) && keys.length > 1) {
-      const dotNotation = keys.slice(1).join(`.`);
-      const search = findField({
-        dotNotation,
-        fields: field.fields,
-        firstIteration: false,
-      });
-      if (search) {
-        return search;
-      }
-    }
-    if (fieldIsArrayType(field) && keys.length > 2) {
-      const dotNotation = keys.slice(2).join(`.`);
-      const search = findField({
-        dotNotation,
-        fields: field.fields,
-        firstIteration: false,
-      });
-      if (search) {
-        return search;
-      }
-    }
-    if (fieldIsBlockType(field) && keys.length > 3) {
-      const dotNotation = keys.slice(3).join(`.`);
-      const blockType = keys[2];
-      // find the block definition
-      const block = field.blocks.find(
-        (field: Block) => field.slug === blockType,
-      );
-      if (block) {
-        const search = findField({
-          dotNotation,
-          fields: block.fields,
-          firstIteration: false,
-        });
-        if (search) {
-          return search;
-        }
-      }
-    }
-    if (field.name === keys[0]) {
-      return field;
-    }
-  }
-  return undefined;
-};
-
-interface LocalizedFieldsOptions {
-  type?: 'json' | 'html';
-  localizedParent: boolean;
-  isLocalized: IsLocalized;
-}
-
-const layoutFieldTypes = ['collapsible', 'tabs', 'row'];
-
-/**
- * Group, array and blocks fields are kept here and dropped later by
- * `recurseNestedFields` if they contain no fields of the requested type.
- */
-const filterByType = (field: Field, type?: 'json' | 'html') =>
-  containsNestedFields(field) ||
-  !type ||
-  fieldCrowdinFileType(field as FieldWithName) === type;
-
-/**
- * Reduce a group, array or blocks field to its localized fields, or return
- * `undefined` if none remain. Blocks keep only their `slug` and `fields`.
- */
-const recurseNestedFields = (
-  field: Field,
-  options: LocalizedFieldsOptions,
-): Field | undefined => {
-  const nestedOptions = {
-    ...options,
-    localizedParent: options.localizedParent || options.isLocalized(field),
-  };
-  if (isCrowdinNestedDataField(field)) {
-    const fields = getLocalizedFields({
-      ...nestedOptions,
-      fields: field.fields,
-    });
-    return fields.length > 0 ? { ...field, fields } : undefined;
-  }
-  if (fieldIsBlockType(field)) {
-    const blocks = field.blocks.flatMap((block: Block) => {
-      const fields = getLocalizedFields({
-        ...nestedOptions,
-        fields: block.fields,
-      });
-      return fields.length > 0 ? [{ slug: block.slug, fields }] : [];
-    });
-    return blocks.length > 0 ? { ...field, blocks } : undefined;
-  }
-  return field;
-};
-
-/**
- * Localized fields inside tabs, collapsible and row fields, in that order.
- * Named tabs become groups.
- */
-const flattenContainerFields = (
-  fields: Field[],
-  options: LocalizedFieldsOptions,
-): Field[] => [
-  ...convertTabs({
-    fields,
-    localized: options.localizedParent,
-    isLocalized: options.isLocalized,
-    callback: (tabFields) =>
-      getLocalizedFields({ ...options, fields: tabFields }),
-  }),
-  ...getCollapsibleLocalizedFields({ ...options, fields }),
-  ...getRowLocalizedFields({ ...options, fields }),
-];
-
-export const getLocalizedFields = ({
-  fields,
-  type,
-  localizedParent = false,
-  isLocalized = isLocalizedField,
-}: {
-  fields: Field[];
-  type?: 'json' | 'html';
-  localizedParent?: boolean;
-  isLocalized?: IsLocalized;
-}): any[] => {
-  const options = { type, localizedParent, isLocalized };
-  return [
-    ...fields
-      .filter(
-        (field) =>
-          !layoutFieldTypes.includes(field.type) &&
-          (isLocalized(field, localizedParent) ||
-            containsNestedFields(field)) &&
-          filterByType(field, type),
-      )
-      .flatMap((field) => recurseNestedFields(field, options) ?? []),
-    ...flattenContainerFields(fields, options),
-  ];
-};
-
-export const getCollapsibleLocalizedFields = ({
-  fields,
-  type,
-  localizedParent = false,
-  isLocalized = isLocalizedField,
-}: {
-  fields: Field[];
-  type?: 'json' | 'html';
-  localizedParent?: boolean;
-  isLocalized?: IsLocalized;
-}): any[] =>
-  getLocalizedFieldsByType({
-    fields,
-    containerType: 'collapsible',
-    type,
-    localizedParent,
-    isLocalized,
-  });
-
-export const getRowLocalizedFields = ({
-  fields,
-  type,
-  localizedParent = false,
-  isLocalized = isLocalizedField,
-}: {
-  fields: Field[];
-  type?: 'json' | 'html';
-  localizedParent?: boolean;
-  isLocalized?: IsLocalized;
-}): any[] =>
-  getLocalizedFieldsByType({
-    fields,
-    containerType: 'row',
-    type,
-    localizedParent,
-    isLocalized,
-  });
-
-const getLocalizedFieldsByType = ({
-  fields,
-  containerType,
-  type,
-  localizedParent = false,
-  isLocalized = isLocalizedField,
-}: {
-  fields: Field[];
-  containerType: 'collapsible' | 'row';
-  type?: 'json' | 'html';
-  localizedParent?: boolean;
-  isLocalized?: IsLocalized;
-}): any[] =>
-  fields
-    .filter((field) => field.type === containerType)
-    .flatMap((field) =>
-      getLocalizedFields({
-        fields:
-          containerType === 'collapsible'
-            ? (field as CollapsibleField).fields
-            : (field as RowField).fields,
-        type,
-        localizedParent,
-        isLocalized,
-      }),
-    );
-
-export const convertTabs = ({
-  fields,
-  callback,
-  localized = false,
-  isLocalized = isLocalizedField,
-}: {
-  fields: Field[];
-  callback: (fields: Field[]) => Field[];
-  localized?: boolean;
-  isLocalized?: IsLocalized;
-}): Field[] =>
-  fields
-    .filter((field) => field.type === 'tabs')
-    .flatMap((field) => {
-      if (field.type === 'tabs') {
-        const flattenedFields = field.tabs.reduce((tabFields, tab) => {
-          return [
-            ...tabFields,
-            tabHasName(tab)
-              ? ({
-                  type: 'group',
-                  name: tab.name,
-                  ...(localized && {
-                    localized: true,
-                  }),
-                  fields: tab.fields,
-                } as Field)
-              : ({
-                  label: 'fromTab',
-                  type: 'collapsible',
-                  fields: (tab.fields || []).map((tabField) => {
-                    if (isLocalized(tabField, localized)) {
-                      return {
-                        ...tabField,
-                        localized: true,
-                      } as Field;
-                    }
-                    return tabField;
-                  }),
-                } as Field),
-          ];
-        }, [] as Field[]);
-        return callback(flattenedFields);
-      }
-      return field;
-    });
-
-export const getLocalizedRequiredFields = (
-  collection: CollectionConfig | GlobalConfig,
-  type?: 'json' | 'html',
-): any[] => {
-  const fields = getLocalizedFields({ fields: collection.fields, type });
-  return fields.filter((field) => field.required);
-};
-
-/**
- * Not yet compatible with nested fields - this means nested HTML
- * field translations cannot be synced from Crowdin.
- */
-export const getFieldSlugs = (fields: FieldWithName[]): string[] =>
-  fields
-    .filter(
-      (field: Field) => field.type === 'text' || field.type === 'richText',
-    )
-    .map((field: FieldWithName) => field.name);
-
-/**
- * Crowdin treats children as syncable when a localized group/array/blocks parent
- * sets localizedParent, even if the child lacks localized: true. Payload's
- * fieldShouldBeLocalized uses the opposite rule for DB locale inheritance.
- */
-const hasCrowdinLocalizationFlag = (
-  field: Field,
-  localizedParent = false,
-) =>
-  localizedParent ||
-  fieldShouldBeLocalized({ field, parentIsLocalized: localizedParent });
-
-/**
- * Is Localized Field
- *
- * Note that `id` should be excluded - it is a `text` field that is added by Payload CMS.
- * Note that `blockName` should be excluded - it is a `text` field that is added by Payload CMS and is not localized.
- */
-export const isLocalizedField = (field: Field, localizedParent = false) =>
-  hasCrowdinLocalizationFlag(field, localizedParent) &&
-  (localizedFieldTypes.includes(field.type) || containsNestedFields(field)) &&
-  !excludeBasedOnConfig(field) &&
-  !fieldIsID(field) &&
-  (field as FieldWithName).name !== 'blockName';
-
-/**
- * Re-localize Field
- *
- * Is Localized Field - for non-localized field collections. e.g.
- * fields within blocks nested in a localized Lexical rich text block.
- */
-export const reLocalizeField = (field: Field) =>
-  localizedFieldTypes.includes(field.type) &&
-  !excludeBasedOnConfig(field) &&
-  !fieldIsID(field);
 
 const excludeBasedOnConfig = (field: Field) => {
   const description = `${get(field, 'admin.description', '')}`;
@@ -381,21 +42,66 @@ const excludeBasedOnConfig = (field: Field) => {
   return false;
 };
 
-export const containsLocalizedFields = ({
-  fields,
-  type,
-  localizedParent,
-  isLocalized = isLocalizedField,
-}: {
+/**
+ * Crowdin's default localized-field check: Payload localization plus
+ * plugin exclude rules (admin description / custom.crowdinSync.disable).
+ */
+export const isLocalizedField = (field: Field, localizedParent = false) =>
+  isDocumentLocalizedField(field, localizedParent) &&
+  !excludeBasedOnConfig(field);
+
+export const reLocalizeField = (field: Field) =>
+  isDocumentReLocalizeField(field) && !excludeBasedOnConfig(field);
+
+export const fieldCrowdinFileType = (field: FieldWithName): 'json' | 'html' =>
+  field.type === 'richText' ? 'html' : 'json';
+
+const includeFromCrowdinType = (type?: 'json' | 'html') =>
+  type
+    ? (field: Field) => fieldCrowdinFileType(field as FieldWithName) === type
+    : undefined;
+
+type CrowdinLocalizedFieldsOptions = {
   fields: Field[];
   type?: 'json' | 'html';
+  include?: (field: Field) => boolean;
   localizedParent?: boolean;
   isLocalized?: IsLocalized;
-}): boolean => {
-  return !isEmpty(
-    getLocalizedFields({ fields, type, localizedParent, isLocalized }),
-  );
 };
+
+const crowdinLocalizedFieldOptions = ({
+  type,
+  include,
+  isLocalized,
+  ...rest
+}: CrowdinLocalizedFieldsOptions) => ({
+  ...rest,
+  include: include ?? includeFromCrowdinType(type),
+  isLocalized: isLocalized ?? isLocalizedField,
+});
+
+export const getLocalizedFields = (options: CrowdinLocalizedFieldsOptions) =>
+  getDocumentLocalizedFields(crowdinLocalizedFieldOptions(options));
+
+export const getCollapsibleLocalizedFields = (
+  options: CrowdinLocalizedFieldsOptions,
+) => getDocumentCollapsibleLocalizedFields(crowdinLocalizedFieldOptions(options));
+
+export const getRowLocalizedFields = (options: CrowdinLocalizedFieldsOptions) =>
+  getDocumentRowLocalizedFields(crowdinLocalizedFieldOptions(options));
+
+export const getLocalizedRequiredFields = (
+  collection: CollectionConfig | GlobalConfig,
+  type?: 'json' | 'html',
+): any[] =>
+  getLocalizedFields({ fields: collection.fields, type }).filter(
+    (field) => field.required,
+  );
+
+export const containsLocalizedFields = (
+  options: CrowdinLocalizedFieldsOptions,
+): boolean =>
+  getDocumentContainsLocalizedFields(crowdinLocalizedFieldOptions(options));
 
 export const fieldChanged = (
   previousValue: string | object | undefined,
@@ -410,9 +116,6 @@ export const fieldChanged = (
 
 export const removeLineBreaks = (string: string) =>
   string.replace(/(\r\n|\n|\r)/gm, '');
-
-export const fieldCrowdinFileType = (field: FieldWithName): 'json' | 'html' =>
-  field.type === 'richText' ? 'html' : 'json';
 
 /**
  * Skip empty values, and array/blocks fields that are not arrays.
@@ -436,95 +139,6 @@ const skipCrowdinBuilderField = (
     return true;
   }
   return false;
-};
-
-type RestoreOrderContext = {
-  updateDocument: { [key: string]: any };
-  document: { [key: string]: any };
-  response: { [key: string]: any };
-};
-
-const restoreCollectionItems = (
-  field: ArrayField | BlocksField,
-  ctx: RestoreOrderContext,
-  isBlocks: boolean,
-) => {
-  ctx.response[field.name] = ctx.document[field.name]
-    .map((item: any) => {
-      const arrayItem = ctx.updateDocument[field.name].find(
-        (updateItem: any) => {
-          return updateItem.id === item.id;
-        },
-      );
-      if (!arrayItem) {
-        return {
-          id: item.id,
-          ...(isBlocks && { blockType: item.blockType }),
-        };
-      }
-      const subFields = isBlocks
-        ? getBlockFields(field as BlocksField, item.blockType)
-        : (field as ArrayField).fields;
-      return {
-        ...restoreOrder({
-          updateDocument: arrayItem,
-          document: item,
-          fields: subFields,
-        }),
-        id: arrayItem.id,
-        ...(isBlocks && { blockType: arrayItem.blockType }),
-      };
-    })
-    .filter((item: any) => !isEmpty(item));
-};
-
-/**
- * Reorder blocks and array values based on the order of the original document.
- */
-export const restoreOrder = ({
-  updateDocument,
-  document,
-  fields,
-}: {
-  updateDocument: { [key: string]: any };
-  document: { [key: string]: any };
-  fields: Field[];
-}) => {
-  const response: { [key: string]: any } = {};
-  // it is possible the original document is empty (e.g. new document)
-  if (!document) {
-    return updateDocument;
-  }
-  // use getLocalizedFields with no type or localization check
-  // gets an appropriate updateDocument structure: flattens collapsible/tag fields
-  const filteredFields = getLocalizedFields({
-    fields,
-    isLocalized: (fields) => !!fields,
-  });
-  traverseFields(
-    filteredFields,
-    { updateDocument, document, response },
-    {
-      skip: (field, ctx) => !ctx.updateDocument || !ctx.updateDocument[field.name],
-      group(field, ctx) {
-        ctx.response[field.name] = restoreOrder({
-          updateDocument: ctx.updateDocument[field.name],
-          document: ctx.document[field.name],
-          fields: field.fields,
-        });
-      },
-      array(field, ctx) {
-        restoreCollectionItems(field, ctx, false);
-      },
-      blocks(field, ctx) {
-        restoreCollectionItems(field, ctx, true);
-      },
-      leaf(field, ctx) {
-        ctx.response[field.name] = ctx.updateDocument[field.name];
-      },
-    },
-  );
-  return response;
 };
 
 /**

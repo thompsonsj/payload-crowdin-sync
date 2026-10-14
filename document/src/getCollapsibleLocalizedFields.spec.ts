@@ -297,7 +297,7 @@ describe('fn: getCollapsibleLocalizedFields', () => {
     ]);
   });
 
-  it('getCollapsibleLocalizedFields filters by type when type is specified', () => {
+  it('getCollapsibleLocalizedFields filters leaves with include', () => {
     const global: GlobalConfig = {
       slug: 'global',
       fields: [
@@ -312,24 +312,22 @@ describe('fn: getCollapsibleLocalizedFields', () => {
       ],
     };
 
-    // type 'json' should include text but not richText
     const jsonFields = getCollapsibleLocalizedFields({
       fields: global.fields,
-      type: 'json',
+      include: (field) => field.type !== 'richText',
     });
     expect(jsonFields.map((f: any) => f.name)).toContain('textField');
     expect(jsonFields.map((f: any) => f.name)).not.toContain('richTextField');
 
-    // type 'html' should include richText but not text
     const htmlFields = getCollapsibleLocalizedFields({
       fields: global.fields,
-      type: 'html',
+      include: (field) => field.type === 'richText',
     });
     expect(htmlFields.map((f: any) => f.name)).toContain('richTextField');
     expect(htmlFields.map((f: any) => f.name)).not.toContain('textField');
   });
 
-  it('getRowLocalizedFields filters by type when type is specified', () => {
+  it('getRowLocalizedFields filters leaves with include', () => {
     const global: GlobalConfig = {
       slug: 'global',
       fields: [
@@ -343,10 +341,9 @@ describe('fn: getCollapsibleLocalizedFields', () => {
       ],
     };
 
-    // type 'json' should include text but not richText
     const jsonFields = getRowLocalizedFields({
       fields: global.fields,
-      type: 'json',
+      include: (field) => field.type !== 'richText',
     });
     expect(jsonFields.map((f: any) => f.name)).toContain('textField');
     expect(jsonFields.map((f: any) => f.name)).not.toContain('richTextField');

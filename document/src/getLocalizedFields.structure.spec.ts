@@ -79,7 +79,12 @@ describe('fn: getLocalizedFields output structure', () => {
         ],
       },
     ];
-    expect(getLocalizedFields({ fields, type: 'html' })).toEqual([
+    expect(
+      getLocalizedFields({
+        fields,
+        include: (field) => field.type === 'richText',
+      }),
+    ).toEqual([
       { name: 'htmlGroup', type: 'group', fields: [richText('body')] },
       {
         name: 'layout',

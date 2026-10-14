@@ -1,4 +1,4 @@
-import type { CollectionConfig, Field } from 'payload';
+import type { CollectionConfig } from 'payload';
 import {
   type SlateToHtmlConfig,
   type HtmlToSlateConfig,
@@ -82,7 +82,7 @@ export interface PluginOptions {
   legacyArticleDirectoryLookup?: boolean;
 }
 
-export type FieldWithName = Field & { name: string };
+export type { FieldWithName } from 'payload-localized-fields';
 
 // Type checkers
 export const isCrowdinArticleDirectory = (

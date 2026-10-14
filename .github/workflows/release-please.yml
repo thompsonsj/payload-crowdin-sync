@@ -15,6 +15,8 @@ jobs:
     outputs:
       plugin_release_created: ${{ steps.release.outputs['plugin--release_created'] }}
       plugin_version: ${{ steps.release.outputs['plugin--version'] }}
+      document_release_created: ${{ steps.release.outputs['document--release_created'] }}
+      document_version: ${{ steps.release.outputs['document--version'] }}
     steps:
       - uses: google-github-actions/release-please-action@e4dc86ba9405554aeba3c6bb2d169500e7d3b4ee # v4
         id: release
@@ -25,7 +27,7 @@ jobs:
 
   publish:
     needs: release-please
-    if: ${{ needs.release-please.outputs.plugin_release_created == 'true' }}
+    if: ${{ needs.release-please.outputs.plugin_release_created == 'true' || needs.release-please.outputs.document_release_created == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -38,7 +40,17 @@ jobs:
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
       - run: npm ci
-      - run: npx nx run plugin:build
-      - name: Publish to npm
+      - name: Build payload-localized-fields
+        if: ${{ needs.release-please.outputs.document_release_created == 'true' }}
+        run: npx nx run document:build
+      - name: Publish payload-localized-fields
+        if: ${{ needs.release-please.outputs.document_release_created == 'true' }}
+        working-directory: dist/document
+        run: npm publish --access public
+      - name: Build payload-crowdin-sync
+        if: ${{ needs.release-please.outputs.plugin_release_created == 'true' }}
+        run: npx nx run plugin:build
+      - name: Publish payload-crowdin-sync
+        if: ${{ needs.release-please.outputs.plugin_release_created == 'true' }}
         working-directory: dist/plugin
         run: npm publish --access public

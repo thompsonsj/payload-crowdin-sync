@@ -20,6 +20,26 @@ export default defineConfig({
     },
     projects: [
       {
+        resolve: {
+          alias: {
+            'payload-localized-fields': path.resolve('document/src/index.ts'),
+          },
+        },
+        test: {
+          name: 'document',
+          environment: 'node',
+          globals: true,
+          watch: false,
+          retry: process.env.CI ? 2 : 0,
+          include: ['document/src/**/*.{spec,test}.ts'],
+        },
+      },
+      {
+        resolve: {
+          alias: {
+            'payload-localized-fields': path.resolve('document/src/index.ts'),
+          },
+        },
         test: {
           name: 'plugin',
           environment: 'node',
@@ -58,6 +78,7 @@ export default defineConfig({
     alias: {
       // Ensure plugin source is used by integration tests, mirroring the Jest mapper.
       'payload-crowdin-sync': path.resolve('plugin/src/index.ts'),
+      'payload-localized-fields': path.resolve('document/src/index.ts'),
     },
   },
 })

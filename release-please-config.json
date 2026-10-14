@@ -16,6 +16,14 @@
       "draft": false,
       "prerelease": false
     },
+    "document": {
+      "changelog-path": "document/CHANGELOG.md",
+      "release-type": "node",
+      "bump-minor-pre-major": false,
+      "bump-patch-for-minor-pre-major": false,
+      "draft": false,
+      "prerelease": false
+    },
     "dev": {
       "changelog-path": "dev/CHANGELOG.md",
       "release-type": "node",

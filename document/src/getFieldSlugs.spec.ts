@@ -38,7 +38,7 @@ describe('Function: getFieldSlugs', () => {
     };
     const htmlFields = getLocalizedFields({
       fields: Policies.fields,
-      type: 'html',
+      include: (field) => field.type === 'richText',
     });
     expect(getFieldSlugs(htmlFields)).toEqual(['content']);
   });
@@ -135,7 +135,7 @@ describe('Function: getFieldSlugs', () => {
     };
     const htmlFields = getLocalizedFields({
       fields: Statistics.fields,
-      type: 'html',
+      include: (field) => field.type === 'richText',
     });
     expect(getFieldSlugs(htmlFields)).toEqual([]);
   });

@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "jsdom": "^29.1.1",
+    "payload-localized-fields": "0.1.0",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {
