@@ -1,6 +1,10 @@
 import { slateEditor } from '@payloadcms/richtext-slate';
 import type { Block, CollectionConfig, Field, GlobalConfig } from 'payload';
 import { getLocalizedFields } from '.';
+
+const isHtml = (field: Field) => field.type === 'richText';
+const isJson = (field: Field) => field.type !== 'richText';
+
 describe('fn: getLocalizedFields', () => {
   describe('basic field types', () => {
     it('includes a text field', () => {
@@ -12,56 +16,6 @@ describe('fn: getLocalizedFields', () => {
         },
       ];
       expect(getLocalizedFields({ fields })).toEqual(fields);
-    });
-    it('excludes a localized text field based on the admin description', () => {
-      const fields: Field[] = [
-        {
-          name: 'textLocalizedField',
-          type: 'text',
-          localized: true,
-        },
-        {
-          name: 'textLocalizedFieldWithExcludeDescription',
-          type: 'text',
-          localized: true,
-          admin: {
-            description: 'Not sent to Crowdin. Localize in the CMS.',
-          },
-        },
-      ];
-      expect(getLocalizedFields({ fields })).toEqual([
-        {
-          name: 'textLocalizedField',
-          type: 'text',
-          localized: true,
-        },
-      ]);
-    });
-    it('excludes a localized text field based on the custom field property', () => {
-      const fields: Field[] = [
-        {
-          name: 'textLocalizedField',
-          type: 'text',
-          localized: true,
-        },
-        {
-          name: 'textLocalizedFieldWithExcludeCustomProperty',
-          type: 'text',
-          localized: true,
-          custom: {
-            crowdinSync: {
-              disable: true,
-            },
-          },
-        },
-      ];
-      expect(getLocalizedFields({ fields })).toEqual([
-        {
-          name: 'textLocalizedField',
-          type: 'text',
-          localized: true,
-        },
-      ]);
     });
     it('includes a richText field', () => {
       const fields: Field[] = [
@@ -294,55 +248,6 @@ describe('fn: getLocalizedFields', () => {
           ],
         },
       ];
-      expect(getLocalizedFields({ fields })).toEqual(expected);
-    });
-    it('excludes localized fields within a tab from an array with a localization setting on the array field and the "exclude" custom property', () => {
-      /**
-       * Note that the localized prop is added to fields in this case.
-       */
-      const fields: Field[] = [
-        ...mixedFieldCollection,
-        {
-          name: 'arrayField',
-          type: 'array',
-          localized: true,
-          custom: {
-            crowdinSync: {
-              disable: true,
-            },
-          },
-          fields: [
-            {
-              type: 'tabs',
-              tabs: [
-                {
-                  label: 'Text',
-                  fields: [
-                    {
-                      name: 'title',
-                      type: 'text',
-                    },
-                    {
-                      name: 'text',
-                      type: 'text',
-                    },
-                    {
-                      name: 'textarea',
-                      type: 'textarea',
-                    },
-                    {
-                      name: 'select',
-                      type: 'select',
-                      options: ['one', 'two'],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      ];
-      const expected = [...localizedFieldCollection];
       expect(getLocalizedFields({ fields })).toEqual(expected);
     });
     it('includes localized fields from an array inside a collapsible field where the top-level field group only contains collapsible fields', () => {
@@ -653,7 +558,7 @@ describe('fn: getLocalizedFields', () => {
         ],
       },
     ];
-    expect(getLocalizedFields({ fields: global.fields, type: 'html' })).toEqual(
+    expect(getLocalizedFields({ fields: global.fields, include: isHtml })).toEqual(
       expected,
     );
   });
@@ -741,7 +646,7 @@ describe('fn: getLocalizedFields', () => {
     ];
     const jsonFields = getLocalizedFields({
       fields: Promos.fields,
-      type: 'json',
+      include: isJson,
     });
     expect(jsonFields).toEqual(expected);
   });

@@ -1,12 +1,54 @@
-import BookDemo from './tests/inline-snapshots/collections/BookDemo';
-import { findField } from '.';
 import type { Block, Field } from 'payload';
+import { findField } from '.';
+
+const fields: Field[] = [
+  {
+    name: 'hero',
+    type: 'group',
+    localized: true,
+    fields: [
+      {
+        name: 'title',
+        type: 'richText',
+        editor: () => undefined,
+      },
+    ],
+  },
+  {
+    name: 'form',
+    type: 'group',
+    localized: true,
+    fields: [
+      { type: 'text', name: 'title' },
+      {
+        type: 'group',
+        name: 'content',
+        localized: true,
+        fields: [
+          {
+            name: 'items',
+            type: 'array',
+            localized: true,
+            fields: [{ type: 'text', name: 'text' }],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'logoTitle',
+    type: 'text',
+    required: true,
+    localized: true,
+  },
+];
+
 describe('fn: findField', () => {
   it('finds a top-level field', () => {
     expect(
       findField({
         dotNotation: 'logoTitle',
-        fields: BookDemo.fields,
+        fields,
       }),
     ).toMatchInlineSnapshot(`
       {
@@ -21,7 +63,7 @@ describe('fn: findField', () => {
     expect(
       findField({
         dotNotation: 'form.title',
-        fields: BookDemo.fields,
+        fields,
       }),
     ).toMatchInlineSnapshot(`
       {
@@ -35,7 +77,7 @@ describe('fn: findField', () => {
     expect(
       findField({
         dotNotation: 'form.content.items.6474baaf73b854f4d464e38f.text',
-        fields: BookDemo.fields,
+        fields,
       }),
     ).toMatchInlineSnapshot(`
       {
@@ -76,7 +118,7 @@ describe('fn: findField', () => {
         },
       ],
     };
-    const fields: Field[] = [
+    const blockFields: Field[] = [
       {
         name: 'title',
         type: 'text',
@@ -98,7 +140,7 @@ describe('fn: findField', () => {
     expect(
       findField({
         dotNotation: 'blocksField.6474baaf73b854f4d464e38f.testBlockTwo.url',
-        fields,
+        fields: blockFields,
       }),
     ).toMatchInlineSnapshot(`
       {

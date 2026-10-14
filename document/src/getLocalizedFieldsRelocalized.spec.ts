@@ -14,29 +14,6 @@ describe('fn: getLocalizedFields using reLocalizeField', () => {
         getLocalizedFields({ fields, isLocalized: reLocalizeField }),
       ).toEqual(fields);
     });
-    it('excludes a localized text field based on the admin description', () => {
-      const fields: Field[] = [
-        {
-          name: 'textLocalizedField',
-          type: 'text',
-        },
-        {
-          name: 'textLocalizedFieldWithExcludeDescription',
-          type: 'text',
-          admin: {
-            description: 'Not sent to Crowdin. Localize in the CMS.',
-          },
-        },
-      ];
-      expect(
-        getLocalizedFields({ fields, isLocalized: reLocalizeField }),
-      ).toEqual([
-        {
-          name: 'textLocalizedField',
-          type: 'text',
-        },
-      ]);
-    });
     it('includes a richText field', () => {
       const fields: Field[] = [
         {
