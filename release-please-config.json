@@ -1,4 +1,5 @@
 {
+  "include-component-in-tag": true,
   "packages": {
     ".": {
       "changelog-path": "CHANGELOG.md",
@@ -9,7 +10,7 @@
       "prerelease": false
     },
     "plugin": {
-      "changelog-path": "plugin/CHANGELOG.md",
+      "changelog-path": "CHANGELOG.md",
       "release-type": "node",
       "bump-minor-pre-major": false,
       "bump-patch-for-minor-pre-major": false,
@@ -17,7 +18,7 @@
       "prerelease": false
     },
     "document": {
-      "changelog-path": "document/CHANGELOG.md",
+      "changelog-path": "CHANGELOG.md",
       "release-type": "node",
       "bump-minor-pre-major": false,
       "bump-patch-for-minor-pre-major": false,
@@ -25,7 +26,7 @@
       "prerelease": false
     },
     "dev": {
-      "changelog-path": "dev/CHANGELOG.md",
+      "changelog-path": "CHANGELOG.md",
       "release-type": "node",
       "bump-minor-pre-major": false,
       "bump-patch-for-minor-pre-major": false,
