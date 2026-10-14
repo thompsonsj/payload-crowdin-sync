@@ -40,7 +40,9 @@ See [PR labels](./pr-labels.md) for how pull requests are labelled.
 
 ## Release
 
-Releases are managed by [release-please](https://github.com/googleapis/release-please). When a release PR is merged to `main`, the [`release-please` workflow](https://github.com/thompsonsj/payload-crowdin-sync/blob/main/.github/workflows/release-please.yml) builds and publishes `payload-crowdin-sync` and `payload-localized-fields` to npm via [trusted publishing (OIDC)](https://docs.npmjs.com/trusted-publishers/).
+Releases are managed by [release-please](https://github.com/googleapis/release-please). Packages in `release-please-config.json` (`.` / `source`, `plugin` / `payload-crowdin-sync`, `document` / `payload-localized-fields`, `dev`) share one `chore: release main` PR. Changelog files live next to each package (`plugin/CHANGELOG.md`, `document/CHANGELOG.md`, `dev/CHANGELOG.md`) — `changelog-path` is relative to the package directory, not the repo root. Do not add text above the `:robot:` marker in a release PR body; that prevents GitHub releases from being created and blocks later release PRs.
+
+When a release PR is merged to `main`, the [`release-please` workflow](https://github.com/thompsonsj/payload-crowdin-sync/blob/main/.github/workflows/release-please.yml) tags `payload-crowdin-sync-vX`, `payload-localized-fields-vX`, `source-vX`, and `dev-vX`, then builds and publishes `payload-crowdin-sync` and `payload-localized-fields` to npm via [trusted publishing (OIDC)](https://docs.npmjs.com/trusted-publishers/).
 
 One-time npm setup (package maintainer): on [npmjs.com](https://www.npmjs.com/package/payload-crowdin-sync) and [payload-localized-fields](https://www.npmjs.com/package/payload-localized-fields), go to **Settings** > **Trusted publishing** and add a GitHub Actions publisher for repository `thompsonsj/payload-crowdin-sync` and workflow filename `release-please.yml`. After verifying automated publishes work, revoke the `NPM_TOKEN` repository secret.
 
