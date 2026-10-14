@@ -10,7 +10,6 @@ const fields: Field[] = [
       {
         name: 'title',
         type: 'richText',
-        editor: () => undefined,
       },
     ],
   },
@@ -67,7 +66,6 @@ describe('fn: findField', () => {
       }),
     ).toMatchInlineSnapshot(`
       {
-        "editor": [Function],
         "name": "title",
         "type": "richText",
       }
