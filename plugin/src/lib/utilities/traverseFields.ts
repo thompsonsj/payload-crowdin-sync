@@ -1,5 +1,5 @@
 export {
   getBlockFields,
   traverseFields,
-} from 'payload-document';
-export type { FieldTraversalVisitor } from 'payload-document';
+} from 'payload-localized-fields';
+export type { FieldTraversalVisitor } from 'payload-localized-fields';

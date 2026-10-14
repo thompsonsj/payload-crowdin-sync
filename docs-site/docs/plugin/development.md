@@ -17,7 +17,7 @@ description: Build, lint and test the plugin in the Nx monorepo.
 The repository is an [Nx](https://nx.dev) monorepo with these projects:
 
 - `plugin`: the `payload-crowdin-sync` package.
-- `document`: the `payload-document` package — Payload field walks used by the plugin and usable by other import/export plugins.
+- `document`: the `payload-localized-fields` package — Payload field walks used by the plugin and usable by other import/export plugins.
 - `dev`: a Payload install that uses the plugin, for integration tests. Tests that need a different plugin config pass `pluginOptionsOverride` to `initPayloadInt`.
 - `docs-site`: this documentation site.
 
@@ -41,10 +41,10 @@ Tests use [Vitest](https://vitest.dev). In the root of the repository:
 - `npm run test` runs all tests.
 - `npm run test:coverage` runs all tests with coverage. Reports are written to `coverage/<project>`.
 - `nx test plugin` runs plugin unit tests only.
-- `nx test document` runs `payload-document` unit tests.
+- `nx test document` runs `payload-localized-fields` unit tests.
 - `nx test dev` runs integration tests against the Payload install.
 
-Plugin unit tests (`*.spec.ts`) sit next to the code they test in `plugin/src`. `payload-document` specs sit in `document/src`. Payload field walks (`getLocalizedFields`, `traverseFields`, `restoreOrder`) live in the `payload-document` package (`document/`). Crowdin file builders stay in `plugin/src/lib/utilities/`.
+Plugin unit tests (`*.spec.ts`) sit next to the code they test in `plugin/src`. `payload-localized-fields` specs sit in `document/src`. Payload field walks (`getLocalizedFields`, `traverseFields`, `restoreOrder`) live in the `payload-localized-fields` package (`document/`). Crowdin file builders stay in `plugin/src/lib/utilities/`.
 
 Integration tests (`*.test.ts`) are in `dev/src/tests`. They use Payload's [Local API](https://payloadcms.com/docs/local-api/overview) against a real Payload install with an in-memory MongoDB database. Calls to the Crowdin API are intercepted with [`nock`](https://github.com/nock/nock), so tests check which requests the plugin makes without needing a Crowdin account.
 

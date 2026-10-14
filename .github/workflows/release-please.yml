@@ -40,10 +40,10 @@ jobs:
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
       - run: npm ci
-      - name: Build payload-document
+      - name: Build payload-localized-fields
         if: ${{ needs.release-please.outputs.document_release_created == 'true' }}
         run: npx nx run document:build
-      - name: Publish payload-document
+      - name: Publish payload-localized-fields
         if: ${{ needs.release-please.outputs.document_release_created == 'true' }}
         working-directory: dist/document
         run: npm publish --access public

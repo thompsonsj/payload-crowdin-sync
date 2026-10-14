@@ -22,7 +22,7 @@ export default defineConfig({
       {
         resolve: {
           alias: {
-            'payload-document': path.resolve('document/src/index.ts'),
+            'payload-localized-fields': path.resolve('document/src/index.ts'),
           },
         },
         test: {
@@ -37,7 +37,7 @@ export default defineConfig({
       {
         resolve: {
           alias: {
-            'payload-document': path.resolve('document/src/index.ts'),
+            'payload-localized-fields': path.resolve('document/src/index.ts'),
           },
         },
         test: {
@@ -78,7 +78,7 @@ export default defineConfig({
     alias: {
       // Ensure plugin source is used by integration tests, mirroring the Jest mapper.
       'payload-crowdin-sync': path.resolve('plugin/src/index.ts'),
-      'payload-document': path.resolve('document/src/index.ts'),
+      'payload-localized-fields': path.resolve('document/src/index.ts'),
     },
   },
 })

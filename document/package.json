@@ -1,5 +1,5 @@
 {
-  "name": "payload-document",
+  "name": "payload-localized-fields",
   "version": "0.1.0",
   "description": "Walk Payload CMS field schemas, pick localized fields, and rebuild document updates. Useful for import, export, and translation plugins.",
   "keywords": [

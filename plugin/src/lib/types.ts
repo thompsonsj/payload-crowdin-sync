@@ -82,7 +82,7 @@ export interface PluginOptions {
   legacyArticleDirectoryLookup?: boolean;
 }
 
-export type { FieldWithName } from 'payload-document';
+export type { FieldWithName } from 'payload-localized-fields';
 
 // Type checkers
 export const isCrowdinArticleDirectory = (

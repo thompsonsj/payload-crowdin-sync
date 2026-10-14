@@ -10,7 +10,7 @@ Notes for contributors and maintainers. To use the plugin, start with [getting s
 ## Layout
 
 - [`plugin/`](https://github.com/thompsonsj/payload-crowdin-sync/tree/main/plugin): the `payload-crowdin-sync` package published to npm.
-- [`document/`](https://github.com/thompsonsj/payload-crowdin-sync/tree/main/document): the `payload-document` package — walk localized Payload fields for import, export, or translation plugins.
+- [`document/`](https://github.com/thompsonsj/payload-crowdin-sync/tree/main/document): the `payload-localized-fields` package — walk localized Payload fields for import, export, or translation plugins.
 - [`dev/`](https://github.com/thompsonsj/payload-crowdin-sync/tree/main/dev): Payload install used for integration tests.
 - [`docs-site/`](https://github.com/thompsonsj/payload-crowdin-sync/tree/main/docs-site): this documentation site, built with Docusaurus and published to GitHub Pages.
 
@@ -40,9 +40,9 @@ See [PR labels](./pr-labels.md) for how pull requests are labelled.
 
 ## Release
 
-Releases are managed by [release-please](https://github.com/googleapis/release-please). When a release PR is merged to `main`, the [`release-please` workflow](https://github.com/thompsonsj/payload-crowdin-sync/blob/main/.github/workflows/release-please.yml) builds and publishes `payload-crowdin-sync` and `payload-document` to npm via [trusted publishing (OIDC)](https://docs.npmjs.com/trusted-publishers/).
+Releases are managed by [release-please](https://github.com/googleapis/release-please). When a release PR is merged to `main`, the [`release-please` workflow](https://github.com/thompsonsj/payload-crowdin-sync/blob/main/.github/workflows/release-please.yml) builds and publishes `payload-crowdin-sync` and `payload-localized-fields` to npm via [trusted publishing (OIDC)](https://docs.npmjs.com/trusted-publishers/).
 
-One-time npm setup (package maintainer): on [npmjs.com](https://www.npmjs.com/package/payload-crowdin-sync) and [payload-document](https://www.npmjs.com/package/payload-document), go to **Settings** > **Trusted publishing** and add a GitHub Actions publisher for repository `thompsonsj/payload-crowdin-sync` and workflow filename `release-please.yml`. After verifying automated publishes work, revoke the `NPM_TOKEN` repository secret.
+One-time npm setup (package maintainer): on [npmjs.com](https://www.npmjs.com/package/payload-crowdin-sync) and [payload-localized-fields](https://www.npmjs.com/package/payload-localized-fields), go to **Settings** > **Trusted publishing** and add a GitHub Actions publisher for repository `thompsonsj/payload-crowdin-sync` and workflow filename `release-please.yml`. After verifying automated publishes work, revoke the `NPM_TOKEN` repository secret.
 
 Manual publish remains available as a fallback:
 

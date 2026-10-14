@@ -1,4 +1,4 @@
-# payload-document
+# payload-localized-fields
 
 Walk a Payload CMS field schema, pick the fields that should be imported or exported, and put a partial update back into document order.
 
@@ -7,7 +7,7 @@ This is the vendor-neutral field walk used by [`payload-crowdin-sync`](https://w
 ## Install
 
 ```bash
-npm install payload-document
+npm install payload-localized-fields
 ```
 
 Peer dependency: `payload` ^3.
@@ -30,7 +30,7 @@ A collection mixes copy with fields that should not leave the CMS (`slug`, uploa
 
 ```ts
 import type { CollectionConfig } from 'payload';
-import { getLocalizedFields, restoreOrder } from 'payload-document';
+import { getLocalizedFields, restoreOrder } from 'payload-localized-fields';
 
 const Pages: CollectionConfig = {
   slug: 'pages',
