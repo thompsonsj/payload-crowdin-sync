@@ -50,7 +50,7 @@ Integration tests (`*.test.ts`) are in `dev/src/tests`. They use Payload's [Loca
 
 To start Payload with a different plugin config, pass `pluginOptionsOverride` to `initPayloadInt`. The override is shallow-merged over the default test options, so `{ collections: undefined }` replaces the default collections list. Pass the same override to `pluginConfig` when setting up Crowdin mocks.
 
-CI runs `npm run test:coverage` and uploads the results to [Codecov](https://about.codecov.io). This needs the `CODECOV_TOKEN` repository secret.
+CI runs `npm run test:coverage` and uploads the results to [Codecov](https://about.codecov.io). Plugin coverage also includes `document/src` so builder specs that call the Crowdin wrappers still count hits on `payload-localized-fields`. This needs the `CODECOV_TOKEN` repository secret.
 
 ## Import maps
 
