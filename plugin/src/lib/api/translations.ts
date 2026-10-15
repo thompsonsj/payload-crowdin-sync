@@ -21,10 +21,11 @@ import {
   getFieldSlugs,
   buildCrowdinJsonObject,
   buildCrowdinHtmlObject,
-  buildPayloadUpdateObject,
   getLocalizedRequiredFields,
   findField,
 } from '../utilities';
+import { applyDocumentSlice } from './adapters';
+import type { DocumentSlice, TranslationReader } from './adapters';
 import {
   LEXICAL_BLOCKS_FIELD_NAME,
   lexicalBlocksFolderName,
@@ -90,7 +91,7 @@ interface IupdateTranslation {
   draft?: boolean;
 }
 
-export class payloadCrowdinSyncTranslationsApi {
+export class payloadCrowdinSyncTranslationsApi implements TranslationReader {
   translationsApi: Translations;
   projectId: number;
   directoryId?: number;
@@ -329,9 +330,11 @@ export class payloadCrowdinSyncTranslationsApi {
       fields: localizedFields,
     });
     try {
-      const docTranslations = buildPayloadUpdateObject({
-        crowdinJsonObject,
-        crowdinHtmlObject,
+      const docTranslations = applyDocumentSlice({
+        slice: {
+          json: crowdinJsonObject,
+          html: crowdinHtmlObject,
+        },
         fields: localizedFields,
         document,
       });
@@ -386,6 +389,52 @@ export class payloadCrowdinSyncTranslationsApi {
   }
 
   /**
+   * Crowdin `TranslationReader`: json file `fields` plus each html file.
+   */
+  async readSlice({
+    documentId,
+    locale,
+    collection,
+    global,
+  }: {
+    documentId: string;
+    locale: string;
+    collection: CollectionConfig | GlobalConfig;
+    global?: boolean;
+    doc?: any;
+  }): Promise<DocumentSlice> {
+    const json =
+      (await this.getTranslation({
+        documentId,
+        fieldName: 'fields',
+        locale,
+        collection,
+        global,
+      })) || {};
+    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+      console.log('readSlice: json', json);
+    }
+    const htmlFieldNames = await this.getHtmlFieldSlugs(documentId, {
+      collection,
+      global,
+    });
+    const html: CrowdinHtmlObject = {};
+    for (const field of htmlFieldNames) {
+      html[field] = await this.getTranslation({
+        documentId,
+        fieldName: field,
+        locale,
+        collection,
+        global,
+      });
+    }
+    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
+      console.log('readSlice: html', JSON.stringify(html));
+    }
+    return { json, html };
+  }
+
+  /**
    * Retrieve translations from Crowdin for a document in a given locale
    */
   async getLatestDocumentTranslation({
@@ -414,47 +463,15 @@ export class payloadCrowdinSyncTranslationsApi {
       return { message: 'no localized fields' };
     }
 
-    let docTranslations: { [key: string]: any } = {};
-    // add json fields
-    const crowdinJsonObject =
-      (await this.getTranslation({
-        documentId: global ? collectionConfig.slug : doc.id,
-        fieldName: 'fields',
-        locale: locale,
-        collection: collectionConfig,
-        global,
-      })) || {};
-    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
-      console.log(
-        'getLatestDocumentTranslation: crowdinJsonObject',
-        crowdinJsonObject,
-      );
-    }
-    // add html fields
-    const localizedHtmlFields = await this.getHtmlFieldSlugs(
-      global ? collectionConfig.slug : doc.id,
-      { collection: collectionConfig, global },
-    );
-    const crowdinHtmlObject: CrowdinHtmlObject = {};
-    for (const field of localizedHtmlFields) {
-      // need to get the field definiton here somehow?
-      crowdinHtmlObject[field] = await this.getTranslation({
-        documentId: global ? collectionConfig.slug : doc.id,
-        fieldName: field,
-        locale: locale,
-        collection: collectionConfig,
-        global,
-      });
-    }
-    if (process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE) {
-      console.log(
-        'getLatestDocumentTranslation: crowdinHtmlObject',
-        JSON.stringify(crowdinHtmlObject),
-      );
-    }
-    docTranslations = buildPayloadUpdateObject({
-      crowdinJsonObject,
-      crowdinHtmlObject,
+    const slice = await this.readSlice({
+      documentId: global ? collectionConfig.slug : doc.id,
+      locale,
+      collection: collectionConfig,
+      global,
+      doc,
+    });
+    const docTranslations = applyDocumentSlice({
+      slice,
       fields: localizedFields,
       document: doc,
     });

@@ -27,6 +27,10 @@ import {
 } from './utilities/lexical';
 import { mockCrowdinClient } from './api/mock/crowdin-api-responses';
 import { getRelationshipId } from './utilities/payload';
+import {
+  applyDocumentSlice,
+  syncDocumentSource,
+} from './api/adapters';
 
 export {
   getFiles,
@@ -51,7 +55,15 @@ export {
   getLexicalFieldArticleDirectories,
   getRelationshipId,
   backfillArticleDirectoryPolymorphicLinks,
+  applyDocumentSlice,
+  syncDocumentSource,
 };
+
+export type {
+  DocumentSlice,
+  SourceWriter,
+  TranslationReader,
+} from './api/adapters';
 
 export type { ArticleDirectoryRootLookup } from './api/helpers';
 export type { BackfillArticleDirectoryLinksResult } from './migrations/backfillArticleDirectoryPolymorphicLinks';

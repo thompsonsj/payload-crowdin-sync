@@ -15,7 +15,7 @@ const Pages: CollectionConfig = {
 };
 
 const memoryWriter = () => {
-  const json: object[] = [];
+  const json: Array<string | object> = [];
   const html: { name: string; value: unknown }[] = [];
   const writer: SourceWriter = {
     writeJson: async ({ fileData }) => {
@@ -104,5 +104,110 @@ describe('syncDocumentSource', () => {
     });
 
     expect(json).toEqual([]);
+  });
+
+  it('writes empty json when alwaysUpdate is set', async () => {
+    const { writer, json } = memoryWriter();
+
+    await syncDocumentSource({
+      writer,
+      collection: Pages,
+      fields: Pages.fields,
+      doc: { slug: 'home' },
+      previousDoc: { slug: 'home' },
+      alwaysUpdate: true,
+    });
+
+    expect(json).toEqual([{}]);
+  });
+
+  it('writes json and html when both slices change', async () => {
+    const { writer, json, html } = memoryWriter();
+
+    await syncDocumentSource({
+      writer,
+      collection: Pages,
+      fields: Pages.fields,
+      doc: { title: 'Home', body: slateFr },
+      previousDoc: { title: 'Old', body: slate },
+    });
+
+    expect(json).toEqual([{ title: 'Home' }]);
+    expect(html).toEqual([{ name: 'body', value: slateFr }]);
+  });
+
+  it('writes only the rich text fields that changed', async () => {
+    const TwoBodies: CollectionConfig = {
+      slug: 'pages',
+      fields: [
+        { name: 'intro', type: 'richText', localized: true },
+        { name: 'body', type: 'richText', localized: true },
+      ],
+    };
+    const { writer, html } = memoryWriter();
+
+    await syncDocumentSource({
+      writer,
+      collection: TwoBodies,
+      fields: TwoBodies.fields,
+      doc: { intro: slateFr, body: slate },
+      previousDoc: { intro: slate, body: slate },
+    });
+
+    expect(html).toEqual([{ name: 'intro', value: slateFr }]);
+  });
+
+  it('does not write html if json write rejects', async () => {
+    const html: { name: string }[] = [];
+    const writer: SourceWriter = {
+      writeJson: async () => {
+        throw new Error('json failed');
+      },
+      writeHtml: async ({ name }) => {
+        html.push({ name });
+      },
+    };
+
+    await expect(
+      syncDocumentSource({
+        writer,
+        collection: Pages,
+        fields: Pages.fields,
+        doc: { title: 'Home', body: slateFr },
+        previousDoc: { title: 'Old', body: slate },
+      }),
+    ).rejects.toThrow('json failed');
+    expect(html).toEqual([]);
+  });
+
+  it('continues writing other html files if one write fails', async () => {
+    const TwoBodies: CollectionConfig = {
+      slug: 'pages',
+      fields: [
+        { name: 'intro', type: 'richText', localized: true },
+        { name: 'body', type: 'richText', localized: true },
+      ],
+    };
+    const written: string[] = [];
+    const writer: SourceWriter = {
+      writeJson: async () => undefined,
+      writeHtml: async ({ name }) => {
+        if (name === 'intro') {
+          throw new Error('intro failed');
+        }
+        written.push(name);
+      },
+    };
+
+    await expect(
+      syncDocumentSource({
+        writer,
+        collection: TwoBodies,
+        fields: TwoBodies.fields,
+        doc: { intro: slateFr, body: slateFr },
+        previousDoc: { intro: slate, body: slate },
+      }),
+    ).resolves.toBeUndefined();
+    expect(written).toEqual(['body']);
   });
 });

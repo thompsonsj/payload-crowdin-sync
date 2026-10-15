@@ -116,3 +116,10 @@ Unifying the paths fixed these bugs:
 ## Future: adapter pattern
 
 Once items 3 and 4 are complete, the translation strategies (`getJsonTranslation`, `getSlateTranslation`, `getLexicalTranslation`) and the files layer (`createOrUpdateFile`, etc.) can be extracted behind interfaces, making it possible to implement a Phrase or Lokalise adapter that satisfies the same contracts without touching the orchestration layer.
+
+**Started:** `plugin/src/lib/api/adapters/` owns the vendor-neutral seams that consume a document slice:
+
+- `SourceWriter` — write Payload-shaped json/html source. Crowdin `createOrUpdateJsonFile` / `createOrUpdateHtmlFile` implement it. `syncDocumentSource` is the afterChange orchestration (diff + skip empty).
+- `TranslationReader` — read a translated `{ json, html }` slice. Crowdin `payloadCrowdinSyncTranslationsApi.readSlice` implements it. `applyDocumentSlice` turns a slice into a Payload update.
+
+Phrase or Lokalise should implement those two interfaces. Rich-text HTML conversion and Crowdin file CRUD stay in the Crowdin adapter.

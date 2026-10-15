@@ -66,4 +66,14 @@ describe('applyDocumentSlice', () => {
       }),
     ).toEqual({ title: 'Accueil' });
   });
+
+  it('applies html-only slices', () => {
+    expect(
+      applyDocumentSlice({
+        slice: { json: {}, html: { body: slate } },
+        fields,
+        document: { title: 'Home', body: [] },
+      }),
+    ).toEqual({ body: slate });
+  });
 });
