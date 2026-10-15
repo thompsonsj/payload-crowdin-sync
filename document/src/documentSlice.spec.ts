@@ -219,4 +219,39 @@ describe('buildUpdateObject', () => {
       ],
     });
   });
+
+  it('does not mutate the caller json or html slices', () => {
+    const fields: Field[] = [
+      { name: 'title', type: 'text', localized: true },
+      {
+        name: 'items',
+        type: 'array',
+        localized: true,
+        fields: [
+          { name: 'label', type: 'text', localized: true },
+          { name: 'copy', type: 'richText', localized: true },
+        ],
+      },
+    ];
+    const jsonObject = {
+      title: 'Accueil',
+      items: { a: { label: 'Un' } },
+    };
+    const htmlObject = { 'items.a.copy': slateBody };
+    const jsonBefore = structuredClone(jsonObject);
+    const htmlBefore = structuredClone(htmlObject);
+
+    buildUpdateObject({
+      jsonObject,
+      htmlObject,
+      fields,
+      document: {
+        title: 'Home',
+        items: [{ id: 'a', label: 'One', copy: slateBody }],
+      },
+    });
+
+    expect(jsonObject).toEqual(jsonBefore);
+    expect(htmlObject).toEqual(htmlBefore);
+  });
 });

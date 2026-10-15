@@ -216,11 +216,12 @@ export const buildUpdateObject = ({
   isLocalized?: IsLocalized;
 }) => {
   let response: { [key: string]: any } = {};
+  let source = jsonObject;
   if (htmlObject) {
-    const destructured = dot.object(htmlObject) as {
+    const destructured = dot.object({ ...htmlObject }) as {
       [key: string]: any;
     };
-    merge(jsonObject, destructured);
+    source = merge(structuredClone(jsonObject), destructured);
   }
   const filteredFields = getLocalizedFields({
     fields,
@@ -229,7 +230,7 @@ export const buildUpdateObject = ({
   });
   traverseFields(
     filteredFields,
-    { jsonObject, response },
+    { jsonObject: source, response },
     {
       skip: (field, ctx) => !ctx.jsonObject[field.name],
       group(field, ctx) {
