@@ -195,6 +195,12 @@ A comment in the source already flags this: `"find a better way to do this - blo
 - Crowdin builders (`buildCrowdinJsonObject`, `buildCrowdinHtmlObject`, `buildPayloadUpdateObject`) stay in `plugin/src/lib/utilities/` and call `payload-localized-fields`. `getLocalizedFields({ type: 'json' | 'html' })` remains as a Crowdin convenience that maps to `include`.
 - **Tests:** `document/src/*.spec.ts` were committed first (failing). Existing plugin utilities specs are the regression suite.
 
+**Pass 7 — extract json/html document slice**
+
+- `buildJsonObject`, `buildHtmlObject`, and `buildUpdateObject` live in `payload-localized-fields`. JSON leaves are non-`richText`; HTML leaves are `richText` keyed by dotted path. Arrays/blocks are keyed by `id` (and `blockType`) so round-trip does not depend on order. Locale maps from `locale: 'all'` are skipped.
+- Crowdin names (`buildCrowdinJsonObject`, `buildCrowdinHtmlObject`, `buildPayloadUpdateObject`) stay on the plugin as wrappers that pass the Crowdin `isLocalizedField` exclude. Rich-text HTML conversion stays in the plugin.
+- **Tests:** `document/src/documentSlice.spec.ts` was committed first (failing). Existing Crowdin builder specs are the regression suite.
+
 ---
 
 ## Notes on approach

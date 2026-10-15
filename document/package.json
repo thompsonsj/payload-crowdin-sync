@@ -32,6 +32,7 @@
     }
   },
   "dependencies": {
+    "dot-object": "^2.1.5",
     "es-toolkit": "^1.52.0",
     "tslib": "^2.3.0"
   },
