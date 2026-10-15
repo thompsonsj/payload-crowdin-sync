@@ -33,7 +33,7 @@
       },
       "configurations": {
         "ci": {
-          "command": "vitest run --project plugin --coverage --coverage.reportsDirectory=coverage/plugin --coverage.include=plugin/src/**/*.ts"
+          "command": "vitest run --project plugin --coverage --coverage.reportsDirectory=coverage/plugin --coverage.include=plugin/src/**/*.ts --coverage.include=document/src/**/*.ts"
         }
       }
     }
