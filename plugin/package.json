@@ -1,6 +1,6 @@
 {
   "name": "payload-crowdin-sync",
-  "version": "0.43.0",
+  "version": "0.44.0",
   "description": "Translate Payload CMS content in Crowdin. Uploads localized fields as HTML and JSON files, and writes translations back into Payload.",
   "keywords": [
     "payload",
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "jsdom": "^29.1.1",
-    "payload-localized-fields": "0.1.0",
+    "payload-localized-fields": "1.0.0",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {

@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.39.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.39.0...dev-v0.39.1) (2026-10-14)
+
+
+### Bug Fixes
+
+* **plugin:** load Lexical translations without a Slate hop ([#386](https://github.com/thompsonsj/payload-crowdin-sync/issues/386)) ([348f9ae](https://github.com/thompsonsj/payload-crowdin-sync/commit/348f9ae8c90356c4aec28c47ed31aba334f79b92))
+* **plugin:** skip locale-map arrays in Crowdin builders ([#384](https://github.com/thompsonsj/payload-crowdin-sync/issues/384)) ([58c2609](https://github.com/thompsonsj/payload-crowdin-sync/commit/58c26099ad116f3e97bc5cc4083f4f2f63bdb8f2))
+* **releaseplease:** write changelogs next to each package so tagging can resume ([#388](https://github.com/thompsonsj/payload-crowdin-sync/issues/388)) ([635fd40](https://github.com/thompsonsj/payload-crowdin-sync/commit/635fd403d74aa3c71c8ed832a892de52717abaec))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.43.0 to 0.44.0
+
 ## [0.39.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.38.2...dev-v0.39.0) (2026-10-09)
 
 

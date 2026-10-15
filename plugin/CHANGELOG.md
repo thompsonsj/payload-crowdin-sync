@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.44.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.43.0...payload-crowdin-sync-v0.44.0) (2026-10-14)
+
+
+### Features
+
+* **document:** extract Payload field walk into payload-document ([#387](https://github.com/thompsonsj/payload-crowdin-sync/issues/387)) ([7b28f7d](https://github.com/thompsonsj/payload-crowdin-sync/commit/7b28f7ddfba9f1c898d3cf93cfa66e2d2485a455))
+
+
+### Bug Fixes
+
+* **plugin:** load Lexical translations without a Slate hop ([#386](https://github.com/thompsonsj/payload-crowdin-sync/issues/386)) ([348f9ae](https://github.com/thompsonsj/payload-crowdin-sync/commit/348f9ae8c90356c4aec28c47ed31aba334f79b92))
+* **plugin:** skip locale-map arrays in Crowdin builders ([#384](https://github.com/thompsonsj/payload-crowdin-sync/issues/384)) ([58c2609](https://github.com/thompsonsj/payload-crowdin-sync/commit/58c26099ad116f3e97bc5cc4083f4f2f63bdb8f2))
+* **releaseplease:** write changelogs next to each package so tagging can resume ([#388](https://github.com/thompsonsj/payload-crowdin-sync/issues/388)) ([635fd40](https://github.com/thompsonsj/payload-crowdin-sync/commit/635fd403d74aa3c71c8ed832a892de52717abaec))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-localized-fields bumped from 0.1.0 to 1.0.0
+
 ## [0.43.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.42.2...payload-crowdin-sync-v0.43.0) (2026-10-09)
 
 
