@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.45.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.44.0...payload-crowdin-sync-v0.45.0) (2026-10-16)
+
+
+### Features
+
+* **document:** move json/html document slice into payload-localized-fields ([#390](https://github.com/thompsonsj/payload-crowdin-sync/issues/390)) ([703775b](https://github.com/thompsonsj/payload-crowdin-sync/commit/703775b6f14a0c877b01b5d35daab6cd2de6e1f8))
+* **plugin:** add vendor-neutral source-writer and translation-reader adapters ([#392](https://github.com/thompsonsj/payload-crowdin-sync/issues/392)) ([f98b1ad](https://github.com/thompsonsj/payload-crowdin-sync/commit/f98b1ad62d8fd034c7d56a9f348b53a7044533be))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-localized-fields bumped from 1.0.0 to 1.1.0
+
 ## [0.44.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.43.0...payload-crowdin-sync-v0.44.0) (2026-10-14)
 
 
