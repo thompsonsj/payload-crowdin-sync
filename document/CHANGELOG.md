@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-localized-fields-v1.0.0...payload-localized-fields-v1.1.0) (2026-10-16)
+
+
+### Features
+
+* **document:** move json/html document slice into payload-localized-fields ([#390](https://github.com/thompsonsj/payload-crowdin-sync/issues/390)) ([703775b](https://github.com/thompsonsj/payload-crowdin-sync/commit/703775b6f14a0c877b01b5d35daab6cd2de6e1f8))
+
 ## 1.0.0 (2026-10-14)
 
 
