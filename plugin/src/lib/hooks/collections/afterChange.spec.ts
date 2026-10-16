@@ -2,6 +2,19 @@ import { getAfterChangeHook, getGlobalAfterChangeHook } from './afterChange';
 import { pluginOptions } from '../../api/mock/plugin-options';
 import type { CollectionConfig, GlobalConfig } from 'payload';
 
+const { createOrUpdateJsonFile, createOrUpdateHtmlFile } = vi.hoisted(() => ({
+  createOrUpdateJsonFile: vi.fn().mockResolvedValue(undefined),
+  createOrUpdateHtmlFile: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock('../../api/files/by-document', () => ({
+  filesApiByDocument: class {
+    async get() {
+      return { createOrUpdateJsonFile, createOrUpdateHtmlFile };
+    }
+  },
+}));
+
 const minimalCollection: CollectionConfig = {
   slug: 'posts',
   fields: [
@@ -128,6 +141,63 @@ describe('getAfterChangeHook', () => {
       } as any);
 
       expect(result).toBe(doc);
+    });
+  });
+
+  describe('syncDocumentSource wiring', () => {
+    beforeEach(() => {
+      createOrUpdateJsonFile.mockClear();
+      createOrUpdateHtmlFile.mockClear();
+    });
+
+    it('writes json through the Crowdin files api when localized strings change', async () => {
+      const hook = getAfterChangeHook({
+        collection: minimalCollection,
+        pluginOptions,
+      });
+
+      await hook({
+        doc,
+        previousDoc,
+        req: buildReq(),
+        operation: 'update',
+        collection: minimalCollection,
+      } as any);
+
+      expect(createOrUpdateJsonFile).toHaveBeenCalledWith({
+        fileData: { title: 'Hello' },
+      });
+      expect(createOrUpdateHtmlFile).not.toHaveBeenCalled();
+    });
+
+    it('writes html through the Crowdin files api when rich text changes', async () => {
+      const slate = [{ type: 'p', children: [{ text: 'Hello' }] }];
+      const slateFr = [{ type: 'p', children: [{ text: 'Bonjour' }] }];
+      const collection: CollectionConfig = {
+        slug: 'posts',
+        fields: [{ name: 'body', type: 'richText', localized: true }],
+      };
+      const hook = getAfterChangeHook({
+        collection,
+        pluginOptions,
+      });
+      const req = buildReq();
+      req.payload.collections.posts.config = collection;
+
+      await hook({
+        doc: { id: 'doc-001', body: slateFr },
+        previousDoc: { id: 'doc-001', body: slate },
+        req,
+        operation: 'update',
+        collection,
+      } as any);
+
+      expect(createOrUpdateJsonFile).not.toHaveBeenCalled();
+      expect(createOrUpdateHtmlFile).toHaveBeenCalledWith({
+        name: 'body',
+        value: slateFr,
+        collection,
+      });
     });
   });
 });

@@ -1,12 +1,12 @@
 import { payloadCrowdinSyncTranslationsApi } from './translations';
 import { pluginOptions } from './mock/plugin-options';
-import { buildPayloadUpdateObject } from '../utilities';
+import { applyDocumentSlice } from './adapters';
 
-vi.mock('../utilities', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../utilities')>();
+vi.mock('./adapters', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./adapters')>();
   return {
     ...actual,
-    buildPayloadUpdateObject: vi.fn(actual.buildPayloadUpdateObject),
+    applyDocumentSlice: vi.fn(actual.applyDocumentSlice),
   };
 });
 
@@ -181,6 +181,165 @@ describe('payloadCrowdinSyncTranslationsApi', () => {
     });
   });
 
+  describe('readSlice', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    const collection = { slug: 'posts', fields: [] } as any;
+    const slateDe = [{ type: 'p', children: [{ text: 'Hallo' }] }];
+
+    it('composes json from the fields file and html from each html slug', async () => {
+      vi.spyOn(api, 'getTranslation').mockImplementation(
+        async ({ fieldName }) => {
+          if (fieldName === 'fields') return { title: 'Hallo' };
+          if (fieldName === 'body') return slateDe;
+          return undefined;
+        },
+      );
+      vi.spyOn(api, 'getHtmlFieldSlugs').mockResolvedValue(['body']);
+
+      await expect(
+        api.readSlice({
+          documentId: 'doc-1',
+          locale: 'de_DE',
+          collection,
+        }),
+      ).resolves.toEqual({
+        json: { title: 'Hallo' },
+        html: { body: slateDe },
+      });
+    });
+
+    it('logs json and html when PAYLOAD_CROWDIN_SYNC_VERBOSE is set', async () => {
+      const previous = process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE;
+      process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE = 'true';
+      const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+      vi.spyOn(api, 'getTranslation').mockImplementation(
+        async ({ fieldName }) => {
+          if (fieldName === 'fields') return { title: 'Hallo' };
+          if (fieldName === 'body') return slateDe;
+          return undefined;
+        },
+      );
+      vi.spyOn(api, 'getHtmlFieldSlugs').mockResolvedValue(['body']);
+
+      try {
+        await api.readSlice({
+          documentId: 'doc-1',
+          locale: 'de_DE',
+          collection,
+        });
+        expect(log).toHaveBeenCalledWith('readSlice: json', { title: 'Hallo' });
+        expect(log).toHaveBeenCalledWith(
+          'readSlice: html',
+          JSON.stringify({ body: slateDe }),
+        );
+      } finally {
+        if (previous === undefined) {
+          delete process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE;
+        } else {
+          process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE = previous;
+        }
+      }
+    });
+
+    it('uses an empty json object when the fields file is missing', async () => {
+      vi.spyOn(api, 'getTranslation').mockResolvedValue(undefined);
+      vi.spyOn(api, 'getHtmlFieldSlugs').mockResolvedValue([]);
+
+      await expect(
+        api.readSlice({
+          documentId: 'doc-1',
+          locale: 'de_DE',
+          collection,
+        }),
+      ).resolves.toEqual({ json: {}, html: {} });
+    });
+  });
+
+  describe('getLatestDocumentTranslation', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('applies the slice from readSlice', async () => {
+      vi.spyOn(api, 'getCollectionConfig').mockReturnValue({
+        slug: 'posts',
+        fields: [{ name: 'title', type: 'text', localized: true }],
+      } as any);
+      vi.spyOn(api, 'readSlice').mockResolvedValue({ json: { title: 'Hallo' } });
+
+      await expect(
+        api.getLatestDocumentTranslation({
+          collection: 'posts',
+          doc: { id: 'doc-1', title: 'Hello' },
+          locale: 'de_DE',
+        }),
+      ).resolves.toEqual({ title: 'Hallo' });
+    });
+
+    it('uses the collection slug as documentId for globals', async () => {
+      vi.spyOn(api, 'getCollectionConfig').mockReturnValue({
+        slug: 'site-settings',
+        fields: [{ name: 'title', type: 'text', localized: true }],
+      } as any);
+      const readSlice = vi
+        .spyOn(api, 'readSlice')
+        .mockResolvedValue({ json: { title: 'Hallo' } });
+
+      await api.getLatestDocumentTranslation({
+        collection: 'site-settings',
+        doc: { title: 'Hello' },
+        locale: 'de_DE',
+        global: true,
+      });
+
+      expect(readSlice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          documentId: 'site-settings',
+          global: true,
+        }),
+      );
+    });
+
+    it('fills missing required localized fields from the current translation', async () => {
+      vi.spyOn(api, 'getCollectionConfig').mockReturnValue({
+        slug: 'posts',
+        fields: [
+          { name: 'title', type: 'text', localized: true, required: true },
+        ],
+      } as any);
+      vi.spyOn(api, 'readSlice').mockResolvedValue({ json: {} });
+      vi.spyOn(api, 'getCurrentDocumentTranslation').mockResolvedValue({
+        title: 'Hallo',
+      });
+
+      await expect(
+        api.getLatestDocumentTranslation({
+          collection: 'posts',
+          doc: { id: 'doc-1' },
+          locale: 'de_DE',
+        }),
+      ).resolves.toEqual({ title: 'Hallo' });
+    });
+
+    it('returns a message when the collection has no config', async () => {
+      vi.spyOn(api, 'getCollectionConfig').mockImplementation(() => {
+        throw new Error('missing');
+      });
+      vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+      await expect(
+        api.getLatestDocumentTranslation({
+          collection: 'missing',
+          doc: { id: '1' },
+          locale: 'de_DE',
+        }),
+      ).resolves.toEqual({ message: 'no localized fields' });
+    });
+  });
+
   describe('getCurrentDocumentTranslation', () => {
     afterEach(() => {
       vi.restoreAllMocks();
@@ -199,7 +358,7 @@ describe('payloadCrowdinSyncTranslationsApi', () => {
         fields: [{ name: 'title', type: 'text', localized: true }],
       } as any);
       const original = new Error('cannot build update object');
-      vi.mocked(buildPayloadUpdateObject).mockImplementationOnce(() => {
+      vi.mocked(applyDocumentSlice).mockImplementationOnce(() => {
         throw original;
       });
       vi.spyOn(console, 'error').mockImplementation(() => undefined);

@@ -201,6 +201,11 @@ A comment in the source already flags this: `"find a better way to do this - blo
 - Crowdin names (`buildCrowdinJsonObject`, `buildCrowdinHtmlObject`, `buildPayloadUpdateObject`) stay on the plugin as wrappers that pass the Crowdin `isLocalizedField` exclude. Rich-text HTML conversion stays in the plugin.
 - **Tests:** `document/src/documentSlice.spec.ts` was committed first (failing). Existing Crowdin builder specs are the regression suite.
 
+**Pass 8 — localization adapters**
+
+- `SourceWriter` / `syncDocumentSource` and `TranslationReader` / `applyDocumentSlice` live in `plugin/src/lib/api/adapters/`. They consume the json/html document slice. Crowdin afterChange and `payloadCrowdinSyncTranslationsApi` implement the writer/reader. File CRUD and Lexical/Slate HTML conversion stay Crowdin-specific.
+- **Tests:** `adapters/syncSource.spec.ts` and `adapters/applySlice.spec.ts` were committed first (failing). Existing afterChange and translations specs are the regression suite.
+
 ---
 
 ## Notes on approach

@@ -44,7 +44,7 @@ Tests use [Vitest](https://vitest.dev). In the root of the repository:
 - `nx test document` runs `payload-localized-fields` unit tests.
 - `nx test dev` runs integration tests against the Payload install.
 
-Plugin unit tests (`*.spec.ts`) sit next to the code they test in `plugin/src`. `payload-localized-fields` specs sit in `document/src`. Payload field walks and the json/html document slice (`getLocalizedFields`, `traverseFields`, `restoreOrder`, `buildJsonObject`, `buildHtmlObject`, `buildUpdateObject`) live in the `payload-localized-fields` package (`document/`). Crowdin wrappers and rich-text HTML conversion stay in `plugin/src/lib/utilities/`.
+Plugin unit tests (`*.spec.ts`) sit next to the code they test in `plugin/src`. `payload-localized-fields` specs sit in `document/src`. Payload field walks and the json/html document slice (`getLocalizedFields`, `traverseFields`, `restoreOrder`, `buildJsonObject`, `buildHtmlObject`, `buildUpdateObject`) live in the `payload-localized-fields` package (`document/`). Crowdin wrappers and rich-text HTML conversion stay in `plugin/src/lib/utilities/`. Vendor-neutral upload/download orchestration (`syncDocumentSource`, `applyDocumentSlice`) lives in `plugin/src/lib/api/adapters/`.
 
 Integration tests (`*.test.ts`) are in `dev/src/tests`. They use Payload's [Local API](https://payloadcms.com/docs/local-api/overview) against a real Payload install with an in-memory MongoDB database. Calls to the Crowdin API are intercepted with [`nock`](https://github.com/nock/nock), so tests check which requests the plugin makes without needing a Crowdin account.
 

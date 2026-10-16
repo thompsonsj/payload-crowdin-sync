@@ -8,17 +8,11 @@ import type {
   CollectionSlug,
   GlobalSlug,
 } from 'payload';
-import { Descendant } from 'slate';
 import { PluginOptions } from '../../types';
-import {
-  buildCrowdinHtmlObject,
-  buildCrowdinJsonObject,
-  fieldChanged,
-} from '../../utilities';
-import deepEqual from 'deep-equal';
-import { getLocalizedFields } from '../../utilities';
+import { getLocalizedFields, isLocalizedField } from '../../utilities';
 import { isCrowdinActive } from '../../api/helpers';
 import { filesApiByDocument } from '../../api/files/by-document';
+import { syncDocumentSource } from '../../api/adapters';
 
 /**
  * Update Crowdin collections and make updates in Crowdin
@@ -157,21 +151,6 @@ const performAfterChange = async ({
   }
 
   /**
-   * Prepare JSON objects
-   *
-   * `text` fields are compiled into a single JSON file
-   * on Crowdin. Prepare previous and current objects.
-   */
-  const currentCrowdinJsonData = buildCrowdinJsonObject({
-    doc,
-    fields: localizedFields,
-  });
-  const prevCrowdinJsonData = buildCrowdinJsonObject({
-    doc: previousDoc,
-    fields: localizedFields,
-  });
-
-  /**
    * Initialize Crowdin client sourceFilesApi
    */
   const apiByDocument = new filesApiByDocument({
@@ -183,61 +162,18 @@ const performAfterChange = async ({
   });
   const filesApi = await apiByDocument.get();
 
-  // START: function definitions
-
-  const createOrUpdateJsonSource = async () => {
-    if (
-      (!deepEqual(currentCrowdinJsonData, prevCrowdinJsonData) &&
-        Object.keys(currentCrowdinJsonData).length !== 0) ||
-      process.env['PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE'] === 'true'
-    ) {
-      await filesApi.createOrUpdateJsonFile({
-        fileData: currentCrowdinJsonData,
-      });
-    }
-  };
-
-  /**
-   * Recursively send rich text fields to Crowdin as HTML
-   *
-   * Name these HTML files with dot notation. Examples:
-   *
-   * * `localizedRichTextField`
-   * * `groupField.localizedRichTextField`
-   * * `arrayField[0].localizedRichTextField`
-   * * `arrayField[1].localizedRichTextField`
-   */
-  const createOrUpdateHtmlSource = async () => {
-    const currentCrowdinHtmlData = buildCrowdinHtmlObject({
-      doc,
-      fields: localizedFields,
-    });
-    const prevCrowdinHtmlData = buildCrowdinHtmlObject({
-      doc: previousDoc,
-      fields: localizedFields,
-    });
-    await Promise.allSettled(
-      Object.keys(currentCrowdinHtmlData).map(async (name) => {
-        const currentValue = currentCrowdinHtmlData[name];
-        const prevValue = prevCrowdinHtmlData[name];
-        if (
-          !fieldChanged(prevValue, currentValue, 'richText') &&
-          process.env['PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE'] !== 'true'
-        ) {
-          return;
-        }
-        await filesApi.createOrUpdateHtmlFile({
-          name,
-          value: currentValue as Descendant[],
-          collection: sanitizedCollection,
-        });
-      }),
-    );
-  };
-  // END: function definitions
-
-  await createOrUpdateJsonSource();
-  await createOrUpdateHtmlSource();
+  await syncDocumentSource({
+    writer: {
+      writeJson: (args) => filesApi.createOrUpdateJsonFile(args),
+      writeHtml: (args) => filesApi.createOrUpdateHtmlFile(args),
+    },
+    collection: sanitizedCollection,
+    fields: localizedFields,
+    doc,
+    previousDoc,
+    alwaysUpdate: process.env['PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE'] === 'true',
+    isLocalized: isLocalizedField,
+  });
 
   return doc;
 };
