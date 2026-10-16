@@ -23,6 +23,7 @@ import {
   buildCrowdinHtmlObject,
   getLocalizedRequiredFields,
   findField,
+  isLocalizedField,
 } from '../utilities';
 import { applyDocumentSlice } from './adapters';
 import type { DocumentSlice, TranslationReader } from './adapters';
@@ -337,6 +338,7 @@ export class payloadCrowdinSyncTranslationsApi implements TranslationReader {
         },
         fields: localizedFields,
         document,
+        isLocalized: isLocalizedField,
       });
       return docTranslations;
     } catch (error) {
@@ -474,6 +476,7 @@ export class payloadCrowdinSyncTranslationsApi implements TranslationReader {
       slice,
       fields: localizedFields,
       document: doc,
+      isLocalized: isLocalizedField,
     });
 
     // Add required fields if not present

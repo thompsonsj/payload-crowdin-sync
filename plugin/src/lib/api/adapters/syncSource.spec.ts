@@ -1,4 +1,5 @@
-import type { CollectionConfig } from 'payload';
+import type { CollectionConfig, Field } from 'payload';
+import { isLocalizedField } from '../../utilities';
 import { syncDocumentSource } from './syncSource';
 import type { SourceWriter } from './types';
 
@@ -209,5 +210,55 @@ describe('syncDocumentSource', () => {
       }),
     ).resolves.toBeUndefined();
     expect(written).toEqual(['body']);
+  });
+
+  const disabledInternal: Field = {
+    name: 'internal',
+    type: 'text',
+    localized: true,
+    custom: { crowdinSync: { disable: true } },
+  };
+
+  it('includes Crowdin-disabled fields unless a predicate is passed', async () => {
+    const collection: CollectionConfig = {
+      slug: 'pages',
+      fields: [
+        { name: 'title', type: 'text', localized: true },
+        disabledInternal,
+      ],
+    };
+    const { writer, json } = memoryWriter();
+
+    await syncDocumentSource({
+      writer,
+      collection,
+      fields: collection.fields,
+      doc: { title: 'Home', internal: 'Secret' },
+      previousDoc: { title: 'Old', internal: 'Old secret' },
+    });
+
+    expect(json).toEqual([{ title: 'Home', internal: 'Secret' }]);
+  });
+
+  it('honours the Crowdin localized-field predicate when it is passed', async () => {
+    const collection: CollectionConfig = {
+      slug: 'pages',
+      fields: [
+        { name: 'title', type: 'text', localized: true },
+        disabledInternal,
+      ],
+    };
+    const { writer, json } = memoryWriter();
+
+    await syncDocumentSource({
+      writer,
+      collection,
+      fields: collection.fields,
+      doc: { title: 'Home', internal: 'Secret' },
+      previousDoc: { title: 'Old', internal: 'Old secret' },
+      isLocalized: isLocalizedField,
+    });
+
+    expect(json).toEqual([{ title: 'Home' }]);
   });
 });

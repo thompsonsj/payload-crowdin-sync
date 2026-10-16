@@ -1,12 +1,12 @@
 import { payloadCrowdinSyncTranslationsApi } from './translations';
 import { pluginOptions } from './mock/plugin-options';
-import { buildPayloadUpdateObject } from '../utilities';
+import { applyDocumentSlice } from './adapters';
 
-vi.mock('../utilities', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../utilities')>();
+vi.mock('./adapters', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./adapters')>();
   return {
     ...actual,
-    buildPayloadUpdateObject: vi.fn(actual.buildPayloadUpdateObject),
+    applyDocumentSlice: vi.fn(actual.applyDocumentSlice),
   };
 });
 
@@ -211,6 +211,39 @@ describe('payloadCrowdinSyncTranslationsApi', () => {
       });
     });
 
+    it('logs json and html when PAYLOAD_CROWDIN_SYNC_VERBOSE is set', async () => {
+      const previous = process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE;
+      process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE = 'true';
+      const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+      vi.spyOn(api, 'getTranslation').mockImplementation(
+        async ({ fieldName }) => {
+          if (fieldName === 'fields') return { title: 'Hallo' };
+          if (fieldName === 'body') return slateDe;
+          return undefined;
+        },
+      );
+      vi.spyOn(api, 'getHtmlFieldSlugs').mockResolvedValue(['body']);
+
+      try {
+        await api.readSlice({
+          documentId: 'doc-1',
+          locale: 'de_DE',
+          collection,
+        });
+        expect(log).toHaveBeenCalledWith('readSlice: json', { title: 'Hallo' });
+        expect(log).toHaveBeenCalledWith(
+          'readSlice: html',
+          JSON.stringify({ body: slateDe }),
+        );
+      } finally {
+        if (previous === undefined) {
+          delete process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE;
+        } else {
+          process.env.PAYLOAD_CROWDIN_SYNC_VERBOSE = previous;
+        }
+      }
+    });
+
     it('uses an empty json object when the fields file is missing', async () => {
       vi.spyOn(api, 'getTranslation').mockResolvedValue(undefined);
       vi.spyOn(api, 'getHtmlFieldSlugs').mockResolvedValue([]);
@@ -325,7 +358,7 @@ describe('payloadCrowdinSyncTranslationsApi', () => {
         fields: [{ name: 'title', type: 'text', localized: true }],
       } as any);
       const original = new Error('cannot build update object');
-      vi.mocked(buildPayloadUpdateObject).mockImplementationOnce(() => {
+      vi.mocked(applyDocumentSlice).mockImplementationOnce(() => {
         throw original;
       });
       vi.spyOn(console, 'error').mockImplementation(() => undefined);

@@ -1,5 +1,8 @@
 import type { Field } from 'payload';
-import { buildPayloadUpdateObject } from '../../utilities';
+import {
+  buildUpdateObject,
+  type IsLocalized,
+} from 'payload-localized-fields';
 import type { DocumentSlice } from './types';
 
 /**
@@ -9,14 +12,17 @@ export const applyDocumentSlice = ({
   slice,
   fields,
   document,
+  isLocalized,
 }: {
   slice: DocumentSlice;
   fields: Field[];
   document?: { [key: string]: any };
+  isLocalized?: IsLocalized;
 }) =>
-  buildPayloadUpdateObject({
-    crowdinJsonObject: slice.json,
-    crowdinHtmlObject: slice.html,
+  buildUpdateObject({
+    jsonObject: slice.json,
+    htmlObject: slice.html,
     fields,
     document,
+    isLocalized,
   });

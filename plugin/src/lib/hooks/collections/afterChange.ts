@@ -9,7 +9,7 @@ import type {
   GlobalSlug,
 } from 'payload';
 import { PluginOptions } from '../../types';
-import { getLocalizedFields } from '../../utilities';
+import { getLocalizedFields, isLocalizedField } from '../../utilities';
 import { isCrowdinActive } from '../../api/helpers';
 import { filesApiByDocument } from '../../api/files/by-document';
 import { syncDocumentSource } from '../../api/adapters';
@@ -172,6 +172,7 @@ const performAfterChange = async ({
     doc,
     previousDoc,
     alwaysUpdate: process.env['PAYLOAD_CROWDIN_SYNC_ALWAYS_UPDATE'] === 'true',
+    isLocalized: isLocalizedField,
   });
 
   return doc;

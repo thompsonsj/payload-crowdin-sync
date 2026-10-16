@@ -1,10 +1,11 @@
 import type { CollectionConfig, Field, GlobalConfig } from 'payload';
 import deepEqual from 'deep-equal';
 import {
-  buildCrowdinHtmlObject,
-  buildCrowdinJsonObject,
-  fieldChanged,
-} from '../../utilities';
+  buildHtmlObject,
+  buildJsonObject,
+  type IsLocalized,
+} from 'payload-localized-fields';
+import { fieldChanged } from '../../utilities';
 import type { SourceWriter } from './types';
 
 export const syncDocumentSource = async ({
@@ -14,6 +15,7 @@ export const syncDocumentSource = async ({
   doc,
   previousDoc,
   alwaysUpdate = false,
+  isLocalized,
 }: {
   writer: SourceWriter;
   collection: CollectionConfig | GlobalConfig;
@@ -21,11 +23,13 @@ export const syncDocumentSource = async ({
   doc: { [key: string]: any };
   previousDoc: { [key: string]: any };
   alwaysUpdate?: boolean;
+  isLocalized?: IsLocalized;
 }) => {
-  const currentJson = buildCrowdinJsonObject({ doc, fields });
-  const previousJson = buildCrowdinJsonObject({
+  const currentJson = buildJsonObject({ doc, fields, isLocalized });
+  const previousJson = buildJsonObject({
     doc: previousDoc,
     fields,
+    isLocalized,
   });
 
   if (
@@ -36,10 +40,11 @@ export const syncDocumentSource = async ({
     await writer.writeJson({ fileData: currentJson });
   }
 
-  const currentHtml = buildCrowdinHtmlObject({ doc, fields });
-  const previousHtml = buildCrowdinHtmlObject({
+  const currentHtml = buildHtmlObject({ doc, fields, isLocalized });
+  const previousHtml = buildHtmlObject({
     doc: previousDoc,
     fields,
+    isLocalized,
   });
 
   await Promise.allSettled(
