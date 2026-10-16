@@ -18,6 +18,8 @@ jobs:
       plugin_version: ${{ steps.release.outputs['plugin--version'] }}
       document_release_created: ${{ steps.release.outputs['document--release_created'] }}
       document_version: ${{ steps.release.outputs['document--version'] }}
+      adapters_release_created: ${{ steps.release.outputs['adapters--release_created'] }}
+      adapters_version: ${{ steps.release.outputs['adapters--version'] }}
     steps:
       - uses: google-github-actions/release-please-action@e4dc86ba9405554aeba3c6bb2d169500e7d3b4ee # v4
         id: release
@@ -29,7 +31,7 @@ jobs:
 
   publish:
     needs: release-please
-    if: ${{ needs.release-please.outputs.plugin_release_created == 'true' || needs.release-please.outputs.document_release_created == 'true' }}
+    if: ${{ needs.release-please.outputs.plugin_release_created == 'true' || needs.release-please.outputs.document_release_created == 'true' || needs.release-please.outputs.adapters_release_created == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -48,6 +50,13 @@ jobs:
       - name: Publish payload-localized-fields
         if: ${{ needs.release-please.outputs.document_release_created == 'true' }}
         working-directory: dist/document
+        run: npm publish --access public
+      - name: Build payload-localization-adapters
+        if: ${{ needs.release-please.outputs.adapters_release_created == 'true' }}
+        run: npx nx run adapters:build
+      - name: Publish payload-localization-adapters
+        if: ${{ needs.release-please.outputs.adapters_release_created == 'true' }}
+        working-directory: dist/adapters
         run: npm publish --access public
       - name: Build payload-crowdin-sync
         if: ${{ needs.release-please.outputs.plugin_release_created == 'true' }}

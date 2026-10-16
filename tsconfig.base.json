@@ -27,7 +27,8 @@
     "paths": {
       "@payload-crowdin-sync-nx/dev": ["dev/src/index.ts"],
       "payload-crowdin-sync": ["plugin/src/index.ts"],
-      "payload-localized-fields": ["document/src/index.ts"]
+      "payload-localized-fields": ["document/src/index.ts"],
+      "payload-localization-adapters": ["adapters/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

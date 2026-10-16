@@ -203,8 +203,8 @@ A comment in the source already flags this: `"find a better way to do this - blo
 
 **Pass 8 — localization adapters**
 
-- `SourceWriter` / `syncDocumentSource` and `TranslationReader` / `applyDocumentSlice` live in `plugin/src/lib/api/adapters/`. They consume the json/html document slice. Crowdin afterChange and `payloadCrowdinSyncTranslationsApi` implement the writer/reader. File CRUD and Lexical/Slate HTML conversion stay Crowdin-specific.
-- **Tests:** `adapters/syncSource.spec.ts` and `adapters/applySlice.spec.ts` were committed first (failing). Existing afterChange and translations specs are the regression suite.
+- `SourceWriter` / `syncDocumentSource` and `TranslationReader` / `applyDocumentSlice` live in `payload-localization-adapters` (`adapters/`). They consume the json/html document slice. Crowdin afterChange and `payloadCrowdinSyncTranslationsApi` implement the writer/reader. File CRUD and Lexical/Slate HTML conversion stay Crowdin-specific. Phrase and Lokalise plugins in this monorepo will depend on the same package.
+- **Tests:** `adapters/src/syncSource.spec.ts` and `adapters/src/applySlice.spec.ts` were committed first (failing). Existing afterChange and translations specs are the regression suite.
 
 ---
 

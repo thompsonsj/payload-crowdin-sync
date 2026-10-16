@@ -5,8 +5,12 @@ import {
   buildJsonObject,
   type IsLocalized,
 } from 'payload-localized-fields';
-import { fieldChanged } from '../../utilities';
 import type { SourceWriter } from './types';
+
+const richTextChanged = (
+  previousValue: unknown,
+  currentValue: unknown,
+) => !deepEqual(previousValue || {}, currentValue || {});
 
 export const syncDocumentSource = async ({
   writer,
@@ -51,10 +55,7 @@ export const syncDocumentSource = async ({
     Object.keys(currentHtml).map(async (name) => {
       const currentValue = currentHtml[name];
       const previousValue = previousHtml[name];
-      if (
-        !alwaysUpdate &&
-        !fieldChanged(previousValue, currentValue, 'richText')
-      ) {
+      if (!alwaysUpdate && !richTextChanged(previousValue, currentValue)) {
         return;
       }
       await writer.writeHtml({

@@ -9,7 +9,8 @@
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
-      "payload-localized-fields": ["../document/src/index.ts"]
+      "payload-localized-fields": ["../document/src/index.ts"],
+      "payload-localization-adapters": ["../adapters/src/index.ts"]
     }
   }
 }

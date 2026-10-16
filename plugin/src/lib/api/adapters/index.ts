@@ -1,7 +1,9 @@
+export {
+  applyDocumentSlice,
+  syncDocumentSource,
+} from 'payload-localization-adapters';
 export type {
   DocumentSlice,
   SourceWriter,
   TranslationReader,
-} from './types';
-export { syncDocumentSource } from './syncSource';
-export { applyDocumentSlice } from './applySlice';
+} from 'payload-localization-adapters';

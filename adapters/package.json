@@ -1,0 +1,46 @@
+{
+  "name": "payload-localization-adapters",
+  "version": "0.0.0",
+  "description": "Vendor-neutral writer and reader contracts for syncing a Payload json/html document slice with a translation service.",
+  "keywords": [
+    "payload",
+    "payloadcms",
+    "localization",
+    "i18n",
+    "translation",
+    "adapter",
+    "cms"
+  ],
+  "homepage": "https://thompsonsj.github.io/payload-crowdin-sync/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thompsonsj/payload-crowdin-sync.git",
+    "directory": "adapters"
+  },
+  "author": "https://github.com/thompsonsj",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thompsonsj/payload-crowdin-sync/issues"
+  },
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "deep-equal": "^2.2.3",
+    "payload-localized-fields": "file:../document",
+    "tslib": "^2.3.0"
+  },
+  "peerDependencies": {
+    "payload": "^3"
+  },
+  "engines": {
+    "node": "^20.19.0 || ^22.13.0 || >=24.0.0"
+  }
+}
