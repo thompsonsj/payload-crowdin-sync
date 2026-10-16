@@ -10,6 +10,7 @@ Defined in `.github/labeler.yml` and applied by `actions/labeler@v5`. Labels are
 |-------|-------|
 | `area: plugin` | `plugin/src/lib/**` |
 | `area: document` | `document/**` |
+| `area: adapters` | `adapters/**` |
 | `area: test-installation` | `dev/**` |
 | `area: tests` | `**/*.spec.ts`, `**/*.test.ts`, `**/*.spec.tsx`, `**/*.test.tsx` |
 | `area: docs` | `docs-site/**`, `**/*.md` |

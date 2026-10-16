@@ -11,6 +11,11 @@
       - any-glob-to-any-file:
           - document/**
 
+"area: adapters":
+  - changed-files:
+      - any-glob-to-any-file:
+          - adapters/**
+
 "area: test-installation":
   - changed-files:
       - any-glob-to-any-file:

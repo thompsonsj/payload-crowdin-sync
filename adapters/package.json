@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "deep-equal": "^2.2.3",
-    "payload-localized-fields": "1.0.0",
+    "payload-localized-fields": "file:../document",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {
