@@ -44,20 +44,6 @@ jobs:
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
       - run: npm ci
-      - name: Build payload-localized-fields
-        if: ${{ needs.release-please.outputs.document_release_created == 'true' }}
-        run: npx nx run document:build
-      - name: Publish payload-localized-fields
-        if: ${{ needs.release-please.outputs.document_release_created == 'true' }}
-        working-directory: dist/document
-        run: npm publish --access public
-      - name: Build payload-localization-adapters
-        if: ${{ needs.release-please.outputs.adapters_release_created == 'true' }}
-        run: npx nx run adapters:build
-      - name: Publish payload-localization-adapters
-        if: ${{ needs.release-please.outputs.adapters_release_created == 'true' }}
-        working-directory: dist/adapters
-        run: npm publish --access public
       - name: Require payload-localization-adapters on npm
         if: ${{ needs.release-please.outputs.plugin_release_created == 'true' }}
         env:
@@ -72,10 +58,30 @@ jobs:
             exit 1
           fi
           if [ "$ADAPTERS_RELEASE_CREATED" = "true" ]; then
-            echo "This job published payload-localization-adapters@${ADAPTERS_VERSION} before the plugin."
+            normalized=${required#^}
+            normalized=${normalized#~}
+            if [ "$normalized" != "$ADAPTERS_VERSION" ]; then
+              echo "::error::plugin requires payload-localization-adapters@${required} but this job publishes ${ADAPTERS_VERSION}."
+              exit 1
+            fi
+            echo "This job will publish payload-localization-adapters@${ADAPTERS_VERSION} before the plugin."
             exit 0
           fi
           npm view "payload-localization-adapters@${required}" version
+      - name: Build payload-localized-fields
+        if: ${{ needs.release-please.outputs.document_release_created == 'true' }}
+        run: npx nx run document:build
+      - name: Publish payload-localized-fields
+        if: ${{ needs.release-please.outputs.document_release_created == 'true' }}
+        working-directory: dist/document
+        run: npm publish --access public
+      - name: Build payload-localization-adapters
+        if: ${{ needs.release-please.outputs.adapters_release_created == 'true' }}
+        run: npx nx run adapters:build
+      - name: Publish payload-localization-adapters
+        if: ${{ needs.release-please.outputs.adapters_release_created == 'true' }}
+        working-directory: dist/adapters
+        run: npm publish --access public
       - name: Build payload-crowdin-sync
         if: ${{ needs.release-please.outputs.plugin_release_created == 'true' }}
         run: npx nx run plugin:build
