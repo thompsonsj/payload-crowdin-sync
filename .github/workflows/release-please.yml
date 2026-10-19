@@ -77,7 +77,9 @@ jobs:
         run: npm publish --access public
       - name: Build payload-localization-adapters
         if: ${{ needs.release-please.outputs.adapters_release_created == 'true' }}
-        run: npx nx run adapters:build
+        run: |
+          npx nx run adapters:build
+          node tools/scripts/rewrite-dist-entrypoints.mjs dist/adapters
       - name: Publish payload-localization-adapters
         if: ${{ needs.release-please.outputs.adapters_release_created == 'true' }}
         working-directory: dist/adapters
