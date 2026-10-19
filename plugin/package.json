@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "jsdom": "^29.1.1",
-    "payload-localization-adapters": "file:../adapters",
+    "payload-localization-adapters": "0.0.0",
     "payload-localized-fields": "1.0.0",
     "tslib": "^2.3.0"
   },

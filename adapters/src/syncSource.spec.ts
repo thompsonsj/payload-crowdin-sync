@@ -44,6 +44,21 @@ describe('syncDocumentSource', () => {
     expect(html).toEqual([]);
   });
 
+  it('writes html when a rich text field is added', async () => {
+    const { writer, json, html } = memoryWriter();
+
+    await syncDocumentSource({
+      writer,
+      collection: Pages,
+      fields: Pages.fields,
+      doc: { title: 'Home', body: slate },
+      previousDoc: { title: 'Home' },
+    });
+
+    expect(json).toEqual([]);
+    expect(html).toEqual([{ name: 'body', value: slate }]);
+  });
+
   it('writes html when a rich text field changes', async () => {
     const { writer, json, html } = memoryWriter();
 
