@@ -58,6 +58,24 @@ jobs:
         if: ${{ needs.release-please.outputs.adapters_release_created == 'true' }}
         working-directory: dist/adapters
         run: npm publish --access public
+      - name: Require payload-localization-adapters on npm
+        if: ${{ needs.release-please.outputs.plugin_release_created == 'true' }}
+        env:
+          ADAPTERS_RELEASE_CREATED: ${{ needs.release-please.outputs.adapters_release_created }}
+          ADAPTERS_VERSION: ${{ needs.release-please.outputs.adapters_version }}
+        run: |
+          set -euo pipefail
+          required=$(node -p "require('./plugin/package.json').dependencies['payload-localization-adapters']")
+          echo "Plugin requires payload-localization-adapters@${required}"
+          if [ "$required" = "0.0.0" ] || [[ "$required" == file:* ]]; then
+            echo "::error::payload-crowdin-sync still depends on unpublished payload-localization-adapters (${required}). Publish adapters first, then let release-please bump this dependency."
+            exit 1
+          fi
+          if [ "$ADAPTERS_RELEASE_CREATED" = "true" ]; then
+            echo "This job published payload-localization-adapters@${ADAPTERS_VERSION} before the plugin."
+            exit 0
+          fi
+          npm view "payload-localization-adapters@${required}" version
       - name: Build payload-crowdin-sync
         if: ${{ needs.release-please.outputs.plugin_release_created == 'true' }}
         run: npx nx run plugin:build
