@@ -19,6 +19,8 @@ The repository is an [Nx](https://nx.dev) monorepo with these projects:
 - `plugin`: the `payload-crowdin-sync` package.
 - `document`: the `payload-localized-fields` package — Payload field walks used by the plugin and usable by other import/export plugins.
 - `adapters`: the `payload-localization-adapters` package — vendor-neutral `SourceWriter` / `TranslationReader` contracts. Phrase and Lokalise plugins in this monorepo will depend on it.
+
+How those three packages call each other, and what a "document slice" is, is in [packages](../repo/packages.md).
 - `dev`: a Payload install that uses the plugin, for integration tests. Tests that need a different plugin config pass `pluginOptionsOverride` to `initPayloadInt`.
 - `docs-site`: this documentation site.
 

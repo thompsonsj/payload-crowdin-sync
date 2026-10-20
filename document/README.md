@@ -95,7 +95,7 @@ const update = buildUpdateObject({
 
 A Crowdin plugin would upload `json` as a JSON file and each `html` path as an HTML file. Phrase or Lokalise can flatten the same slice into keys. Rich-text HTML conversion stays in the consumer.
 
-Upload/download orchestration (`SourceWriter`, `TranslationReader`, `syncDocumentSource`, `applyDocumentSlice`) lives in [`payload-localization-adapters`](https://www.npmjs.com/package/payload-localization-adapters).
+Upload/download orchestration (`SourceWriter`, `TranslationReader`, `syncDocumentSource`, `applyDocumentSlice`) lives in [`payload-localization-adapters`](https://www.npmjs.com/package/payload-localization-adapters). Package boundaries and diagrams: [packages](https://thompsonsj.github.io/payload-crowdin-sync/docs/repo/packages).
 
 ## More use cases
 

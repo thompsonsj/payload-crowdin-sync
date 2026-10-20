@@ -482,5 +482,6 @@ If the document was never uploaded, or its Crowdin records are already gone, the
 - [Serializer configuration](./serializer.md)
 - [Development](./development.md)
 - [Engineering decisions](../repo/engineering.md)
+- [Packages](../repo/packages.md)
 
 Note: This plugin is still in development. Planned features are listed in [`repo/planned-features.md`](../repo/planned-features.md).

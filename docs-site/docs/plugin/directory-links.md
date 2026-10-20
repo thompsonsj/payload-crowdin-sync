@@ -109,7 +109,7 @@ flowchart LR
   root["crowdin-article-directories<br/>name: 5<br/>collectionDocument: localized-posts / 5"]
   block["crowdin-article-directories<br/>name: lex.content<br/>parent: root"]
   rootFiles["crowdin-files<br/>fields.json"]
-  blockFiles["crowdin-files<br/>fields.json"]
+  blockFiles["crowdin-files<br/>blocks.json"]
   rootFiles --> root
   block -- parent --> root
   blockFiles --> block
