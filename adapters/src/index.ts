@@ -2,6 +2,6 @@ export type {
   DocumentSlice,
   SourceWriter,
   TranslationReader,
-} from './types';
-export { syncDocumentSource } from './syncSource';
-export { applyDocumentSlice } from './applySlice';
+} from './types.js';
+export { syncDocumentSource } from './syncSource.js';
+export { applyDocumentSlice } from './applySlice.js';
