@@ -22,3 +22,5 @@ Peer dependency: `payload` ^3.
 Pass `isLocalized` when the vendor should skip fields the default Payload predicate would include. Crowdin’s `custom.crowdinSync.disable` belongs in the Crowdin plugin, not here.
 
 Phrase and Lokalise plugins are planned in this monorepo and will depend on this package.
+
+How this package sits between `payload-localized-fields` and a vendor plugin: [packages](https://thompsonsj.github.io/payload-crowdin-sync/docs/repo/packages).

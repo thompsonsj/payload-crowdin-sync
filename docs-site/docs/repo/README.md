@@ -55,6 +55,7 @@ npm run release
 
 ## Other notes
 
+- [Packages](./packages.md) — field walk, writer/reader contracts, Crowdin plugin
 - [Engineering decisions](./engineering.md)
 - [Planned features](./planned-features.md)
 - [Refactoring notes](./refactoring.md) and [broad refactoring plan](./refactoring-broad.md)

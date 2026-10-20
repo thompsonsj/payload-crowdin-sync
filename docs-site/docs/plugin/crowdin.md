@@ -7,6 +7,8 @@ description: How Payload documents become folders and files in Crowdin, and the 
 
 Rather than uploading a document's JSON to Crowdin, the plugin turns each Payload document into HTML and JSON files that contain only localized field values. Translators see just the text they need to translate.
 
+A field `afterChange` hook with unique Crowdin names would work. Batching the document into `fields.json` plus HTML files is how we keep API calls down, round-trip rich text and Lexical blocks, and put each page in a folder. The longer rationale is in [why a document slice, not field hooks](../repo/engineering.md#why-a-document-slice-not-field-hooks). How the walk is split across npm packages is in [packages](../repo/packages.md).
+
 This page covers how documents are transformed, what the plugin stores in your database, and how it stays in sync with Crowdin.
 
 ## Crowdin folder structure

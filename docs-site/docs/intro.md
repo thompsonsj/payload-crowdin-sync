@@ -15,6 +15,8 @@ description: How payload-crowdin-sync moves content between Payload CMS and Crow
 3. **Translators work in Crowdin.** They see clean HTML and JSON strings, not editor state or unrelated fields.
 4. **You load translations.** Tick **Sync translations** (current locale) or **Sync all translations** on the document and save. The plugin downloads each file for each locale, converts it back into Payload's format, and updates the document as a draft or published version. You can also use [REST endpoints](./plugin/README.md#endpoints) or [Payload jobs](./plugin/README.md#environment-variables).
 
+The walk that builds those files is not Crowdin-specific. [Packages](./repo/packages.md) shows `payload-localized-fields`, `payload-localization-adapters`, and this plugin. [Engineering decisions](./repo/engineering.md#why-a-document-slice-not-field-hooks) covers why we batch a document (fewer API calls, rich text and blocks, Crowdin folders) rather than upload from each field hook.
+
 ## Where to start
 
 - [Install and configure the plugin](./plugin/README.md)
