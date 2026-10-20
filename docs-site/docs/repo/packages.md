@@ -29,12 +29,15 @@ flowchart TB
   end
 
   crowdinPkg --> adaptersPkg
+  crowdinPkg --> documentPkg
   phrasePkg --> adaptersPkg
+  phrasePkg --> documentPkg
   lokalisePkg --> adaptersPkg
+  lokalisePkg --> documentPkg
   adaptersPkg --> documentPkg
 ```
 
-Crowdin is the only vendor plugin today. The arrows are the dependency rule: a second vendor must not import `payload-crowdin-sync` to get the walk or the slice.
+Crowdin is the only vendor plugin today. A vendor plugin depends on both adapters and localized-fields. A second vendor must not import `payload-crowdin-sync` to get the walk or the slice.
 
 ## The slice
 
@@ -43,7 +46,7 @@ A **document slice** is not a Crowdin file and not HTML yet. It is Payload-shape
 - **json** — nested strings (groups as objects; array/block items keyed by Payload `id`).
 - **html** — rich-text **editor JSON** (Slate or Lexical), keyed by dotted path such as `body` or `items.<id>.copy`.
 
-`payload-localized-fields` builds that slice (`buildJsonObject` / `buildHtmlObject`) and turns one back into a Payload update (`buildUpdateObject`, which restores array/block order from the current document). It does not convert Lexical or Slate to HTML. That conversion is Crowdin-specific and lives in the plugin.
+`payload-localized-fields` builds that slice (`buildJsonObject` / `buildHtmlObject`) and turns one back into a Payload update (`buildUpdateObject`). Array and block order is restored only when the current `document` is passed; `applyDocumentSlice` forwards that argument when it is set. It does not convert Lexical or Slate to HTML. That conversion is Crowdin-specific and lives in the plugin.
 
 Crowdin then stores json as `fields.json` and each html path as a `.html` file. Phrase or Lokalise can flatten the same slice into keys instead.
 
@@ -104,7 +107,7 @@ Anything that names Crowdin or an editor HTML dialect:
 
 - Collection/article directories and `crowdin-files`
 - `createOrUpdateJsonFile` / `createOrUpdateHtmlFile`
-- Lexical block subfolders (`lex.*`)
+- Lexical block subfolders (`lex.*`) and `blocks.json`
 - Slate `@slate-serializers/html` and Lexical `convertLexicalToHTML` / `convertHTMLToLexical`
 - `isLocalizedField` wrapping `custom.crowdinSync.disable` and the admin-description exclude
 - Virtual "Sync translations" fields and review/update endpoints

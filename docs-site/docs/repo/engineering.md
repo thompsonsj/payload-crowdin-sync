@@ -13,7 +13,7 @@ The slice is the cheaper and clearer mapping onto Crowdin, not a claim that per-
 
 **Fewer API calls.** A page with many strings and several rich-text fields would otherwise hit Crowdin once per field (create or update file, plus directory checks). One walk produces `fields.json` for every localized string and one HTML file per rich-text path. Unchanged files are skipped. On a complex document that is the difference between a handful of requests and a storm of them.
 
-**Rich text and nested blocks.** Lexical and Slate values are editor JSON, not something a translator should edit. Each rich-text field becomes HTML and comes back through the serializer. Lexical blocks are treated as nested documents with their own `fields.json` and HTML files. That needs the parent field's editor config and a recursive sync, which is awkward to hang off a single nested field hook.
+**Rich text and nested blocks.** Lexical and Slate values are editor JSON, not something a translator should edit. Each rich-text field becomes HTML and comes back through the serializer. Lexical blocks are treated as nested documents with their own `blocks.json` and HTML files. That needs the parent field's editor config and a recursive sync, which is awkward to hang off a single nested field hook.
 
 **Folders on Crowdin.** Collection → document → files is how translators find a page. Lexical blocks sit in a `lex.<field>` subfolder. Building that tree once per save is straightforward. Per-field uploads can still name files uniquely; they do not give you that folder layout unless you recreate the same orchestration around every hook.
 
