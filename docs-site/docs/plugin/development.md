@@ -18,6 +18,7 @@ The repository is an [Nx](https://nx.dev) monorepo with these projects:
 
 - `plugin`: the `payload-crowdin-sync` package.
 - `document`: the `payload-localized-fields` package — Payload field walks used by the plugin and usable by other import/export plugins.
+- `adapters`: the `payload-localization-adapters` package — vendor-neutral `SourceWriter` / `TranslationReader` contracts. Phrase and Lokalise plugins in this monorepo will depend on it.
 - `dev`: a Payload install that uses the plugin, for integration tests. Tests that need a different plugin config pass `pluginOptionsOverride` to `initPayloadInt`.
 - `docs-site`: this documentation site.
 
@@ -27,6 +28,7 @@ In the root of the repository:
 
 - `nx build plugin` builds to `dist/plugin`.
 - `nx build document` builds to `dist/document`.
+- `nx build adapters` builds to `dist/adapters`.
 - `nx build plugin --watch` rebuilds when files change.
 
 ## Lint
@@ -42,15 +44,16 @@ Tests use [Vitest](https://vitest.dev). In the root of the repository:
 - `npm run test:coverage` runs all tests with coverage. Reports are written to `coverage/<project>`.
 - `nx test plugin` runs plugin unit tests only.
 - `nx test document` runs `payload-localized-fields` unit tests.
+- `nx test adapters` runs `payload-localization-adapters` unit tests.
 - `nx test dev` runs integration tests against the Payload install.
 
-Plugin unit tests (`*.spec.ts`) sit next to the code they test in `plugin/src`. `payload-localized-fields` specs sit in `document/src`. Payload field walks and the json/html document slice (`getLocalizedFields`, `traverseFields`, `restoreOrder`, `buildJsonObject`, `buildHtmlObject`, `buildUpdateObject`) live in the `payload-localized-fields` package (`document/`). Crowdin wrappers and rich-text HTML conversion stay in `plugin/src/lib/utilities/`. Vendor-neutral upload/download orchestration (`syncDocumentSource`, `applyDocumentSlice`) lives in `plugin/src/lib/api/adapters/`.
+Plugin unit tests (`*.spec.ts`) sit next to the code they test in `plugin/src`. `payload-localized-fields` specs sit in `document/src`. Writer/reader specs sit in `adapters/src`. Payload field walks and the json/html document slice (`getLocalizedFields`, `traverseFields`, `restoreOrder`, `buildJsonObject`, `buildHtmlObject`, `buildUpdateObject`) live in the `payload-localized-fields` package (`document/`). Vendor-neutral upload/download orchestration (`syncDocumentSource`, `applyDocumentSlice`) lives in `payload-localization-adapters` (`adapters/`). Crowdin wrappers and rich-text HTML conversion stay in `plugin/src/lib/utilities/`. The Crowdin plugin re-exports the adapter contracts.
 
 Integration tests (`*.test.ts`) are in `dev/src/tests`. They use Payload's [Local API](https://payloadcms.com/docs/local-api/overview) against a real Payload install with an in-memory MongoDB database. Calls to the Crowdin API are intercepted with [`nock`](https://github.com/nock/nock), so tests check which requests the plugin makes without needing a Crowdin account.
 
 To start Payload with a different plugin config, pass `pluginOptionsOverride` to `initPayloadInt`. The override is shallow-merged over the default test options, so `{ collections: undefined }` replaces the default collections list. Pass the same override to `pluginConfig` when setting up Crowdin mocks.
 
-CI runs `npm run test:coverage` and uploads the results to [Codecov](https://about.codecov.io). Plugin coverage also includes `document/src` so builder specs that call the Crowdin wrappers still count hits on `payload-localized-fields`. This needs the `CODECOV_TOKEN` repository secret.
+CI runs `npm run test:coverage` and uploads the results to [Codecov](https://about.codecov.io). Plugin coverage also includes `document/src` and `adapters/src` so Crowdin wrapper specs still count hits on the shared packages. This needs the `CODECOV_TOKEN` repository secret.
 
 ## Import maps
 

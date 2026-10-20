@@ -33,6 +33,7 @@
     "jsdom": "^29.1.1",
     "next": "16.3.6",
     "payload": "3.90.2",
+    "payload-localization-adapters": "file:adapters",
     "payload-localized-fields": "1.0.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",

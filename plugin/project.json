@@ -4,7 +4,7 @@
   "sourceRoot": "plugin/src",
   "projectType": "library",
   "tags": ["scope:plugin"],
-  "implicitDependencies": ["document"],
+  "implicitDependencies": ["document", "adapters"],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
@@ -33,7 +33,7 @@
       },
       "configurations": {
         "ci": {
-          "command": "vitest run --project plugin --coverage --coverage.reportsDirectory=coverage/plugin --coverage.include=plugin/src/**/*.ts --coverage.include=document/src/**/*.ts"
+          "command": "vitest run --project plugin --coverage --coverage.reportsDirectory=coverage/plugin --coverage.include=plugin/src/**/*.ts --coverage.include=document/src/**/*.ts --coverage.include=adapters/src/**/*.ts"
         }
       }
     }

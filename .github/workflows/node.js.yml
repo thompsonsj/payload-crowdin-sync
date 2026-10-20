@@ -52,12 +52,16 @@ jobs:
           )
       - name: Typecheck (document build)
         run: npx nx run document:build
+      - name: Typecheck (adapters build)
+        run: npx nx run adapters:build
       - name: Typecheck (plugin build)
         run: npx nx run plugin:build
       - name: Typecheck (plugin unit tests)
         run: npx tsc -p plugin/tsconfig.spec.json --noEmit
       - name: Typecheck (document unit tests)
         run: npx tsc -p document/tsconfig.spec.json --noEmit
+      - name: Typecheck (adapters unit tests)
+        run: npx tsc -p adapters/tsconfig.spec.json --noEmit
       - name: Test with coverage
         run: npm run test:coverage
       - name: Upload coverage artifacts

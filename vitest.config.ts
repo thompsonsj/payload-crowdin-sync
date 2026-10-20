@@ -23,6 +23,24 @@ export default defineConfig({
         resolve: {
           alias: {
             'payload-localized-fields': path.resolve('document/src/index.ts'),
+            'payload-localization-adapters': path.resolve(
+              'adapters/src/index.ts',
+            ),
+          },
+        },
+        test: {
+          name: 'adapters',
+          environment: 'node',
+          globals: true,
+          watch: false,
+          retry: process.env.CI ? 2 : 0,
+          include: ['adapters/src/**/*.{spec,test}.ts'],
+        },
+      },
+      {
+        resolve: {
+          alias: {
+            'payload-localized-fields': path.resolve('document/src/index.ts'),
           },
         },
         test: {
@@ -38,6 +56,9 @@ export default defineConfig({
         resolve: {
           alias: {
             'payload-localized-fields': path.resolve('document/src/index.ts'),
+            'payload-localization-adapters': path.resolve(
+              'adapters/src/index.ts',
+            ),
           },
         },
         test: {
@@ -79,6 +100,7 @@ export default defineConfig({
       // Ensure plugin source is used by integration tests, mirroring the Jest mapper.
       'payload-crowdin-sync': path.resolve('plugin/src/index.ts'),
       'payload-localized-fields': path.resolve('document/src/index.ts'),
+      'payload-localization-adapters': path.resolve('adapters/src/index.ts'),
     },
   },
 })

@@ -1,0 +1,41 @@
+{
+  "name": "adapters",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "adapters/src",
+  "projectType": "library",
+  "tags": ["scope:adapters"],
+  "implicitDependencies": ["document"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/adapters",
+        "main": "adapters/src/index.ts",
+        "tsConfig": "adapters/tsconfig.build.json",
+        "assets": ["adapters/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/rewrite-dist-entrypoints.mjs dist/adapters && node tools/scripts/publish.mjs adapters {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/adapters"],
+      "options": {
+        "command": "vitest run --project adapters"
+      },
+      "configurations": {
+        "ci": {
+          "command": "vitest run --project adapters --coverage --coverage.reportsDirectory=coverage/adapters --coverage.include=adapters/src/**/*.ts"
+        }
+      }
+    }
+  }
+}
