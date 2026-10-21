@@ -1,5 +1,5 @@
 import nock from 'nock'
-import { mockCrowdinClient } from 'payload-crowdin-sync'
+import { mockCrowdinClient, payloadCrowdinSyncTranslationsApi } from 'payload-crowdin-sync'
 import { pluginConfig } from '../helpers/plugin-config'
 import { initPayloadInt } from '../helpers/initPayloadInt'
 import { assertCrowdinNocksDone, cleanCrowdinNocks } from '../helpers/crowdin-nock'
@@ -296,6 +296,49 @@ describe('Collection: Localized Posts With Condition', () => {
       expect(
         Object.prototype.hasOwnProperty.call(updatedPost, 'crowdinArticleDirectory'),
       ).toBeTruthy()
+    })
+  })
+  describe('sync translations after the condition is turned off', () => {
+    it('does not pull Crowdin translations once translateWithCrowdin is false', async () => {
+      nock('https://api.crowdin.com')
+        .post(`/api/v2/projects/${pluginOptions.projectId}/directories`)
+        .reply(200, mockClient.createDirectory({}))
+        .post(`/api/v2/storages`)
+        .reply(200, mockClient.addStorage())
+        .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+        .reply(200, mockClient.createFile({}))
+      const post = await payload.create({
+        collection: 'localized-posts-with-condition',
+        data: {
+          title: 'Original',
+          translateWithCrowdin: true,
+        },
+      })
+      await payload.update({
+        id: post.id,
+        collection: 'localized-posts-with-condition',
+        data: {
+          title: 'Changed after opt-out',
+          translateWithCrowdin: false,
+        },
+      })
+      const translationsApi = new payloadCrowdinSyncTranslationsApi(pluginOptions, payload)
+      const result = await translationsApi.updateTranslation({
+        documentId: `${post.id}`,
+        collection: 'localized-posts-with-condition',
+        dryRun: false,
+      })
+      expect(result).toEqual(
+        expect.objectContaining({
+          skipped: true,
+        }),
+      )
+      const translated = await payload.findByID({
+        collection: 'localized-posts-with-condition',
+        id: post.id,
+        locale: 'de_DE',
+      })
+      expect(translated.title).toBe('Changed after opt-out')
     })
   })
 })

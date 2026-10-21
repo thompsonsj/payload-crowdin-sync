@@ -165,7 +165,7 @@ Use an empty array to disable all collections.
 }
 ```
 
-Use an object to define a condition that activates Crowdin based on the document data.
+Use an object to define a condition that activates Crowdin based on the document data. When the condition is false, the plugin does not upload source files and does not pull translations (the Sync checkboxes stay hidden). Crowdin keeps the last files uploaded while the condition was true.
 
 ```js
 {
@@ -205,7 +205,7 @@ Use an empty array to disable all globals.
 }
 ```
 
-Use an object to define a condition that activates Crowdin based on the document data.
+Use an object to define a condition that activates Crowdin based on the document data. Same rule as collections: a false condition skips upload and translation sync.
 
 ```js
 {

@@ -41,6 +41,40 @@ const makeReq = (locale = 'de_DE') => ({
   payload: { jobs: { queue: vi.fn() } },
 });
 
+describe('pluginFields - sync checkbox visibility', () => {
+  it('hides the checkboxes when the collection condition is false', () => {
+    const fields = pluginCollectionOrGlobalFields({
+      fields: [],
+      pluginOptions: {
+        ...pluginOptions,
+        collections: [
+          {
+            slug: 'localized-posts',
+            condition: ({ doc }) => Boolean(doc.translateWithCrowdin),
+          },
+        ],
+      },
+      slug: 'localized-posts',
+    });
+    const field = fields.find((f) => (f as any).name === 'syncTranslations') as any;
+    const condition = field.admin.condition as (data: Record<string, unknown>) => boolean;
+
+    expect(
+      condition({
+        crowdinArticleDirectory: 'ad-1',
+        translateWithCrowdin: false,
+      }),
+    ).toBe(false);
+    expect(
+      condition({
+        crowdinArticleDirectory: 'ad-1',
+        translateWithCrowdin: true,
+      }),
+    ).toBe(true);
+    expect(condition({ translateWithCrowdin: true })).toBe(false);
+  });
+});
+
 describe('pluginFields - sync translation hooks', () => {
   beforeEach(() => {
     vi.mocked(updatePayloadTranslation).mockReset();
