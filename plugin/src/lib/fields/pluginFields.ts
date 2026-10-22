@@ -1,6 +1,6 @@
 import type { Field, TabsField } from 'payload';
 import { PluginOptions } from '../types';
-import { resolveRootArticleDirectory } from '../api/helpers';
+import { isCrowdinActive, resolveRootArticleDirectory } from '../api/helpers';
 // import { DocumentCustomUIField } from "./documentUI";
 import {
   createSyncAfterChangeHook,
@@ -11,6 +11,8 @@ import {
 interface Args {
   fields: Field[];
   pluginOptions: PluginOptions;
+  slug?: string;
+  global?: boolean;
 }
 
 const createCrowdinArticleDirectoryField = (
@@ -81,7 +83,19 @@ const createCrowdinArticleDirectoryField = (
 export const pluginCollectionOrGlobalFields = ({
   fields,
   pluginOptions,
+  slug,
+  global = false,
 }: Args): Field[] => {
+  const syncFieldVisible = (data: Record<string, unknown>) =>
+    Boolean(data['crowdinArticleDirectory']) &&
+    (slug
+      ? isCrowdinActive({
+          doc: data,
+          slug,
+          global,
+          pluginOptions,
+        })
+      : true);
   const pluginFields: Field[] = [
     /**
     {
@@ -104,9 +118,7 @@ export const pluginCollectionOrGlobalFields = ({
       admin: {
         description:
           'Sync translations for this locale from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).',
-        condition: (data) => {
-          return Boolean(data['crowdinArticleDirectory']);
-        },
+        condition: (data) => syncFieldVisible(data),
       },
       hooks: {
         beforeChange: [
@@ -127,9 +139,7 @@ export const pluginCollectionOrGlobalFields = ({
       admin: {
         description:
           'Sync all translations from Crowdin on save draft (stores translations as drafts) or publish (publishes translations).',
-        condition: (data) => {
-          return Boolean(data['crowdinArticleDirectory']);
-        },
+        condition: (data) => syncFieldVisible(data),
       },
       hooks: {
         beforeChange: [

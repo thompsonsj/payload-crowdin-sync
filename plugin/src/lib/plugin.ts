@@ -183,6 +183,7 @@ export const crowdinSync =
             const fields = pluginCollectionOrGlobalFields({
               fields: existingCollection.fields,
               pluginOptions,
+              slug: existingCollection.slug,
             });
 
             return {
@@ -291,6 +292,8 @@ export const crowdinSync =
             const fields = pluginCollectionOrGlobalFields({
               fields: existingGlobal.fields,
               pluginOptions,
+              slug: existingGlobal.slug,
+              global: true,
             });
             return {
               ...existingGlobal,

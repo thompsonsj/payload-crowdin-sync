@@ -311,17 +311,49 @@ describe('payloadCrowdinSyncTranslationsApi', () => {
         ],
       } as any);
       vi.spyOn(api, 'readSlice').mockResolvedValue({ json: {} });
-      vi.spyOn(api, 'getCurrentDocumentTranslation').mockResolvedValue({
-        title: 'Hallo',
-      });
+      const getCurrent = vi
+        .spyOn(api, 'getCurrentDocumentTranslation')
+        .mockResolvedValue({
+          title: 'Hallo',
+        });
 
       await expect(
         api.getLatestDocumentTranslation({
           collection: 'posts',
           doc: { id: 'doc-1' },
           locale: 'de_DE',
+          draft: true,
         }),
       ).resolves.toEqual({ title: 'Hallo' });
+      expect(getCurrent).toHaveBeenCalledWith(
+        expect.objectContaining({ draft: true }),
+      );
+    });
+
+    it('forwards draft: false when filling required localized fields', async () => {
+      vi.spyOn(api, 'getCollectionConfig').mockReturnValue({
+        slug: 'posts',
+        fields: [
+          { name: 'title', type: 'text', localized: true, required: true },
+        ],
+      } as any);
+      vi.spyOn(api, 'readSlice').mockResolvedValue({ json: {} });
+      const getCurrent = vi
+        .spyOn(api, 'getCurrentDocumentTranslation')
+        .mockResolvedValue({
+          title: 'Hallo',
+        });
+
+      await api.getLatestDocumentTranslation({
+        collection: 'posts',
+        doc: { id: 'doc-1' },
+        locale: 'de_DE',
+        draft: false,
+      });
+
+      expect(getCurrent).toHaveBeenCalledWith(
+        expect.objectContaining({ draft: false }),
+      );
     });
 
     it('returns a message when the collection has no config', async () => {
@@ -372,6 +404,275 @@ describe('payloadCrowdinSyncTranslationsApi', () => {
       await expect(result).rejects.toThrow('cannot build update object');
       const rejection = await result.catch((error: Error) => error);
       expect(rejection.cause).toBe(original);
+    });
+  });
+
+  describe('updateTranslation (#306)', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    const draftSourceDoc = {
+      id: 'doc-1',
+      title: 'Draft title',
+      translateWithCrowdin: true,
+    };
+
+    const inactiveSourceDoc = {
+      id: 'doc-1',
+      title: 'Changed after opt-out',
+      translateWithCrowdin: false,
+    };
+
+    const makeApi = (
+      doc: Record<string, unknown>,
+      options: typeof pluginOptions = pluginOptions,
+    ) => {
+      const payload = {
+        findByID: vi.fn().mockResolvedValue(doc),
+        findGlobal: vi.fn().mockResolvedValue(doc),
+        update: vi.fn(),
+        updateGlobal: vi.fn(),
+      } as any;
+      const translationsApi = new payloadCrowdinSyncTranslationsApi(
+        options,
+        payload,
+      );
+      vi.spyOn(
+        translationsApi,
+        'getCurrentDocumentTranslation',
+      ).mockResolvedValue({ title: 'Hallo' });
+      vi.spyOn(
+        translationsApi,
+        'getLatestDocumentTranslation',
+      ).mockResolvedValue({ title: 'Hallo' });
+      return { translationsApi, payload };
+    };
+
+    it('loads the latest draft as the source document even when writing published translations', async () => {
+      const { translationsApi, payload } = makeApi(draftSourceDoc);
+
+      await translationsApi.updateTranslation({
+        documentId: 'doc-1',
+        collection: 'localized-posts',
+        dryRun: true,
+        draft: false,
+      });
+
+      expect(payload.findByID).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: 'doc-1',
+          locale: 'en',
+          draft: true,
+        }),
+      );
+    });
+
+    it('loads the latest draft of a global as the source document', async () => {
+      const { translationsApi, payload } = makeApi(draftSourceDoc);
+
+      await translationsApi.updateTranslation({
+        documentId: '',
+        collection: 'nav',
+        global: true,
+        dryRun: true,
+        draft: false,
+      });
+
+      expect(payload.findGlobal).toHaveBeenCalledWith(
+        expect.objectContaining({
+          slug: 'nav',
+          locale: 'en',
+          draft: true,
+        }),
+      );
+    });
+
+    it('does not pull Crowdin translations when the collection condition is false', async () => {
+      const { translationsApi, payload } = makeApi(inactiveSourceDoc, {
+        ...pluginOptions,
+        collections: [
+          {
+            slug: 'localized-posts',
+            condition: ({ doc }) => Boolean(doc.translateWithCrowdin),
+          },
+        ],
+      });
+
+      const result = await translationsApi.updateTranslation({
+        documentId: 'doc-1',
+        collection: 'localized-posts',
+        dryRun: false,
+      });
+
+      expect(translationsApi.getLatestDocumentTranslation).not.toHaveBeenCalled();
+      expect(
+        translationsApi.getCurrentDocumentTranslation,
+      ).not.toHaveBeenCalled();
+      expect(payload.update).not.toHaveBeenCalled();
+      expect(result).toEqual(
+        expect.objectContaining({
+          source: inactiveSourceDoc,
+          skipped: true,
+        }),
+      );
+    });
+
+    it('does not pull Crowdin translations when the global condition is false', async () => {
+      const { translationsApi, payload } = makeApi(inactiveSourceDoc, {
+        ...pluginOptions,
+        globals: [
+          {
+            slug: 'nav',
+            condition: ({ doc }) => Boolean(doc.translateWithCrowdin),
+          },
+        ],
+      });
+
+      const result = await translationsApi.updateTranslation({
+        documentId: '',
+        collection: 'nav',
+        global: true,
+        dryRun: false,
+      });
+
+      expect(translationsApi.getLatestDocumentTranslation).not.toHaveBeenCalled();
+      expect(payload.updateGlobal).not.toHaveBeenCalled();
+      expect(result).toEqual(
+        expect.objectContaining({
+          source: inactiveSourceDoc,
+          skipped: true,
+        }),
+      );
+    });
+
+    it('still pulls translations when the collection condition is met', async () => {
+      const { translationsApi } = makeApi(draftSourceDoc, {
+        ...pluginOptions,
+        collections: [
+          {
+            slug: 'localized-posts',
+            condition: ({ doc }) => Boolean(doc.translateWithCrowdin),
+          },
+        ],
+      });
+
+      await translationsApi.updateTranslation({
+        documentId: 'doc-1',
+        collection: 'localized-posts',
+        dryRun: true,
+      });
+
+      expect(translationsApi.getLatestDocumentTranslation).toHaveBeenCalled();
+    });
+
+    it('still pulls translations when the global condition is met', async () => {
+      const { translationsApi } = makeApi(draftSourceDoc, {
+        ...pluginOptions,
+        globals: [
+          {
+            slug: 'nav',
+            condition: ({ doc }) => Boolean(doc.translateWithCrowdin),
+          },
+        ],
+      });
+
+      await translationsApi.updateTranslation({
+        documentId: '',
+        collection: 'nav',
+        global: true,
+        dryRun: true,
+      });
+
+      expect(translationsApi.getLatestDocumentTranslation).toHaveBeenCalled();
+    });
+
+    it('does not pull translations for a global omitted from the globals allowlist', async () => {
+      const { translationsApi, payload } = makeApi(draftSourceDoc, {
+        ...pluginOptions,
+        globals: ['footer'],
+        collections: ['nav'],
+      });
+
+      const result = await translationsApi.updateTranslation({
+        documentId: '',
+        collection: 'nav',
+        global: true,
+        dryRun: false,
+      });
+
+      expect(translationsApi.getLatestDocumentTranslation).not.toHaveBeenCalled();
+      expect(payload.updateGlobal).not.toHaveBeenCalled();
+      expect(result.skipped).toBe(true);
+      expect(result.translations).toEqual({});
+    });
+
+    it('does not pull translations for a collection omitted from the collections allowlist', async () => {
+      const { translationsApi, payload } = makeApi(draftSourceDoc, {
+        ...pluginOptions,
+        collections: ['posts'],
+      });
+
+      const result = await translationsApi.updateTranslation({
+        documentId: 'doc-1',
+        collection: 'localized-posts',
+        dryRun: false,
+      });
+
+      expect(translationsApi.getLatestDocumentTranslation).not.toHaveBeenCalled();
+      expect(payload.update).not.toHaveBeenCalled();
+      expect(result.skipped).toBe(true);
+    });
+
+    it('does not pull translations when collections is an empty allowlist', async () => {
+      const { translationsApi } = makeApi(draftSourceDoc, {
+        ...pluginOptions,
+        collections: [],
+      });
+
+      const result = await translationsApi.updateTranslation({
+        documentId: 'doc-1',
+        collection: 'localized-posts',
+        dryRun: false,
+      });
+
+      expect(translationsApi.getLatestDocumentTranslation).not.toHaveBeenCalled();
+      expect(result.skipped).toBe(true);
+    });
+
+    it('does not pull translations when globals is an empty allowlist', async () => {
+      const { translationsApi } = makeApi(draftSourceDoc, {
+        ...pluginOptions,
+        globals: [],
+      });
+
+      const result = await translationsApi.updateTranslation({
+        documentId: '',
+        collection: 'nav',
+        global: true,
+        dryRun: false,
+      });
+
+      expect(translationsApi.getLatestDocumentTranslation).not.toHaveBeenCalled();
+      expect(result.skipped).toBe(true);
+    });
+
+    it('passes the latest-draft source document into getLatestDocumentTranslation', async () => {
+      const { translationsApi } = makeApi(draftSourceDoc);
+
+      await translationsApi.updateTranslation({
+        documentId: 'doc-1',
+        collection: 'localized-posts',
+        dryRun: true,
+        draft: false,
+      });
+
+      expect(translationsApi.getLatestDocumentTranslation).toHaveBeenCalledWith(
+        expect.objectContaining({
+          doc: draftSourceDoc,
+          draft: false,
+        }),
+      );
     });
   });
 });

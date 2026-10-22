@@ -45,6 +45,7 @@ import {
   getFiles,
   getFilesByDocumentID,
   getLexicalFieldArticleDirectory,
+  isCrowdinActive,
 } from './helpers';
 import {
   getLexicalBlockFields,
@@ -104,6 +105,7 @@ export class payloadCrowdinSyncTranslationsApi implements TranslationReader {
   lexicalBlockFolderPrefix: PluginOptions['lexicalBlockFolderPrefix'];
   disableSelfClean?: PluginOptions['disableSelfClean'];
   legacyArticleDirectoryLookup?: PluginOptions['legacyArticleDirectoryLookup'];
+  pluginOptions: PluginOptions;
 
   constructor(
     pluginOptions: PluginOptions,
@@ -131,6 +133,7 @@ export class payloadCrowdinSyncTranslationsApi implements TranslationReader {
       pluginOptions.legacyArticleDirectoryLookup;
     this.lexicalBlockFolderPrefix =
       pluginOptions.lexicalBlockFolderPrefix || ``;
+    this.pluginOptions = pluginOptions;
   }
 
   async updateTranslation({
@@ -155,7 +158,10 @@ export class payloadCrowdinSyncTranslationsApi implements TranslationReader {
         locale: this.sourceLocale,
         depth: 0,
         req: this.req,
-        draft,
+        // Crowdin source is uploaded from the last save, which lives
+        // on the latest draft when versions are enabled. The `draft`
+        // argument still controls whether translations are written as drafts.
+        draft: true,
       });
     } else {
       doc = await this.payload.findByID({
@@ -164,9 +170,25 @@ export class payloadCrowdinSyncTranslationsApi implements TranslationReader {
         locale: this.sourceLocale,
         depth: 0,
         req: this.req,
-        draft,
+        draft: true,
       });
     }
+
+    if (
+      !isCrowdinActive({
+        doc,
+        slug: collection,
+        global,
+        pluginOptions: this.pluginOptions,
+      })
+    ) {
+      return {
+        source: doc,
+        translations: {},
+        skipped: true,
+      };
+    }
+
     const report: { [key: string]: any } = {};
     let index = 1;
     for (const locale of Object.keys(this.localeMap)) {
@@ -444,6 +466,7 @@ export class payloadCrowdinSyncTranslationsApi implements TranslationReader {
     doc,
     locale,
     global = false,
+    draft = false,
   }: IgetLatestDocumentTranslation) {
     let collectionConfig = undefined;
     try {
@@ -490,6 +513,7 @@ export class payloadCrowdinSyncTranslationsApi implements TranslationReader {
           collection: collection,
           locale: locale,
           global,
+          draft,
         });
         requiredFieldSlugs.forEach((slug) => {
           if (!Object.prototype.hasOwnProperty.call(docTranslations, slug)) {
