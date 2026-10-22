@@ -56,6 +56,8 @@ jobs:
         run: npx nx run adapters:build
       - name: Typecheck (plugin build)
         run: npx nx run plugin:build
+      - name: Native ESM published entries
+        run: npx nx run-many --target=native-esm --projects=document,adapters,plugin
       - name: Typecheck (plugin unit tests)
         run: npx tsc -p plugin/tsconfig.spec.json --noEmit
       - name: Typecheck (document unit tests)
