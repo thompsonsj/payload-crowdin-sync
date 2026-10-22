@@ -709,7 +709,7 @@ export class payloadCrowdinSyncTranslationsApi implements TranslationReader {
             blockConfig,
             file,
             locale,
-            crowdinArticleDirectoryId: lexicalFieldCrowdinArticleDirectoryId,
+            crowdinArticleDirectoryId: `${lexicalFieldCrowdinArticleDirectoryId}`,
           })
         : null;
 
