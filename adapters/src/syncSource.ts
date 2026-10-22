@@ -12,6 +12,23 @@ const richTextChanged = (
   currentValue: unknown,
 ) => !deepEqual(previousValue || {}, currentValue || {});
 
+const throwIfAnyRejected = (
+  results: PromiseSettledResult<unknown>[],
+  message: string,
+) => {
+  const reasons = results
+    .filter(
+      (result): result is PromiseRejectedResult => result.status === 'rejected',
+    )
+    .map((result) => result.reason);
+  if (reasons.length === 1) {
+    throw reasons[0];
+  }
+  if (reasons.length > 1) {
+    throw new AggregateError(reasons, message);
+  }
+};
+
 export const syncDocumentSource = async ({
   writer,
   collection,
@@ -51,7 +68,7 @@ export const syncDocumentSource = async ({
     isLocalized,
   });
 
-  await Promise.allSettled(
+  const htmlWrites = await Promise.allSettled(
     Object.keys(currentHtml).map(async (name) => {
       const currentValue = currentHtml[name];
       const previousValue = previousHtml[name];
@@ -65,4 +82,5 @@ export const syncDocumentSource = async ({
       });
     }),
   );
+  throwIfAnyRejected(htmlWrites, 'Failed to write html source files');
 };
