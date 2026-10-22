@@ -425,7 +425,7 @@ When in a locale other than the source locale:
 
 <img width="766" alt="Screenshot 2024-02-06 at 22 08 48" src="https://github.com/thompsonsj/payload-crowdin-sync/assets/44806974/2aa9c493-7792-422f-bf8d-a91c23893682" />
 
-The checkboxes appear once the document has been uploaded to Crowdin.
+The checkboxes appear after the document has been uploaded to Crowdin, and only while its [collection or global condition](#collections) is true. If you turn the condition off later, they hide. REST and jobs skip the same way (the response includes `skipped: true`) and do not apply stale Crowdin files.
 
 Loading translations for many locales can make saving slow. Set `PAYLOAD_CROWDIN_SYNC_USE_JOBS` to a non-empty value (for example `true`) to queue the work as Payload jobs instead. The plugin registers a `crowdinSyncTranslations` task and queues one job per locale. You need to run the job queue yourself; see [Queues](https://payloadcms.com/docs/jobs-queue/queues) in the Payload docs.
 
@@ -443,8 +443,9 @@ e.g. `https://my-payload-app.com/api/crowdin-article-directories/64a880bb87ef685
 
 A JSON object is returned that allows you to review what will be updated in the database. The JSON object will contain the following keys:
 
-- `draft` indicates that on update, a draft will be created rather than a published version. See [Drafts | Payload CMS](https://payloadcms.com/docs/versions/drafts).
-- `source` review the source document. e.g. for the `en` locale.
+- `draft` indicates that on update, a draft will be created rather than a published version. See [Drafts | Payload CMS](https://payloadcms.com/docs/versions/drafts). This flag only controls the write.
+- `source` is the latest source-locale draft (the last save uploaded to Crowdin), not the published row.
+- `skipped` is `true` when the [collection or global condition](#collections) is false. No translations are pulled.
 - `translations`
   - `<locale>` e.g. `es_ES`
     - `currentTranslations` all current localized fields and values.
@@ -463,7 +464,7 @@ The document will be updated and the same report will be generated as for a revi
 
 ##### Notes
 
-- Pass the `draft=true` query parameter to update as a draft rather than a published version.
+- Pass the `draft=true` query parameter to write translations as drafts. Apply still uses the latest source draft for field structure (block ids, array order).
 - Pass a `locale` parameter to perform a review/update for one locale only. e.g. `locale=fr_FR`.
 - The source locale (e.g. `en`) is not affected.
 - Use the `excludeLocales` field on documents in the `crowdin-article-directories` collection to prevent some locales from being included in the review/update operation.
