@@ -1,6 +1,6 @@
 import type { Field } from 'payload';
 import { fieldIsArrayType, fieldIsBlockType, fieldIsGroupType, fieldIsID, fieldShouldBeLocalized } from 'payload/shared';
-import type { FieldWithName } from './types';
+import type { FieldWithName } from './types.js';
 
 const localizedFieldTypes = ['richText', 'text', 'textarea'];
 

@@ -1,12 +1,12 @@
 import type { Field, TabsField } from 'payload';
-import { PluginOptions } from '../types';
-import { isCrowdinActive, resolveRootArticleDirectory } from '../api/helpers';
-// import { DocumentCustomUIField } from "./documentUI";
+import { PluginOptions } from '../types.js';
+import { isCrowdinActive, resolveRootArticleDirectory } from '../api/helpers.js';
+// import { DocumentCustomUIField } from "./documentUI.js";
 import {
   createSyncAfterChangeHook,
   createSyncBeforeChangeHook,
   syncFieldNames,
-} from './syncTranslationHooks';
+} from './syncTranslationHooks.js';
 
 interface Args {
   fields: Field[];

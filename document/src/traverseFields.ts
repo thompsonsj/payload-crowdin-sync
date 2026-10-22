@@ -1,5 +1,5 @@
 import type { ArrayField, BlocksField, Field, GroupField } from 'payload';
-import type { FieldWithName } from './types';
+import type { FieldWithName } from './types.js';
 
 /**
  * Fields for a blocks item, looked up by `blockType`.

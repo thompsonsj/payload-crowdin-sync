@@ -2,9 +2,9 @@ import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest } from 'payloa
 import {
   ensureArticleDirectoryPolymorphicLink,
   findRootArticleDirectoryPolymorphic,
-} from '../api/helpers';
-import { containsLocalizedFields } from '../utilities';
-import type { CrowdinArticleDirectory } from '../payload-types';
+} from '../api/helpers.js';
+import { containsLocalizedFields } from '../utilities/index.js';
+import type { CrowdinArticleDirectory } from '../payload-types.js';
 
 export type BackfillArticleDirectoryLinksResult = {
   collectionDocumentsUpdated: number;

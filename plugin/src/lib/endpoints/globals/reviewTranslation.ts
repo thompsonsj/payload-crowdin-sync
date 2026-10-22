@@ -1,6 +1,6 @@
 import type { Endpoint } from 'payload';
-import { PluginOptions } from '../../types';
-import { updatePayloadTranslation } from '../../api/helpers';
+import { PluginOptions } from '../../types.js';
+import { updatePayloadTranslation } from '../../api/helpers.js';
 
 export const getReviewTranslationEndpoint = ({
   pluginOptions,

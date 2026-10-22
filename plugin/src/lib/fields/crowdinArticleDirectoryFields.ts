@@ -1,5 +1,5 @@
 import type { Field } from 'payload';
-import { PluginOptions } from '../types';
+import { PluginOptions } from '../types.js';
 
 export const crowdinArticleDirectoryFields = ({
   pluginOptions,

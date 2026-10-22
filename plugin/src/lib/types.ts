@@ -6,8 +6,8 @@ import {
 import {
   CrowdinArticleDirectory,
   CrowdinCollectionDirectory,
-} from './payload-types';
-import { isPopulatedRelationship } from './utilities/payload';
+} from './payload-types.js';
+import { isPopulatedRelationship } from './utilities/payload.js';
 
 type CollectionOrGlobalConfigSlug = string;
 type CollectionOrGlobalConfigObject = {

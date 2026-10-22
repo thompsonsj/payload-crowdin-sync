@@ -32,6 +32,7 @@ In the root of the repository:
 - `nx build document` builds to `dist/document`.
 - `nx build adapters` builds to `dist/adapters`.
 - `nx build plugin --watch` rebuilds when files change.
+- `nx run document:native-esm` (and `adapters` / `plugin`) builds, rewrites published entrypoints, and loads the package with Node's native ESM resolver. Production relative imports use `.js` specifiers so that import works without a bundler.
 
 ## Lint
 

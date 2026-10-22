@@ -8,11 +8,11 @@ import type {
   CollectionSlug,
   GlobalSlug,
 } from 'payload';
-import { PluginOptions } from '../../types';
-import { getLocalizedFields, isLocalizedField } from '../../utilities';
-import { isCrowdinActive } from '../../api/helpers';
-import { filesApiByDocument } from '../../api/files/by-document';
-import { syncDocumentSource } from '../../api/adapters';
+import { PluginOptions } from '../../types.js';
+import { getLocalizedFields, isLocalizedField } from '../../utilities/index.js';
+import { isCrowdinActive } from '../../api/helpers.js';
+import { filesApiByDocument } from '../../api/files/by-document.js';
+import { syncDocumentSource } from '../../api/adapters/index.js';
 
 /**
  * Update Crowdin collections and make updates in Crowdin

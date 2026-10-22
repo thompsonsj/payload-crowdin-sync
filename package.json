@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "generate:importmaps": "cd dev && npm run generate:importmap",
-    "release": "nx build plugin && cd dist/plugin && npm publish",
+    "release": "nx build plugin && node tools/scripts/rewrite-dist-entrypoints.mjs dist/plugin && cd dist/plugin && npm publish",
     "test": "nx run-many --all --target=test",
     "test:coverage": "nx run-many --all --target=test --configuration=ci",
     "docs:serve": "nx run docs-site:serve",

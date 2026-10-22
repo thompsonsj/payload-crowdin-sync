@@ -18,7 +18,7 @@
       }
     },
     "publish": {
-      "command": "node tools/scripts/publish.mjs plugin {args.ver} {args.tag}",
+      "command": "node tools/scripts/rewrite-dist-entrypoints.mjs dist/plugin && node tools/scripts/publish.mjs plugin {args.ver} {args.tag}",
       "dependsOn": ["build"]
     },
     "native-esm": {

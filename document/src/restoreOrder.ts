@@ -1,7 +1,7 @@
 import type { ArrayField, BlocksField, Field } from 'payload';
 import { isEmpty } from 'es-toolkit/compat';
-import { getLocalizedFields } from './localizedFields';
-import { getBlockFields, traverseFields } from './traverseFields';
+import { getLocalizedFields } from './localizedFields.js';
+import { getBlockFields, traverseFields } from './traverseFields.js';
 
 type RestoreOrderContext = {
   updateDocument: { [key: string]: any };

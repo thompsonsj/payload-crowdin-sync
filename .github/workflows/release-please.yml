@@ -70,7 +70,9 @@ jobs:
           npm view "payload-localization-adapters@${required}" version
       - name: Build payload-localized-fields
         if: ${{ needs.release-please.outputs.document_release_created == 'true' }}
-        run: npx nx run document:build
+        run: |
+          npx nx run document:build
+          node tools/scripts/rewrite-dist-entrypoints.mjs dist/document
       - name: Publish payload-localized-fields
         if: ${{ needs.release-please.outputs.document_release_created == 'true' }}
         working-directory: dist/document
@@ -86,7 +88,9 @@ jobs:
         run: npm publish --access public
       - name: Build payload-crowdin-sync
         if: ${{ needs.release-please.outputs.plugin_release_created == 'true' }}
-        run: npx nx run plugin:build
+        run: |
+          npx nx run plugin:build
+          node tools/scripts/rewrite-dist-entrypoints.mjs dist/plugin
       - name: Publish payload-crowdin-sync
         if: ${{ needs.release-please.outputs.plugin_release_created == 'true' }}
         working-directory: dist/plugin

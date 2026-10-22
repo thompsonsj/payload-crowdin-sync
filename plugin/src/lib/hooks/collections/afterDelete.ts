@@ -4,10 +4,10 @@ import type {
   CollectionSlug,
   GlobalSlug,
 } from 'payload';
-import { PluginOptions } from '../../types';
-import { filesApiByDocument } from '../../api/files/by-document';
-import { isCrowdinActive } from '../../api/helpers';
-import { getLocalizedFields } from '../../utilities';
+import { PluginOptions } from '../../types.js';
+import { filesApiByDocument } from '../../api/files/by-document.js';
+import { isCrowdinActive } from '../../api/helpers.js';
+import { getLocalizedFields } from '../../utilities/index.js';
 
 interface CommonArgs {
   pluginOptions: PluginOptions;

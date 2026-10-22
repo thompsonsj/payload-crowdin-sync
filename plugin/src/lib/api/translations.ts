@@ -4,7 +4,7 @@ import {
   Translations,
 } from '@crowdin/crowdin-api-client';
 import { Payload } from 'payload';
-import { CrowdinHtmlObject, PluginOptions } from '../types';
+import { CrowdinHtmlObject, PluginOptions } from '../types.js';
 import deepEqual from 'deep-equal';
 import type {
   BlocksField as BlockField,
@@ -24,20 +24,20 @@ import {
   getLocalizedRequiredFields,
   findField,
   isLocalizedField,
-} from '../utilities';
-import { applyDocumentSlice } from './adapters';
-import type { DocumentSlice, TranslationReader } from './adapters';
+} from '../utilities/index.js';
+import { applyDocumentSlice } from './adapters/index.js';
+import type { DocumentSlice, TranslationReader } from './adapters/index.js';
 import {
   LEXICAL_BLOCKS_FIELD_NAME,
   lexicalBlocksFolderName,
   mergeLexicalBlockTranslations,
-} from './files/lexical-blocks';
+} from './files/lexical-blocks.js';
 import {
   convertHtmlToLexical,
   convertHtmlToSlate,
-} from '../utilities/richTextConversion';
+} from '../utilities/richTextConversion.js';
 
-import { Config, CrowdinFile } from '../payload-types';
+import { Config, CrowdinFile } from '../payload-types.js';
 import {
   getCollectionConfig,
   getFile,
@@ -46,12 +46,12 @@ import {
   getFilesByDocumentID,
   getLexicalFieldArticleDirectory,
   isCrowdinActive,
-} from './helpers';
+} from './helpers.js';
 import {
   getLexicalBlockFields,
   getLexicalEditorConfig,
-} from '../utilities/lexical';
-import { getRelationshipId } from '../utilities/payload';
+} from '../utilities/lexical/index.js';
+import { getRelationshipId } from '../utilities/payload.js';
 
 import { Client } from '@crowdin/crowdin-api-client';
 

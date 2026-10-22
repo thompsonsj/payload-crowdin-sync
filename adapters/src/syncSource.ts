@@ -5,7 +5,7 @@ import {
   buildJsonObject,
   type IsLocalized,
 } from 'payload-localized-fields';
-import type { SourceWriter } from './types';
+import type { SourceWriter } from './types.js';
 
 const richTextChanged = (
   previousValue: unknown,

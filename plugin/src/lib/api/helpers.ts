@@ -3,14 +3,14 @@ import {
   CrowdinArticleDirectory,
   CrowdinCollectionDirectory,
   CrowdinFile,
-} from '../payload-types';
-import { payloadCrowdinSyncTranslationsApi } from './translations';
+} from '../payload-types.js';
+import { payloadCrowdinSyncTranslationsApi } from './translations.js';
 import {
   PluginOptions,
   isCollectionOrGlobalConfigObject,
   isCollectionOrGlobalConfigSlug,
   isCrowdinArticleDirectory,
-} from '../types';
+} from '../types.js';
 import type {
   CollectionConfig,
   GlobalConfig,

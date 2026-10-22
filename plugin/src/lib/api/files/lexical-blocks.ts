@@ -9,14 +9,14 @@ import type {
 } from 'payload';
 import { merge } from 'es-toolkit';
 import { isEmpty } from 'es-toolkit/compat';
-import type { CrowdinHtmlObject, PluginOptions } from '../../types';
-import type { CrowdinArticleDirectory } from '../../payload-types';
+import type { CrowdinHtmlObject, PluginOptions } from '../../types.js';
+import type { CrowdinArticleDirectory } from '../../payload-types.js';
 import {
   buildCrowdinHtmlObject,
   buildCrowdinJsonObject,
   buildPayloadUpdateObject,
   reLocalizeField,
-} from '../../utilities';
+} from '../../utilities/index.js';
 
 export const LEXICAL_BLOCKS_COLLECTION_SLUG =
   'mock-collection-for-lexical-blocks';
