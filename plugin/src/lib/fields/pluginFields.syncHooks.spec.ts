@@ -42,8 +42,18 @@ const makeReq = (locale = 'de_DE') => ({
 });
 
 describe('pluginFields - sync checkbox visibility', () => {
+  const getCondition = (
+    name: SyncFieldName,
+    args: Parameters<typeof pluginCollectionOrGlobalFields>[0],
+  ) => {
+    const fields = pluginCollectionOrGlobalFields(args);
+    const field = fields.find((f) => (f as any).name === name) as any;
+    expect(field).toBeTruthy();
+    return field.admin.condition as (data: Record<string, unknown>) => boolean;
+  };
+
   it('hides the checkboxes when the collection condition is false', () => {
-    const fields = pluginCollectionOrGlobalFields({
+    const condition = getCondition('syncTranslations', {
       fields: [],
       pluginOptions: {
         ...pluginOptions,
@@ -56,8 +66,6 @@ describe('pluginFields - sync checkbox visibility', () => {
       },
       slug: 'localized-posts',
     });
-    const field = fields.find((f) => (f as any).name === 'syncTranslations') as any;
-    const condition = field.admin.condition as (data: Record<string, unknown>) => boolean;
 
     expect(
       condition({
@@ -72,6 +80,88 @@ describe('pluginFields - sync checkbox visibility', () => {
       }),
     ).toBe(true);
     expect(condition({ translateWithCrowdin: true })).toBe(false);
+  });
+
+  it('applies the same visibility to sync all translations', () => {
+    const condition = getCondition('syncAllTranslations', {
+      fields: [],
+      pluginOptions: {
+        ...pluginOptions,
+        collections: [
+          {
+            slug: 'localized-posts',
+            condition: ({ doc }) => Boolean(doc.translateWithCrowdin),
+          },
+        ],
+      },
+      slug: 'localized-posts',
+    });
+
+    expect(
+      condition({
+        crowdinArticleDirectory: 'ad-1',
+        translateWithCrowdin: false,
+      }),
+    ).toBe(false);
+  });
+
+  it('hides the checkboxes when the global condition is false', () => {
+    const condition = getCondition('syncTranslations', {
+      fields: [],
+      pluginOptions: {
+        ...pluginOptions,
+        globals: [
+          {
+            slug: 'nav',
+            condition: ({ doc }) => Boolean(doc.translateWithCrowdin),
+          },
+        ],
+      },
+      slug: 'nav',
+      global: true,
+    });
+
+    expect(
+      condition({
+        crowdinArticleDirectory: 'ad-1',
+        translateWithCrowdin: false,
+      }),
+    ).toBe(false);
+    expect(
+      condition({
+        crowdinArticleDirectory: 'ad-1',
+        translateWithCrowdin: true,
+      }),
+    ).toBe(true);
+  });
+
+  it('hides the checkboxes for a global omitted from the globals allowlist', () => {
+    const condition = getCondition('syncTranslations', {
+      fields: [],
+      pluginOptions: {
+        ...pluginOptions,
+        globals: ['footer'],
+        collections: ['nav'],
+      },
+      slug: 'nav',
+      global: true,
+    });
+
+    expect(
+      condition({
+        crowdinArticleDirectory: 'ad-1',
+      }),
+    ).toBe(false);
+  });
+
+  it('only requires an article directory when no slug is passed', () => {
+    const condition = getCondition('syncTranslations', {
+      fields: [],
+      pluginOptions,
+    });
+
+    expect(condition({ crowdinArticleDirectory: 'ad-1' })).toBe(true);
+    expect(condition({})).toBe(false);
   });
 });
 

@@ -144,6 +144,38 @@ describe('getAfterChangeHook', () => {
     });
   });
 
+  describe('collection condition', () => {
+    beforeEach(() => {
+      createOrUpdateJsonFile.mockClear();
+      createOrUpdateHtmlFile.mockClear();
+    });
+
+    it('does not upload when the collection condition is false', async () => {
+      const hook = getAfterChangeHook({
+        collection: minimalCollection,
+        pluginOptions: {
+          ...pluginOptions,
+          collections: [
+            {
+              slug: 'posts',
+              condition: () => false,
+            },
+          ],
+        },
+      });
+
+      await hook({
+        doc,
+        previousDoc,
+        req: buildReq(),
+        operation: 'update',
+        collection: minimalCollection,
+      } as any);
+
+      expect(createOrUpdateJsonFile).not.toHaveBeenCalled();
+    });
+  });
+
   describe('syncDocumentSource wiring', () => {
     beforeEach(() => {
       createOrUpdateJsonFile.mockClear();
@@ -203,6 +235,64 @@ describe('getAfterChangeHook', () => {
 });
 
 describe('getGlobalAfterChangeHook', () => {
+  describe('global condition', () => {
+    beforeEach(() => {
+      createOrUpdateJsonFile.mockClear();
+      createOrUpdateHtmlFile.mockClear();
+    });
+
+    it('does not upload when the global condition is false', async () => {
+      const hook = getGlobalAfterChangeHook({
+        global: minimalGlobal,
+        pluginOptions: {
+          ...pluginOptions,
+          globals: [
+            {
+              slug: 'nav',
+              condition: () => false,
+            },
+          ],
+          collections: ['nav'],
+        },
+      });
+
+      await hook({
+        doc,
+        previousDoc,
+        req: buildReq(),
+        global: minimalGlobal,
+      } as any);
+
+      expect(createOrUpdateJsonFile).not.toHaveBeenCalled();
+    });
+
+    it('uploads when the global condition is met', async () => {
+      const hook = getGlobalAfterChangeHook({
+        global: minimalGlobal,
+        pluginOptions: {
+          ...pluginOptions,
+          globals: [
+            {
+              slug: 'nav',
+              condition: () => true,
+            },
+          ],
+        },
+      });
+
+      await hook({
+        doc: { id: 'doc-001', label: 'Hello' },
+        previousDoc: { id: 'doc-001', label: 'Old' },
+        req: buildReq(),
+        global: minimalGlobal,
+      } as any);
+
+      expect(createOrUpdateJsonFile).toHaveBeenCalledWith({
+        fileData: { label: 'Hello' },
+      });
+    });
+  });
+
   describe('triggerAfterChange context guard (new in PR)', () => {
     it('returns doc immediately when req.context.triggerAfterChange is false', async () => {
       const hook = getGlobalAfterChangeHook({

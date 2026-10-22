@@ -135,6 +135,120 @@ describe('Helper: isCrowdinActive', () => {
     });
     expect(active).toBe(false);
   });
+
+  describe('allowlist and condition matrix', () => {
+    it.each([
+      {
+        name: 'no slug',
+        slug: '',
+        global: false,
+        options: {},
+        expected: false,
+      },
+      {
+        name: 'empty collections array disables every collection',
+        slug: 'posts',
+        global: false,
+        options: { collections: [] },
+        expected: false,
+      },
+      {
+        name: 'empty globals array disables every global',
+        slug: 'nav',
+        global: true,
+        options: { globals: [] },
+        expected: false,
+      },
+      {
+        name: 'global condition met',
+        slug: 'nav',
+        global: true,
+        options: {
+          globals: [
+            {
+              slug: 'nav',
+              condition: ({ doc: d }: { doc: { title: string } }) =>
+                d.title === 'Test doc',
+            },
+          ],
+        },
+        expected: true,
+      },
+      {
+        name: 'global listed as a slug string',
+        slug: 'nav',
+        global: true,
+        options: { globals: ['nav'] },
+        expected: true,
+      },
+      {
+        name: 'global listed as an object without a condition',
+        slug: 'nav',
+        global: true,
+        options: { globals: [{ slug: 'nav' }] },
+        expected: true,
+      },
+      {
+        name: 'false global condition does not fall through to collections',
+        slug: 'nav',
+        global: true,
+        options: {
+          globals: [
+            {
+              slug: 'nav',
+              condition: () => false,
+            },
+          ],
+          collections: ['nav'],
+        },
+        expected: false,
+      },
+      {
+        name: 'unlisted global does not fall through to a matching collection slug',
+        slug: 'nav',
+        global: true,
+        options: {
+          globals: ['footer'],
+          collections: ['nav'],
+        },
+        expected: false,
+      },
+      {
+        name: 'globals unset still activates a global even if collections is empty',
+        slug: 'nav',
+        global: true,
+        options: { collections: [] },
+        expected: true,
+      },
+      {
+        name: 'false collection condition does not use globals',
+        slug: 'posts',
+        global: false,
+        options: {
+          collections: [
+            {
+              slug: 'posts',
+              condition: () => false,
+            },
+          ],
+          globals: ['posts'],
+        },
+        expected: false,
+      },
+    ])('$name', ({ slug, global, options, expected }) => {
+      expect(
+        isCrowdinActive({
+          doc,
+          slug,
+          global,
+          pluginOptions: {
+            ...pluginOptions,
+            ...options,
+          },
+        }),
+      ).toBe(expected);
+    });
+  });
 });
 
 describe('findRootArticleDirectoryPolymorphic / getArticleDirectory rootLookup', () => {
