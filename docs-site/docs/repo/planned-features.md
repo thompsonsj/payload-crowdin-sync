@@ -96,9 +96,7 @@ Per-locale translation progress would need a Crowdin API call, for example trans
 
 **Goal:** support translation services other than Crowdin (for example Phrase or Lokalise) behind a shared interface.
 
-**Status:** not started. Depends on API refactoring items 3 and 4 (Lexical block handling isolated in `files/lexical-blocks.ts`).
-
-**Source:** [refactoring.md](./refactoring.md#future-adapter-pattern).
+**Status:** Crowdin side is done. `payload-localization-adapters` owns `SourceWriter` / `TranslationReader`, `syncDocumentSource`, and `applyDocumentSlice`. The Crowdin plugin implements those contracts. Phrase and Lokalise plugins are not started; they should depend on that package and `payload-localized-fields`, not on `payload-crowdin-sync`. See [packages](./packages.md) and [refactoring.md](./refactoring.md#future-adapter-pattern).
 
 ---
 
