@@ -815,6 +815,45 @@ export async function updatePayloadTranslation({
   }
 }
 
+const configMatchesSlug = (
+  config: NonNullable<PluginOptions['collections']>[number],
+  slug: string,
+) =>
+  isCollectionOrGlobalConfigObject(config)
+    ? config.slug === slug
+    : isCollectionOrGlobalConfigSlug(config) && config === slug;
+
+const isActiveForSlug = ({
+  doc,
+  slug,
+  slugsConfig,
+}: {
+  doc: any;
+  slug: string;
+  slugsConfig: PluginOptions['collections'] | PluginOptions['globals'];
+}) => {
+  if (!slugsConfig) {
+    return true;
+  }
+
+  const matchingConfig = slugsConfig.find((config) =>
+    configMatchesSlug(config, slug),
+  );
+
+  if (typeof matchingConfig === 'undefined') {
+    return false;
+  }
+
+  if (
+    isCollectionOrGlobalConfigObject(matchingConfig) &&
+    typeof matchingConfig.condition !== 'undefined'
+  ) {
+    return matchingConfig.condition({ doc });
+  }
+
+  return true;
+};
+
 export const isCrowdinActive = ({
   doc,
   slug,
@@ -831,48 +870,16 @@ export const isCrowdinActive = ({
   }
 
   if (global) {
-    if (!pluginOptions.globals) {
-      return true;
-    }
-
-    const matchingGlobalConfig = pluginOptions.globals.find((config) => {
-      if (isCollectionOrGlobalConfigObject(config) && config.slug === slug) {
-        if (typeof config.condition !== 'undefined') {
-          return config.condition({ doc });
-        }
-        return true;
-      }
-      if (isCollectionOrGlobalConfigSlug(config)) {
-        return config === slug;
-      }
-      return false;
+    return isActiveForSlug({
+      doc,
+      slug,
+      slugsConfig: pluginOptions.globals,
     });
-
-    if (typeof matchingGlobalConfig !== 'undefined') {
-      return true;
-    }
   }
 
-  if (!pluginOptions.collections) {
-    return true;
-  }
-
-  const matchingCollectionConfig = pluginOptions.collections.find((config) => {
-    if (isCollectionOrGlobalConfigObject(config) && config.slug === slug) {
-      if (typeof config.condition !== 'undefined') {
-        return config.condition({ doc });
-      }
-      return true;
-    }
-    if (isCollectionOrGlobalConfigSlug(config)) {
-      return config === slug;
-    }
-    return false;
+  return isActiveForSlug({
+    doc,
+    slug,
+    slugsConfig: pluginOptions.collections,
   });
-
-  if (typeof matchingCollectionConfig !== 'undefined') {
-    return true;
-  }
-
-  return false;
 };

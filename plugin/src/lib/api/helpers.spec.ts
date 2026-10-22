@@ -106,6 +106,35 @@ describe('Helper: isCrowdinActive', () => {
     });
     expect(active).toBeFalsy();
   });
+  it('returns false if a global condition is not met, even when collections is unset', () => {
+    const active = isCrowdinActive({
+      doc,
+      slug: 'nav',
+      global: true,
+      pluginOptions: {
+        ...pluginOptions,
+        globals: [
+          {
+            slug: 'nav',
+            condition: ({ doc: d }) => d.title !== 'Test doc',
+          },
+        ],
+      },
+    });
+    expect(active).toBe(false);
+  });
+  it('returns false if a global slug is omitted from the globals allowlist', () => {
+    const active = isCrowdinActive({
+      doc,
+      slug: 'footer',
+      global: true,
+      pluginOptions: {
+        ...pluginOptions,
+        globals: ['nav'],
+      },
+    });
+    expect(active).toBe(false);
+  });
 });
 
 describe('findRootArticleDirectoryPolymorphic / getArticleDirectory rootLookup', () => {

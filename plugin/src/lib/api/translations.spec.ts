@@ -492,6 +492,34 @@ describe('payloadCrowdinSyncTranslationsApi', () => {
       );
     });
 
+    it('does not pull Crowdin translations when the global condition is false', async () => {
+      const { translationsApi, payload } = makeApi(inactiveSourceDoc, {
+        ...pluginOptions,
+        globals: [
+          {
+            slug: 'nav',
+            condition: ({ doc }) => Boolean(doc.translateWithCrowdin),
+          },
+        ],
+      });
+
+      const result = await translationsApi.updateTranslation({
+        documentId: '',
+        collection: 'nav',
+        global: true,
+        dryRun: false,
+      });
+
+      expect(translationsApi.getLatestDocumentTranslation).not.toHaveBeenCalled();
+      expect(payload.updateGlobal).not.toHaveBeenCalled();
+      expect(result).toEqual(
+        expect.objectContaining({
+          source: inactiveSourceDoc,
+          skipped: true,
+        }),
+      );
+    });
+
     it('still pulls translations when the collection condition is met', async () => {
       const { translationsApi } = makeApi(draftSourceDoc, {
         ...pluginOptions,
