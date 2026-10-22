@@ -1,4 +1,4 @@
-import { CrowdinArticleDirectory } from '../payload-types';
+import { CrowdinArticleDirectory } from '../payload-types.js';
 
 /**
  * A relationship value is either a populated document or an unpopulated id

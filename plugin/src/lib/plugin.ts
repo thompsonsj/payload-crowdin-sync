@@ -1,21 +1,21 @@
 import type { CollectionConfig, Config, GlobalConfig } from 'payload';
-import { isCollectionOrGlobalConfigObject, type PluginOptions } from './types';
+import { isCollectionOrGlobalConfigObject, type PluginOptions } from './types.js';
 import {
   getAfterChangeHook,
   getGlobalAfterChangeHook,
-} from './hooks/collections/afterChange';
-import { getAfterDeleteHook } from './hooks/collections/afterDelete';
-import { pluginCollectionOrGlobalFields } from './fields/pluginFields';
-import CrowdinFiles from './collections/CrowdinFiles';
-import CrowdinCollectionDirectories from './collections/CrowdinCollectionDirectories';
-import CrowdinArticleDirectories from './collections/CrowdinArticleDirectories';
-import { containsLocalizedFields } from './utilities';
-import { getReviewTranslationEndpoint } from './endpoints/globals/reviewTranslation';
-import { getReviewFieldsEndpoint } from './endpoints/globals/reviewFields';
+} from './hooks/collections/afterChange.js';
+import { getAfterDeleteHook } from './hooks/collections/afterDelete.js';
+import { pluginCollectionOrGlobalFields } from './fields/pluginFields.js';
+import CrowdinFiles from './collections/CrowdinFiles.js';
+import CrowdinCollectionDirectories from './collections/CrowdinCollectionDirectories.js';
+import CrowdinArticleDirectories from './collections/CrowdinArticleDirectories.js';
+import { containsLocalizedFields } from './utilities/index.js';
+import { getReviewTranslationEndpoint } from './endpoints/globals/reviewTranslation.js';
+import { getReviewFieldsEndpoint } from './endpoints/globals/reviewFields.js';
 import Joi from 'joi';
-import { crowdinArticleDirectoryFields } from './fields/crowdinArticleDirectoryFields';
-import { buildDocumentTabFields } from './fields/documentTabFields';
-import { syncTranslations } from './tasks/sync-translation';
+import { crowdinArticleDirectoryFields } from './fields/crowdinArticleDirectoryFields.js';
+import { buildDocumentTabFields } from './fields/documentTabFields.js';
+import { syncTranslations } from './tasks/sync-translation.js';
 
 /**
  * This plugin extends all collections that contain localized fields

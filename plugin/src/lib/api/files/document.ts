@@ -1,6 +1,6 @@
-import { PluginOptions } from '../../index';
-import { payloadCrowdinSyncFilesApi } from '.';
-import { CrowdinArticleDirectory, CrowdinFile } from '../../payload-types';
+import { PluginOptions } from '../../index.js';
+import { payloadCrowdinSyncFilesApi } from './index.js';
+import { CrowdinArticleDirectory, CrowdinFile } from '../../payload-types.js';
 import {
   BlocksField as BlockField,
   CollectionConfig,
@@ -11,24 +11,24 @@ import {
 } from 'payload';
 
 import { isEmpty } from 'es-toolkit/compat';
-import { getFile, getFiles } from '../helpers';
+import { getFile, getFiles } from '../helpers.js';
 import { Descendant } from 'slate';
-import { findField } from '../../utilities';
+import { findField } from '../../utilities/index.js';
 import {
   convertLexicalToHtml,
   convertSlateToHtml,
-} from '../../utilities/richTextConversion';
+} from '../../utilities/richTextConversion.js';
 import {
   extractLexicalBlockContent,
   getLexicalBlockFields,
   getLexicalEditorConfig,
-} from '../../utilities/lexical';
-import { filesApiByDocument } from './by-document';
+} from '../../utilities/lexical/index.js';
+import { filesApiByDocument } from './by-document.js';
 import { CollectionSlug, GlobalSlug } from 'payload';
 import {
   filterLocalizedFieldsForCollection,
   syncLexicalBlocks,
-} from './lexical-blocks';
+} from './lexical-blocks.js';
 
 type FileData = string | object;
 

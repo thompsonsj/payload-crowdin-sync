@@ -1,6 +1,6 @@
 import { TaskConfig } from 'payload';
-import { updatePayloadTranslation } from '../api/helpers';
-import { PluginOptions } from '../types';
+import { updatePayloadTranslation } from '../api/helpers.js';
+import { PluginOptions } from '../types.js';
 
 export const syncTranslations = ({
   pluginOptions,

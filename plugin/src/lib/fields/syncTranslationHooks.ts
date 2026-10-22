@@ -1,7 +1,7 @@
 import type { FieldHook, RequestContext } from 'payload';
-import { updatePayloadTranslation } from '../api/helpers';
-import type { PluginOptions } from '../types';
-import { getOtherLocales } from '../utilities/locales';
+import { updatePayloadTranslation } from '../api/helpers.js';
+import type { PluginOptions } from '../types.js';
+import { getOtherLocales } from '../utilities/locales.js';
 
 export type SyncMode = 'current-locale' | 'all-locales';
 

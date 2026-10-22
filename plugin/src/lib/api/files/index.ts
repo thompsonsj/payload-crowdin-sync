@@ -1,7 +1,7 @@
-import { PluginOptions } from '../../types';
-import { getFileByDocumentID, getFilesByDocumentID } from '../helpers';
+import { PluginOptions } from '../../types.js';
+import { getFileByDocumentID, getFilesByDocumentID } from '../helpers.js';
 
-import { CrowdinArticleDirectory } from '../../payload-types';
+import { CrowdinArticleDirectory } from '../../payload-types.js';
 import { PayloadRequest } from 'payload';
 
 import * as crowdin from '@crowdin/crowdin-api-client';

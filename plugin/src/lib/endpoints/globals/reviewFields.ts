@@ -1,9 +1,9 @@
 import type { Endpoint } from 'payload';
-import { PluginOptions } from '../../types';
-import { payloadCrowdinSyncTranslationsApi } from '../../api/translations';
-import { getLocalizedFields } from '../../utilities';
+import { PluginOptions } from '../../types.js';
+import { payloadCrowdinSyncTranslationsApi } from '../../api/translations.js';
+import { getLocalizedFields } from '../../utilities/index.js';
 
-import { CrowdinCollectionDirectory } from '../../payload-types';
+import { CrowdinCollectionDirectory } from '../../payload-types.js';
 
 export const getReviewFieldsEndpoint = ({
   pluginOptions,

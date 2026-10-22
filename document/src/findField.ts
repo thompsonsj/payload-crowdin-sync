@@ -1,6 +1,6 @@
 import type { Block, Field } from 'payload';
 import { fieldIsArrayType, fieldIsBlockType, fieldIsGroupType } from 'payload/shared';
-import { getLocalizedFields } from './localizedFields';
+import { getLocalizedFields } from './localizedFields.js';
 
 export const findField = ({
   dotNotation,

@@ -2,10 +2,10 @@ import type { Field } from 'payload';
 import { merge, omitBy } from 'es-toolkit';
 import { isEmpty, map } from 'es-toolkit/compat';
 import dot from 'dot-object';
-import { getLocalizedFields } from './localizedFields';
-import { getBlockFields, traverseFields } from './traverseFields';
-import { restoreOrder } from './restoreOrder';
-import type { FieldWithName, HtmlObject, IsLocalized } from './types';
+import { getLocalizedFields } from './localizedFields.js';
+import { getBlockFields, traverseFields } from './traverseFields.js';
+import { restoreOrder } from './restoreOrder.js';
+import type { FieldWithName, HtmlObject, IsLocalized } from './types.js';
 
 export const isJsonField = (field: Field) => field.type !== 'richText';
 

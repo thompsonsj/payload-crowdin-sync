@@ -17,7 +17,11 @@
       }
     },
     "publish": {
-      "command": "node tools/scripts/publish.mjs document {args.ver} {args.tag}",
+      "command": "node tools/scripts/rewrite-dist-entrypoints.mjs dist/document && node tools/scripts/publish.mjs document {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    },
+    "native-esm": {
+      "command": "node tools/scripts/rewrite-dist-entrypoints.mjs dist/document && node tools/scripts/assert-native-esm.mjs dist/document",
       "dependsOn": ["build"]
     },
     "lint": {

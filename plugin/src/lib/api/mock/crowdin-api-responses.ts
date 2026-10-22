@@ -1,4 +1,4 @@
-import { PluginOptions } from '../../types';
+import { PluginOptions } from '../../types.js';
 import {
   SourceFilesModel,
   UploadStorageModel,

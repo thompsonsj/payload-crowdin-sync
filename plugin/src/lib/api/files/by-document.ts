@@ -1,8 +1,8 @@
 import {
   CrowdinArticleDirectory,
   CrowdinCollectionDirectory,
-} from '../../payload-types';
-import { isCrowdinArticleDirectory, PluginOptions } from '../../types';
+} from '../../payload-types.js';
+import { isCrowdinArticleDirectory, PluginOptions } from '../../types.js';
 import type {
   CollectionConfig,
   CollectionSlug,
@@ -15,16 +15,16 @@ import { toWords } from 'payload';
 import {
   isCrowdinDirectoryNotFoundError,
   isCrowdinNameConflictError,
-} from '.';
+} from './index.js';
 import {
   payloadCrowdinSyncDocumentFilesApi,
-} from './document';
-import { isLexicalBlocksCollectionSlug } from './lexical-blocks';
+} from './document.js';
+import { isLexicalBlocksCollectionSlug } from './lexical-blocks.js';
 import {
   findUnlinkedArticleDirectoryByName,
   getCollectionConfig,
   resolveRootArticleDirectory,
-} from '../helpers';
+} from '../helpers.js';
 
 import * as crowdin from '@crowdin/crowdin-api-client';
 

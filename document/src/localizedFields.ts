@@ -15,8 +15,8 @@ import {
   tabHasName,
 } from 'payload/shared';
 import { isEmpty } from 'es-toolkit/compat';
-import { containsNestedFields, isLocalizedField } from './isLocalizedField';
-import type { FieldWithName, IsLocalized } from './types';
+import { containsNestedFields, isLocalizedField } from './isLocalizedField.js';
+import type { FieldWithName, IsLocalized } from './types.js';
 
 export { containsNestedFields };
 

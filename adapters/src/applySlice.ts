@@ -3,7 +3,7 @@ import {
   buildUpdateObject,
   type IsLocalized,
 } from 'payload-localized-fields';
-import type { DocumentSlice } from './types';
+import type { DocumentSlice } from './types.js';
 
 /**
  * Turn a vendor-neutral document slice into a Payload update.

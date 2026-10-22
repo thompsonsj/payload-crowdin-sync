@@ -21,13 +21,13 @@ import {
 import type { Descendant } from 'slate';
 import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical';
 
-import { getLexicalBlockFields } from './lexical';
+import { getLexicalBlockFields } from './lexical/index.js';
 
 export {
   convertHtmlToLexical,
   rewriteCrowdinHtmlForLexical,
-} from './htmlToLexical';
-export type { ConvertHtmlToLexicalOptions } from './htmlToLexical';
+} from './htmlToLexical.js';
+export type { ConvertHtmlToLexicalOptions } from './htmlToLexical.js';
 
 export const convertLexicalToHtml = async (
   editorData: SerializedEditorState,

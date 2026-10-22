@@ -2,7 +2,7 @@
 import React, { FC } from 'react';
 import { useFormFields } from '@payloadcms/ui';
 import { UIField } from 'payload';
-import { CrowdinArticleDirectory } from '../payload-types';
+import { CrowdinArticleDirectory } from '../payload-types.js';
 
 export const DocumentCustomUIField: React.FC<UIField> = () => (
   <LocalePublishedFeedback />

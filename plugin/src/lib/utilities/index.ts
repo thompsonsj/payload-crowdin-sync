@@ -1,6 +1,6 @@
 import type { CollectionConfig, Field, GlobalConfig } from 'payload';
 import deepEqual from 'deep-equal';
-import { FieldWithName, type CrowdinHtmlObject } from '../types';
+import { FieldWithName, type CrowdinHtmlObject } from '../types.js';
 import {
   buildHtmlObject,
   buildJsonObject,
