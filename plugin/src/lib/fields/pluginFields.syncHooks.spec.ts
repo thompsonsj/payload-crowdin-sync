@@ -211,6 +211,36 @@ describe('pluginFields - sync translation hooks', () => {
       expect(context['articleDirectoryId']).toBe('ad-2');
     });
 
+    it('stores an unpopulated numeric article directory id (SQL adapters)', async () => {
+      const context: Record<string, unknown> = {};
+
+      await beforeChange({
+        context,
+        req: makeReq(),
+        siblingData: {
+          syncTranslations: true,
+          crowdinArticleDirectory: 42,
+        },
+      });
+
+      expect(context['articleDirectoryId']).toBe(42);
+    });
+
+    it('stores the numeric id of a populated article directory (SQL adapters)', async () => {
+      const context: Record<string, unknown> = {};
+
+      await beforeChange({
+        context,
+        req: makeReq(),
+        siblingData: {
+          syncTranslations: true,
+          crowdinArticleDirectory: { id: 42 },
+        },
+      });
+
+      expect(context['articleDirectoryId']).toBe(42);
+    });
+
     it('treats published and unversioned documents as not draft', async () => {
       const published: Record<string, unknown> = {};
       const unversioned: Record<string, unknown> = {};
@@ -388,6 +418,53 @@ describe('pluginFields - sync translation hooks', () => {
 
       expect(updatePayloadTranslation).not.toHaveBeenCalled();
       expect(req.payload.jobs.queue).not.toHaveBeenCalled();
+    });
+
+    it('updates translations when the article directory id is numeric (SQL adapters)', async () => {
+      const req = makeReq();
+
+      await afterChange({
+        context: {
+          ...context,
+          articleDirectoryId: 42,
+        },
+        req,
+      });
+
+      expect(updatePayloadTranslation).toHaveBeenCalledTimes(1);
+      expect(updatePayloadTranslation).toHaveBeenCalledWith({
+        articleDirectoryId: 42,
+        pluginOptions,
+        payload: req.payload,
+        draft: true,
+        excludeLocales: ['fr_FR', 'es_ES'],
+        dryRun: false,
+        req,
+      });
+    });
+
+    it('queues a job with the numeric id stringified when jobs are enabled', async () => {
+      vi.stubEnv('PAYLOAD_CROWDIN_SYNC_USE_JOBS', 'true');
+      const req = makeReq();
+
+      await afterChange({
+        context: {
+          ...context,
+          articleDirectoryId: 42,
+        },
+        req,
+      });
+
+      expect(req.payload.jobs.queue).toHaveBeenCalledWith({
+        task: 'crowdinSyncTranslations',
+        input: {
+          articleDirectoryId: '42',
+          draft: true,
+          excludeLocales: ['fr_FR', 'es_ES'],
+          dryRun: false,
+        },
+      });
+      expect(updatePayloadTranslation).not.toHaveBeenCalled();
     });
 
     it('does nothing when triggerAfterChange is false', async () => {
