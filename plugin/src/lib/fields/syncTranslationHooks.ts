@@ -2,6 +2,7 @@ import type { FieldHook, RequestContext } from 'payload';
 import { updatePayloadTranslation } from '../api/helpers.js';
 import type { PluginOptions } from '../types.js';
 import { getOtherLocales } from '../utilities/locales.js';
+import { getRelationshipId } from '../utilities/payload.js';
 
 export type SyncMode = 'current-locale' | 'all-locales';
 
@@ -11,10 +12,13 @@ export const syncFieldNames: Record<SyncMode, string> = {
 };
 
 interface SyncRequest {
-  articleDirectoryId: string;
+  articleDirectoryId: string | number;
   draft: boolean;
   excludeLocales?: string[];
 }
+
+const isDocumentId = (value: unknown): value is string | number =>
+  typeof value === 'string' || typeof value === 'number';
 
 const getSyncRequest = (
   mode: SyncMode,
@@ -22,7 +26,7 @@ const getSyncRequest = (
 ): SyncRequest | undefined => {
   const { articleDirectoryId, draft, excludeLocales } = context;
   if (
-    typeof articleDirectoryId !== 'string' ||
+    !isDocumentId(articleDirectoryId) ||
     typeof draft !== 'boolean' ||
     typeof context[syncFieldNames[mode]] !== 'boolean'
   ) {
@@ -47,12 +51,15 @@ export const createSyncBeforeChangeHook =
       return;
     }
     const fieldName = syncFieldNames[mode];
-    const articleDirectory = siblingData['crowdinArticleDirectory'];
-    if (siblingData[fieldName] && articleDirectory) {
-      context['articleDirectoryId'] =
-        typeof articleDirectory === 'string'
-          ? articleDirectory
-          : articleDirectory.id;
+    const articleDirectoryId = getRelationshipId(
+      siblingData['crowdinArticleDirectory'],
+    );
+    if (
+      siblingData[fieldName] &&
+      articleDirectoryId !== undefined &&
+      articleDirectoryId !== ''
+    ) {
+      context['articleDirectoryId'] = articleDirectoryId;
       context['draft'] = Boolean(
         siblingData['_status'] && siblingData['_status'] !== 'published',
       );
@@ -94,7 +101,7 @@ export const createSyncAfterChangeHook =
         await req.payload.jobs.queue({
           task: 'crowdinSyncTranslations',
           input: {
-            articleDirectoryId,
+            articleDirectoryId: `${articleDirectoryId}`,
             draft,
             excludeLocales: jobExcludeLocales,
             dryRun: false,

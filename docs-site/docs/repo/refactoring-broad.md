@@ -171,7 +171,7 @@ A comment in the source already flags this: `"find a better way to do this - blo
 **Pass 2 — item 3**
 
 - **Item 3:** `createSyncBeforeChangeHook(mode, pluginOptions)` and `createSyncAfterChangeHook(mode, pluginOptions)` live in `fields/syncTranslationHooks.ts`, alongside `syncFieldNames`, which maps each `SyncMode` to its checkbox name. The before hook takes `pluginOptions` rather than a field name because the current-locale mode needs `localeMap`; the field name comes from `syncFieldNames`. Baseline tests in `pluginFields.syncHooks.spec.ts` were committed against the old hooks first and pass unchanged against the factories. They cover both modes, inline and job-queue loading, and the `triggerAfterChange === false` guard.
-- **Known limitation, kept as-is:** the after hook only syncs when `articleDirectoryId` is a string, so numeric ids (SQL adapters) never trigger a sync. Fixing it is a behaviour change and belongs in its own PR.
+- **SQL numeric ids:** `getSyncRequest` accepts `string | number`. The before hook stores the id through `getRelationshipId`, so an unpopulated SQL relationship (`42`) and a populated `{ id: 42 }` both sync. Job input stringifies the id (`type: 'text'`).
 
 **Pass 3 — item 6**
 

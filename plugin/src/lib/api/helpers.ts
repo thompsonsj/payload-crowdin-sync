@@ -701,7 +701,7 @@ export async function getFilesByDocumentID({
 }
 
 interface IupdatePayloadTranslation {
-  articleDirectoryId: string;
+  articleDirectoryId: string | number;
   pluginOptions: PluginOptions;
   payload: Payload;
   /** store translations into a draft */

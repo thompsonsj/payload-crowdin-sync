@@ -34,6 +34,18 @@ describe('getRelationshipId', () => {
     expect(getRelationshipId('abc')).toBe('abc')
   })
 
+  it('returns an unpopulated numeric id as-is (SQL adapters)', () => {
+    expect(getRelationshipId(42)).toBe(42)
+  })
+
+  it('returns the numeric id of a populated document (SQL adapters)', () => {
+    expect(getRelationshipId({ id: 42 })).toBe(42)
+  })
+
+  it('returns zero as an unpopulated numeric id', () => {
+    expect(getRelationshipId(0)).toBe(0)
+  })
+
   it.each([
     ['undefined', undefined],
     ['null', null],
