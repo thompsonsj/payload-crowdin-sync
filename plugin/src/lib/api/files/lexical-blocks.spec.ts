@@ -175,6 +175,23 @@ describe('lexical-blocks', () => {
         collection: buildLexicalBlocksCollectionConfig(highlightBlockConfig),
       });
     });
+
+    it('rejects when an html write fails after json has been written', async () => {
+      const filesApi = {
+        createOrUpdateJsonFile: vi.fn().mockResolvedValue(undefined),
+        createOrUpdateHtmlFile: vi.fn().mockRejectedValue(new Error('html failed')),
+      };
+
+      await expect(
+        writeLexicalBlockFiles({
+          filesApi,
+          blockContent: [highlightBlock],
+          blockConfig: highlightBlockConfig,
+          req,
+        }),
+      ).rejects.toThrow('html failed');
+      expect(filesApi.createOrUpdateJsonFile).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('syncLexicalBlocks', () => {

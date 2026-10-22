@@ -222,7 +222,36 @@ describe('syncDocumentSource', () => {
         doc: { intro: slateFr, body: slateFr },
         previousDoc: { intro: slate, body: slate },
       }),
-    ).resolves.toBeUndefined();
+    ).rejects.toThrow('intro failed');
     expect(written).toEqual(['body']);
+  });
+
+  it('rejects with AggregateError when more than one html write fails', async () => {
+    const TwoBodies: CollectionConfig = {
+      slug: 'pages',
+      fields: [
+        { name: 'intro', type: 'richText', localized: true },
+        { name: 'body', type: 'richText', localized: true },
+      ],
+    };
+    const writer: SourceWriter = {
+      writeJson: async () => undefined,
+      writeHtml: async ({ name }) => {
+        throw new Error(`${name} failed`);
+      },
+    };
+
+    const error = await syncDocumentSource({
+      writer,
+      collection: TwoBodies,
+      fields: TwoBodies.fields,
+      doc: { intro: slateFr, body: slateFr },
+      previousDoc: { intro: slate, body: slate },
+    }).catch((reason) => reason);
+
+    expect(error).toBeInstanceOf(AggregateError);
+    expect((error as AggregateError).errors.map((item) => item.message)).toEqual(
+      ['intro failed', 'body failed'],
+    );
   });
 });
