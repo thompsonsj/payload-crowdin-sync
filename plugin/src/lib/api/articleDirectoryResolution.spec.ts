@@ -519,6 +519,60 @@ describe('filesApiByDocument.findOrCreateArticleDirectory (sync path)', () => {
   });
 });
 
+describe('payloadCrowdinSyncDocumentFilesApi.deleteHtmlFile', () => {
+  it('deletes the Crowdin file for the removed rich-text path', async () => {
+    const bodyFile = {
+      id: 'file-body',
+      field: 'body',
+      originalId: 1079,
+      crowdinArticleDirectory: 'ad-post-5',
+    };
+    const payload = createInMemoryPayload({
+      'crowdin-article-directories': [unlinkedPostDirectory],
+      'crowdin-files': [bodyFile],
+    });
+    const api = new payloadCrowdinSyncDocumentFilesApi(
+      {
+        document: { id: '5' },
+        articleDirectory: unlinkedPostDirectory as never,
+        collectionSlug: 'posts' as never,
+        global: false,
+      },
+      { ...pluginOptions, deleteCrowdinFiles: false },
+      { payload } as unknown as PayloadRequest,
+    );
+
+    await api.deleteHtmlFile({ name: 'body' });
+
+    expect(payload.delete).toHaveBeenCalledWith(
+      expect.objectContaining({
+        collection: 'crowdin-files',
+        id: 'file-body',
+      }),
+    );
+  });
+
+  it('does nothing when there is no Crowdin file for that path', async () => {
+    const payload = createInMemoryPayload({
+      'crowdin-article-directories': [unlinkedPostDirectory],
+      'crowdin-files': [],
+    });
+    const api = new payloadCrowdinSyncDocumentFilesApi(
+      {
+        document: { id: '5' },
+        articleDirectory: unlinkedPostDirectory as never,
+        collectionSlug: 'posts' as never,
+        global: false,
+      },
+      { ...pluginOptions, deleteCrowdinFiles: false },
+      { payload } as unknown as PayloadRequest,
+    );
+
+    await expect(api.deleteHtmlFile({ name: 'body' })).resolves.toBeUndefined();
+    expect(payload.delete).not.toHaveBeenCalled();
+  });
+});
+
 describe('payloadCrowdinSyncDocumentFilesApi.deleteFilesAndDirectory', () => {
   it('deletes the resolved article directory, not another directory with the same name', async () => {
     const payload = createInMemoryPayload({

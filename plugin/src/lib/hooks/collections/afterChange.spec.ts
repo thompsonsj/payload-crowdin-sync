@@ -2,15 +2,17 @@ import { getAfterChangeHook, getGlobalAfterChangeHook } from './afterChange';
 import { pluginOptions } from '../../api/mock/plugin-options';
 import type { CollectionConfig, GlobalConfig } from 'payload';
 
-const { createOrUpdateJsonFile, createOrUpdateHtmlFile } = vi.hoisted(() => ({
-  createOrUpdateJsonFile: vi.fn().mockResolvedValue(undefined),
-  createOrUpdateHtmlFile: vi.fn().mockResolvedValue(undefined),
-}));
+const { createOrUpdateJsonFile, createOrUpdateHtmlFile, deleteHtmlFile } =
+  vi.hoisted(() => ({
+    createOrUpdateJsonFile: vi.fn().mockResolvedValue(undefined),
+    createOrUpdateHtmlFile: vi.fn().mockResolvedValue(undefined),
+    deleteHtmlFile: vi.fn().mockResolvedValue(undefined),
+  }));
 
 vi.mock('../../api/files/by-document', () => ({
   filesApiByDocument: class {
     async get() {
-      return { createOrUpdateJsonFile, createOrUpdateHtmlFile };
+      return { createOrUpdateJsonFile, createOrUpdateHtmlFile, deleteHtmlFile };
     }
   },
 }));
@@ -148,6 +150,7 @@ describe('getAfterChangeHook', () => {
     beforeEach(() => {
       createOrUpdateJsonFile.mockClear();
       createOrUpdateHtmlFile.mockClear();
+      deleteHtmlFile.mockClear();
     });
 
     it('does not upload when the collection condition is false', async () => {
@@ -180,6 +183,7 @@ describe('getAfterChangeHook', () => {
     beforeEach(() => {
       createOrUpdateJsonFile.mockClear();
       createOrUpdateHtmlFile.mockClear();
+      deleteHtmlFile.mockClear();
     });
 
     it('writes json through the Crowdin files api when localized strings change', async () => {
@@ -231,6 +235,31 @@ describe('getAfterChangeHook', () => {
         collection,
       });
     });
+
+    it('deletes html through the Crowdin files api when a rich-text path is removed', async () => {
+      const slate = [{ type: 'p', children: [{ text: 'Hello' }] }];
+      const collection: CollectionConfig = {
+        slug: 'posts',
+        fields: [{ name: 'body', type: 'richText', localized: true }],
+      };
+      const hook = getAfterChangeHook({
+        collection,
+        pluginOptions,
+      });
+      const req = buildReq();
+      req.payload.collections.posts.config = collection;
+
+      await hook({
+        doc: { id: 'doc-001' },
+        previousDoc: { id: 'doc-001', body: slate },
+        req,
+        operation: 'update',
+        collection,
+      } as any);
+
+      expect(createOrUpdateHtmlFile).not.toHaveBeenCalled();
+      expect(deleteHtmlFile).toHaveBeenCalledWith({ name: 'body' });
+    });
   });
 });
 
@@ -239,6 +268,7 @@ describe('getGlobalAfterChangeHook', () => {
     beforeEach(() => {
       createOrUpdateJsonFile.mockClear();
       createOrUpdateHtmlFile.mockClear();
+      deleteHtmlFile.mockClear();
     });
 
     it('does not upload when the global condition is false', async () => {
