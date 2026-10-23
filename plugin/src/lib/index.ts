@@ -26,6 +26,7 @@ import {
   isLexical,
 } from './utilities/lexical/index.js';
 import { mockCrowdinClient } from './api/mock/crowdin-api-responses.js';
+import { filesApiByDocument } from './api/files/by-document.js';
 import { getRelationshipId } from './utilities/payload.js';
 import {
   applyDocumentSlice,
@@ -50,6 +51,7 @@ export {
   getLexicalEditorConfig,
   isLexical,
   mockCrowdinClient,
+  filesApiByDocument,
   extractLexicalBlockContent,
   getLexicalFieldArticleDirectory,
   getLexicalFieldArticleDirectories,

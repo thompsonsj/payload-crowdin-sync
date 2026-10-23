@@ -21,7 +21,6 @@
   },
   "nx": {
     "includedScripts": [
-      "build",
       "dev",
       "devsafe",
       "generate:importmap",
