@@ -346,7 +346,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
       limit: 1,
       req: this.req,
     });
-    const crowdinFile = result.docs[0];
+    const crowdinFile = result.docs[0] as CrowdinFile | undefined;
     if (!crowdinFile) {
       return;
     }
