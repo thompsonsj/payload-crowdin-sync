@@ -333,6 +333,26 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     return payloadFile;
   }
 
+  async deleteHtmlFile({ name }: { name: string }) {
+    const result = await this.req.payload.find({
+      collection: 'crowdin-files',
+      where: {
+        field: { equals: name },
+        type: { equals: 'html' },
+        crowdinArticleDirectory: {
+          equals: this.articleDirectory.id,
+        },
+      },
+      limit: 1,
+      req: this.req,
+    });
+    const crowdinFile = result.docs[0] as CrowdinFile | undefined;
+    if (!crowdinFile) {
+      return;
+    }
+    return this.deleteFile(crowdinFile);
+  }
+
   async createOrUpdateJsonFile({
     fileData,
     fileName = 'fields',

@@ -166,6 +166,7 @@ const performAfterChange = async ({
     writer: {
       writeJson: (args) => filesApi.createOrUpdateJsonFile(args),
       writeHtml: (args) => filesApi.createOrUpdateHtmlFile(args),
+      deleteHtml: (args) => filesApi.deleteHtmlFile(args),
     },
     collection: sanitizedCollection,
     fields: localizedFields,

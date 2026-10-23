@@ -17,6 +17,7 @@ const Pages: CollectionConfig = {
 const memoryWriter = () => {
   const json: Array<string | object> = [];
   const html: { name: string; value: unknown }[] = [];
+  const deleted: string[] = [];
   const writer: SourceWriter = {
     writeJson: async ({ fileData }) => {
       json.push(fileData);
@@ -24,8 +25,11 @@ const memoryWriter = () => {
     writeHtml: async ({ name, value }) => {
       html.push({ name, value });
     },
+    deleteHtml: async ({ name }) => {
+      deleted.push(name);
+    },
   };
-  return { writer, json, html };
+  return { writer, json, html, deleted };
 };
 
 describe('syncDocumentSource', () => {
@@ -253,5 +257,92 @@ describe('syncDocumentSource', () => {
     expect((error as AggregateError).errors.map((item) => item.message)).toEqual(
       ['intro failed', 'body failed'],
     );
+  });
+
+  it('asks the writer to delete html when a rich-text path is removed', async () => {
+    const { writer, json, html, deleted } = memoryWriter();
+
+    await syncDocumentSource({
+      writer,
+      collection: Pages,
+      fields: Pages.fields,
+      doc: { title: 'Home' },
+      previousDoc: { title: 'Home', body: slate },
+    });
+
+    expect(json).toEqual([]);
+    expect(html).toEqual([]);
+    expect(deleted).toEqual(['body']);
+  });
+
+  it('deletes only the removed rich-text paths', async () => {
+    const TwoBodies: CollectionConfig = {
+      slug: 'pages',
+      fields: [
+        { name: 'intro', type: 'richText', localized: true },
+        { name: 'body', type: 'richText', localized: true },
+      ],
+    };
+    const { writer, html, deleted } = memoryWriter();
+
+    await syncDocumentSource({
+      writer,
+      collection: TwoBodies,
+      fields: TwoBodies.fields,
+      doc: { body: slate },
+      previousDoc: { intro: slate, body: slate },
+    });
+
+    expect(html).toEqual([]);
+    expect(deleted).toEqual(['intro']);
+  });
+
+  it('does not delete html if the writer has no deleteHtml', async () => {
+    const writer: SourceWriter = {
+      writeJson: async () => undefined,
+      writeHtml: async () => undefined,
+    };
+
+    await expect(
+      syncDocumentSource({
+        writer,
+        collection: Pages,
+        fields: Pages.fields,
+        doc: { title: 'Home' },
+        previousDoc: { title: 'Home', body: slate },
+      }),
+    ).resolves.toBeUndefined();
+  });
+
+  it('rejects when deleteHtml fails after other deletes settle', async () => {
+    const TwoBodies: CollectionConfig = {
+      slug: 'pages',
+      fields: [
+        { name: 'intro', type: 'richText', localized: true },
+        { name: 'body', type: 'richText', localized: true },
+      ],
+    };
+    const deleted: string[] = [];
+    const writer: SourceWriter = {
+      writeJson: async () => undefined,
+      writeHtml: async () => undefined,
+      deleteHtml: async ({ name }) => {
+        if (name === 'intro') {
+          throw new Error('intro delete failed');
+        }
+        deleted.push(name);
+      },
+    };
+
+    await expect(
+      syncDocumentSource({
+        writer,
+        collection: TwoBodies,
+        fields: TwoBodies.fields,
+        doc: {},
+        previousDoc: { intro: slate, body: slate },
+      }),
+    ).rejects.toThrow('intro delete failed');
+    expect(deleted).toEqual(['body']);
   });
 });

@@ -29,6 +29,11 @@ export interface SourceWriter {
     value: unknown;
     collection: CollectionConfig | GlobalConfig;
   }) => Promise<unknown>;
+  /**
+   * Remove a rich-text file whose path is no longer in the document slice.
+   * Optional so a vendor that cannot delete can no-op.
+   */
+  deleteHtml?: (args: { name: string }) => Promise<unknown>;
 }
 
 /**
