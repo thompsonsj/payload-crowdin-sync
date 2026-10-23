@@ -520,18 +520,8 @@ describe('filesApiByDocument.findOrCreateArticleDirectory (sync path)', () => {
 });
 
 describe('payloadCrowdinSyncDocumentFilesApi.deleteHtmlFile', () => {
-  it('deletes the Crowdin file for the removed rich-text path', async () => {
-    const bodyFile = {
-      id: 'file-body',
-      field: 'body',
-      originalId: 1079,
-      crowdinArticleDirectory: 'ad-post-5',
-    };
-    const payload = createInMemoryPayload({
-      'crowdin-article-directories': [unlinkedPostDirectory],
-      'crowdin-files': [bodyFile],
-    });
-    const api = new payloadCrowdinSyncDocumentFilesApi(
+  const buildDeleteHtmlApi = (payload: InMemoryPayload) =>
+    new payloadCrowdinSyncDocumentFilesApi(
       {
         document: { id: '5' },
         articleDirectory: unlinkedPostDirectory as never,
@@ -541,6 +531,20 @@ describe('payloadCrowdinSyncDocumentFilesApi.deleteHtmlFile', () => {
       { ...pluginOptions, deleteCrowdinFiles: false },
       { payload } as unknown as PayloadRequest,
     );
+
+  it('deletes the Crowdin file for the removed rich-text path', async () => {
+    const bodyFile = {
+      id: 'file-body',
+      field: 'body',
+      type: 'html',
+      originalId: 1079,
+      crowdinArticleDirectory: 'ad-post-5',
+    };
+    const payload = createInMemoryPayload({
+      'crowdin-article-directories': [unlinkedPostDirectory],
+      'crowdin-files': [bodyFile],
+    });
+    const api = buildDeleteHtmlApi(payload);
 
     await api.deleteHtmlFile({ name: 'body' });
 
@@ -557,19 +561,42 @@ describe('payloadCrowdinSyncDocumentFilesApi.deleteHtmlFile', () => {
       'crowdin-article-directories': [unlinkedPostDirectory],
       'crowdin-files': [],
     });
-    const api = new payloadCrowdinSyncDocumentFilesApi(
-      {
-        document: { id: '5' },
-        articleDirectory: unlinkedPostDirectory as never,
-        collectionSlug: 'posts' as never,
-        global: false,
-      },
-      { ...pluginOptions, deleteCrowdinFiles: false },
-      { payload } as unknown as PayloadRequest,
-    );
+    const api = buildDeleteHtmlApi(payload);
 
     await expect(api.deleteHtmlFile({ name: 'body' })).resolves.toBeUndefined();
     expect(payload.delete).not.toHaveBeenCalled();
+  });
+
+  it('does not delete fields.json when a rich-text path is also named fields', async () => {
+    const fieldsJson = {
+      id: 'file-fields-json',
+      field: 'fields',
+      type: 'json',
+      originalId: 1079,
+      crowdinArticleDirectory: 'ad-post-5',
+    };
+    const fieldsHtml = {
+      id: 'file-fields-html',
+      field: 'fields',
+      type: 'html',
+      originalId: 1080,
+      crowdinArticleDirectory: 'ad-post-5',
+    };
+    const payload = createInMemoryPayload({
+      'crowdin-article-directories': [unlinkedPostDirectory],
+      'crowdin-files': [fieldsJson, fieldsHtml],
+    });
+    const api = buildDeleteHtmlApi(payload);
+
+    await api.deleteHtmlFile({ name: 'fields' });
+
+    expect(payload.delete).toHaveBeenCalledTimes(1);
+    expect(payload.delete).toHaveBeenCalledWith(
+      expect.objectContaining({
+        collection: 'crowdin-files',
+        id: 'file-fields-html',
+      }),
+    );
   });
 });
 
