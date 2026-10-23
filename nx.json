@@ -6,9 +6,7 @@
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
     },
-    "test": {
-      "cache": true
-    },
+    "test": { "cache": true },
     "@nx/eslint:lint": {
       "cache": true,
       "inputs": [
@@ -35,7 +33,6 @@
     "sharedGlobals": []
   },
   "analytics": true,
-  "migrate": {
-    "agentic": true
-  }
+  "migrate": { "agentic": true },
+  "nxCloudId": "66a141b20fe2751e0f6ecdc9"
 }
