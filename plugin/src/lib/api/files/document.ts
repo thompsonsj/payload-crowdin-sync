@@ -333,6 +333,14 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     return payloadFile;
   }
 
+  async deleteHtmlFile({ name }: { name: string }) {
+    const crowdinFile = await this.getFile(name);
+    if (!crowdinFile) {
+      return;
+    }
+    return this.deleteFile(crowdinFile);
+  }
+
   async createOrUpdateJsonFile({
     fileData,
     fileName = 'fields',

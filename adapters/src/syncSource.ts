@@ -68,8 +68,13 @@ export const syncDocumentSource = async ({
     isLocalized,
   });
 
-  const htmlWrites = await Promise.allSettled(
-    Object.keys(currentHtml).map(async (name) => {
+  const deleteHtml = writer.deleteHtml;
+  const removedHtmlNames = Object.keys(previousHtml).filter(
+    (name) => !Object.hasOwn(currentHtml, name),
+  );
+
+  const htmlWrites = await Promise.allSettled([
+    ...Object.keys(currentHtml).map(async (name) => {
       const currentValue = currentHtml[name];
       const previousValue = previousHtml[name];
       if (!alwaysUpdate && !richTextChanged(previousValue, currentValue)) {
@@ -81,6 +86,9 @@ export const syncDocumentSource = async ({
         collection,
       });
     }),
-  );
-  throwIfAnyRejected(htmlWrites, 'Failed to write html source files');
+    ...(deleteHtml
+      ? removedHtmlNames.map((name) => deleteHtml({ name }))
+      : []),
+  ]);
+  throwIfAnyRejected(htmlWrites, 'Failed to sync html source files');
 };
