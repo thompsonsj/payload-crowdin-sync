@@ -25,10 +25,6 @@
       "command": "node tools/scripts/rewrite-dist-entrypoints.mjs dist/adapters && node tools/scripts/assert-native-esm.mjs dist/adapters --alias=payload-localized-fields=dist/document/src/index.js",
       "dependsOn": ["build", "^build"]
     },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
     "test": {
       "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/coverage/adapters"],
