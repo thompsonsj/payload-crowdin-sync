@@ -47,8 +47,10 @@ describe('Translations', () => {
         .times(4)
         .reply(200, mockClient.createDirectory({}))
         .post(`/api/v2/storages`)
+        .times(3)
         .reply(200, mockClient.addStorage())
         .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
+        .times(3)
         .reply(
           200,
           mockClient.createFile({
@@ -71,7 +73,10 @@ describe('Translations', () => {
         (post.crowdinArticleDirectory as CrowdinArticleDirectory)?.id,
         payload,
       )
-      expect(files.length).toBe(0)
+      expect(files.length).toBe(1)
+      expect(files[0].name).toBe(
+        'layout.688dd685258ffa0224ea6daa.basicBlockLexical.content.html',
+      )
       const childDirectories = await getLexicalFieldArticleDirectories({
         payload,
         parent: post.crowdinArticleDirectory,
@@ -82,7 +87,10 @@ describe('Translations', () => {
         `lex.layout.688dd685258ffa0224ea6daa.basicBlockLexical.content`,
       )
       const childDirectoryFiles = await getFiles(childDirectory.id, payload)
-      expect(childDirectoryFiles.length).toBe(0)
+      expect(childDirectoryFiles.length).toBe(1)
+      expect(childDirectoryFiles[0].name).toBe(
+        'blocks.688dd6eca950db7862106962.highlight.content.html',
+      )
       const grandChildDirectories = await getLexicalFieldArticleDirectories({
         payload,
         parent: childDirectory,

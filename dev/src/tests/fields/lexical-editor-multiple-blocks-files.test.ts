@@ -29,7 +29,7 @@ describe('Lexical editor with multiple blocks - Files', () => {
     await teardownLexicalMultipleBlocksTest(payload)
   })
   it('creates HTML files for Crowdin as expected', async () => {
-    nockLexical().directories(3).storages(4).files(4).build()
+    nockLexical().directories(3).storages(7).files(4).fileUpdates(3).build()
     const policy = await payload.create({
       collection: 'policies',
       data: {

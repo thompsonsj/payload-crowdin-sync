@@ -494,11 +494,13 @@ describe('Lexical editor with blocks', () => {
       .times(2)
       .reply(200, mockClient.createDirectory({}))
       .post(`/api/v2/storages`)
-      .times(2)
+      .times(3)
       .reply(200, mockClient.addStorage())
       .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
       .times(2)
       .reply(200, mockClient.createFile({}))
+      .put(`/api/v2/projects/${pluginOptions.projectId}/files/1079`)
+      .reply(200, mockClient.updateOrRestoreFile({ fileId: 1079 }))
     const policy = await payload.create({
       collection: 'policies',
       data: {

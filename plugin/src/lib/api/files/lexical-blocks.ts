@@ -133,7 +133,7 @@ export const writeLexicalBlockFiles = async ({
     fileName: LEXICAL_BLOCKS_FIELD_NAME,
     req,
   });
-  await Promise.allSettled(
+  const htmlWrites = await Promise.allSettled(
     Object.keys(currentCrowdinHtmlData).map(async (name) => {
       await filesApi.createOrUpdateHtmlFile({
         name,
@@ -144,6 +144,20 @@ export const writeLexicalBlockFiles = async ({
       });
     }),
   );
+  const htmlWriteErrors = htmlWrites
+    .filter(
+      (result): result is PromiseRejectedResult => result.status === 'rejected',
+    )
+    .map((result) => result.reason);
+  if (htmlWriteErrors.length === 1) {
+    throw htmlWriteErrors[0];
+  }
+  if (htmlWriteErrors.length > 1) {
+    throw new AggregateError(
+      htmlWriteErrors,
+      'Failed to write lexical block html files',
+    );
+  }
 };
 
 export const syncLexicalBlocks = async ({

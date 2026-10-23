@@ -175,6 +175,50 @@ describe('lexical-blocks', () => {
         collection: buildLexicalBlocksCollectionConfig(highlightBlockConfig),
       });
     });
+
+    it('rejects when an html write fails after json has been written', async () => {
+      const filesApi = {
+        createOrUpdateJsonFile: vi.fn().mockResolvedValue(undefined),
+        createOrUpdateHtmlFile: vi.fn().mockRejectedValue(new Error('html failed')),
+      };
+
+      await expect(
+        writeLexicalBlockFiles({
+          filesApi,
+          blockContent: [highlightBlock],
+          blockConfig: highlightBlockConfig,
+          req,
+        }),
+      ).rejects.toThrow('html failed');
+      expect(filesApi.createOrUpdateJsonFile).toHaveBeenCalledTimes(1);
+    });
+
+    it('rejects with AggregateError when more than one html write fails', async () => {
+      const filesApi = {
+        createOrUpdateJsonFile: vi.fn().mockResolvedValue(undefined),
+        createOrUpdateHtmlFile: vi.fn().mockImplementation(async ({ name }) => {
+          throw new Error(`${name} failed`);
+        }),
+      };
+
+      const error = await writeLexicalBlockFiles({
+        filesApi,
+        blockContent: [
+          highlightBlock,
+          { ...highlightBlock, id: 'block-2', title: 'Second' },
+        ],
+        blockConfig: highlightBlockConfig,
+        req,
+      }).catch((reason) => reason);
+
+      expect(error).toBeInstanceOf(AggregateError);
+      expect(
+        (error as AggregateError).errors.map((item) => item.message),
+      ).toEqual([
+        'blocks.block-1.highlight.content failed',
+        'blocks.block-2.highlight.content failed',
+      ]);
+    });
   });
 
   describe('syncLexicalBlocks', () => {

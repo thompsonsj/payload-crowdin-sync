@@ -29,7 +29,7 @@ describe('Lexical editor with multiple blocks - Directories', () => {
     await teardownLexicalMultipleBlocksTest(payload)
   })
   it('associates a parent Crowdin article directory with a lexical blocks Crowdin article directory', async () => {
-    nockLexical().directories(3).storages(4).files(4).build()
+    nockLexical().directories(3).storages(7).files(4).fileUpdates(3).build()
     const create = await payload.create({
       collection: 'policies',
       data: {

@@ -10,6 +10,7 @@ interface NockLexicalBuilder {
   directories(count: number): NockLexicalBuilder
   storages(count: number): NockLexicalBuilder
   files(count: number): NockLexicalBuilder
+  fileUpdates(count: number): NockLexicalBuilder
   fileWithId(fileId: number): NockLexicalBuilder
   translationBuild(
     fileId: number,
@@ -32,6 +33,7 @@ export function nockLexical(): NockLexicalBuilder {
   let directoryCount = 0
   let storageCount = 0
   let fileCount = 0
+  let fileUpdateCount = 0
   const fileMocks: Array<{ fileId?: number }> = []
   const translationMocks: Array<{
     fileId: number
@@ -53,6 +55,11 @@ export function nockLexical(): NockLexicalBuilder {
 
     files(count: number) {
       fileCount = count
+      return builder
+    },
+
+    fileUpdates(count: number) {
+      fileUpdateCount = count
       return builder
     },
 
@@ -142,6 +149,17 @@ export function nockLexical(): NockLexicalBuilder {
           .post(`/api/v2/projects/${pluginOptions.projectId}/files`)
           .times(fileCount)
           .reply(200, mockClient.createFile({}))
+      }
+
+      if (fileUpdateCount > 0) {
+        scope
+          .put(new RegExp(`^/api/v2/projects/${pluginOptions.projectId}/files/\\d+$`))
+          .times(fileUpdateCount)
+          .reply(200, (uri: string) => {
+            const match = uri.match(/\/files\/(\d+)$/)
+            const fileId = match ? parseInt(match[1], 10) : 1079
+            return mockClient.updateOrRestoreFile({ fileId })
+          })
       }
 
       for (const translation of translationMocks) {
