@@ -24,10 +24,6 @@
       "command": "node tools/scripts/rewrite-dist-entrypoints.mjs dist/document && node tools/scripts/assert-native-esm.mjs dist/document",
       "dependsOn": ["build"]
     },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
     "test": {
       "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/coverage/document"],

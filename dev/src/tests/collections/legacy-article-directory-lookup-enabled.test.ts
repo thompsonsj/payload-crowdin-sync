@@ -1,7 +1,6 @@
 import type { Payload, PayloadRequest } from 'payload'
-import { mockCrowdinClient } from 'payload-crowdin-sync'
+import { filesApiByDocument, mockCrowdinClient } from 'payload-crowdin-sync'
 import type { CrowdinArticleDirectory } from '../../payload-types'
-import { filesApiByDocument } from '../../../../plugin/src/lib/api/files/by-document'
 import { initPayloadInt } from '../helpers/initPayloadInt'
 import { pluginConfig } from '../helpers/plugin-config'
 import {

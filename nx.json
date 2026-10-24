@@ -6,17 +6,26 @@
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
     },
-    "test": { "cache": true },
-    "@nx/eslint:lint": {
-      "cache": true,
-      "inputs": [
-        "default",
-        "^default",
-        "{workspaceRoot}/eslint.config.mjs",
-        "{workspaceRoot}/eslint.config.js",
-        "{workspaceRoot}/tools/eslint-rules/**/*"
-      ]
-    }
+    "test": {
+      "cache": true
+    },
+    "lint": [
+      {
+        "filter": {
+          "plugin": "@nx/eslint/plugin"
+        },
+        "inputs": [
+          "default",
+          "^default",
+          "{workspaceRoot}/eslint.config.mjs",
+          "{workspaceRoot}/eslint.config.js",
+          "{workspaceRoot}/tools/eslint-rules/**/*",
+          {
+            "externalDependencies": ["eslint"]
+          }
+        ]
+      }
+    ]
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
@@ -33,6 +42,20 @@
     "sharedGlobals": []
   },
   "analytics": true,
-  "migrate": { "agentic": true },
-  "nxCloudId": "66a141b20fe2751e0f6ecdc9"
+  "migrate": {
+    "agentic": true
+  },
+  "nxCloudId": "66a141b20fe2751e0f6ecdc9",
+  "affected": {
+    "legacy": true
+  },
+  "plugins": [
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      },
+      "include": ["adapters/**/*", "dev/**/*", "document/**/*", "plugin/**/*"]
+    }
+  ]
 }

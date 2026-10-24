@@ -18,5 +18,16 @@
   "dependencies": {
     "payload-crowdin-sync": "0.44.0",
     "tslib": "^2.3.0"
+  },
+  "nx": {
+    "includedScripts": [
+      "dev",
+      "devsafe",
+      "generate:importmap",
+      "generate:types",
+      "payload",
+      "start",
+      "prettier"
+    ]
   }
 }
