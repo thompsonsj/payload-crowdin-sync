@@ -29,15 +29,15 @@
     "dotenv": "^18.0.3",
     "es-toolkit": "^1.52.0",
     "graphql": "^16.14.2",
-    "joi": "^18.2.9",
+    "joi": "^18.3.0",
     "jsdom": "^29.1.1",
-    "next": "16.3.6",
+    "next": "16.4.3",
     "payload": "3.90.2",
     "payload-localization-adapters": "file:adapters",
     "payload-localized-fields": "1.0.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "tslib": "^2.8.1"
   },
   "devDependencies": {
