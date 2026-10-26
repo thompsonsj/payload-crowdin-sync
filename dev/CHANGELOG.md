@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.39.2](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.39.1...dev-v0.39.2) (2026-10-26)
+
+
+### Bug Fixes
+
+* **plugin:** draft source and collection condition on translation sync ([#395](https://github.com/thompsonsj/payload-crowdin-sync/issues/395)) ([1ed368f](https://github.com/thompsonsj/payload-crowdin-sync/commit/1ed368f78e0b0a72c497bffe2cddce85c054dbfb))
+* surface html write failures after allSettled ([#399](https://github.com/thompsonsj/payload-crowdin-sync/issues/399)) ([bbc726b](https://github.com/thompsonsj/payload-crowdin-sync/commit/bbc726b43613ba2e79e44754e811c9b8cc00f00c))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-crowdin-sync bumped from 0.44.0 to 0.45.0
+
 ## [0.39.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/dev-v0.39.0...dev-v0.39.1) (2026-10-14)
 
 
