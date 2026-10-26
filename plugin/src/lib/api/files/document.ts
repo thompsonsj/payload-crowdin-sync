@@ -282,7 +282,7 @@ export class payloadCrowdinSyncDocumentFilesApi extends payloadCrowdinSyncFilesA
     sourceBlocks,
   }: {
     existingPayloadFile: CrowdinFile;
-    crowdinFileData: { id: number; updatedAt: string; revisionId: number };
+    crowdinFileData: { id: number; updatedAt: string | null; revisionId: number };
     name: string;
     fileData: FileData;
     fileType: 'html' | 'json';
