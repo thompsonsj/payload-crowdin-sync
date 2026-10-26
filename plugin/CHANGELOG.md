@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.45.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.44.0...payload-crowdin-sync-v0.45.0) (2026-10-26)
+
+
+### Features
+
+* **adapters:** extract writer/reader contracts into payload-localization-adapters ([#393](https://github.com/thompsonsj/payload-crowdin-sync/issues/393)) ([30c10ff](https://github.com/thompsonsj/payload-crowdin-sync/commit/30c10ff0f6237fc5a114b5f8bc9add935c66ff3c))
+* **document:** move json/html document slice into payload-localized-fields ([#390](https://github.com/thompsonsj/payload-crowdin-sync/issues/390)) ([703775b](https://github.com/thompsonsj/payload-crowdin-sync/commit/703775b6f14a0c877b01b5d35daab6cd2de6e1f8))
+* **plugin:** add vendor-neutral source-writer and translation-reader adapters ([#392](https://github.com/thompsonsj/payload-crowdin-sync/issues/392)) ([f98b1ad](https://github.com/thompsonsj/payload-crowdin-sync/commit/f98b1ad62d8fd034c7d56a9f348b53a7044533be))
+
+
+### Bug Fixes
+
+* delete crowdin html when a rich-text path is removed ([#400](https://github.com/thompsonsj/payload-crowdin-sync/issues/400)) ([8d37036](https://github.com/thompsonsj/payload-crowdin-sync/commit/8d370366fee6252c0a8fada9645e542a71bd3932))
+* load published packages under native Node ESM ([#397](https://github.com/thompsonsj/payload-crowdin-sync/issues/397)) ([cbeb738](https://github.com/thompsonsj/payload-crowdin-sync/commit/cbeb73813bd5c6fa7697a4bfb2febadcdb74e394))
+* **plugin:** draft source and collection condition on translation sync ([#395](https://github.com/thompsonsj/payload-crowdin-sync/issues/395)) ([1ed368f](https://github.com/thompsonsj/payload-crowdin-sync/commit/1ed368f78e0b0a72c497bffe2cddce85c054dbfb))
+* **plugin:** sync translations when the article directory id is numeric ([#398](https://github.com/thompsonsj/payload-crowdin-sync/issues/398)) ([378d3d4](https://github.com/thompsonsj/payload-crowdin-sync/commit/378d3d4ef8213e399e8570c086e0fd1d3ed990a2))
+* surface html write failures after allSettled ([#399](https://github.com/thompsonsj/payload-crowdin-sync/issues/399)) ([bbc726b](https://github.com/thompsonsj/payload-crowdin-sync/commit/bbc726b43613ba2e79e44754e811c9b8cc00f00c))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-localization-adapters bumped from 0.0.0 to 1.0.0
+    * payload-localized-fields bumped from 1.0.0 to 1.1.0
+
 ## [0.44.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.43.0...payload-crowdin-sync-v0.44.0) (2026-10-14)
 
 
