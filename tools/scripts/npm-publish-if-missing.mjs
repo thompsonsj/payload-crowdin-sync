@@ -15,7 +15,11 @@ try {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
   }).trim();
-} catch {
+} catch (error) {
+  const stderr = String(error.stderr ?? '');
+  if (error.status !== 1 || !stderr.includes('E404')) {
+    throw error;
+  }
   published = '';
 }
 
