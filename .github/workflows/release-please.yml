@@ -36,13 +36,13 @@ jobs:
 
   publish:
     needs: release-please
-    if: ${{ needs.release-please.outputs.plugin_release_created == 'true' || needs.release-please.outputs.document_release_created == 'true' || needs.release-please.outputs.adapters_release_created == 'true' || (github.event_name == 'workflow_dispatch' && inputs.publish_missing) }}
+    if: ${{ needs.release-please.outputs.plugin_release_created == 'true' || needs.release-please.outputs.document_release_created == 'true' || needs.release-please.outputs.adapters_release_created == 'true' || (github.event_name == 'workflow_dispatch' && inputs.publish_missing && github.ref == 'refs/heads/main') }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
     env:
-      PUBLISH_MISSING: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_missing }}
+      PUBLISH_MISSING: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_missing && github.ref == 'refs/heads/main' }}
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
