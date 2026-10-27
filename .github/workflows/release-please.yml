@@ -3,6 +3,11 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      publish_missing:
+        description: Publish public packages whose current package.json version is not on npm
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -31,11 +36,13 @@ jobs:
 
   publish:
     needs: release-please
-    if: ${{ needs.release-please.outputs.plugin_release_created == 'true' || needs.release-please.outputs.document_release_created == 'true' || needs.release-please.outputs.adapters_release_created == 'true' }}
+    if: ${{ github.ref == 'refs/heads/main' && (needs.release-please.outputs.plugin_release_created == 'true' || needs.release-please.outputs.document_release_created == 'true' || needs.release-please.outputs.adapters_release_created == 'true' || (github.event_name == 'workflow_dispatch' && inputs.publish_missing)) }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
+    env:
+      PUBLISH_MISSING: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_missing && github.ref == 'refs/heads/main' }}
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
@@ -45,7 +52,7 @@ jobs:
           package-manager-cache: false
       - run: npm ci
       - name: Require payload-localization-adapters on npm
-        if: ${{ needs.release-please.outputs.plugin_release_created == 'true' }}
+        if: ${{ needs.release-please.outputs.plugin_release_created == 'true' || env.PUBLISH_MISSING == 'true' }}
         env:
           ADAPTERS_RELEASE_CREATED: ${{ needs.release-please.outputs.adapters_release_created }}
           ADAPTERS_VERSION: ${{ needs.release-please.outputs.adapters_version }}
@@ -67,31 +74,35 @@ jobs:
             echo "This job will publish payload-localization-adapters@${ADAPTERS_VERSION} before the plugin."
             exit 0
           fi
+          if [ "$PUBLISH_MISSING" = "true" ]; then
+            echo "This job will publish payload-localization-adapters@${required} before the plugin if it is not already on npm."
+            exit 0
+          fi
           npm view "payload-localization-adapters@${required}" version
       - name: Build payload-localized-fields
-        if: ${{ needs.release-please.outputs.document_release_created == 'true' }}
+        if: ${{ needs.release-please.outputs.document_release_created == 'true' || env.PUBLISH_MISSING == 'true' }}
         run: |
           npx nx run document:build
           node tools/scripts/rewrite-dist-entrypoints.mjs dist/document
       - name: Publish payload-localized-fields
-        if: ${{ needs.release-please.outputs.document_release_created == 'true' }}
+        if: ${{ needs.release-please.outputs.document_release_created == 'true' || env.PUBLISH_MISSING == 'true' }}
         working-directory: dist/document
-        run: npm publish --access public
+        run: node ../../tools/scripts/npm-publish-if-missing.mjs
       - name: Build payload-localization-adapters
-        if: ${{ needs.release-please.outputs.adapters_release_created == 'true' }}
+        if: ${{ needs.release-please.outputs.adapters_release_created == 'true' || env.PUBLISH_MISSING == 'true' }}
         run: |
           npx nx run adapters:build
           node tools/scripts/rewrite-dist-entrypoints.mjs dist/adapters
       - name: Publish payload-localization-adapters
-        if: ${{ needs.release-please.outputs.adapters_release_created == 'true' }}
+        if: ${{ needs.release-please.outputs.adapters_release_created == 'true' || env.PUBLISH_MISSING == 'true' }}
         working-directory: dist/adapters
-        run: npm publish --access public
+        run: node ../../tools/scripts/npm-publish-if-missing.mjs
       - name: Build payload-crowdin-sync
-        if: ${{ needs.release-please.outputs.plugin_release_created == 'true' }}
+        if: ${{ needs.release-please.outputs.plugin_release_created == 'true' || env.PUBLISH_MISSING == 'true' }}
         run: |
           npx nx run plugin:build
           node tools/scripts/rewrite-dist-entrypoints.mjs dist/plugin
       - name: Publish payload-crowdin-sync
-        if: ${{ needs.release-please.outputs.plugin_release_created == 'true' }}
+        if: ${{ needs.release-please.outputs.plugin_release_created == 'true' || env.PUBLISH_MISSING == 'true' }}
         working-directory: dist/plugin
-        run: npm publish --access public
+        run: node ../../tools/scripts/npm-publish-if-missing.mjs
