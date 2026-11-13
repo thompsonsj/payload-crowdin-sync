@@ -2,7 +2,10 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { rewriteDistEntrypoints } from './rewrite-dist-entrypoints.mjs'
+import {
+  rewriteDistEntrypoints,
+  runRewriteDistEntrypointsCli,
+} from './rewrite-dist-entrypoints.mjs'
 
 const dirs: string[] = []
 
@@ -46,5 +49,24 @@ describe('rewriteDistEntrypoints', () => {
         },
       },
     })
+  })
+
+  it('requires a dist directory when run as a CLI', () => {
+    expect(() => runRewriteDistEntrypointsCli([])).toThrow(
+      /Usage: node tools\/scripts\/rewrite-dist-entrypoints.mjs/,
+    )
+  })
+
+  it('rewrites entrypoints when invoked with a dist directory', () => {
+    const distDir = mkdtempSync(join(tmpdir(), 'rewrite-cli-'))
+    dirs.push(distDir)
+    writeFileSync(
+      join(distDir, 'package.json'),
+      JSON.stringify({ name: 'payload-crowdin-sync' }),
+    )
+    runRewriteDistEntrypointsCli([distDir])
+    expect(JSON.parse(readFileSync(join(distDir, 'package.json'), 'utf8')).main).toBe(
+      './src/index.js',
+    )
   })
 })

@@ -88,7 +88,7 @@ export const vendorWorkspacePackages = ({ pluginDist, documentSrc, adaptersSrc }
   writeFileSync(packagePath, `${JSON.stringify(json, null, 2)}\n`);
 };
 
-const parseArgs = (argv) => {
+export const parseArgs = (argv) => {
   let pluginDist = 'dist/plugin';
   let documentSrc = 'dist/document/src';
   let adaptersSrc = 'dist/adapters/src';
@@ -100,8 +100,7 @@ const parseArgs = (argv) => {
     } else if (arg.startsWith('--adapters-src=')) {
       adaptersSrc = arg.slice('--adapters-src='.length);
     } else {
-      console.error(`Unknown argument: ${arg}`);
-      process.exit(1);
+      throw new Error(`Unknown argument: ${arg}`);
     }
   }
   return {
@@ -111,6 +110,13 @@ const parseArgs = (argv) => {
   };
 };
 
+/* c8 ignore start */
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
-  vendorWorkspacePackages(parseArgs(process.argv.slice(2)));
+  try {
+    vendorWorkspacePackages(parseArgs(process.argv.slice(2)));
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : error);
+    process.exit(1);
+  }
 }
+/* c8 ignore end */

@@ -7,9 +7,12 @@ import {
   writeFileSync,
 } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { vendorWorkspacePackages } from './vendor-workspace-packages.mjs'
+import {
+  parseArgs,
+  vendorWorkspacePackages,
+} from './vendor-workspace-packages.mjs'
 
 const dirs: string[] = []
 
@@ -20,7 +23,7 @@ const makeTree = () => {
   const documentSrc = join(root, 'document')
   const adaptersSrc = join(root, 'adapters')
   mkdirSync(join(pluginDist, 'src/lib'), { recursive: true })
-  mkdirSync(documentSrc, { recursive: true })
+  mkdirSync(join(documentSrc, 'nested'), { recursive: true })
   mkdirSync(adaptersSrc, { recursive: true })
   writeFileSync(
     join(pluginDist, 'package.json'),
@@ -56,6 +59,12 @@ export { localizedFields };
     `export declare const walk: () => string;
 `,
   )
+  writeFileSync(
+    join(documentSrc, 'nested/extra.js'),
+    `export const extra = 1;
+`,
+  )
+  writeFileSync(join(documentSrc, 'README.md'), 'not rewritten\n')
   writeFileSync(
     join(adaptersSrc, 'index.js'),
     `import { walk } from 'payload-localized-fields';
@@ -114,6 +123,16 @@ describe('vendorWorkspacePackages', () => {
     expect(adaptersJs).toContain("from '../payload-localized-fields/index.js'")
     expect(adaptersJs).not.toContain("'payload-localized-fields'")
     expect(pkg.dependencies).toEqual({ jsdom: '^29.1.1' })
+    expect(
+      existsSync(
+        join(tree.pluginDist, 'vendor/payload-localized-fields/nested/extra.js'),
+      ),
+    ).toBe(true)
+    expect(
+      existsSync(
+        join(tree.pluginDist, 'vendor/payload-localized-fields/README.md'),
+      ),
+    ).toBe(true)
   })
 
   it('throws when a compiled workspace package is missing', () => {
@@ -122,5 +141,58 @@ describe('vendorWorkspacePackages', () => {
     expect(() => vendorWorkspacePackages(tree)).toThrow(
       /Missing compiled workspace package/,
     )
+  })
+
+  it('skips src rewrite when the plugin dist has no src directory', () => {
+    const tree = makeTree()
+    rmSync(join(tree.pluginDist, 'src'), { recursive: true, force: true })
+    vendorWorkspacePackages(tree)
+    expect(
+      existsSync(
+        join(tree.pluginDist, 'vendor/payload-localized-fields/index.js'),
+      ),
+    ).toBe(true)
+  })
+
+  it('does not require a dependencies field on the plugin package.json', () => {
+    const tree = makeTree()
+    writeFileSync(
+      join(tree.pluginDist, 'package.json'),
+      JSON.stringify({ name: 'payload-crowdin-sync' }),
+    )
+    vendorWorkspacePackages(tree)
+    const pkg = JSON.parse(
+      readFileSync(join(tree.pluginDist, 'package.json'), 'utf8'),
+    ) as { dependencies?: Record<string, string> }
+    expect(pkg.dependencies).toBeUndefined()
+  })
+})
+
+describe('parseArgs', () => {
+  it('defaults to the compiled dist paths', () => {
+    expect(parseArgs([])).toEqual({
+      pluginDist: resolve('dist/plugin'),
+      documentSrc: resolve('dist/document/src'),
+      adaptersSrc: resolve('dist/adapters/src'),
+    })
+  })
+
+  it('parses explicit dist flags', () => {
+    const tree = makeTree()
+    expect(
+      parseArgs([
+        `--plugin-dist=${tree.pluginDist}`,
+        `--document-src=${tree.documentSrc}`,
+        `--adapters-src=${tree.adaptersSrc}`,
+      ]),
+    ).toEqual({
+      pluginDist: resolve(tree.pluginDist),
+      documentSrc: resolve(tree.documentSrc),
+      adaptersSrc: resolve(tree.adaptersSrc),
+    })
+  })
+
+  it('rejects unknown flags', () => {
+    expect(() => parseArgs(['--nope'])).toThrow(/Unknown argument: --nope/)
   })
 })

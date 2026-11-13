@@ -24,11 +24,21 @@ export const rewriteDistEntrypoints = (distDir) => {
   writeFileSync(packagePath, `${JSON.stringify(json, null, 2)}\n`);
 };
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
-  const distDir = process.argv[2];
+export const runRewriteDistEntrypointsCli = (argv) => {
+  const distDir = argv[0];
   if (!distDir) {
-    console.error('Usage: node tools/scripts/rewrite-dist-entrypoints.mjs <dist-dir>');
-    process.exit(1);
+    throw new Error('Usage: node tools/scripts/rewrite-dist-entrypoints.mjs <dist-dir>');
   }
   rewriteDistEntrypoints(distDir);
+};
+
+/* c8 ignore start */
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
+  try {
+    runRewriteDistEntrypointsCli(process.argv.slice(2));
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : error);
+    process.exit(1);
+  }
 }
+/* c8 ignore end */

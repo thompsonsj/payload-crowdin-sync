@@ -13,7 +13,7 @@
       },
       "configurations": {
         "ci": {
-          "command": "vitest run --project tools --coverage --coverage.reportsDirectory=coverage/tools --coverage.include=tools/scripts/**/*.mjs"
+          "command": "vitest run --project tools --coverage --coverage.reportsDirectory=coverage/tools --coverage.include=tools/scripts/vendor-workspace-packages.mjs --coverage.include=tools/scripts/rewrite-dist-entrypoints.mjs"
         }
       }
     }
