@@ -23,9 +23,4 @@ json.exports = {
     default: './src/index.js',
   },
 };
-// Nx pins workspace packages to exact versions in dist. 1.0.0 exports .ts;
-// published 1.1.0+ exports compiled .js. Keep a caret so consumers get the fix.
-if (json.dependencies?.['payload-localized-fields']) {
-  json.dependencies['payload-localized-fields'] = '^1.1.0';
-}
 writeFileSync(packagePath, `${JSON.stringify(json, null, 2)}\n`);

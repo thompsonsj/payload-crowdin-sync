@@ -8,7 +8,10 @@ const pluginPackage = JSON.parse(
 ) as { dependencies: Record<string, string> }
 
 describe('plugin package.json', () => {
-  it('depends on payload-localized-fields ^1.1.0 so consumers get compiled .js exports', () => {
-    expect(pluginPackage.dependencies['payload-localized-fields']).toBe('^1.1.0')
+  it('depends on workspace libraries with * rather than npm versions', () => {
+    expect(pluginPackage.dependencies['payload-localized-fields']).toBe('*')
+    expect(pluginPackage.dependencies['payload-localization-adapters']).toBe(
+      '*',
+    )
   })
 })

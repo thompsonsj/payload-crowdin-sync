@@ -1,26 +1,29 @@
 ---
 sidebar_position: 2
-description: How payload-localized-fields, payload-localization-adapters, and payload-crowdin-sync split field walking, slice orchestration, and Crowdin I/O.
+description: How document/, adapters/, and payload-crowdin-sync split field walking, slice orchestration, and Crowdin I/O.
 ---
 
 # Packages
 
-The repo publishes three npm packages. Crowdin is one consumer. Phrase and Lokalise plugins, when they exist here, should depend on the first two and not on `payload-crowdin-sync`.
+The repo publishes one npm package: `payload-crowdin-sync`. `document/` and `adapters/` stay as workspace libraries. Phrase and Lokalise plugins, when they exist here, should import those libraries locally and not depend on `payload-crowdin-sync`.
 
-| Folder | npm name | Job |
-| --- | --- | --- |
-| `document/` | `payload-localized-fields` | Walk a Payload field schema. Split a document into a json/html **slice**, and merge a slice back into a Payload update. |
-| `adapters/` | `payload-localization-adapters` | `SourceWriter` / `TranslationReader` contracts, plus `syncDocumentSource` / `applyDocumentSlice`. |
-| `plugin/` | `payload-crowdin-sync` | Crowdin folders and files, Lexical/Slate HTML, article directories, admin UI. Re-exports the adapter functions. |
+| Folder | Import name | Published | Job |
+| --- | --- | --- | --- |
+| `document/` | `payload-localized-fields` | no | Walk a Payload field schema. Split a document into a json/html **slice**, and merge a slice back into a Payload update. |
+| `adapters/` | `payload-localization-adapters` | no | `SourceWriter` / `TranslationReader` contracts, plus `syncDocumentSource` / `applyDocumentSlice`. |
+| `plugin/` | `payload-crowdin-sync` | npm | Crowdin folders and files, Lexical/Slate HTML, article directories, admin UI. Re-exports the adapter functions. Vendors the two libraries into the tarball. |
 
 `dev/` and `docs-site/` are not published.
 
 ```mermaid
 flowchart TB
-  subgraph published["Published packages"]
+  subgraph published["Published"]
+    crowdinPkg["payload-crowdin-sync<br/>Crowdin plugin"]
+  end
+
+  subgraph workspace["Workspace libraries"]
     documentPkg["payload-localized-fields<br/>field walk + slice"]
     adaptersPkg["payload-localization-adapters<br/>writer/reader + orchestration"]
-    crowdinPkg["payload-crowdin-sync<br/>Crowdin plugin"]
   end
 
   subgraph later["Later in this repo"]
@@ -37,7 +40,9 @@ flowchart TB
   adaptersPkg --> documentPkg
 ```
 
-Crowdin is the only vendor plugin today. A vendor plugin depends on both adapters and localized-fields. A second vendor must not import `payload-crowdin-sync` to get the walk or the slice.
+Crowdin is the only vendor plugin today. A second vendor in this monorepo should import `payload-localized-fields` and `payload-localization-adapters` from the workspace, not from npm, and must not import `payload-crowdin-sync` to get the walk or the slice.
+
+Existing `payload-localized-fields` and `payload-localization-adapters` versions on npm are leftover from when those folders were published. They are not updated.
 
 ## The slice
 

@@ -18,11 +18,11 @@
       }
     },
     "publish": {
-      "command": "node tools/scripts/rewrite-dist-entrypoints.mjs dist/plugin && node tools/scripts/publish.mjs plugin {args.ver} {args.tag}",
+      "command": "node tools/scripts/vendor-workspace-packages.mjs && node tools/scripts/rewrite-dist-entrypoints.mjs dist/plugin && node tools/scripts/publish.mjs plugin {args.ver} {args.tag}",
       "dependsOn": ["build"]
     },
     "native-esm": {
-      "command": "node tools/scripts/rewrite-dist-entrypoints.mjs dist/plugin && node tools/scripts/assert-native-esm.mjs dist/plugin --alias=payload-localized-fields=dist/document/src/index.js --alias=payload-localization-adapters=dist/adapters/src/index.js",
+      "command": "node tools/scripts/vendor-workspace-packages.mjs && node tools/scripts/rewrite-dist-entrypoints.mjs dist/plugin && node tools/scripts/assert-native-esm.mjs dist/plugin",
       "dependsOn": ["build", "^build"]
     },
     "test": {

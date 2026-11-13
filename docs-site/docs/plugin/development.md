@@ -16,9 +16,9 @@ description: Build, lint and test the plugin in the Nx monorepo.
 
 The repository is an [Nx](https://nx.dev) monorepo with these projects:
 
-- `plugin`: the `payload-crowdin-sync` package.
-- `document`: the `payload-localized-fields` package — Payload field walks used by the plugin and usable by other import/export plugins.
-- `adapters`: the `payload-localization-adapters` package — vendor-neutral `SourceWriter` / `TranslationReader` contracts. Phrase and Lokalise plugins in this monorepo will depend on it.
+- `plugin`: the `payload-crowdin-sync` package published to npm.
+- `document`: workspace library `payload-localized-fields` — Payload field walks used by the plugin and by other import/export plugins in this repo.
+- `adapters`: workspace library `payload-localization-adapters` — vendor-neutral `SourceWriter` / `TranslationReader` contracts. Phrase and Lokalise plugins in this monorepo will depend on it.
 
 How those three packages call each other, and what a "document slice" is, is in [packages](../repo/packages.md).
 - `dev`: a Payload install that uses the plugin, for integration tests. Tests that need a different plugin config pass `pluginOptionsOverride` to `initPayloadInt`.
@@ -32,7 +32,7 @@ In the root of the repository:
 - `nx build document` builds to `dist/document`.
 - `nx build adapters` builds to `dist/adapters`.
 - `nx build plugin --watch` rebuilds when files change.
-- `nx run document:native-esm` (and `adapters` / `plugin`) builds, rewrites published entrypoints, and loads the package with Node's native ESM resolver. Production relative imports use `.js` specifiers so that import works without a bundler.
+- `nx run plugin:native-esm` builds the plugin, vendors compiled `document/` and `adapters/` into the plugin dist, rewrites published entrypoints, and loads that tarball layout with Node's native ESM resolver (no npm aliases). `document` and `adapters` native-esm targets still check those libraries in isolation.
 
 ## Lint
 
@@ -50,7 +50,7 @@ Tests use [Vitest](https://vitest.dev). In the root of the repository:
 - `nx test adapters` runs `payload-localization-adapters` unit tests.
 - `nx test dev` runs integration tests against the Payload install.
 
-Plugin unit tests (`*.spec.ts`) sit next to the code they test in `plugin/src`. `payload-localized-fields` specs sit in `document/src`. Writer/reader specs sit in `adapters/src`. Payload field walks and the json/html document slice (`getLocalizedFields`, `traverseFields`, `restoreOrder`, `buildJsonObject`, `buildHtmlObject`, `buildUpdateObject`) live in the `payload-localized-fields` package (`document/`). Vendor-neutral upload/download orchestration (`syncDocumentSource`, `applyDocumentSlice`) lives in `payload-localization-adapters` (`adapters/`). Crowdin wrappers and rich-text HTML conversion stay in `plugin/src/lib/utilities/`. The Crowdin plugin re-exports the adapter contracts.
+Plugin unit tests (`*.spec.ts`) sit next to the code they test in `plugin/src`. `payload-localized-fields` specs sit in `document/src`. Writer/reader specs sit in `adapters/src`. Payload field walks and the json/html document slice (`getLocalizedFields`, `traverseFields`, `restoreOrder`, `buildJsonObject`, `buildHtmlObject`, `buildUpdateObject`) live in the `payload-localized-fields` library (`document/`). Vendor-neutral upload/download orchestration (`syncDocumentSource`, `applyDocumentSlice`) lives in `payload-localization-adapters` (`adapters/`). Crowdin wrappers and rich-text HTML conversion stay in `plugin/src/lib/utilities/`. The Crowdin plugin re-exports the adapter contracts.
 
 Integration tests (`*.test.ts`) are in `dev/src/tests`. They use Payload's [Local API](https://payloadcms.com/docs/local-api/overview) against a real Payload install with an in-memory MongoDB database. Calls to the Crowdin API are intercepted with [`nock`](https://github.com/nock/nock), so tests check which requests the plugin makes without needing a Crowdin account.
 

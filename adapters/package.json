@@ -1,6 +1,7 @@
 {
   "name": "payload-localization-adapters",
   "version": "1.0.0",
+  "private": true,
   "description": "Vendor-neutral writer and reader contracts for syncing a Payload json/html document slice with a translation service.",
   "keywords": [
     "payload",
@@ -34,7 +35,7 @@
   },
   "dependencies": {
     "deep-equal": "^2.2.3",
-    "payload-localized-fields": "^1.1.0",
+    "payload-localized-fields": "*",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {

@@ -4,11 +4,7 @@ Walk a Payload CMS field schema, pick the fields that should be imported or expo
 
 This is the vendor-neutral field walk used by [`payload-crowdin-sync`](https://www.npmjs.com/package/payload-crowdin-sync). It does not know about Crowdin, Phrase, or any other translation service.
 
-## Install
-
-```bash
-npm install payload-localized-fields
-```
+It is a workspace library in this monorepo, not a published npm package. Phrase or Lokalise plugins added here should import it locally. The Crowdin plugin vendors the compiled output into the `payload-crowdin-sync` tarball.
 
 Peer dependency: `payload` ^3.
 
@@ -95,7 +91,7 @@ const update = buildUpdateObject({
 
 A Crowdin plugin would upload `json` as a JSON file and each `html` path as an HTML file. Phrase or Lokalise can flatten the same slice into keys. Rich-text HTML conversion stays in the consumer.
 
-Upload/download orchestration (`SourceWriter`, `TranslationReader`, `syncDocumentSource`, `applyDocumentSlice`) lives in [`payload-localization-adapters`](https://www.npmjs.com/package/payload-localization-adapters). Package boundaries and diagrams: [packages](https://thompsonsj.github.io/payload-crowdin-sync/docs/repo/packages).
+Upload/download orchestration (`SourceWriter`, `TranslationReader`, `syncDocumentSource`, `applyDocumentSlice`) lives in [`payload-localization-adapters`](../adapters/README.md). Package boundaries and diagrams: [packages](https://thompsonsj.github.io/payload-crowdin-sync/docs/repo/packages).
 
 ## More use cases
 

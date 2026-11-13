@@ -16,7 +16,7 @@
     "prettier": "npx prettier . --write"
   },
   "dependencies": {
-    "payload-crowdin-sync": "0.45.0",
+    "payload-crowdin-sync": "*",
     "tslib": "^2.3.0"
   },
   "nx": {
