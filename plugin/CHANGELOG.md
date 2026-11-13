@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.44.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.44.0...payload-crowdin-sync-v0.44.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* **plugin:** depend on payload-localized-fields ^1.1.0 so consumers get compiled `.js` exports instead of the broken 1.0.0 `.ts` map
+
+
 ## [0.44.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.43.0...payload-crowdin-sync-v0.44.0) (2026-10-14)
 
 
