@@ -20,6 +20,16 @@ export default defineConfig({
     },
     projects: [
       {
+        test: {
+          name: 'tools',
+          environment: 'node',
+          globals: true,
+          watch: false,
+          retry: process.env.CI ? 2 : 0,
+          include: ['tools/scripts/**/*.spec.ts'],
+        },
+      },
+      {
         resolve: {
           alias: {
             'payload-localized-fields': path.resolve('document/src/index.ts'),

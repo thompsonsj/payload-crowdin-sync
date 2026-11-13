@@ -3,7 +3,7 @@
  *
  * Usage:
  *   node tools/scripts/assert-native-esm.mjs <dist-dir>
- *   node tools/scripts/assert-native-esm.mjs dist/plugin \
+ *   node tools/scripts/assert-native-esm.mjs dist/adapters \
  *     --alias=payload-localized-fields=dist/document/src/index.js
  */
 import { register } from 'node:module';

@@ -27,8 +27,8 @@
   },
   "dependencies": {
     "jsdom": "^29.1.1",
-    "payload-localization-adapters": "1.0.0",
-    "payload-localized-fields": "1.1.0",
+    "payload-localization-adapters": "*",
+    "payload-localized-fields": "*",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {
@@ -40,6 +40,11 @@
     "react": "^19.0.0"
   },
   "type": "module",
+  "files": [
+    "src",
+    "vendor",
+    "*.md"
+  ],
   "engines": {
     "node": "^20.19.0 || ^22.13.0 || >=24.0.0"
   },

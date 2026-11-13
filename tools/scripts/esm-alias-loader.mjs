@@ -1,7 +1,6 @@
 /**
  * Resolve selected package names to compiled workspace entries.
- * Used by assert-native-esm.mjs so plugin/adapters can load dist/document
- * instead of the published payload-localized-fields tarball.
+ * Used by assert-native-esm.mjs so adapters native-esm can load dist/document.
  */
 import { pathToFileURL } from 'node:url';
 import { resolve as resolvePath } from 'node:path';

@@ -1,0 +1,21 @@
+{
+  "name": "tools",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "tools",
+  "projectType": "library",
+  "tags": ["scope:tools"],
+  "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/tools"],
+      "options": {
+        "command": "vitest run --project tools"
+      },
+      "configurations": {
+        "ci": {
+          "command": "vitest run --project tools --coverage --coverage.reportsDirectory=coverage/tools --coverage.include=tools/scripts/vendor-workspace-packages.mjs --coverage.include=tools/scripts/rewrite-dist-entrypoints.mjs"
+        }
+      }
+    }
+  }
+}
