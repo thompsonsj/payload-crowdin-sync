@@ -1,17 +1,18 @@
 # Payload Crowdin Sync
 
-Translate [Payload CMS](https://payloadcms.com) content in [Crowdin](https://crowdin.com) without copying and pasting.
+Reorganise nested [Payload CMS](https://payloadcms.com) documents into compact HTML and JSON files for [Crowdin](https://crowdin.com) translators.
 
 **Documentation: [thompsonsj.github.io/payload-crowdin-sync](https://thompsonsj.github.io/payload-crowdin-sync/)**
 
-Payload stores documents as nested JSON, and rich text as editor state. That's hard to translate directly. This plugin extracts the localized fields from every document and uploads them to Crowdin as clean files: HTML for rich text and JSON for everything else. It then writes the translations back into the right fields, however deeply nested.
+The advantage is the format translators get. Nested Payload documents, including blocks embedded in Lexical rich text, are rebuilt as HTML and JSON in Crowdin. File count stays low: one `fields.json`, one HTML file per rich text field, and a small folder per Lexical block. Numbers, selects, dates, uploads, relationships, and fields you exclude stay in Payload. Translations are written back into the same nested structure.
 
 ## Features
 
 - **Uploads on save.** Localized fields in collections and globals are sent to Crowdin when you save a draft or publish. Only fields that changed are uploaded again.
 - **Rich text as HTML.** Slate and Lexical fields become HTML files that translators can edit in Crowdin's editor. Lexical blocks, uploads, relationships and tables are all converted back into Lexical when translations come in.
 - **Nested fields.** Localized fields inside groups, arrays, blocks, tabs, collapsibles and rows are collected into a single `fields.json` per document.
-- **Tidy Crowdin projects.** Each collection gets a folder, and each document gets a subfolder. Blocks inside a Lexical field get their own nested folders.
+- **Only translatable fields.** Numbers, selects, dates, uploads and relationships stay in Payload. You can exclude individual text fields (slugs, for example) so translators never see them.
+- **Tidy Crowdin projects.** Each collection gets a folder, and each document gets a subfolder. File count is kept down: one `fields.json` plus HTML for rich text. Blocks inside a Lexical field get their own nested folders.
 - **Translations back in one click.** Tick a checkbox in the admin panel to load translations for one locale or all of them, as a draft or published. You can also review changes first over REST, or run the sync as a Payload job.
 - **Safe updates.** A translation that is missing a required field isn't applied, and validation errors are reported.
 - **Self-healing.** If files or folders are deleted in Crowdin, the plugin removes its stale records and creates them again on the next save.

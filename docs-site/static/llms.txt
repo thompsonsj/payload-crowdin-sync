@@ -4,7 +4,7 @@
 # It points to the highest-signal pages in this docs site.
 
 ## What is this?
-`payload-crowdin-sync` is a Payload CMS plugin that uploads localized fields to Crowdin as HTML and JSON files, and writes translations back into Payload.
+`payload-crowdin-sync` is a Payload CMS plugin that reorganises nested documents into compact HTML and JSON files for Crowdin translators, then writes translations back into Payload. File count is kept low; non-translatable fields stay in the CMS.
 
 ## Canonical docs
 - /docs/intro
