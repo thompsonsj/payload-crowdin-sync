@@ -121,6 +121,10 @@ jobs:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           ref: ${{ inputs.plugin_tag }}
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          ref: ${{ github.sha }}
+          path: workflow-revision
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: 24.x
@@ -129,18 +133,8 @@ jobs:
       - run: npm ci
       - name: Build payload-crowdin-sync
         run: npx nx run plugin:build
-      - name: Pin payload-localized-fields to compiled exports
-        working-directory: dist/plugin
-        run: |
-          node -e "
-            const fs = require('fs');
-            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-            if (!pkg.dependencies || !pkg.dependencies['payload-localized-fields']) {
-              throw new Error('dist/plugin/package.json is missing payload-localized-fields');
-            }
-            pkg.dependencies['payload-localized-fields'] = '^1.1.0';
-            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
-          "
+      - name: Rewrite dist entrypoints
+        run: node workflow-revision/tools/scripts/rewrite-dist-entrypoints.mjs dist/plugin
       - name: Publish payload-crowdin-sync
         working-directory: dist/plugin
-        run: npm publish --access public
+        run: node ../../workflow-revision/tools/scripts/npm-publish-if-missing.mjs
