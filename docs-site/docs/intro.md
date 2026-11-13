@@ -1,12 +1,14 @@
 ---
 sidebar_position: 1
 sidebar_label: Introduction
-description: How payload-crowdin-sync moves content between Payload CMS and Crowdin, and where to start.
+description: Nested Payload documents reorganised into compact HTML and JSON for Crowdin translators.
 ---
 
 # Introduction
 
-`payload-crowdin-sync` keeps your content in [Payload CMS](https://payloadcms.com) while your translators work in [Crowdin](https://crowdin.com).
+`payload-crowdin-sync` takes nested [Payload CMS](https://payloadcms.com) documents and rebuilds them as compact HTML and JSON files in [Crowdin](https://crowdin.com). Translators work in Crowdin's editor. You keep editing in Payload.
+
+A document can be arbitrarily deep. Groups, arrays, tabs, rows, and Lexical blocks nested inside rich text are all included. File count is kept down: one `fields.json` for text, one HTML file per rich text field, and a small folder per Lexical block. Fields that are not translatable stay in Payload.
 
 ## How it works
 

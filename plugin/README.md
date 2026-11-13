@@ -1,16 +1,17 @@
 # `payload-crowdin-sync`
 
-Translate [Payload CMS](https://payloadcms.com) content in [Crowdin](https://crowdin.com).
+Reorganise nested [Payload CMS](https://payloadcms.com) documents into compact HTML and JSON files for [Crowdin](https://crowdin.com) translators.
 
 **Documentation: [thompsonsj.github.io/payload-crowdin-sync](https://thompsonsj.github.io/payload-crowdin-sync/)**
 
-The plugin extracts localized fields from your Payload documents and uploads them to Crowdin as clean files: HTML for rich text and JSON for everything else. It then writes translations back into the right fields, however deeply nested.
+The advantage is the format translators get. Nested Payload documents, including blocks embedded in Lexical rich text, are rebuilt as HTML and JSON in Crowdin. File count stays low: one `fields.json`, one HTML file per rich text field, and a small folder per Lexical block. Numbers, selects, dates, uploads, relationships, and fields you exclude stay in Payload. Translations are written back into the same nested structure.
 
 ## Features
 
 - Uploads localized fields from collections and globals on save, sending only the fields that changed.
 - Converts Slate and Lexical rich text to HTML and back, including Lexical blocks, uploads, relationships and tables.
 - Handles localized fields nested in groups, arrays, blocks, tabs, collapsibles and rows.
+- Leaves numbers, selects, dates, uploads and relationships in Payload, and lets you exclude individual text fields.
 - Loads translations from a checkbox in the admin panel, from REST endpoints with a dry-run review, or from Payload jobs.
 - Skips translations that are missing required fields, and reports the validation errors.
 - Recreates files and folders that were deleted in Crowdin.
