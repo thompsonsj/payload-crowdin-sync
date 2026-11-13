@@ -10,7 +10,8 @@ const isGitHubPages = process.env.GITHUB_ACTIONS === 'true';
 
 const config: Config = {
   title: 'Payload Crowdin Sync',
-  tagline: 'Translate Payload CMS content in Crowdin.',
+  tagline:
+    'Nested Payload documents reorganised into compact HTML and JSON for Crowdin translators.',
   favicon: 'img/favicon.ico',
   trailingSlash: false,
 
@@ -90,7 +91,7 @@ const config: Config = {
       {
         name: 'description',
         content:
-          'Documentation for the payload-crowdin-sync plugin: sync Payload localized fields to Crowdin and load translations back into Payload.',
+          'payload-crowdin-sync reorganises nested Payload CMS documents, including Lexical blocks in rich text, into compact HTML and JSON files for Crowdin, then writes translations back into Payload.',
       },
     ],
     colorMode: {

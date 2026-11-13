@@ -1,7 +1,7 @@
 {
   "name": "payload-crowdin-sync",
   "version": "0.45.0",
-  "description": "Translate Payload CMS content in Crowdin. Uploads localized fields as HTML and JSON files, and writes translations back into Payload.",
+  "description": "Reorganise nested Payload CMS documents into compact HTML and JSON files for Crowdin translators. Groups, arrays, and Lexical blocks inside rich text become a small set of files. Fields that are not translatable stay in Payload.",
   "keywords": [
     "payload",
     "payloadcms",
