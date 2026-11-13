@@ -19,20 +19,21 @@ The repository is an [Nx](https://nx.dev) monorepo with these projects:
 - `plugin`: the `payload-crowdin-sync` package published to npm.
 - `document`: workspace library `payload-localized-fields` — Payload field walks used by the plugin and by other import/export plugins in this repo.
 - `adapters`: workspace library `payload-localization-adapters` — vendor-neutral `SourceWriter` / `TranslationReader` contracts. Phrase and Lokalise plugins in this monorepo will depend on it.
-
-How those three packages call each other, and what a "document slice" is, is in [packages](../repo/packages.md).
 - `dev`: a Payload install that uses the plugin, for integration tests. Tests that need a different plugin config pass `pluginOptionsOverride` to `initPayloadInt`.
 - `docs-site`: this documentation site.
+- `tools`: build scripts (vendor workspace libraries into the plugin tarball, rewrite published entrypoints).
+
+How `document/`, `adapters/`, and `plugin/` call each other, and what a "document slice" is, is in [packages](../repo/packages.md).
 
 ## Build
 
 In the root of the repository:
 
-- `nx build plugin` builds to `dist/plugin`.
-- `nx build document` builds to `dist/document`.
-- `nx build adapters` builds to `dist/adapters`.
+- `nx build plugin` compiles TypeScript to `dist/plugin`. That output still imports the workspace libraries by package name.
+- `nx run plugin:package` then copies compiled `document/` and `adapters/` into `dist/plugin/vendor`, rewrites those imports, and points `package.json` at `.js` / `.d.ts`. That is the layout published to npm.
+- `nx build document` / `nx build adapters` compile the workspace libraries.
 - `nx build plugin --watch` rebuilds when files change.
-- `nx run plugin:native-esm` builds the plugin, vendors compiled `document/` and `adapters/` into the plugin dist, rewrites published entrypoints, and loads that tarball layout with Node's native ESM resolver (no npm aliases). `document` and `adapters` native-esm targets still check those libraries in isolation.
+- `nx run plugin:native-esm` runs `plugin:package`, then loads that tarball layout with Node's native ESM resolver. `document` and `adapters` native-esm targets still check those libraries in isolation.
 
 ## Lint
 
@@ -48,6 +49,7 @@ Tests use [Vitest](https://vitest.dev). In the root of the repository:
 - `nx test plugin` runs plugin unit tests only.
 - `nx test document` runs `payload-localized-fields` unit tests.
 - `nx test adapters` runs `payload-localization-adapters` unit tests.
+- `nx test tools` runs tests for the vendor and entrypoint scripts.
 - `nx test dev` runs integration tests against the Payload install.
 
 Plugin unit tests (`*.spec.ts`) sit next to the code they test in `plugin/src`. `payload-localized-fields` specs sit in `document/src`. Writer/reader specs sit in `adapters/src`. Payload field walks and the json/html document slice (`getLocalizedFields`, `traverseFields`, `restoreOrder`, `buildJsonObject`, `buildHtmlObject`, `buildUpdateObject`) live in the `payload-localized-fields` library (`document/`). Vendor-neutral upload/download orchestration (`syncDocumentSource`, `applyDocumentSlice`) lives in `payload-localization-adapters` (`adapters/`). Crowdin wrappers and rich-text HTML conversion stay in `plugin/src/lib/utilities/`. The Crowdin plugin re-exports the adapter contracts.
@@ -56,7 +58,7 @@ Integration tests (`*.test.ts`) are in `dev/src/tests`. They use Payload's [Loca
 
 To start Payload with a different plugin config, pass `pluginOptionsOverride` to `initPayloadInt`. The override is shallow-merged over the default test options, so `{ collections: undefined }` replaces the default collections list. Pass the same override to `pluginConfig` when setting up Crowdin mocks.
 
-CI runs `npm run test:coverage` and uploads the results to [Codecov](https://about.codecov.io). Plugin coverage also includes `document/src` and `adapters/src` so Crowdin wrapper specs still count hits on the shared packages. This needs the `CODECOV_TOKEN` repository secret.
+CI runs `npm run test:coverage` and uploads the results to [Codecov](https://about.codecov.io). Plugin coverage also includes `document/src` and `adapters/src` so Crowdin wrapper specs still count hits on the shared libraries. This needs the `CODECOV_TOKEN` repository secret.
 
 ## Import maps
 

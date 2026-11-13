@@ -122,4 +122,4 @@ Once items 3 and 4 are complete, the translation strategies (`getJsonTranslation
 - `SourceWriter` — write Payload-shaped json/html source. Crowdin `createOrUpdateJsonFile` / `createOrUpdateHtmlFile` implement it. `syncDocumentSource` is the afterChange orchestration (diff + skip empty).
 - `TranslationReader` — read a translated `{ json, html }` slice. Crowdin `payloadCrowdinSyncTranslationsApi.readSlice` implements it. `applyDocumentSlice` turns a slice into a Payload update.
 
-Phrase or Lokalise plugins in this monorepo should depend on this package and implement those two interfaces. Rich-text HTML conversion and Crowdin file CRUD stay in the Crowdin plugin.
+Phrase or Lokalise plugins in this monorepo should import this workspace library and implement those two interfaces. Rich-text HTML conversion and Crowdin file CRUD stay in the Crowdin plugin.

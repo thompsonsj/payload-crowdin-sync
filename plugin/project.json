@@ -17,13 +17,18 @@
         "updateBuildableProjectDepsInPackageJson": true
       }
     },
+    "package": {
+      "command": "node tools/scripts/vendor-workspace-packages.mjs && node tools/scripts/rewrite-dist-entrypoints.mjs dist/plugin",
+      "cache": false,
+      "dependsOn": ["build", "^build"]
+    },
     "publish": {
-      "command": "node tools/scripts/vendor-workspace-packages.mjs && node tools/scripts/rewrite-dist-entrypoints.mjs dist/plugin && node tools/scripts/publish.mjs plugin {args.ver} {args.tag}",
-      "dependsOn": ["build"]
+      "command": "node tools/scripts/publish.mjs plugin {args.ver} {args.tag}",
+      "dependsOn": ["package"]
     },
     "native-esm": {
-      "command": "node tools/scripts/vendor-workspace-packages.mjs && node tools/scripts/rewrite-dist-entrypoints.mjs dist/plugin && node tools/scripts/assert-native-esm.mjs dist/plugin",
-      "dependsOn": ["build", "^build"]
+      "command": "node tools/scripts/assert-native-esm.mjs dist/plugin",
+      "dependsOn": ["package"]
     },
     "test": {
       "executor": "nx:run-commands",

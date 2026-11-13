@@ -49,10 +49,7 @@ jobs:
       - run: npm ci
       - name: Build payload-crowdin-sync
         if: ${{ needs.release-please.outputs.plugin_release_created == 'true' || env.PUBLISH_MISSING == 'true' }}
-        run: |
-          npx nx run plugin:build
-          node tools/scripts/vendor-workspace-packages.mjs
-          node tools/scripts/rewrite-dist-entrypoints.mjs dist/plugin
+        run: npx nx run plugin:package
       - name: Publish payload-crowdin-sync
         if: ${{ needs.release-please.outputs.plugin_release_created == 'true' || env.PUBLISH_MISSING == 'true' }}
         working-directory: dist/plugin

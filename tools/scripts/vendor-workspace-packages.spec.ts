@@ -1,4 +1,11 @@
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import {
+  existsSync,
+  mkdtempSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -76,6 +83,10 @@ describe('vendorWorkspacePackages', () => {
     vendorWorkspacePackages(tree)
 
     const pluginJs = readFileSync(join(tree.pluginDist, 'src/lib/index.js'), 'utf8')
+    const pluginDts = readFileSync(
+      join(tree.pluginDist, 'src/lib/index.d.ts'),
+      'utf8',
+    )
     const adaptersJs = readFileSync(
       join(tree.pluginDist, 'vendor/payload-localization-adapters/index.js'),
       'utf8',
@@ -84,6 +95,11 @@ describe('vendorWorkspacePackages', () => {
       readFileSync(join(tree.pluginDist, 'package.json'), 'utf8'),
     ) as { dependencies: Record<string, string> }
 
+    expect(
+      existsSync(
+        join(tree.pluginDist, 'vendor/payload-localized-fields/index.js'),
+      ),
+    ).toBe(true)
     expect(pluginJs).toContain(
       "from '../../vendor/payload-localized-fields/index.js'",
     )
@@ -92,8 +108,19 @@ describe('vendorWorkspacePackages', () => {
     )
     expect(pluginJs).not.toContain("'payload-localized-fields'")
     expect(pluginJs).not.toContain("'payload-localization-adapters'")
+    expect(pluginDts).toContain(
+      "from '../../vendor/payload-localized-fields/index.js'",
+    )
     expect(adaptersJs).toContain("from '../payload-localized-fields/index.js'")
     expect(adaptersJs).not.toContain("'payload-localized-fields'")
     expect(pkg.dependencies).toEqual({ jsdom: '^29.1.1' })
+  })
+
+  it('throws when a compiled workspace package is missing', () => {
+    const tree = makeTree()
+    rmSync(tree.documentSrc, { recursive: true, force: true })
+    expect(() => vendorWorkspacePackages(tree)).toThrow(
+      /Missing compiled workspace package/,
+    )
   })
 })
