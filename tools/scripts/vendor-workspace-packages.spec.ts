@@ -30,6 +30,9 @@ const makeTree = () => {
     JSON.stringify({
       name: 'payload-crowdin-sync',
       dependencies: {
+        'deep-equal': '^2.2.3',
+        'dot-object': '^2.1.5',
+        'es-toolkit': '^1.52.0',
         jsdom: '^29.1.1',
         'payload-localization-adapters': '1.0.0',
         'payload-localized-fields': '1.1.0',
@@ -122,7 +125,12 @@ describe('vendorWorkspacePackages', () => {
     )
     expect(adaptersJs).toContain("from '../payload-localized-fields/index.js'")
     expect(adaptersJs).not.toContain("'payload-localized-fields'")
-    expect(pkg.dependencies).toEqual({ jsdom: '^29.1.1' })
+    expect(pkg.dependencies).toEqual({
+      'deep-equal': '^2.2.3',
+      'dot-object': '^2.1.5',
+      'es-toolkit': '^1.52.0',
+      jsdom: '^29.1.1',
+    })
     expect(
       existsSync(
         join(tree.pluginDist, 'vendor/payload-localized-fields/nested/extra.js'),
