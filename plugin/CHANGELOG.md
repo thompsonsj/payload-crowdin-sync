@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.46.1](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.46.0...payload-crowdin-sync-v0.46.1) (2026-11-14)
+
+
+### Bug Fixes
+
+* **plugin:** write published docs in a human voice ([#417](https://github.com/thompsonsj/payload-crowdin-sync/issues/417)) ([440062b](https://github.com/thompsonsj/payload-crowdin-sync/commit/440062bede3f5b70e6e3a85601530e2cb690d199))
+
 ## [0.46.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.45.0...payload-crowdin-sync-v0.46.0) (2026-11-13)
 
 
