@@ -1,6 +1,6 @@
 {
   "name": "payload-crowdin-sync",
-  "version": "0.46.0",
+  "version": "0.46.1",
   "description": "Reorganise nested Payload CMS documents into compact HTML and JSON files for Crowdin translators. Groups, arrays, and Lexical blocks inside rich text become a small set of files. Fields that are not translatable stay in Payload.",
   "keywords": [
     "payload",
