@@ -4,7 +4,7 @@ Reorganise nested [Payload CMS](https://payloadcms.com) documents into compact H
 
 **Documentation: [thompsonsj.github.io/payload-crowdin-sync](https://thompsonsj.github.io/payload-crowdin-sync/)**
 
-The advantage is the format translators get. Nested Payload documents, including blocks embedded in Lexical rich text, are rebuilt as HTML and JSON in Crowdin. File count stays low: one `fields.json`, one HTML file per rich text field, and a small folder per Lexical block. Numbers, selects, dates, uploads, relationships, and fields you exclude stay in Payload. Translations are written back into the same nested structure.
+Nested Payload documents, including blocks embedded in Lexical rich text, become HTML and JSON in Crowdin. File count stays low: one `fields.json`, one HTML file per rich text field, and a small folder per Lexical block. Numbers, selects, dates, uploads, relationships, and fields you exclude stay in Payload. Translations are written back into the same nested structure.
 
 ## Features
 
