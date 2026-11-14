@@ -19,30 +19,30 @@
     "dev"
   ],
   "dependencies": {
-    "@crowdin/crowdin-api-client": "^1.59.2",
-    "@payloadcms/db-mongodb": "3.91.0",
-    "@payloadcms/next": "^3.91.0",
-    "@payloadcms/richtext-lexical": "3.91.0",
-    "@payloadcms/richtext-slate": "3.91.0",
-    "@payloadcms/ui": "^3.91.0",
-    "@slate-serializers/html": "^2.8.4",
+    "@crowdin/crowdin-api-client": "^1.60.0",
+    "@payloadcms/db-mongodb": "3.93.0",
+    "@payloadcms/next": "^3.93.0",
+    "@payloadcms/richtext-lexical": "3.93.0",
+    "@payloadcms/richtext-slate": "3.93.0",
+    "@payloadcms/ui": "^3.93.0",
+    "@slate-serializers/html": "^2.8.5",
     "@swc-node/register": "1.12.1",
-    "@swc/helpers": "0.5.23",
+    "@swc/helpers": "0.5.24",
     "@types/dot-object": "^2.1.6",
     "cross-env": "^10.1.0",
     "deep-equal": "^2.2.3",
     "dot-object": "^2.1.5",
-    "dotenv": "^18.0.9",
-    "es-toolkit": "^1.52.0",
+    "dotenv": "^18.0.10",
+    "es-toolkit": "^1.53.2",
     "graphql": "^16.14.2",
-    "joi": "^18.3.1",
+    "joi": "^18.3.2",
     "jsdom": "^29.1.1",
-    "next": "16.4.3",
-    "payload": "3.91.0",
+    "next": "16.4.6",
+    "payload": "3.93.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "sharp": "0.35.5",
-    "tslib": "^2.8.1"
+    "tslib": "^2.9.1"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
@@ -51,11 +51,11 @@
     "@babel/preset-typescript": "^7.29.7",
     "@eslint/eslintrc": "^3.3.7",
     "@eslint/js": "^10.0.1",
-    "@nx/eslint": "24.0.3",
-    "@nx/eslint-plugin": "24.0.3",
-    "@nx/js": "24.0.3",
-    "@nx/workspace": "24.0.3",
-    "@swc/core": "1.16.20",
+    "@nx/eslint": "24.0.6",
+    "@nx/eslint-plugin": "24.0.6",
+    "@nx/js": "24.0.6",
+    "@nx/workspace": "24.0.6",
+    "@swc/core": "1.16.22",
     "@swc/register": "^0.1.10",
     "@types/deep-equal": "^1.0.4",
     "@types/express": "^5.0.6",
@@ -64,31 +64,33 @@
     "@types/nodemailer": "^8.0.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "@typescript-eslint/eslint-plugin": "8.72.0",
-    "@typescript-eslint/parser": "8.72.0",
-    "@vitest/coverage-v8": "^5.0.5",
+    "@typescript-eslint/eslint-plugin": "8.72.2",
+    "@typescript-eslint/parser": "8.72.2",
+    "@vitest/coverage-v8": "^5.1.0",
     "copyfiles": "^2.4.1",
     "cross-env": "^10.1.0",
-    "eslint": "10.13.0",
-    "eslint-config-next": "16.4.3",
+    "eslint": "10.15.0",
+    "eslint-config-next": "16.4.6",
     "eslint-config-prettier": "10.1.8",
     "get-port": "^7.2.0",
     "isomorphic-fetch": "^3.0.0",
     "mongodb-memory-server": "^11.3.0",
     "nock": "^14.0.17",
-    "nodemailer": "^10.2.1",
+    "nodemailer": "^10.5.0",
     "nodemon": "^3.1.14",
-    "nx": "24.0.3",
-    "prettier": "^3.9.10",
+    "nx": "24.0.6",
+    "prettier": "^3.10.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "6.0.2",
-    "typescript-eslint": "^8.72.0",
-    "vitest": "^5.0.5"
+    "typescript-eslint": "^8.72.2",
+    "vitest": "^5.1.0"
   },
   "overrides": {
     "dompurify": "3.4.17",
     "follow-redirects": "1.16.2",
+    "happy-dom": "21.0.4",
+    "mongoose": "8.24.9",
     "smol-toml": "1.9.1",
     "undici": "7.30.1"
   },
@@ -96,9 +98,15 @@
     "includedScripts": []
   },
   "engines": {
-    "node": "^20.19.0 || ^22.13.0 || >=24"
+    "node": "^22.23.4 || >=24.22.1"
   },
   "volta": {
-    "node": "24.0.0"
+    "node": "24.22.3"
+  },
+  "allowScripts": {
+    "@swc/core@1.16.22": true,
+    "esbuild@0.28.2": true,
+    "mongodb-memory-server@11.3.0": true,
+    "nx@24.0.6": true
   }
 }

@@ -2698,6 +2698,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                       },
                     },
                     "node": [Function],
+                    "validations": [
+                      [Function],
+                    ],
                   },
                   {
                     "converters": {
@@ -2854,6 +2857,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                     [Function],
                   ],
                   "inlineBlock" => [
+                    [Function],
+                  ],
+                  "tablecell" => [
                     [Function],
                   ],
                   "upload" => [
@@ -5794,6 +5800,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                         },
                       },
                       "node": [Function],
+                      "validations": [
+                        [Function],
+                      ],
                     },
                     {
                       "converters": {
@@ -14454,6 +14463,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                               },
                             },
                             "node": [Function],
+                            "validations": [
+                              [Function],
+                            ],
                           },
                           {
                             "converters": {
@@ -14610,6 +14622,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                             [Function],
                           ],
                           "inlineBlock" => [
+                            [Function],
+                          ],
+                          "tablecell" => [
                             [Function],
                           ],
                           "upload" => [
@@ -17550,6 +17565,9 @@ describe('payload-crowdin-sync: getLocalizedFields', () => {
                                 },
                               },
                               "node": [Function],
+                              "validations": [
+                                [Function],
+                              ],
                             },
                             {
                               "converters": {
