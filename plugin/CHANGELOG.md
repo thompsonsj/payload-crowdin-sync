@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.46.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.45.0...payload-crowdin-sync-v0.46.0) (2026-11-13)
+
+
+### Features
+
+* **packages:** Stop publishing document and adapters; vendor them into the plugin ([#412](https://github.com/thompsonsj/payload-crowdin-sync/issues/412)) ([fb941c2](https://github.com/thompsonsj/payload-crowdin-sync/commit/fb941c2ba1b492a36175436bfa10313ee9315031))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * payload-localization-adapters bumped from * to 1.1.0
+    * payload-localized-fields bumped from * to 1.2.0
+
 ## [0.45.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/payload-crowdin-sync-v0.44.0...payload-crowdin-sync-v0.45.0) (2026-10-26)
 
 

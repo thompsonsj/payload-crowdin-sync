@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.27.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.26.0...source-v0.27.0) (2026-11-13)
+
+
+### Features
+
+* **packages:** Stop publishing document and adapters; vendor them into the plugin ([#412](https://github.com/thompsonsj/payload-crowdin-sync/issues/412)) ([fb941c2](https://github.com/thompsonsj/payload-crowdin-sync/commit/fb941c2ba1b492a36175436bfa10313ee9315031))
+
 ## [0.26.0](https://github.com/thompsonsj/payload-crowdin-sync/compare/source-v0.25.0...source-v0.26.0) (2026-10-26)
 
 
