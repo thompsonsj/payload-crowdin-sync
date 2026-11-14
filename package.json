@@ -90,10 +90,6 @@
     "dompurify": "3.4.17",
     "follow-redirects": "1.16.2",
     "happy-dom": "21.0.4",
-    "minimatch@7": "11.0.1",
-    "minimatch@8": "11.0.1",
-    "minimatch@9": "11.0.1",
-    "minimatch@10": "11.0.1",
     "mongoose": "8.24.9",
     "smol-toml": "1.9.1",
     "undici": "7.30.1"
