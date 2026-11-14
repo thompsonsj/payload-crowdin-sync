@@ -1,11 +1,11 @@
 ---
 sidebar_position: 1
-description: Install and configure payload-crowdin-sync, upload content to Crowdin, and load translations back into Payload.
+description: Add payload-crowdin-sync to Payload, upload nested documents as HTML and JSON to Crowdin, and load translations back.
 ---
 
 # Getting started
 
-Install the plugin, configure it, and sync content between Payload and Crowdin.
+Add the plugin to your Payload config. Saving a document uploads its localized fields to Crowdin as HTML and JSON. Tick a checkbox on the document when you want translations back.
 
 Table of contents:
 

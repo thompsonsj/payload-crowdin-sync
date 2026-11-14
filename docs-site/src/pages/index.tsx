@@ -45,9 +45,8 @@ export default function Home(): ReactNode {
         <Heading as="h1">{siteConfig.title}</Heading>
         <p className="margin-bottom--md">{siteConfig.tagline}</p>
         <p>
-          The advantage is the format translators get. Nested Payload
-          documents, including blocks embedded in Lexical rich text, are
-          rebuilt as HTML and JSON in Crowdin. File count stays low: one{' '}
+          Nested Payload documents, including blocks embedded in Lexical rich
+          text, become HTML and JSON in Crowdin. File count stays low: one{' '}
           <code>fields.json</code>, one HTML file per rich text field, and a
           small folder per Lexical block.
         </p>

@@ -12,3 +12,7 @@
 - For Nx plugin best practices, check `node_modules/@nx/<plugin>/PLUGIN.md`. Not all plugins have this file - proceed without it if unavailable.
 
 <!-- nx configuration end-->
+
+# Docs
+
+When writing or editing user-facing docs, follow `.cursor/skills/docs-voice/SKILL.md`.
